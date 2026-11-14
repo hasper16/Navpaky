@@ -214,6 +214,12 @@ namespace Rekey.Win32 {
     public event Action<UndoPerformed>? Undone;
 
     /// <summary>
+    /// Occurs on the worker thread when Rekey switched the Layout, with why and to which Layout,
+    /// for the cursor indicator and the switch sound.
+    /// </summary>
+    public event Action<SwitchFeedback>? Switched;
+
+    /// <summary>
     /// Gets the Protected Words and Learned Words the engine starts with; set it before
     /// <see cref="Start" />.
     /// </summary>
@@ -700,8 +706,13 @@ namespace Rekey.Win32 {
     }
 
     private void Send(InputEvent inputEvent) {
-      foreach (EngineAction action in _engine.Handle(inputEvent)) {
+      IReadOnlyList<EngineAction> actions = _engine.Handle(inputEvent);
+      foreach (EngineAction action in actions) {
         Execute(action);
+      }
+
+      if (Switched is not null && SwitchFeedback.Of(inputEvent, actions) is { } feedback) {
+        Switched.Invoke(feedback);
       }
 
       PublishPolicy();

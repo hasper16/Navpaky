@@ -23,6 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Sounds\*.wav" LogicalName="Rekey.Sounds.%(Filename).wav" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="Rekey.App.Tests" />
   </ItemGroup>
 

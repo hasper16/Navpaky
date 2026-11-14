@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using H.NotifyIcon;
+using Rekey.App.Feedback;
 using Rekey.App.Tray;
 using Rekey.App.ViewModels;
 using Rekey.App.Views;
@@ -50,6 +51,8 @@ namespace Rekey.App {
     private readonly WordListsSaver _wordsSaver =
         new(_wordsStore, TimeProvider.System, ReportWordsNotSaved);
 
+    private readonly SignInLaunch _signIn = new();
+
     private SingleInstanceGuard? _guard;
     private SettingsHub? _hub;
     private TrayViewModel? _tray;
@@ -58,6 +61,8 @@ namespace Rekey.App {
     private DispatcherTimer? _trayTimer;
     private WordsViewModel? _words;
     private SettingsWindow? _settingsWindow;
+    private CursorIndicator? _indicator;
+    private SwitchSoundPlayer? _sounds;
 #if DEBUG
     private bool _checkingTray;
     private bool _autoResume;
@@ -82,8 +87,14 @@ namespace Rekey.App {
       }
 
       ApplicationThemeManager.ApplySystemTheme();
-      _hub = new SettingsHub(
-          _settingsStore.Load().ForNewSession(), _settingsStore.Save, TimeProvider.System);
+
+      // Windows holds the truth about starting at sign-in: Task Manager can change it.
+      Settings loaded = _settingsStore.Load().ForNewSession() with {
+        LaunchAtSignIn = _signIn.IsOn(),
+      };
+      _hub = new SettingsHub(loaded, _settingsStore.Save, TimeProvider.System);
+      _indicator = new CursorIndicator();
+      _sounds = new SwitchSoundPlayer();
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
       var trayIcon = (TaskbarIcon)FindResource("TrayIcon");
       _trayView = new TrayIconView(
@@ -101,6 +112,10 @@ namespace Rekey.App {
 #if DEBUG
       if (e.Args.Contains(_checkFreeze)) {
         FreezeTwiceForCheck();
+      }
+
+      if (e.Args.Contains(_checkUi)) {
+        StartUiCheck();
       }
 
       if (e.Args.Contains(_checkSettings)) {
@@ -137,6 +152,7 @@ namespace Rekey.App {
         // After the worker, so its last change is saved too.
         _wordsSaver.Flush();
         _wordsSaver.Dispose();
+        _sounds?.Dispose();
         _trayTimer?.Stop();
         _foregroundApps?.Dispose();
         _trayView?.Dispose();
@@ -201,6 +217,7 @@ namespace Rekey.App {
       _worker.SelfPauseChanged += until => Dispatcher.BeginInvoke(() => ShowSelfPause(until));
       _worker.Observed += RememberWordCounts;
       _worker.Observed += FollowLayout;
+      _worker.Switched += feedback => Dispatcher.BeginInvoke(() => RespondToSwitch(feedback));
       try {
         _worker.Start();
       } catch (Win32Exception) {
@@ -331,6 +348,7 @@ namespace Rekey.App {
       _trayView?.Refresh();
 #if DEBUG
       WriteTrayState();
+      WriteUiState();
 #endif
     }
 
@@ -345,9 +363,30 @@ namespace Rekey.App {
       }
     }
 
+    private void RespondToSwitch(SwitchFeedback feedback) {
+      SwitchResponse response = SwitchResponse.For(feedback, _hub!.Current);
+      if (response.Indicator) {
+        _indicator!.Show(
+            feedback.Target.LanguageCode,
+            ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark);
+      }
+
+      if (response.Sound) {
+        _sounds!.Play(_hub.Current.SwitchSound);
+      }
+#if DEBUG
+      NoteSwitchForCheck(feedback);
+      WriteUiState();
+#endif
+    }
+
     private void OnSettingsChanged(Settings settings) {
       _worker?.UseSettings(settings);
       _freezeGuard?.UseSettings(settings);
+      if (settings.LaunchAtSignIn != _signIn.IsOn() && Environment.ProcessPath is { } path) {
+        _signIn.Set(settings.LaunchAtSignIn, path);
+      }
+
       RefreshTray();
     }
 
@@ -362,7 +401,12 @@ namespace Rekey.App {
     // One settings window at a time: asking again brings it to the front.
     private void ShowSettings(Type page) {
       if (_settingsWindow is null) {
+        // The user may have turned Rekey off under Startup apps in Task Manager meanwhile.
+        _hub!.Update(settings => settings with { LaunchAtSignIn = _signIn.IsOn() });
         _settingsWindow = CreateSettingsWindow();
+#if DEBUG
+        NoteSettingsOpenedForCheck();
+#endif
         _settingsWindow.Closed += (_, _) => _settingsWindow = null;
         _settingsWindow.Show();
       }
@@ -381,7 +425,8 @@ namespace Rekey.App {
       var apps = new ExcludedAppsViewModel(_hub!, key => AppNames.Of(new AppId(key)));
       bool dark = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
       SettingsSection[] sections = [
-          new(Strings.PageGeneral, SymbolRegular.Settings24, new GeneralPage(settings, _ => { })),
+          new(Strings.PageGeneral, SymbolRegular.Settings24,
+              new GeneralPage(settings, sound => _sounds!.Play(sound))),
           new(Strings.PageCorrection, SymbolRegular.TextGrammarCheckmark24,
               new CorrectionPage(settings)),
           new(Strings.PageHotkey, SymbolRegular.Keyboard24, new HotkeyPage(hotkey)),

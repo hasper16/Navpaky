@@ -1,5 +1,6 @@
 CUIAutomation
 CallNextHookEx
+ClientToScreen
 CloseDesktop
 CreateMutex
 DispatchMessage
@@ -12,12 +13,14 @@ GetAsyncKeyState
 GetClassName
 GetCurrentProcess
 GetCurrentThreadId
+GetCursorPos
 GetForegroundWindow
 GetGUIThreadInfo
 GetKeyState
 GetKeyboardLayout
 GetKeyboardLayoutList
 GetLastInputInfo
+GetMonitorInfo
 GetSystemMetrics
 GetMessage
 GetModuleHandle
@@ -36,6 +39,7 @@ KBDLLHOOKSTRUCT
 LoadKeyboardLayout
 MSLLHOOKSTRUCT
 MapVirtualKeyEx
+MonitorFromPoint
 MsgWaitForMultipleObjectsEx
 OpenInputDesktop
 OpenProcess
@@ -48,6 +52,7 @@ RegisterHotKey
 SendInput
 SetWinEventHook
 SetWindowsHookEx
+SetWindowLong
 TOKEN_ELEVATION
 TextPatternRangeEndpoint
 TextUnit
@@ -60,6 +65,7 @@ UnloadKeyboardLayout
 UnregisterHotKey
 VIRTUAL_KEY
 WIN32_ERROR
+WINDOW_EX_STYLE
 WINEVENT_OUTOFCONTEXT
 WINEVENT_SKIPOWNPROCESS
 WM_APP
