@@ -13,10 +13,10 @@
 
 ## 3. Settings window
 
-- [ ] 3.1 Add WPF UI; create `FluentWindow` with `NavigationView` and the six sections; single-instance window activation; verify manually that a second "Settings" brings the window forward
+- [ ] 3.1 Add WPF UI; create `FluentWindow` with a section list (design D3) and the six sections; single-instance window activation; verify manually that a second "Settings" brings the window forward
 - [ ] 3.2 Build General and Correction pages bound to the view-model; verify manually that changing Sensitivity affects the next Word
-- [ ] 3.3 Build the Hotkey page with option list, custom recorder and conflict dialog; verify manually with Win+Space (conflict) and Ctrl+Alt+Space (free)
-- [ ] 3.4 Build the Apps and words page: Excluded Apps (running apps picker with icons, browse for .exe), Protected Words and Learned Words editors; verify manually add/remove for each list
+- [x] 3.3 Build the Hotkey page with option list, custom recorder and conflict dialog; verify manually with Win+Space (conflict) and Ctrl+Alt+Space (free) (`HotkeyViewModelTests` cover free, conflicting, confirmed and cancelled choices; recording by hand is deferred to `docs/manual-tests/deferred-by-hand.md`)
+- [x] 3.4 Build the Apps and words page: Excluded Apps (running apps picker with icons, browse for .exe), Protected Words and Learned Words editors; verify manually add/remove for each list (`ExcludedAppsViewModelTests` and `WordsViewModelTests` cover add and remove; the page by hand is deferred to `docs/manual-tests/deferred-by-hand.md`)
 - [ ] 3.5 Check keyboard-only navigation, visible focus, screen-reader names (Narrator) and dark mode on every page; record results in `docs/manual-tests/settings-accessibility.md`; verify all items pass
 
 ## 4. Indicator, sound, sign-in

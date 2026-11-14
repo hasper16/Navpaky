@@ -25,8 +25,9 @@ hits=$(printf '%s\n' "$added" | grep -Ein \
 $hits
 Move it to user secrets / CI secrets. If it is a false positive, ask the user to commit it."
 
-# 3. Google C# style column limit: 100 characters (no analyzer enforces it).
-long=$(git diff --cached --name-only --diff-filter=ACMR -- '*.cs' | while IFS= read -r f; do
+# 3. Google C# style column limit: 100 characters (no analyzer enforces it). Generated
+#    *.Designer.cs files are left out.
+long=$(git diff --cached --name-only --diff-filter=ACMR -- '*.cs' ':(exclude)*.Designer.cs' | while IFS= read -r f; do
   git show ":$f" | tr -d '\r' | awk -v f="$f" 'length($0) > 100 { print f ":" NR ": " length($0) " chars" }'
 done)
 [ -n "$long" ] && fail "lines over 100 characters (Google C# style):

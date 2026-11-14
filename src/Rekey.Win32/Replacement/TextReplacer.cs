@@ -19,7 +19,6 @@ namespace Rekey.Win32.Replacement {
 
     private readonly ITextBeforeCaret _reader;
     private readonly Action<TimeSpan> _pause;
-    private readonly bool _verify;
     private readonly Func<IReadOnlyList<VIRTUAL_KEY>> _heldModifiers;
     private readonly Func<INPUT[], bool> _send;
     private readonly Func<TextTarget> _target;
@@ -29,6 +28,12 @@ namespace Rekey.Win32.Replacement {
     // The text the latest replacement expected, when what was read differed from it.
     private string? _mismatchExpected;
     private MismatchKind _mismatchKind;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the text is checked before it is replaced
+    /// (setting Verified Replacement); set it on the thread that replaces.
+    /// </summary>
+    public bool Verify { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TextReplacer" /> class.
@@ -75,7 +80,7 @@ namespace Rekey.Win32.Replacement {
         Func<TextTarget> target,
         Action<TimeSpan>? pause = null) {
       _reader = reader;
-      _verify = verify;
+      Verify = verify;
       _heldModifiers = heldModifiers;
       _send = send;
       _target = target;
@@ -120,7 +125,7 @@ namespace Rekey.Win32.Replacement {
       }
 
       _mismatchExpected = null;
-      bool check = _verify
+      bool check = Verify
           && !_slowApps.HasStruckOut(appId)
           && !_unreadableApps.HasStruckOut(appId);
       ITextBeforeCaret? reader = check ? _reader : null;

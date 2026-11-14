@@ -10,10 +10,14 @@ using System.Windows.Threading;
 using H.NotifyIcon;
 using Rekey.App.Tray;
 using Rekey.App.ViewModels;
+using Rekey.App.Views;
 using Rekey.Core;
 using Rekey.Core.Words;
 using Rekey.Win32;
 using Rekey.Win32.Focus;
+using Rekey.Win32.Hotkeys;
+using Wpf.Ui.Appearance;
+using SymbolRegular = Wpf.Ui.Controls.SymbolRegular;
 
 namespace Rekey.App {
   [SuppressMessage(
@@ -27,6 +31,7 @@ namespace Rekey.App {
     private const string _checkSelfPause = "--check-self-pause";
     private const string _checkAutoResume = "--check-auto-resume";
     private const string _checkQuit = "--check-quit";
+    private const string _checkSettings = "--check-settings";
 #endif
 
     // The tray says how many minutes of a Pause remain and notices its end.
@@ -51,6 +56,8 @@ namespace Rekey.App {
     private TrayIconView? _trayView;
     private ForegroundApps? _foregroundApps;
     private DispatcherTimer? _trayTimer;
+    private WordsViewModel? _words;
+    private SettingsWindow? _settingsWindow;
 #if DEBUG
     private bool _checkingTray;
     private bool _autoResume;
@@ -74,6 +81,7 @@ namespace Rekey.App {
         return;
       }
 
+      ApplicationThemeManager.ApplySystemTheme();
       _hub = new SettingsHub(
           _settingsStore.Load().ForNewSession(), _settingsStore.Save, TimeProvider.System);
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
@@ -93,6 +101,12 @@ namespace Rekey.App {
 #if DEBUG
       if (e.Args.Contains(_checkFreeze)) {
         FreezeTwiceForCheck();
+      }
+
+      if (e.Args.Contains(_checkSettings)) {
+        // For tools/Rekey.DesktopChecks: the settings window open from the start, as after
+        // choosing Settings in the tray.
+        OpenSettings();
       }
 
       if (e.Args.Contains(_checkSelfPause)) {
@@ -132,6 +146,10 @@ namespace Rekey.App {
       }
     }
 
+    private static HotkeyConflict CheckHotkey(Hotkey hotkey) {
+      return HotkeyConflicts.Check(hotkey, LayoutSwitchShortcuts.Read(), HotkeyProbe.IsTaken);
+    }
+
     // Incidents carry enum values only, so the trace never holds typed text.
     private static void RecordIncident(Incident incident) {
       string details = string.Join(',', incident.Details);
@@ -164,6 +182,10 @@ namespace Rekey.App {
 
     private void StartInput(Settings settings) {
       WordListsDocument? words = _wordsStore.Load();
+      _words = new WordsViewModel(
+          edit => _worker?.EditWordList(edit),
+          () => TimeSpan.FromMilliseconds(Environment.TickCount64));
+      _words.Show(words ?? WordListsDocument.Empty);
       _worker = new InputWorker(settings, RecordIncident, TimeProvider.System) {
         InitialWords = words ?? WordListsDocument.Empty,
       };
@@ -175,6 +197,7 @@ namespace Rekey.App {
         _worker.WordListsChanged += _wordsSaver.Changed;
       }
 
+      _worker.WordListsChanged += lists => Dispatcher.BeginInvoke(() => _words.Show(lists));
       _worker.SelfPauseChanged += until => Dispatcher.BeginInvoke(() => ShowSelfPause(until));
       _worker.Observed += RememberWordCounts;
       _worker.Observed += FollowLayout;
@@ -324,15 +347,51 @@ namespace Rekey.App {
 
     private void OnSettingsChanged(Settings settings) {
       _worker?.UseSettings(settings);
+      _freezeGuard?.UseSettings(settings);
       RefreshTray();
     }
 
     private void OpenSettings() {
-      // The settings window arrives with task group 3 of add-tray-and-settings-ui.
+      ShowSettings(typeof(GeneralPage));
     }
 
     private void OpenAbout() {
-      // The About page arrives with task group 3 of add-tray-and-settings-ui.
+      ShowSettings(typeof(AboutPage));
+    }
+
+    // One settings window at a time: asking again brings it to the front.
+    private void ShowSettings(Type page) {
+      if (_settingsWindow is null) {
+        _settingsWindow = CreateSettingsWindow();
+        _settingsWindow.Closed += (_, _) => _settingsWindow = null;
+        _settingsWindow.Show();
+      }
+
+      if (_settingsWindow.WindowState == WindowState.Minimized) {
+        _settingsWindow.WindowState = WindowState.Normal;
+      }
+
+      _settingsWindow.Activate();
+      _settingsWindow.Show(page);
+    }
+
+    private SettingsWindow CreateSettingsWindow() {
+      var settings = new SettingsViewModel(_hub!);
+      var hotkey = new HotkeyViewModel(_hub!, CheckHotkey);
+      var apps = new ExcludedAppsViewModel(_hub!, key => AppNames.Of(new AppId(key)));
+      bool dark = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
+      SettingsSection[] sections = [
+          new(Strings.PageGeneral, SymbolRegular.Settings24, new GeneralPage(settings, _ => { })),
+          new(Strings.PageCorrection, SymbolRegular.TextGrammarCheckmark24,
+              new CorrectionPage(settings)),
+          new(Strings.PageHotkey, SymbolRegular.Keyboard24, new HotkeyPage(hotkey)),
+          new(Strings.PageAppsAndWords, SymbolRegular.AppsList24,
+              new AppsAndWordsPage(apps, _words!)),
+          new(Strings.PageDiagnostics, SymbolRegular.ShieldCheckmark24,
+              new DiagnosticsPage(settings)),
+          new(Strings.PageAbout, SymbolRegular.Info24, new AboutPage(dark)),
+      ];
+      return new SettingsWindow(sections);
     }
 
     private void ShowSelfPause(DateTimeOffset? until) {

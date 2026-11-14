@@ -75,4 +75,211 @@
   <data name="MenuQuit" xml:space="preserve">
     <value>Quit</value>
   </data>
+  <data name="HotkeyConflictWindows" xml:space="preserve">
+    <value>{0} switches the keyboard layout in Windows. As the Hotkey, Rekey will take it over. Use it anyway or pick another.</value>
+  </data>
+  <data name="HotkeyConflictTaken" xml:space="preserve">
+    <value>{0} is already used by another app. Use it anyway or pick another.</value>
+  </data>
+  <data name="HotkeyDoubleShift" xml:space="preserve">
+    <value>Double Shift</value>
+  </data>
+  <data name="HotkeyDoubleCtrl" xml:space="preserve">
+    <value>Double Ctrl</value>
+  </data>
+  <data name="HotkeyDoubleAlt" xml:space="preserve">
+    <value>Double Alt</value>
+  </data>
+  <data name="KeyCtrl" xml:space="preserve">
+    <value>Ctrl</value>
+  </data>
+  <data name="KeyShift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="KeyAlt" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="KeyWin" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="KeySpace" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Rekey settings</value>
+  </data>
+  <data name="PageGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="PageCorrection" xml:space="preserve">
+    <value>Correction</value>
+  </data>
+  <data name="PageHotkey" xml:space="preserve">
+    <value>Hotkey</value>
+  </data>
+  <data name="PageAppsAndWords" xml:space="preserve">
+    <value>Apps and words</value>
+  </data>
+  <data name="PageDiagnostics" xml:space="preserve">
+    <value>Diagnostics and privacy</value>
+  </data>
+  <data name="PageAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="LaunchAtSignIn" xml:space="preserve">
+    <value>Start Rekey when I sign in to Windows</value>
+  </data>
+  <data name="ShowCursorIndicator" xml:space="preserve">
+    <value>Show the new language next to the cursor</value>
+  </data>
+  <data name="ShowCursorIndicatorHint" xml:space="preserve">
+    <value>A small key appears for a moment after Rekey switches the layout.</value>
+  </data>
+  <data name="PlaySwitchSound" xml:space="preserve">
+    <value>Play a sound after a correction</value>
+  </data>
+  <data name="SwitchSoundChoice" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="SoundKeyClick" xml:space="preserve">
+    <value>Key click</value>
+  </data>
+  <data name="SoundSoftTick" xml:space="preserve">
+    <value>Soft tick</value>
+  </data>
+  <data name="SoundChime" xml:space="preserve">
+    <value>Chime</value>
+  </data>
+  <data name="PreviewSound" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="AutoCorrection" xml:space="preserve">
+    <value>Correct wrong-layout words automatically</value>
+  </data>
+  <data name="Sensitivity" xml:space="preserve">
+    <value>Sensitivity</value>
+  </data>
+  <data name="SensitivityBalanced" xml:space="preserve">
+    <value>Balanced</value>
+  </data>
+  <data name="SensitivityBalancedHint" xml:space="preserve">
+    <value>Corrects words that are clearly typed in the wrong layout.</value>
+  </data>
+  <data name="SensitivityCautious" xml:space="preserve">
+    <value>Cautious</value>
+  </data>
+  <data name="SensitivityCautiousHint" xml:space="preserve">
+    <value>Corrects only when it is very sure; fewer surprises, more misses.</value>
+  </data>
+  <data name="SensitivityAggressive" xml:space="preserve">
+    <value>Aggressive</value>
+  </data>
+  <data name="SensitivityAggressiveHint" xml:space="preserve">
+    <value>Corrects more words, including short ones; may correct by mistake.</value>
+  </data>
+  <data name="CorrectWhenIPress" xml:space="preserve">
+    <value>Correct when I press</value>
+  </data>
+  <data name="TriggerSpace" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="TriggerEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="TriggerTab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="SkipAfterManualSwitch" xml:space="preserve">
+    <value>Don't correct after I switch layout myself</value>
+  </data>
+  <data name="VerifiedReplacement" xml:space="preserve">
+    <value>Check text before replacing</value>
+  </data>
+  <data name="VerifiedReplacementHint" xml:space="preserve">
+    <value>Rekey reads the word back first where the app allows it.</value>
+  </data>
+  <data name="HotkeyIntro" xml:space="preserve">
+    <value>Press the Hotkey to fix the last word, the selected text, or switch the layout.</value>
+  </data>
+  <data name="HotkeyCustom" xml:space="preserve">
+    <value>My own combination</value>
+  </data>
+  <data name="HotkeyRecord" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="HotkeyRecording" xml:space="preserve">
+    <value>Press the combination…</value>
+  </data>
+  <data name="HotkeyUseAnyway" xml:space="preserve">
+    <value>Use it anyway</value>
+  </data>
+  <data name="HotkeyPickAnother" xml:space="preserve">
+    <value>Pick another</value>
+  </data>
+  <data name="ExcludedApps" xml:space="preserve">
+    <value>Apps where Rekey stays off</value>
+  </data>
+  <data name="AddRunningApp" xml:space="preserve">
+    <value>Add a running app</value>
+  </data>
+  <data name="BrowseForApp" xml:space="preserve">
+    <value>Choose a program…</value>
+  </data>
+  <data name="ProgramFilter" xml:space="preserve">
+    <value>Programs</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="ProtectedWords" xml:space="preserve">
+    <value>Words Rekey never corrects</value>
+  </data>
+  <data name="LearnedWords" xml:space="preserve">
+    <value>Words Rekey has learned</value>
+  </data>
+  <data name="NewWord" xml:space="preserve">
+    <value>New word</value>
+  </data>
+  <data name="WordLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageRussian" xml:space="preserve">
+    <value>Russian</value>
+  </data>
+  <data name="LanguageUkrainian" xml:space="preserve">
+    <value>Ukrainian</value>
+  </data>
+  <data name="KeyboardWatchdog" xml:space="preserve">
+    <value>Reconnect to the keyboard when Windows stops sending keys</value>
+  </data>
+  <data name="RestartAfterFreeze" xml:space="preserve">
+    <value>Restart Rekey if it stops responding twice</value>
+  </data>
+  <data name="PrivacyNote" xml:space="preserve">
+    <value>What you type stays in Rekey's memory and is never saved, logged or sent. Rekey stores only its settings and your word lists on this PC.</value>
+  </data>
+  <data name="AboutTagline" xml:space="preserve">
+    <value>Fixes words typed in the wrong keyboard layout.</value>
+  </data>
+  <data name="AboutVersion" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="RemoveItem" xml:space="preserve">
+    <value>Remove {0}</value>
+  </data>
+  <data name="WindowMinimize" xml:space="preserve">
+    <value>Minimize</value>
+  </data>
+  <data name="WindowMaximize" xml:space="preserve">
+    <value>Maximize</value>
+  </data>
+  <data name="WindowClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
 </root>

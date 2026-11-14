@@ -48,6 +48,15 @@ namespace Rekey.Win32 {
       _thread = new Thread(Run) { Name = "Rekey freeze guard", IsBackground = true };
     }
 
+    /// <summary>
+    /// Applies the user's choice whether a repeated freeze restarts Rekey; call it from one
+    /// thread.
+    /// </summary>
+    /// <param name="settings">The settings now in effect.</param>
+    public void UseSettings(Settings settings) {
+      _watchdog.RestartEnabled = settings.RestartAfterFreezeEnabled;
+    }
+
     /// <summary>Starts watching.</summary>
     public void Start() {
       _thread.Start();

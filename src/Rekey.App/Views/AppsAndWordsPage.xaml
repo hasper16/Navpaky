@@ -1,0 +1,107 @@
+<UserControl x:Class="Rekey.App.Views.AppsAndWordsPage"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:app="clr-namespace:Rekey.App"
+             xmlns:views="clr-namespace:Rekey.App.Views">
+  <UserControl.Resources>
+    <views:FormatConverter x:Key="Format" />
+    <views:AppIconConverter x:Key="AppIcon" />
+  </UserControl.Resources>
+  <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+    <StackPanel Margin="24,16" MaxWidth="640" HorizontalAlignment="Left">
+      <TextBlock x:Name="AppsLabel"
+                 Text="{x:Static app:Strings.ExcludedApps}"
+                 Style="{StaticResource SectionText}" />
+      <ItemsControl x:Name="Apps"
+                    ItemsSource="{Binding Apps}"
+                    Focusable="False"
+                    AutomationProperties.LabeledBy="{Binding ElementName=AppsLabel}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <DockPanel Margin="0,2">
+              <Button DockPanel.Dock="Right"
+                      Content="{x:Static app:Strings.Remove}"
+                      Tag="{Binding}"
+                      Click="OnRemoveApp"
+                      AutomationProperties.Name="{Binding Name, Converter={StaticResource Format},
+                                                  ConverterParameter={x:Static app:Strings.RemoveItem}}" />
+              <Image Source="{Binding Key, Converter={StaticResource AppIcon}}"
+                     Width="20"
+                     Height="20"
+                     Margin="0,0,8,0" />
+              <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+            </DockPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <StackPanel Orientation="Horizontal" Margin="0,8,0,24">
+        <Button x:Name="AddRunning" Content="{x:Static app:Strings.AddRunningApp}" />
+        <Button x:Name="Browse" Content="{x:Static app:Strings.BrowseForApp}" Margin="8,0,0,0" />
+      </StackPanel>
+
+      <TextBlock x:Name="ProtectedLabel"
+                 Text="{x:Static app:Strings.ProtectedWords}"
+                 Style="{StaticResource SectionText}" />
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+        <TextBox x:Name="NewProtected"
+                 MinWidth="200"
+                 AutomationProperties.Name="{x:Static app:Strings.NewWord}" />
+        <Button x:Name="AddProtected" Content="{x:Static app:Strings.Add}" Margin="8,0,0,0" />
+      </StackPanel>
+      <ItemsControl ItemsSource="{Binding Protected}"
+                    Focusable="False"
+                    AutomationProperties.LabeledBy="{Binding ElementName=ProtectedLabel}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <DockPanel Margin="0,2">
+              <Button DockPanel.Dock="Right"
+                      Content="{x:Static app:Strings.Remove}"
+                      Tag="{Binding}"
+                      Click="OnRemoveProtected"
+                      AutomationProperties.Name="{Binding Converter={StaticResource Format},
+                                                  ConverterParameter={x:Static app:Strings.RemoveItem}}" />
+              <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+            </DockPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <TextBlock x:Name="LearnedLabel"
+                 Text="{x:Static app:Strings.LearnedWords}"
+                 Style="{StaticResource SectionText}"
+                 Margin="0,24,0,8" />
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+        <TextBox x:Name="NewLearned"
+                 MinWidth="200"
+                 AutomationProperties.Name="{x:Static app:Strings.NewWord}" />
+        <ComboBox x:Name="LearnedLanguage"
+                  MinWidth="120"
+                  Margin="8,0,0,0"
+                  AutomationProperties.Name="{x:Static app:Strings.WordLanguage}" />
+        <Button x:Name="AddLearned" Content="{x:Static app:Strings.Add}" Margin="8,0,0,0" />
+      </StackPanel>
+      <ItemsControl ItemsSource="{Binding Learned}"
+                    Focusable="False"
+                    AutomationProperties.LabeledBy="{Binding ElementName=LearnedLabel}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <DockPanel Margin="0,2">
+              <Button DockPanel.Dock="Right"
+                      Content="{x:Static app:Strings.Remove}"
+                      Tag="{Binding}"
+                      Click="OnRemoveLearned"
+                      AutomationProperties.Name="{Binding Text, Converter={StaticResource Format},
+                                                  ConverterParameter={x:Static app:Strings.RemoveItem}}" />
+              <TextBlock Text="{Binding Text}" VerticalAlignment="Center" />
+              <TextBlock Text="{Binding Language}"
+                         Style="{StaticResource HintText}"
+                         VerticalAlignment="Center"
+                         Margin="8,0,0,0" />
+            </DockPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

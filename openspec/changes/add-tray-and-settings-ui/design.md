@@ -27,7 +27,7 @@ The original has a menu-bar quick-settings menu, a settings window, a badge near
 - Copy: sentence case, plain verbs, names users understand ("Turn off in Telegram", not "Exclude process"). No all-caps labels.
 
 ### D2. Libraries
-- WPF UI (`lepoco/wpfui`) for `FluentWindow`, `NavigationView`, `ToggleSwitch`, Mica. Built-in WPF `ThemeMode` (Fluent) is still experimental (`WPF0001`) and lacks navigation; revisit when it is stable.
+- WPF UI (`lepoco/wpfui`) for `FluentWindow`, `TitleBar`, `ToggleSwitch`, control styles and Mica. Built-in WPF `ThemeMode` (Fluent) is still experimental (`WPF0001`) and lacks navigation; revisit when it is stable.
 - H.NotifyIcon.Wpf (from bootstrap) for the tray icon; icon images are rendered at runtime from the keycap drawing for each DPI (16/20/24/32 px), so the Language code is always crisp.
 
 ### D3. Settings window layout
@@ -49,7 +49,11 @@ The original has a menu-bar quick-settings menu, a settings window, a badge near
 │              │                        [ on ] │
 └──────────────┴───────────────────────────────┘
 ```
-Left-aligned, single column per page, 560×520 default size, resizable. Each Sensitivity option has one line of plain explanation under it.
+Left-aligned, single column per page, 760×560 default size (560×420 at least), resizable. Each Sensitivity option has one line of plain explanation under it.
+
+The section list is a `ListBox` styled by WPF UI, not WPF UI's `NavigationView`: in WPF UI 4.3 the navigation items expose no selection or invoke pattern to UI Automation, so screen readers and the desktop checks could not change the section. WPF UI's caption buttons get names in code for the same reason.
+
+Every setting applies at once, including the ones the worker read only at start before this change: the keyboard watchdog, Verified Replacement and restart after a freeze. Protected Words and Learned Words edits go to the engine as `WordListEdited` events (`InputWorker.EditWordList`), and the page shows the snapshots the engine sends back.
 
 ### D4. MVVM and data flow
 `SettingsViewModel` (CommunityToolkit.Mvvm) edits a mutable copy; every property change produces a new immutable `Settings` snapshot sent to the engine thread and to `SettingsStore` (debounced 500 ms). One source of truth: the store; the engine and UI subscribe.
