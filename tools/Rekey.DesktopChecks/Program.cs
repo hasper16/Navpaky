@@ -7,7 +7,8 @@ namespace Rekey.DesktopChecks {
   /// <summary>
   /// Runs the desktop checks of change add-keyboard-capture-and-layouts on this machine, or with
   /// <c>text-replacement</c> those of change add-text-replacement, or with
-  /// <c>auto-correction</c> those of change add-auto-correction.
+  /// <c>auto-correction</c> those of change add-auto-correction, or with
+  /// <c>tray-and-settings</c> those of change add-tray-and-settings-ui.
   /// </summary>
   /// <remarks>
   /// Output carries counts, kinds and codes only, never typed text. With <c>host</c> it instead
@@ -39,6 +40,12 @@ namespace Rekey.DesktopChecks {
         // No evaluator: the worker evaluates Words itself, as the app does.
         using var manualCorrection = new Checks(new Settings());
         return manualCorrection.RunManualCorrection();
+      }
+
+      if (args is ["tray-and-settings"]) {
+        // The checks' worker only watches; the Debug app under test corrects.
+        using var trayAndSettings = new Checks();
+        return trayAndSettings.RunTrayAndSettings();
       }
 
       if (args is ["console-probe"]) {

@@ -24,3 +24,4 @@ SystemParametersInfo
 VIRTUAL_KEY
 RegisterHotKey
 UnregisterHotKey
+AllowSetForegroundWindow
