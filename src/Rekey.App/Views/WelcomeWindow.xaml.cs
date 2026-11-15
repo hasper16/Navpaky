@@ -12,6 +12,10 @@ namespace Rekey.App.Views {
   internal sealed partial class WelcomeWindow {
     private readonly WelcomeViewModel _model;
 
+    // Written on the UI thread only, read on the worker thread when a Switch happens.
+    private volatile bool _tryItFocused;
+    private nint _handle;
+
     public WelcomeWindow(
         WelcomeViewModel model, HotkeyPage hotkey, bool dark, Action openLanguageSettings) {
       _model = model;
@@ -24,16 +28,20 @@ namespace Rekey.App.Views {
       model.PropertyChanged += OnModelChanged;
       LanguageSettings.Click += (_, _) => openLanguageSettings();
       Done.Click += (_, _) => Close();
+      TryIt.GotKeyboardFocus += (_, _) => _tryItFocused = true;
+      TryIt.LostKeyboardFocus += (_, _) => _tryItFocused = false;
+      SourceInitialized += (_, _) => Interlocked.Exchange(
+          ref _handle, new WindowInteropHelper(this).Handle);
       Loaded += (_, _) => {
         TitleBarButtons.Name(TitleBar);
         TryIt.Focus();
       };
     }
 
-    // Whether a Correction made while the given window was in front happened in the try-it
-    // field: no other control of this window takes typing.
+    // Whether typing goes to the try-it field while the given window is in front; safe to call
+    // from any thread, so the worker can ask when the Switch happens.
     public bool IsTryItIn(nint foreground) {
-      return foreground == new WindowInteropHelper(this).Handle && TryIt.IsKeyboardFocused;
+      return foreground != 0 && foreground == Volatile.Read(ref _handle) && _tryItFocused;
     }
 
     protected override void OnClosed(EventArgs e) {

@@ -86,7 +86,9 @@ namespace Rekey.App {
     private WordsViewModel? _words;
     private SettingsWindow? _settingsWindow;
     private StatisticsWindow? _statisticsWindow;
-    private WelcomeWindow? _welcomeWindow;
+
+    // Written on the UI thread only; the worker reads it when a Switch happens.
+    private volatile WelcomeWindow? _welcomeWindow;
     private WelcomeViewModel? _welcome;
     private ExportWindow? _exportWindow;
     private CursorIndicator? _indicator;
@@ -349,10 +351,10 @@ namespace Rekey.App {
       _worker.Observed += RememberWordCounts;
       _worker.Observed += FollowLayout;
 
-      // The window in front is read when the Switch happens, before focus can move on.
+      // Where typing went is read when the Switch happens, before focus can move on.
       _worker.Switched += feedback => {
-        nint front = ForegroundApps.CurrentWindow();
-        Dispatcher.BeginInvoke(() => RespondToSwitch(feedback, front));
+        bool inTryIt = _welcomeWindow?.IsTryItIn(ForegroundApps.CurrentWindow()) == true;
+        Dispatcher.BeginInvoke(() => RespondToSwitch(feedback, inTryIt));
       };
       try {
         _worker.Start();
@@ -616,7 +618,7 @@ namespace Rekey.App {
       }
     }
 
-    private void RespondToSwitch(SwitchFeedback feedback, nint front) {
+    private void RespondToSwitch(SwitchFeedback feedback, bool inTryIt) {
       SwitchResponse response = SwitchResponse.For(feedback, _hub!.Current);
       if (response.Indicator) {
         _indicator!.Show(
@@ -629,7 +631,7 @@ namespace Rekey.App {
       }
 
       if (feedback.Cause == SwitchCause.Correction) {
-        NoteCorrection(front);
+        NoteCorrection(inTryIt);
       }
 #if DEBUG
       NoteSwitchForCheck(feedback);
@@ -656,8 +658,7 @@ namespace Rekey.App {
     }
 
     // The try-it field confirms the Correction; a first real one gets the one-time Undo tip.
-    private void NoteCorrection(nint front) {
-      bool inTryIt = _welcomeWindow?.IsTryItIn(front) == true;
+    private void NoteCorrection(bool inTryIt) {
       if (inTryIt) {
         _welcome?.NoteTryItCorrection();
       }
