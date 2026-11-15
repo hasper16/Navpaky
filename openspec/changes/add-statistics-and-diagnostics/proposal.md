@@ -26,6 +26,6 @@ None.
 
 - Core: counters aggregator; persistence of the `Incident` records defined in `bootstrap-solution`.
 - App: statistics window, diagnostics export dialog.
-- Storage: `%LOCALAPPDATA%\Rekey\stats.json`, `incidents.jsonl`, `analysis.log` (optional).
+- Storage: `%LOCALAPPDATA%\Rekey\stats.json`, `incidents.jsonl`, `analysis\analysis-YYYY-MM-DD.log` (optional).
 - Settings: `StatisticsEnabled` (on), `AnalysisLogEnabled` (off).
 - Depends on `add-auto-correction` and `add-tray-and-settings-ui`.

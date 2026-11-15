@@ -87,7 +87,18 @@ namespace Rekey.Core.Diagnostics {
 
     private string[] ReadLines() {
       try {
-        return [.. File.ReadLines(FilePath).Where(text => text.Length > 0)];
+        // Shared, so an export can read while the writer appends.
+        using var stream = new FileStream(
+            FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+        using var reader = new StreamReader(stream, Encoding.UTF8);
+        List<string> lines = [];
+        while (reader.ReadLine() is { } text) {
+          if (text.Length > 0) {
+            lines.Add(text);
+          }
+        }
+
+        return [.. lines];
       } catch (Exception e) when (e is FileNotFoundException or DirectoryNotFoundException) {
         return [];
       }

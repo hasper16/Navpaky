@@ -46,4 +46,8 @@ Every `IncidentType` value, the component that records it, and the design name.
 | `InputFrozen` | `FreezeWatchdog` | freeze | the worker stalled over 5 s with input waiting, without a restart |
 | `FreezeRestart` | `FreezeWatchdog` | `freeze-restart` | a second freeze within an hour restarted Rekey |
 
-Incidents carry enum details only, so typed text cannot reach them.
+Incidents carry enum details only, so typed text cannot reach them. Every Incident is traced and appended to `incidents.jsonl` (the last 500) by one background writer (`QueuedIncidentLog`), so recording never blocks the thread that reports it.
+
+## Statistics and the word-analysis log
+
+The engine emits `RecordStat` (counters, no text) and, only while the user keeps the word-analysis log on, `LogAnalysis`. The worker is the only writer of both: its `StatsRecorder` publishes immutable snapshots that the UI thread saves to `stats.json` every 60 s and on exit, and its `AnalysisLog` appends to the day's file. Turning either setting off reaches the worker as a flag on the settings message, so the worker clears the counters or deletes the log even when the setting is turned back on before it reads the message.

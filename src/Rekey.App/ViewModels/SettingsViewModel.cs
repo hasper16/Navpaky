@@ -78,6 +78,16 @@ namespace Rekey.App.ViewModels {
       set => _hub.Update(settings => settings with { RestartAfterFreezeEnabled = value });
     }
 
+    public bool StatisticsEnabled {
+      get => _hub.Current.StatisticsEnabled;
+      set => _hub.Update(settings => settings with { StatisticsEnabled = value });
+    }
+
+    public bool AnalysisLogEnabled {
+      get => _hub.Current.AnalysisLogEnabled;
+      set => _hub.Update(settings => settings with { AnalysisLogEnabled = value });
+    }
+
     // The hub outlives the settings window, so the window's models let go of it on close.
     public void Dispose() {
       _hub.Changed -= OnHubChanged;

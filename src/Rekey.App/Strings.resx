@@ -262,7 +262,7 @@
     <value>Restart Rekey if it stops responding twice</value>
   </data>
   <data name="PrivacyNote" xml:space="preserve">
-    <value>What you type stays in Rekey's memory and is never saved, logged or sent. Rekey stores only its settings and your word lists on this PC.</value>
+    <value>What you type stays in Rekey's memory and is never saved, logged or sent. Rekey stores its settings, your word lists, counts and a log of keyboard problems on this PC; it saves typed words only in the word-analysis log, and only if you turn it on.</value>
   </data>
   <data name="AboutTagline" xml:space="preserve">
     <value>Fixes words typed in the wrong keyboard layout.</value>
@@ -281,5 +281,104 @@
   </data>
   <data name="WindowClose" xml:space="preserve">
     <value>Close</value>
+  </data>
+  <data name="StatWordsAnalysed" xml:space="preserve">
+    <value>Words analysed</value>
+  </data>
+  <data name="StatCorrections" xml:space="preserve">
+    <value>Corrections</value>
+  </data>
+  <data name="StatAutoCorrections" xml:space="preserve">
+    <value>Automatic corrections</value>
+  </data>
+  <data name="StatManualCorrections" xml:space="preserve">
+    <value>Manual corrections</value>
+  </data>
+  <data name="StatUndos" xml:space="preserve">
+    <value>Undos</value>
+  </data>
+  <data name="StatUndoShare" xml:space="preserve">
+    <value>Corrections undone</value>
+  </data>
+  <data name="StatCorrectDecisions" xml:space="preserve">
+    <value>Words corrected</value>
+  </data>
+  <data name="StatDeferDecisions" xml:space="preserve">
+    <value>Words that waited for the next word</value>
+  </data>
+  <data name="StatKeepDecisions" xml:space="preserve">
+    <value>Words kept</value>
+  </data>
+  <data name="StatProtectedWordDecisions" xml:space="preserve">
+    <value>Protected words kept</value>
+  </data>
+  <data name="StatMinDuration" xml:space="preserve">
+    <value>Fastest correction</value>
+  </data>
+  <data name="StatMedianDuration" xml:space="preserve">
+    <value>Typical correction (median)</value>
+  </data>
+  <data name="StatMaxDuration" xml:space="preserve">
+    <value>Slowest correction</value>
+  </data>
+  <data name="StatAverageDuration" xml:space="preserve">
+    <value>Average correction</value>
+  </data>
+  <data name="StatMilliseconds" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="StatToday" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="StatMonth" xml:space="preserve">
+    <value>Last 30 days</value>
+  </data>
+  <data name="StatisticsTitle" xml:space="preserve">
+    <value>Rekey statistics</value>
+  </data>
+  <data name="StatisticsNote" xml:space="preserve">
+    <value>Counts only: Rekey never stores the words behind these numbers.</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="StatisticsEnabled" xml:space="preserve">
+    <value>Keep statistics (counts only, never words)</value>
+  </data>
+  <data name="AnalysisLogEnabled" xml:space="preserve">
+    <value>Keep a word-analysis log for troubleshooting</value>
+  </data>
+  <data name="AnalysisLogNote" xml:space="preserve">
+    <value>The log records the words you type and how Rekey judged them. It stays on this PC, only your Windows account can open it, and it keeps 7 days. Turning it off deletes it.</value>
+  </data>
+  <data name="OpenStatistics" xml:space="preserve">
+    <value>Show statistics</value>
+  </data>
+  <data name="OpenExport" xml:space="preserve">
+    <value>Export diagnostics…</value>
+  </data>
+  <data name="ExportTitle" xml:space="preserve">
+    <value>Export diagnostics</value>
+  </data>
+  <data name="ExportNote" xml:space="preserve">
+    <value>This is exactly the text that will be saved or copied. It holds no typed words unless you include the word-analysis log.</value>
+  </data>
+  <data name="ExportIncludeLog" xml:space="preserve">
+    <value>Include word-analysis log (contains the words you typed)</value>
+  </data>
+  <data name="ExportSave" xml:space="preserve">
+    <value>Save to file…</value>
+  </data>
+  <data name="ExportCopy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="ExportSaved" xml:space="preserve">
+    <value>Saved.</value>
+  </data>
+  <data name="ExportCopied" xml:space="preserve">
+    <value>Copied to the clipboard.</value>
+  </data>
+  <data name="ExportFailed" xml:space="preserve">
+    <value>Could not save the file.</value>
   </data>
 </root>

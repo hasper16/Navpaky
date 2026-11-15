@@ -1,7 +1,3 @@
-using System.Windows;
-using System.Windows.Automation;
-using System.Windows.Controls;
-using System.Windows.Media;
 using Wpf.Ui.Appearance;
 
 namespace Rekey.App.Views {
@@ -20,30 +16,11 @@ namespace Rekey.App.Views {
         }
       };
       Sections.SelectedIndex = 0;
-      Loaded += (_, _) => NameTitleBarButtons();
+      Loaded += (_, _) => TitleBarButtons.Name(TitleBar);
     }
 
     public void Show(Type page) {
       Sections.SelectedItem = _sections.FirstOrDefault(section => section.Page.GetType() == page);
-    }
-
-    private static IEnumerable<DependencyObject> Descendants(DependencyObject parent) {
-      for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++) {
-        DependencyObject child = VisualTreeHelper.GetChild(parent, i);
-        yield return child;
-        foreach (DependencyObject grandchild in Descendants(child)) {
-          yield return grandchild;
-        }
-      }
-    }
-
-    // WPF UI's caption buttons carry only glyphs; screen readers need their names.
-    private void NameTitleBarButtons() {
-      string[] names = [Strings.WindowMinimize, Strings.WindowMaximize, Strings.WindowClose];
-      List<Button> buttons = [.. Descendants(TitleBar).OfType<Button>()];
-      for (int i = 0; i < buttons.Count && i < names.Length; i++) {
-        AutomationProperties.SetName(buttons[buttons.Count - names.Length + i], names[i]);
-      }
     }
   }
 }

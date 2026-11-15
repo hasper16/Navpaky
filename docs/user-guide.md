@@ -5,7 +5,7 @@
 Rekey lives in the notification area as a small key showing the language you type in now, such as "EN" or "RU". Windows 11 may hide it under the arrow; to keep it in sight, turn it on under Settings → Personalization → Taskbar → Other system tray icons.
 
 - The key looks different when Rekey is not correcting: an amber edge while paused, a faded label while Auto Correction is off, and a red edge with a dot when Rekey paused itself after losing the keyboard. Point at the icon to read the state, including how many minutes of a pause remain.
-- Click the icon with either button for the menu: turn Auto Correction on or off, pause it for 15 minutes, 30 minutes, 1 hour, 3 hours or until Rekey restarts (or resume), turn Rekey off or back on in the app you were just typing in, open Settings or About, and quit.
+- Click the icon with either button for the menu: turn Auto Correction on or off, pause it for 15 minutes, 30 minutes, 1 hour, 3 hours or until Rekey restarts (or resume), turn Rekey off or back on in the app you were just typing in, open Settings, Statistics or About, and quit.
 - After Rekey switches the layout, a small key with the new language appears for a moment next to the text cursor, or next to the mouse pointer in apps that draw their own cursor. You can turn it off in Settings → General, and turn on a short sound after each correction there too.
 
 ## Settings
@@ -16,7 +16,17 @@ Settings opens from the tray menu; choosing it again brings the open window forw
 - **Correction**: automatic correction, Sensitivity (Balanced, Cautious, Aggressive), the keys that end a word and trigger a correction (Space, Enter, Tab), leaving a word alone after you switch the layout yourself, and checking the text before replacing it.
 - **Hotkey**: Double Shift, Double Ctrl, Double Alt, Ctrl+Space, Win+Space, or your own combination. When a combination is already Windows' layout shortcut or used by another app, Rekey says so and keeps the old Hotkey until you choose "Use it anyway" or pick another.
 - **Apps and words**: apps where Rekey stays off (pick a running app or choose a program), and the Protected and Learned Words described below.
-- **Diagnostics and privacy**: reconnecting to the keyboard when Windows stops sending keys, and restarting Rekey when it stops responding twice.
+- **Diagnostics and privacy**: reconnecting to the keyboard when Windows stops sending keys, restarting Rekey when it stops responding twice, keeping statistics, the word-analysis log, and the buttons that show statistics and export diagnostics.
+
+## Statistics and diagnostics
+
+Rekey counts, per day and for the last 30 days, the words it analysed, its automatic and manual corrections, your undos (and what share of corrections they are), how each word was judged (corrected, left to wait for the next word, kept, kept as a Protected Word) and how long corrections took. Choose Statistics in the tray menu to see them. The counts never contain words; they are kept in `%LOCALAPPDATA%\Rekey\stats.json`, and turning statistics off in Settings → Diagnostics and privacy deletes them.
+
+Rekey also keeps a log of the last 500 moments when it lost or regained the keyboard or stopped itself to stay safe (`incidents.jsonl`): times and codes only, never text or window titles.
+
+For troubleshooting you can turn on the **word-analysis log**. It is off by default because it records the words you type, how they read in your other layouts and what Rekey decided. It stays on this PC in `%LOCALAPPDATA%\Rekey\analysis`, only your Windows account can open it, each day older than 7 days is deleted, and turning the log off deletes it at once. Rekey never sends it anywhere.
+
+**Export diagnostics…** shows the exact text Rekey would export: its version, Windows version, layouts, settings, statistics and incidents, with your profile folder, user name and computer name replaced by placeholders. It contains no typed words, Protected Words, Learned Words or window titles unless you tick "Include word-analysis log". Save it to a file (the Desktop is suggested) or copy it; this button is the only time Rekey writes to the clipboard.
 
 ## Teaching Rekey
 

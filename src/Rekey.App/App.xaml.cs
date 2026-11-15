@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,7 @@ using Rekey.Core.Diagnostics;
 using Rekey.Core.Statistics;
 using Rekey.Core.Words;
 using Rekey.Win32;
+using Rekey.Win32.Diagnostics;
 using Rekey.Win32.Focus;
 using Rekey.Win32.Hotkeys;
 using Wpf.Ui.Appearance;
@@ -49,6 +51,8 @@ namespace Rekey.App {
     private static readonly string _dataFolder = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Rekey");
 
+    private static readonly string _analysisFolder = Path.Join(_dataFolder, "analysis");
+
     private static readonly WordListsStore _wordsStore = new(_dataFolder);
 
     private readonly SettingsStore _settingsStore = new(_dataFolder);
@@ -71,6 +75,8 @@ namespace Rekey.App {
     private DispatcherTimer? _statsTimer;
     private WordsViewModel? _words;
     private SettingsWindow? _settingsWindow;
+    private StatisticsWindow? _statisticsWindow;
+    private ExportWindow? _exportWindow;
     private CursorIndicator? _indicator;
     private SwitchSoundPlayer? _sounds;
 #if DEBUG
@@ -111,8 +117,8 @@ namespace Rekey.App {
       _sounds = new SwitchSoundPlayer();
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
       var trayIcon = (TaskbarIcon)FindResource("TrayIcon");
-      _trayView = new TrayIconView(
-          trayIcon, _tray, new TrayCommands(OpenSettings, OpenAbout, () => Shutdown()));
+      var commands = new TrayCommands(OpenSettings, OpenStatistics, OpenAbout, () => Shutdown());
+      _trayView = new TrayIconView(trayIcon, _tray, commands);
 #if DEBUG
       AddDebugMenuItems(_trayView);
 #endif
@@ -182,6 +188,14 @@ namespace Rekey.App {
       }
     }
 
+    private static void BringToFront(Window window) {
+      if (window.WindowState == WindowState.Minimized) {
+        window.WindowState = WindowState.Normal;
+      }
+
+      window.Activate();
+    }
+
     private static HotkeyConflict CheckHotkey(Hotkey hotkey) {
       return HotkeyConflicts.Check(hotkey, LayoutSwitchShortcuts.Read(), HotkeyProbe.IsTaken);
     }
@@ -232,7 +246,7 @@ namespace Rekey.App {
       _worker = new InputWorker(settings, RecordIncident, TimeProvider.System) {
         InitialWords = words ?? WordListsDocument.Empty,
         InitialStatistics = LoadStatistics(settings),
-        AnalysisLogFolder = Path.Join(_dataFolder, "analysis"),
+        AnalysisLogFolder = _analysisFolder,
       };
 
       // A file Rekey could not read stays as it is: this session learns but does not save.
@@ -519,7 +533,7 @@ namespace Rekey.App {
           new(Strings.PageAppsAndWords, SymbolRegular.AppsList24,
               new AppsAndWordsPage(apps, _words!)),
           new(Strings.PageDiagnostics, SymbolRegular.ShieldCheckmark24,
-              new DiagnosticsPage(settings)),
+              new DiagnosticsPage(settings, OpenStatistics, OpenExport)),
           new(Strings.PageAbout, SymbolRegular.Info24, new AboutPage(dark)),
       ];
       var window = new SettingsWindow(sections);
@@ -529,6 +543,59 @@ namespace Rekey.App {
         apps.Dispose();
       };
       return window;
+    }
+
+    // One statistics window at a time: asking again brings it to the front.
+    private void OpenStatistics() {
+      if (_statisticsWindow is null) {
+        var model = new StatisticsViewModel(
+            () => _worker?.Statistics ?? StatsDocument.Empty,
+            () => DateOnly.FromDateTime(DateTime.Now));
+        _statisticsWindow = new StatisticsWindow(model);
+        _statisticsWindow.Closed += (_, _) => _statisticsWindow = null;
+        _statisticsWindow.Show();
+      }
+
+      BringToFront(_statisticsWindow);
+    }
+
+    private void OpenExport() {
+      if (_exportWindow is null) {
+        DiagnosticsFacts facts = GatherDiagnostics();
+        var model = new ExportViewModel(
+            includeLog => DiagnosticsReport.Build(facts, PersonalNames.Current, includeLog),
+            Clipboard.SetText);
+        _exportWindow = new ExportWindow(model);
+        _exportWindow.Closed += (_, _) => _exportWindow = null;
+        _exportWindow.Show();
+      }
+
+      BringToFront(_exportWindow);
+    }
+
+    // Read once when the dialog opens, so the preview does not change under the user.
+    private DiagnosticsFacts GatherDiagnostics() {
+      string version = Assembly.GetExecutingAssembly()
+          .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+          ?? "0";
+      IReadOnlyList<IncidentEntry> incidents = [];
+      IReadOnlyList<string> analysis = [];
+      try {
+        incidents = new IncidentLog(_dataFolder).Read();
+        analysis = AnalysisLog.ReadAll(_analysisFolder);
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        Trace.WriteLine($"Rekey could not read its logs for export: {e.GetType().Name}");
+      }
+
+      return new DiagnosticsFacts(
+          DateTimeOffset.Now,
+          version.Split('+')[0],
+          Environment.OSVersion.Version.ToString(),
+          _worker?.InstalledLayouts ?? [],
+          _hub!.Current,
+          _worker?.Statistics ?? StatsDocument.Empty,
+          incidents,
+          analysis);
     }
 
     private void ShowSelfPause(DateTimeOffset? until) {

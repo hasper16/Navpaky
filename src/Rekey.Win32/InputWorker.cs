@@ -100,6 +100,9 @@ namespace Rekey.Win32 {
     private UiaTextBeforeCaret? _uia;
     private long _seenHoldTimeouts;
 
+    // The installed Layouts as of the latest poll; only the worker thread writes it.
+    private IReadOnlyList<LayoutId> _installedLayouts = [];
+
     // The worker thread alone records into it; any thread reads its snapshot.
     private StatsRecorder _stats = new(StatsDocument.Empty);
     private AnalysisLog? _analysisLog;
@@ -259,6 +262,12 @@ namespace Rekey.Win32 {
     /// Gets the usage counters as of the latest counted event; safe to read from any thread.
     /// </summary>
     public StatsDocument Statistics => _stats.Current;
+
+    /// <summary>
+    /// Gets the installed Layouts in Windows' order as of the latest poll; safe to read from any
+    /// thread.
+    /// </summary>
+    public IReadOnlyList<LayoutId> InstalledLayouts => Volatile.Read(ref _installedLayouts);
 
     /// <summary>
     /// Gets the number of Keystrokes in the engine's current Word; read it only on the worker
@@ -700,6 +709,7 @@ namespace Rekey.Win32 {
       List<KeyMap> keyMaps = [.. _layouts.Layouts.Select(KeyMapOf).OfType<KeyMap>()];
       _translator.UseKeyMaps(keyMaps);
       _characterScanCodes = RawInputTranslator.CharacterScanCodes(keyMaps);
+      Volatile.Write(ref _installedLayouts, [.. _layouts.Layouts]);
       Send(new LayoutsInstalledChanged(Now(), _layouts.Layouts, keyMaps));
       FollowForegroundLayout(userMaySwitch: false);
     }
