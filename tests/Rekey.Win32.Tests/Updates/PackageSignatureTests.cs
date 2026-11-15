@@ -53,6 +53,15 @@ namespace Rekey.Win32.Tests.Updates {
     }
 
     [Fact]
+    public void UnsignedExecutableOutsideTheAppFolderFailsThePackage() {
+      string package = Package(
+          ("lib/app/Rekey.App.exe", _microsoftSigned), ("Squirrel.exe", _unsigned));
+
+      Assert.Equal(
+          SignatureVerdict.NotSigned, PackageSignature.Verify(package, _mainExe, MicrosoftPin()));
+    }
+
+    [Fact]
     public void PackageWithoutTheMainExecutableFails() {
       string package = Package(("lib/app/Other.exe", _microsoftSigned));
 

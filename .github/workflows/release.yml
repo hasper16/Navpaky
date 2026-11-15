@@ -2,7 +2,8 @@ name: Release
 
 # Builds, signs, packs and publishes Rekey to GitHub Releases (design D4 of
 # add-auto-update-and-installer; docs/release.md). Pull requests never run this workflow, and
-# the signing secret lives in the `release` environment, which only `v*` tags may use.
+# the signing secret lives in the `release` environment, which only pushed `v*` tags enter; a
+# manual run is a dry run even when it targets a tag.
 on:
   push:
     tags:
@@ -25,7 +26,7 @@ jobs:
     runs-on: windows-latest
     # Only tag runs enter the environment that holds the signing secret; a dry run packs
     # unsigned and publishes nothing.
-    environment: ${{ github.ref_type == 'tag' && 'release' || '' }}
+    environment: ${{ github.event_name == 'push' && github.ref_type == 'tag' && 'release' || '' }}
     permissions:
       contents: write
     env:
@@ -44,11 +45,11 @@ jobs:
         id: version
         shell: pwsh
         env:
-          REF_TYPE: ${{ github.ref_type }}
+          EVENT_NAME: ${{ github.event_name }}
           REF_NAME: ${{ github.ref_name }}
           INPUT_VERSION: ${{ inputs.version }}
         run: |
-          $version = if ($env:REF_TYPE -eq 'tag') { $env:REF_NAME.Substring(1) } else { $env:INPUT_VERSION }
+          $version = if ($env:EVENT_NAME -eq 'push') { $env:REF_NAME.Substring(1) } else { $env:INPUT_VERSION }
           if ($version -notmatch '^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$') {
             throw "Not a semantic version: $version"
           }
@@ -80,7 +81,7 @@ jobs:
         shell: pwsh
         env:
           VERSION: ${{ steps.version.outputs.value }}
-          REF_TYPE: ${{ github.ref_type }}
+          EVENT_NAME: ${{ github.event_name }}
           SIGN_PARAMS: ${{ secrets.VPK_SIGN_PARAMS }}
         run: |
           $pack = @(
@@ -89,21 +90,21 @@ jobs:
             '--delta', 'None', '--exclude', '\.(pdb|xml)$', '--outputDir', 'releases')
           if ($env:SIGN_PARAMS) {
             $pack += @('--signParams', $env:SIGN_PARAMS)
-          } elseif ($env:REF_TYPE -eq 'tag') {
+          } elseif ($env:EVENT_NAME -eq 'push') {
             throw 'VPK_SIGN_PARAMS is not set in the release environment.'
           }
           & .tools/vpk @pack
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Keep dry-run packages
-        if: github.ref_type != 'tag'
+        if: github.event_name != 'push'
         uses: actions/upload-artifact@v7
         with:
           name: releases-${{ steps.version.outputs.value }}
           path: releases/
 
       - name: Upload to GitHub Releases
-        if: github.ref_type == 'tag'
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         shell: pwsh
         env:
           VERSION: ${{ steps.version.outputs.value }}

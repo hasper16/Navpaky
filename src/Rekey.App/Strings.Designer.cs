@@ -1165,6 +1165,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Some Rekey data could not be deleted because another program is using it. Delete the folder {0} yourself..
+        /// </summary>
+        public static string UninstallDataNotDeleted {
+            get {
+                return ResourceManager.GetString("UninstallDataNotDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Also delete your Rekey settings, word lists, statistics and logs? Choose No to keep them for a later install..
         /// </summary>
         public static string UninstallDeleteData {

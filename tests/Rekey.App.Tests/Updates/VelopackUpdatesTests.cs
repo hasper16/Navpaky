@@ -28,6 +28,19 @@ namespace Rekey.App.Tests.Updates {
     }
 
     [Fact]
+    public async Task UpdaterThatCannotStartKeepsRekeyRunning() {
+      _feed.Publish("1.3.0");
+      int exits = 0;
+      var manager = new RekeyUpdateManager(_feed, Verify, _feed.Locator);
+      var updates = new VelopackUpdates(manager, () => exits++, _incidents.Add, new ManualClock());
+      await updates.CheckAndDownloadAsync();
+
+      updates.RestartToUpdate();
+
+      Assert.Equal(0, exits);
+    }
+
+    [Fact]
     public async Task SignatureIsCheckedOnTheDownloadedPackage() {
       _feed.Publish("1.3.0");
 

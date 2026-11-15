@@ -68,7 +68,14 @@ namespace Rekey.App.Updates {
         return;
       }
 
-      _manager.WaitExitThenApplyUpdates(_ready, silent: true, restart: true, []);
+      // If the updater cannot start, Rekey keeps running and the update stays ready to retry.
+      try {
+        _manager.WaitExitThenApplyUpdates(_ready, silent: true, restart: true, []);
+      } catch (Exception e) {
+        Trace.WriteLine($"Rekey could not start its updater: {e.GetType().Name}");
+        return;
+      }
+
       _exit();
     }
 

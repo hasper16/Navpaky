@@ -69,10 +69,12 @@ namespace Rekey.Win32.Updates {
     }
 
     private static TrustResult Classify(int result) {
-      var code = new HRESULT(result);
-      if (code.Succeeded) {
+      // Only zero means trusted; WinVerifyTrust's other values are not HRESULT successes.
+      if (result == 0) {
         return TrustResult.Trusted;
       }
+
+      var code = new HRESULT(result);
 
       if (code == HRESULT.TRUST_E_NOSIGNATURE || code == HRESULT.TRUST_E_SUBJECT_FORM_UNKNOWN
           || code == HRESULT.TRUST_E_PROVIDER_UNKNOWN) {

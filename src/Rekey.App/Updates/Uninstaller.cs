@@ -12,32 +12,37 @@ namespace Rekey.App.Updates {
     private readonly string _dataFolder;
     private readonly Action _turnOffSignIn;
     private readonly Func<bool> _askDelete;
+    private readonly Action _reportNotDeleted;
 
-    public Uninstaller(string dataFolder, Action turnOffSignIn, Func<bool> askDelete) {
+    public Uninstaller(
+        string dataFolder, Action turnOffSignIn, Func<bool> askDelete, Action reportNotDeleted) {
       _dataFolder = dataFolder;
       _turnOffSignIn = turnOffSignIn;
       _askDelete = askDelete;
+      _reportNotDeleted = reportNotDeleted;
     }
 
     public void Run() {
       _turnOffSignIn();
-      if (Directory.Exists(_dataFolder) && _askDelete()) {
-        Delete();
+      if (Directory.Exists(_dataFolder) && _askDelete() && !TryDelete()) {
+        _reportNotDeleted();
       }
     }
 
     // A Rekey that is still closing may hold a log open for a moment.
-    private void Delete() {
+    private bool TryDelete() {
       for (int attempt = 1; attempt <= _deleteAttempts; attempt++) {
         try {
           Directory.Delete(_dataFolder, recursive: true);
-          return;
+          return true;
         } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
           // The type only: messages name paths inside the user profile.
           Trace.WriteLine($"Rekey could not delete its data yet: {e.GetType().Name}");
           Thread.Sleep(_retryDelay);
         }
       }
+
+      return false;
     }
   }
 }

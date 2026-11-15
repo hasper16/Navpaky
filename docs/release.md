@@ -41,7 +41,7 @@ For the by-hand checks in `docs/manual-tests/deferred-by-hand.md`. Install the p
 
 1. Create a test CA and a code-signing certificate in your user store, and trust the CA for your user only:
    ```powershell
-   $ca = New-SelfSignedCertificate -Subject 'CN=Rekey Test CA' -KeyUsage CertSign -TextExtension '2.5.29.19={text}CA=true' -CertStoreLocation Cert:\CurrentUser\My
+   $ca = New-SelfSignedCertificate -Type Custom -Subject 'CN=Rekey Test CA' -KeyUsage CertSign -TextExtension '2.5.29.19={text}CA=true' -CertStoreLocation Cert:\CurrentUser\My
    $leaf = New-SelfSignedCertificate -Subject 'CN=Rekey Test Publisher' -Type CodeSigningCert -Signer $ca -CertStoreLocation Cert:\CurrentUser\My
    Export-Certificate -Cert $ca -FilePath $env:TEMP\rekey-test-ca.cer
    Import-Certificate -FilePath $env:TEMP\rekey-test-ca.cer -CertStoreLocation Cert:\CurrentUser\Root

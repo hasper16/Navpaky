@@ -20,8 +20,8 @@ namespace Rekey.Win32.Updates {
     /// use. The default is <see langword="true" />.
     /// </param>
     /// <returns>
-    /// <see cref="SignatureVerdict.Valid" /> if every <c>.exe</c> and <c>.dll</c> under
-    /// <c>lib/app</c> passes; otherwise, the verdict of the first file that fails, or
+    /// <see cref="SignatureVerdict.Valid" /> if every <c>.exe</c> and <c>.dll</c> in the
+    /// package passes; otherwise, the verdict of the first file that fails, or
     /// <see cref="SignatureVerdict.NotSigned" /> when the package cannot be read or lacks
     /// <paramref name="mainExe" />.
     /// </returns>
@@ -54,10 +54,10 @@ namespace Rekey.Win32.Updates {
       }
     }
 
+    // Anywhere in the package: Velopack takes its updater from any entry named Squirrel.exe.
     private static bool IsCode(ZipArchiveEntry entry) {
-      return entry.FullName.StartsWith(_appFolder, StringComparison.Ordinal)
-          && (entry.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
-              || entry.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase));
+      return entry.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+          || entry.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase);
     }
   }
 }

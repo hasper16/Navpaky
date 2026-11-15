@@ -19,8 +19,11 @@ namespace Rekey.App {
     private static void Uninstall() {
       string data = DataFolder.Resolve(
           Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), null);
-      new Uninstaller(data, () => new SignInLaunch().Set(false, string.Empty), AskDeleteData)
-          .Run();
+      new Uninstaller(
+          data,
+          () => new SignInLaunch().Set(false, string.Empty),
+          AskDeleteData,
+          () => ReportNotDeleted(data)).Run();
     }
 
     private static bool AskDeleteData() {
@@ -31,6 +34,15 @@ namespace Rekey.App {
           MessageBoxImage.Question,
           MessageBoxResult.No);
       return answer == MessageBoxResult.Yes;
+    }
+
+    // Another program kept a file open, so the user finishes the deletion by hand.
+    private static void ReportNotDeleted(string data) {
+      MessageBox.Show(
+          UiText.Format(Strings.UninstallDataNotDeleted, data),
+          Strings.UninstallTitle,
+          MessageBoxButton.OK,
+          MessageBoxImage.Warning);
     }
   }
 }

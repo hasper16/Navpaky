@@ -78,7 +78,7 @@ Written against the head of the `add-auto-update-and-installer` PR. Unit tests c
 
 - [ ] **Per-user install (2.1).** Run `key-switcher-win-Setup.exe`.
   Expected: no UAC prompt; Rekey starts with its tray icon; "Rekey" appears in the Start menu and in Settings → Apps → Installed apps; files are under `%LOCALAPPDATA%\key-switcher`, data under `%LOCALAPPDATA%\Rekey`.
-- [ ] **Update from a local feed (2.2).** Install 0.1.0 (Debug), quit it, start `%LOCALAPPDATA%\key-switcher\current\Rekey.App.exe --update-feed <folder>` with 0.2.0 in the folder, open the tray menu; choose "Restart to update". Then choose the item again with no newer version.
+- [ ] **Update from a local feed (2.2).** Install 0.1.0 (Debug), quit it, start `%LOCALAPPDATA%\key-switcher\current\Rekey.App.exe --update-feed <folder> --update-pin "<test subject>" <test CA thumbprint>` with 0.2.0 in the folder, open the tray menu; choose "Restart to update". Then choose the item again with no newer version.
   Expected: the item reads "Checking for updates…", then "Restart to update"; Rekey restarts as 0.2.0 (About page); the next check says "Rekey is up to date"; with "Check for updates automatically" off, no check runs at start.
 - [ ] **Update keeps user data (2.3).** Before the update above, change a few settings, add a Protected Word, turn on "Start Rekey when I sign in to Windows" and type a few Words for statistics.
   Expected: after the restart into 0.2.0 the settings, the Protected Word and the statistics are unchanged, and Rekey still starts at the next sign-in.

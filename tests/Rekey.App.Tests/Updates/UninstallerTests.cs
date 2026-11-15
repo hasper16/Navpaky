@@ -9,6 +9,7 @@ namespace Rekey.App.Tests.Updates {
 
     private int _signInOff;
     private int _questions;
+    private int _notDeleted;
 
     public UninstallerTests() {
       Directory.CreateDirectory(Path.Join(_data, "analysis"));
@@ -25,6 +26,17 @@ namespace Rekey.App.Tests.Updates {
 
       Assert.False(Directory.Exists(_data));
       Assert.Equal(1, _signInOff);
+      Assert.Equal(0, _notDeleted);
+    }
+
+    [Fact]
+    public void DataThatCannotBeDeletedIsReported() {
+      using (File.Open(Path.Join(_data, "settings.json"), FileMode.Open, FileAccess.Read,
+          FileShare.None)) {
+        Run(deleteData: true);
+      }
+
+      Assert.Equal(1, _notDeleted);
     }
 
     [Fact]
@@ -46,10 +58,11 @@ namespace Rekey.App.Tests.Updates {
     }
 
     private void Run(bool deleteData) {
-      new Uninstaller(_data, () => _signInOff++, () => {
+      Func<bool> ask = () => {
         _questions++;
         return deleteData;
-      }).Run();
+      };
+      new Uninstaller(_data, () => _signInOff++, ask, () => _notDeleted++).Run();
     }
   }
 }
