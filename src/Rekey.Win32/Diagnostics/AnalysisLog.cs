@@ -123,9 +123,10 @@ namespace Rekey.Win32.Diagnostics {
     private static FileStream CreateForUserOnly(string path) {
       var security = new FileSecurity();
       security.SetAccessRuleProtection(isProtected: true, preserveInheritance: false);
-      foreach (SecurityIdentifier identity in (SecurityIdentifier[])[
+      SecurityIdentifier[] identities = [
           WindowsIdentity.GetCurrent().User!,
-          new SecurityIdentifier(WellKnownSidType.LocalSystemSid, domainSid: null)]) {
+          new SecurityIdentifier(WellKnownSidType.LocalSystemSid, domainSid: null)];
+      foreach (SecurityIdentifier identity in identities) {
         security.AddAccessRule(new FileSystemAccessRule(
             identity, FileSystemRights.FullControl, AccessControlType.Allow));
       }
@@ -164,10 +165,10 @@ namespace Rekey.Win32.Diagnostics {
     private void Prune(DateOnly today) {
       _prunedOn = today;
       DateOnly oldest = today.AddDays(1 - _keptDays);
-      foreach (string file in LogFiles(_folder).ToArray()) {
-        if (DayOf(file) is not { } day || day < oldest) {
-          File.Delete(file);
-        }
+      string[] expired = [.. LogFiles(_folder)
+          .Where(file => DayOf(file) is not { } day || day < oldest)];
+      foreach (string file in expired) {
+        File.Delete(file);
       }
     }
   }
