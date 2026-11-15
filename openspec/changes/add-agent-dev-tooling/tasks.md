@@ -23,8 +23,8 @@ All installs run on the owner's machine at user scope (design D1–D3). No task 
 
 ## 4. agent-skills
 
-- [ ] 4.1 Clone `addyosmani/agent-skills` at the pinned commit into a temporary folder; copy the seven curated `skills/<name>/` folders into `C:\Users\Haspe\.ai-global\skills\`, each with the repo-level `references/` files it cites and a `SOURCE` file holding repo and commit; verify each folder is visible under `C:\Users\Haspe\.claude\skills\` and no `/spec`, `/plan`, `/build` or `/ship` command from agent-skills exists in `C:\Users\Haspe\.claude\commands\`
-- [ ] 4.2 Verify the new skills appear in a new Claude Code session's skill list and do not replace any existing skill of the same name (none of the seven names exists in the store before 4.1)
+- [x] 4.1 Clone `addyosmani/agent-skills` at the pinned commit into a temporary folder; copy the seven curated `skills/<name>/` folders into `C:\Users\Haspe\.ai-global\skills\`, each with the repo-level `references/` files it cites and a `SOURCE` file holding repo and commit; verify each folder is visible under `C:\Users\Haspe\.claude\skills\` and no `/spec`, `/plan`, `/build` or `/ship` command from agent-skills exists in `C:\Users\Haspe\.claude\commands\`
+- [x] 4.2 Verify the new skills appear in a new Claude Code session's skill list and do not replace any existing skill of the same name (none of the seven names exists in the store before 4.1)
 
 ## 5. security-audit
 
