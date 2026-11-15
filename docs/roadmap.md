@@ -22,6 +22,14 @@ Implementation order of the OpenSpec changes in `openspec/changes/`. Apply them 
 
 Changes 2–3 (pure logic) and 4 (Windows interop) can be built in parallel after 1. Changes 10 and 11 can run in parallel after 9. Onboarding comes after the installer because its "install properly" offer and its installed-location check need the Velopack install root.
 
+Tooling changes sit outside the numbered order: they change how agents work on the repo, not the product, so the orchestrator may run them alongside the product changes.
+
+| # | Change | Capability | Depends on |
+|---|---|---|---|
+| T1 | `add-agent-dev-tooling` | agent-dev-tooling (Graphify, ponytail, curated agent-skills) | — |
+
+T1 can run in parallel with changes 12–15: it touches no file under `src/`, `tests/` or `tools/Rekey.DesktopChecks/`. Its global installs reach only sessions started after them, so implementers already at work keep their tools until their change ends.
+
 By-hand checks are not a merge gate for changes 1–14: each change appends them to `docs/manual-tests/deferred-by-hand.md`, and change 15 is the owner's single pass over that file plus the fixes for what fails (owner decision, 2026-11-14).
 
 Sources: the owner's reverse-engineering notes (kept outside the repository), `GLOSSARY.md` (terms), `docs/adr/` (decisions).
