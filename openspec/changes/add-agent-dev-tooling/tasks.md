@@ -28,8 +28,8 @@ All installs run on the owner's machine at user scope (design D1–D3). No task 
 
 ## 5. security-audit
 
-- [ ] 5.1 Confirm the installed `C:\Users\Haspe\.ai-global\skills\security-audit\` is the cloudflare/security-audit-skill content (compare every file in the installed folder with that repository's `main`, by path and content; each file missing upstream or differing from it is reconciled with upstream or explicitly rejected by the owner before the hash is recorded; no hash is pinned while a difference is open) without reinstalling; compute the folder hash per design D7 and add it to `versions.json`; verify the check script reports `PASS` for security-audit and `FAIL` after a one-byte change to a copy of the folder
-- [ ] 5.2 Run a guidance-mode review on the diff of a past sensitive PR (for example the `add-auto-update-and-installer` merge) as a dry run; verify it writes no output directory, its findings follow the privacy guardrails, and the result fits the PR-body template in design D7
+- [x] 5.1 Confirm the installed `C:\Users\Haspe\.ai-global\skills\security-audit\` is the cloudflare/security-audit-skill content (compare every file in the installed folder with that repository's `main`, by path and content; each file missing upstream or differing from it is reconciled with upstream or explicitly rejected by the owner before the hash is recorded; no hash is pinned while a difference is open) without reinstalling; compute the folder hash per design D7 and add it to `versions.json`; verify the check script reports `PASS` for security-audit and `FAIL` after a one-byte change to a copy of the folder
+- [x] 5.2 Run a guidance-mode review on the diff of a past sensitive PR (for example the `add-auto-update-and-installer` merge) as a dry run; verify it writes no output directory, its findings follow the privacy guardrails, and the result fits the PR-body template in design D7
 
 ## 6. Flow and rules
 
