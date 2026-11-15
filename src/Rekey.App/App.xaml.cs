@@ -13,6 +13,7 @@ using Rekey.App.Tray;
 using Rekey.App.ViewModels;
 using Rekey.App.Views;
 using Rekey.Core;
+using Rekey.Core.Diagnostics;
 using Rekey.Core.Words;
 using Rekey.Win32;
 using Rekey.Win32.Focus;
@@ -73,6 +74,7 @@ namespace Rekey.App {
 #endif
     private InputWorker? _worker;
     private FreezeGuard? _freezeGuard;
+    private QueuedIncidentLog? _incidents;
 
     // The worker's Word counts as of the latest Trigger Key; only the worker thread writes it.
     private volatile StrongBox<WordCounts>? _wordCounts;
@@ -89,6 +91,7 @@ namespace Rekey.App {
         return;
       }
 
+      _incidents = new QueuedIncidentLog(new IncidentLog(_dataFolder), ReportIncidentNotSaved);
       ApplicationThemeManager.ApplySystemTheme();
 
       // Windows holds the truth about starting at sign-in: Task Manager can change it.
@@ -158,6 +161,9 @@ namespace Rekey.App {
         _wordsSaver.Flush();
         _wordsSaver.Dispose();
         _sounds?.Dispose();
+
+        // After the worker and the freeze guard, so their last Incidents are written too.
+        _incidents?.Dispose();
         _trayTimer?.Stop();
         _foregroundApps?.Dispose();
         _trayView?.Dispose();
@@ -171,12 +177,9 @@ namespace Rekey.App {
       return HotkeyConflicts.Check(hotkey, LayoutSwitchShortcuts.Read(), HotkeyProbe.IsTaken);
     }
 
-    // Incidents carry enum values only, so the trace never holds typed text.
-    private static void RecordIncident(Incident incident) {
-      string details = string.Join(',', incident.Details);
-      Trace.WriteLine(string.Create(
-          CultureInfo.InvariantCulture,
-          $"Rekey Incident {incident.Time:O} {incident.Type} {details}"));
+    // The type only: the message names a path inside the user profile.
+    private static void ReportIncidentNotSaved(Exception error) {
+      Trace.WriteLine($"Rekey could not write its Incident log: {error.GetType().Name}");
     }
 
     // The type only: the message names a path inside the user profile.
@@ -271,6 +274,16 @@ namespace Rekey.App {
 #endif
     }
 
+    // Incidents carry enum values only, so neither the trace nor the log holds typed text.
+    // Called on the worker, the freeze guard and the UI thread.
+    private void RecordIncident(Incident incident) {
+      string details = string.Join(',', incident.Details);
+      Trace.WriteLine(string.Create(
+          CultureInfo.InvariantCulture,
+          $"Rekey Incident {incident.Time:O} {incident.Type} {details}"));
+      _incidents?.Record(incident);
+    }
+
     // Runs on the freeze guard's thread while the worker is stuck; the UI thread may still run.
     private void RestartAfterFreeze() {
       // Without the saved time the next process could not keep the once-per-10-minutes limit,
@@ -292,6 +305,9 @@ namespace Rekey.App {
       Dispatcher.Invoke(() => _trayView?.Dispose(), TimeSpan.FromSeconds(1));
       FlushSettings();
       _wordsSaver.Flush();
+
+      // The freeze-restart Incident is still queued.
+      _incidents?.Dispose();
       Environment.Exit(0);
     }
 

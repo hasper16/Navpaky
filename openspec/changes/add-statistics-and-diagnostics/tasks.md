@@ -7,8 +7,8 @@
 
 ## 2. Incidents
 
-- [ ] 2.1 Write failing tests for the Incident log (append, 500-entry rotation, no title field); implement; verify they pass
-- [ ] 2.2 Route every Incident type from earlier changes into the log; verify a test that each `IncidentType` value is persisted
+- [x] 2.1 Write failing tests for the Incident log (append, 500-entry rotation, no title field); implement; verify they pass
+- [x] 2.2 Route every Incident type from earlier changes into the log; verify a test that each `IncidentType` value is persisted
 
 ## 3. Word-analysis log
 
