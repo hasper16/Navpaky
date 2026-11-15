@@ -100,6 +100,7 @@ namespace Rekey.App {
     private FreezeGuard? _freezeGuard;
     private QueuedIncidentLog? _incidents;
     private UpdateScheduler? _updates;
+    private ExecutableWatch? _executableWatch;
 
     // The worker's Word counts as of the latest Trigger Key; only the worker thread writes it.
     private volatile StrongBox<WordCounts>? _wordCounts;
@@ -147,6 +148,7 @@ namespace Rekey.App {
       _hub.Update(WelcomeViewModel.FirstStartDefaults);
       StartTrayFollowers();
       StartUpdates();
+      StartLocationChecks();
       if (WelcomeViewModel.OpensAtStart(_hub.Current)) {
         OpenWelcome();
       }
@@ -202,6 +204,7 @@ namespace Rekey.App {
         _incidents?.Dispose();
         _trayTimer?.Stop();
         _updates?.Dispose();
+        _executableWatch?.Dispose();
         _foregroundApps?.Dispose();
         _trayView?.Dispose();
         _welcome?.Dispose();
@@ -232,15 +235,57 @@ namespace Rekey.App {
       return HotkeyConflicts.Check(hotkey, LayoutSwitchShortcuts.Read(), HotkeyProbe.IsTaken);
     }
 
-    // Explorer by its full path opens the Settings page, as a shell link would.
     private static void OpenLanguageSettings() {
+      OpenWithShell("ms-settings:regionlanguage");
+    }
+
+    // Explorer by its full path opens a Settings page or a web page, as a shell link would.
+    private static void OpenWithShell(string target) {
       string explorer = Path.Join(
           Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
       try {
-        Process.Start(explorer, "ms-settings:regionlanguage")?.Dispose();
+        Process.Start(explorer, target)?.Dispose();
       } catch (Win32Exception) {
-        Trace.WriteLine("Rekey could not open the Windows language settings.");
+        Trace.WriteLine("Rekey could not open a Settings or web page.");
       }
+    }
+
+    // Runs the setup that came with this copy, or opens the releases page.
+    private static void Install(string executable) {
+      string source = InstallSource.For(Path.GetDirectoryName(executable)!, File.Exists);
+      if (source == InstallSource.ReleasesPage) {
+        OpenWithShell(source);
+        return;
+      }
+
+      try {
+        Process.Start(source)?.Dispose();
+      } catch (Win32Exception) {
+        Trace.WriteLine("Rekey could not start its setup.");
+      }
+    }
+
+    private static async Task AskToInstall(
+        string executable, string title, string text, string closeText) {
+      var question = new Wpf.Ui.Controls.MessageBox {
+        Title = title,
+        Content = text,
+        PrimaryButtonText = Strings.LocationInstall,
+        CloseButtonText = closeText,
+      };
+      Wpf.Ui.Controls.MessageBoxResult answer = await question.ShowDialogAsync();
+      if (answer == Wpf.Ui.Controls.MessageBoxResult.Primary) {
+        Install(executable);
+      }
+    }
+
+    private static LocationFolders FoldersOf(IVelopackLocator? locator) {
+      string localAppData =
+          Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+      return new LocationFolders(
+          locator?.RootAppDir,
+          [Path.GetTempPath(), Path.Join(localAppData, "Temp")],
+          KnownFolders.Downloads());
     }
 
     // The type only: the message names a path inside the user profile.
@@ -509,6 +554,31 @@ namespace Rekey.App {
       _updates.Start(_hub!.Current.AutoCheckForUpdates);
     }
 
+    // Spec onboarding: a warning at start when this copy may be cleaned up, and a notice when
+    // the executable disappears while Rekey runs.
+    private void StartLocationChecks() {
+      if (Environment.ProcessPath is not { } executable) {
+        return;
+      }
+
+#if DEBUG
+      const bool debugBuild = true;
+#else
+      const bool debugBuild = false;
+#endif
+      LocationFolders folders =
+          FoldersOf(VelopackLocator.IsCurrentSet ? VelopackLocator.Current : null);
+      if (AppLocation.Classify(executable, folders, debugBuild) == LocationKind.Temporary) {
+        _ = AskToInstall(
+            executable, Strings.LocationTitle, Strings.LocationWarning, Strings.LocationNotNow);
+      }
+
+      _executableWatch = new ExecutableWatch(executable, TimeProvider.System);
+      _executableWatch.Disappeared += () => Dispatcher.BeginInvoke(() => AskToInstall(
+          executable, Strings.MovedTitle, Strings.MovedNotice, Strings.MovedClose));
+      _executableWatch.Start();
+    }
+
     // The tray's update item checks for updates, or restarts into one that is ready.
     private void OnUpdatesItem() {
       if (_updates?.Status == UpdateStatus.ReadyToRestart) {
@@ -590,6 +660,9 @@ namespace Rekey.App {
       if (CorrectionTip.IsDue(_hub!.Current, inTryIt)) {
         _hub.Update(CorrectionTip.Shown);
         _trayView?.Notify(Strings.CorrectionTipTitle, Strings.CorrectionTip);
+#if DEBUG
+        NoteTipForCheck();
+#endif
       }
     }
 

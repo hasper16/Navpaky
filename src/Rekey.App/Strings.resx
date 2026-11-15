@@ -465,4 +465,25 @@
   <data name="CorrectionTip" xml:space="preserve">
     <value>Press Ctrl+Z to undo.</value>
   </data>
+  <data name="LocationTitle" xml:space="preserve">
+    <value>Rekey is not installed</value>
+  </data>
+  <data name="LocationWarning" xml:space="preserve">
+    <value>Rekey is running from a temporary folder, a ZIP file or Downloads. It stops working when this copy is removed. Install Rekey to keep it working and up to date.</value>
+  </data>
+  <data name="LocationInstall" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="LocationNotNow" xml:space="preserve">
+    <value>Not now</value>
+  </data>
+  <data name="MovedTitle" xml:space="preserve">
+    <value>Rekey's files were moved or deleted</value>
+  </data>
+  <data name="MovedNotice" xml:space="preserve">
+    <value>Rekey keeps working until you quit it or restart the computer, but it will not start again. To keep using it, install Rekey again.</value>
+  </data>
+  <data name="MovedClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
 </root>

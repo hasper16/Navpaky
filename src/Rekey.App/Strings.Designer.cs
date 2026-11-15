@@ -454,6 +454,42 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Install.
+        /// </summary>
+        public static string LocationInstall {
+            get {
+                return ResourceManager.GetString("LocationInstall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not now.
+        /// </summary>
+        public static string LocationNotNow {
+            get {
+                return ResourceManager.GetString("LocationNotNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey is not installed.
+        /// </summary>
+        public static string LocationTitle {
+            get {
+                return ResourceManager.GetString("LocationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey is running from a temporary folder, a ZIP file or Downloads. It stops working when this copy is removed. Install Rekey to keep it working and up to date..
+        /// </summary>
+        public static string LocationWarning {
+            get {
+                return ResourceManager.GetString("LocationWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About Rekey.
         /// </summary>
         public static string MenuAbout {
@@ -612,6 +648,33 @@ namespace Rekey.App {
         public static string MenuWelcome {
             get {
                 return ResourceManager.GetString("MenuWelcome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string MovedClose {
+            get {
+                return ResourceManager.GetString("MovedClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey keeps working until you quit it or restart the computer, but it will not start again. To keep using it, install Rekey again..
+        /// </summary>
+        public static string MovedNotice {
+            get {
+                return ResourceManager.GetString("MovedNotice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey&apos;s files were moved or deleted.
+        /// </summary>
+        public static string MovedTitle {
+            get {
+                return ResourceManager.GetString("MovedTitle", resourceCulture);
             }
         }
         
