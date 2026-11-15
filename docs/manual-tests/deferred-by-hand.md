@@ -88,6 +88,8 @@ Written against the head of the `add-auto-update-and-installer` PR. Unit tests c
   Expected: Rekey closes; `%LOCALAPPDATA%\key-switcher`, the Start menu entry and the Run entry (Task Manager → Startup apps) are gone; `%LOCALAPPDATA%\Rekey` is still there; installing again picks up the old settings and word lists.
 - [ ] **Uninstall, deleting data (4.1).** Uninstall again and answer Yes.
   Expected: `%LOCALAPPDATA%\Rekey` no longer exists and Rekey does not start at the next sign-in.
+- [ ] **Uninstall with a locked data file (4.1).** Install again, open `%LOCALAPPDATA%\Rekey\settings.json` in a program that locks it (for example Excel, or PowerShell `[IO.File]::Open($path, 'Open', 'Read', 'None')`), uninstall and answer Yes.
+  Expected: after a few seconds a warning names the folder to delete by hand; once the lock is released the folder can be deleted.
 - [ ] **Release environment and dry run (4.2).** Owner: create the `release` environment limited to `v*` tags with the `VPK_SIGN_PARAMS` secret (`docs/release.md`, One-time setup). After the change is on `main`, run Release by hand with version `0.0.1`.
   Expected: the run passes, its Pack log says no signing parameters were provided, it creates no release, and the artifact holds `key-switcher-win-Setup.exe` and the `.nupkg`.
 - [ ] **Local signed test build (4.3).** Follow `docs/release.md` → Local test build on a clean checkout without help.
