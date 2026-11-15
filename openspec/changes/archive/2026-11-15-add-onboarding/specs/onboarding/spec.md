@@ -21,7 +21,7 @@ On the first start for a Windows user, Rekey SHALL open a welcome window that ex
 The welcome window SHALL contain a text field where the user can type a word in the wrong Layout and see Rekey correct it, with a short instruction naming their installed Layouts.
 
 #### Scenario: Successful try
-- **WHEN** English (US) and Russian are installed and the user types "ghbdtn" followed by Space in the try-it field with English (US) active
+- **WHEN** English (US) and Russian are installed, Auto Correction is on, and the user types "ghbdtn" followed by Space in the try-it field with English (US) active
 - **THEN** the field shows "привет "
 - **AND** the welcome window confirms that Rekey works
 
