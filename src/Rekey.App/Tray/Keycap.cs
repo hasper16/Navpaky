@@ -47,14 +47,14 @@ namespace Rekey.App.Tray {
         int row = 0;
         foreach (bool dark in new[] { false, true }) {
           foreach (TrayState state in states) {
-            double top = gap + (row * cell);
-            var band = new Rect(0, top - (gap / 2), width, cell);
+            double top = gap + (row * (double)cell);
+            var band = new Rect(0, top - (gap / 2.0), width, cell);
             context.DrawRectangle(
                 new SolidColorBrush(dark ? Color.FromRgb(0x20, 0x20, 0x20) : Colors.White),
                 null,
                 band);
             for (int column = 0; column < sizes.Count; column++) {
-              var at = new Point(gap + (column * cell), top);
+              var at = new Point(gap + (column * (double)cell), top);
               Draw(context, "EN", state, dark, sizes[column], at);
             }
 

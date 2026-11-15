@@ -22,6 +22,9 @@ namespace Rekey.App.Feedback {
     private readonly Image _image = new();
     private readonly DispatcherTimer _timer;
 
+    // Counts the badges shown, so a fade that ends after the next badge appeared leaves it.
+    private int _shows;
+
     public CursorIndicator() {
       _window = new Window {
         Title = WindowTitle,
@@ -63,6 +66,7 @@ namespace Rekey.App.Feedback {
       _window.Left = at.X / scale;
       _window.Top = at.Y / scale;
 
+      _shows++;
       _window.BeginAnimation(UIElement.OpacityProperty, null);
       _window.Opacity = 1;
       _window.Show();
@@ -78,9 +82,10 @@ namespace Rekey.App.Feedback {
         return;
       }
 
+      int fading = _shows;
       var fade = new DoubleAnimation(0, _fade);
       fade.Completed += (_, _) => {
-        if (_window.Opacity == 0) {
+        if (fading == _shows) {
           _window.Hide();
         }
       };
