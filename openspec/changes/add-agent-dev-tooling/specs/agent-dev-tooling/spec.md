@@ -91,7 +91,11 @@ Each security finding SHALL be fixed in the same PR or listed in the PR body's `
 - **THEN** the section lists it with the reason and, where follow-up work is needed, the follow-up's name
 
 ### Requirement: Orchestrator verifies the security review
-Before merging a PR whose diff touches a security-sensitive area, the orchestrator SHALL confirm that the PR body has a `Security review` section naming a reviewed commit that is the PR head or an ancestor of it, and SHALL return the PR to the implementer otherwise.
+Before merging a PR whose diff touches a security-sensitive area, the orchestrator SHALL confirm that the PR body has a complete `Security review` section (guidance mode, a reviewed commit that is the PR head or an ancestor of it, every touched sensitive area, and findings) and SHALL return the PR to the implementer otherwise. Sensitivity is judged from changed paths and from added network or process calls.
+
+#### Scenario: Incomplete section
+- **WHEN** the section names only a reviewed commit
+- **THEN** the orchestrator sends the PR back and does not merge
 
 #### Scenario: Section missing
 - **WHEN** a PR touches the auto-update code and its body has no `Security review` section

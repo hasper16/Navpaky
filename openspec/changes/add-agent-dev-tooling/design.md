@@ -103,7 +103,11 @@ The orchestrator gains one readiness item (D7). The ponytail review is not a mer
   ```
 
   For a diff outside every area: `Security review: not required`. Findings follow the privacy guardrails: file, line, class of issue, never typed text, Words or window titles.
-- Orchestrator check (new item in step 3 of `docs/agents/orchestration.md`): `gh pr diff <N> --name-only` against the path table; if any path matches, the body must have the section, and `git merge-base --is-ancestor <reviewed-sha> <head>` must hold. If commits after the reviewed one touch a sensitive path, the review is redone. A missing or stale section goes back to the same implementer, like an open thread.
+- Orchestrator check (new item in step 3 of `docs/agents/orchestration.md`):
+  1. Scope: `gh pr diff <N> --name-only` against the path table, plus a scan of the added lines of `gh pr diff <N>` for network and process APIs (`HttpClient`, `WebRequest`, `Socket`, `TcpClient`, `NamedPipe`, `Process.Start`, `WebClient`), so the Network I/O row is caught wherever the call lands. Any match makes the change sensitive.
+  2. Content: the section must have all four template lines: `Skill: security-audit (guidance mode)`, a reviewed commit, `Areas:` naming every area that step 1 matched, and `Findings:` (`none`, or each finding as fixed or deferred with a reason). A section with only a commit, a different mode, or an area missing does not pass.
+  3. Freshness: `git merge-base --is-ancestor <reviewed-sha> <head>` must hold, and if commits after the reviewed one touch a sensitive path or add a matched API, the review is redone.
+  A missing, incomplete or stale section goes back to the same implementer, like an open thread.
 - Overlap: `security-and-hardening` from agent-skills is for writing code; `security-audit` is the review. D3's table already gives `security-audit` precedence for audits.
 
 ### D5. Pins and the check script
