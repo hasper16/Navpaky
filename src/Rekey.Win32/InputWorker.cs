@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Frozen;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -32,6 +33,7 @@ namespace Rekey.Win32 {
     private const uint _resumeMessage = PInvoke.WM_APP + 2;
     private const uint _freezeMessage = PInvoke.WM_APP + 3;
     private const uint _settingsMessage = PInvoke.WM_APP + 4;
+    private const uint _wordsMessage = PInvoke.WM_APP + 5;
     private const uint _idleWaitMilliseconds = 250;
 
     // Design D6: a pending Layout Switch is checked every 25 ms.
@@ -75,9 +77,11 @@ namespace Rekey.Win32 {
     private readonly KeyConfirmer _keyConfirmer;
     private readonly TypingState _typing = new();
     private readonly WordEvaluator? _evaluate;
-    private readonly bool _verifiedReplacement;
     private readonly Thread _thread;
     private readonly ManualResetEventSlim _started = new();
+
+    // Edits from the settings window, waiting for the worker thread.
+    private readonly ConcurrentQueue<WordListEdited> _wordEdits = new();
     private Engine _engine = new();
     private uint _threadId;
     private Exception? _startError;
@@ -144,7 +148,6 @@ namespace Rekey.Win32 {
       _time = time;
       _evaluate = evaluate;
       _latestSettings = settings;
-      _verifiedReplacement = settings.VerifiedReplacement;
       _meter = new SlowCallbackMeter(time);
       _hook = new InputHook(_ring, _gate, _signal, _meter, time);
       UseHotkey(settings.Hotkey);
@@ -209,6 +212,12 @@ namespace Rekey.Win32 {
     /// It carries typed text: never log it.
     /// </remarks>
     public event Action<UndoPerformed>? Undone;
+
+    /// <summary>
+    /// Occurs on the worker thread when Rekey switched the Layout, with why and to which Layout,
+    /// for the cursor indicator and the switch sound.
+    /// </summary>
+    public event Action<SwitchFeedback>? Switched;
 
     /// <summary>
     /// Gets the Protected Words and Learned Words the engine starts with; set it before
@@ -300,17 +309,30 @@ namespace Rekey.Win32 {
     }
 
     /// <summary>
-    /// Replaces the settings Auto Correction follows: the switch, the Trigger Keys, the
-    /// Excluded Apps, the Pause, the Layout Switch rule and the Sensitivity.
+    /// Replaces the settings the worker follows: Auto Correction's, the Hotkey, the keyboard
+    /// watchdog and Verified Replacement.
     /// </summary>
     /// <remarks>
-    /// Call it after <see cref="Start" />, always from the same thread. The keyboard watchdog
-    /// and Verified Replacement keep the settings the worker was created with.
+    /// Call it after <see cref="Start" />, always from the same thread.
     /// </remarks>
     /// <param name="settings">The settings now in effect.</param>
     public void UseSettings(Settings settings) {
       Volatile.Write(ref _latestSettings, settings);
       PInvoke.PostThreadMessage(_threadId, _settingsMessage, default, default);
+    }
+
+    /// <summary>
+    /// Hands the engine a Protected Word or Learned Word the user added or removed in
+    /// settings; safe to call from any thread.
+    /// </summary>
+    /// <remarks>
+    /// The engine owns the word lists (design D5 of add-word-learning); the result arrives as
+    /// <see cref="WordListsChanged" />.
+    /// </remarks>
+    /// <param name="edit">The edit.</param>
+    public void EditWordList(WordListEdited edit) {
+      _wordEdits.Enqueue(edit);
+      PInvoke.PostThreadMessage(_threadId, _wordsMessage, default, default);
     }
 
 #if DEBUG
@@ -407,7 +429,7 @@ namespace Rekey.Win32 {
       _uia = new UiaTextBeforeCaret(() => _focus?.TypingElement);
       _replacer = new TextReplacer(
           _uia,
-          _verifiedReplacement,
+          Volatile.Read(ref _latestSettings).VerifiedReplacement,
           HeldModifiers,
           SendKeys,
           ConsoleWindows.ForegroundTarget);
@@ -684,8 +706,13 @@ namespace Rekey.Win32 {
     }
 
     private void Send(InputEvent inputEvent) {
-      foreach (EngineAction action in _engine.Handle(inputEvent)) {
+      IReadOnlyList<EngineAction> actions = _engine.Handle(inputEvent);
+      foreach (EngineAction action in actions) {
         Execute(action);
+      }
+
+      if (Switched is not null && SwitchFeedback.Of(inputEvent, actions) is { } feedback) {
+        Switched.Invoke(feedback);
       }
 
       PublishPolicy();
@@ -728,7 +755,18 @@ namespace Rekey.Win32 {
         case _settingsMessage:
           Settings settings = Volatile.Read(ref _latestSettings);
           UseHotkey(settings.Hotkey);
+          _hookWatchdog.Enabled = settings.KeyboardWatchdogEnabled;
+          if (_replacer is not null) {
+            _replacer.Verify = settings.VerifiedReplacement;
+          }
+
           Send(new SettingsChanged(Now(), settings));
+          return true;
+        case _wordsMessage:
+          while (_wordEdits.TryDequeue(out WordListEdited? edit)) {
+            Send(edit);
+          }
+
           return true;
         case _freezeMessage:
           Thread.Sleep(TimeSpan.FromMilliseconds(message.lParam.Value));

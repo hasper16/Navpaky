@@ -27,6 +27,21 @@ namespace Rekey.DesktopChecks {
       return title[..Math.Max(length, 0)].ToString();
     }
 
+    // Every visible top-level window with exactly this title.
+    public static int CountWindows(string title) {
+      int count = 0;
+      PInvoke.EnumWindows(
+          (window, _) => {
+            if (PInvoke.IsWindowVisible(window) && TitleOf(window) == title) {
+              count++;
+            }
+
+            return true;
+          },
+          default);
+      return count;
+    }
+
     private static HWND Find(string titlePart) {
       HWND found = HWND.Null;
       PInvoke.EnumWindows(

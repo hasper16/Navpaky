@@ -31,3 +31,27 @@ Written against the head of the `add-word-learning` PR. The rules are covered by
   Expected: the second "rhby;" becomes "кринж" on its own; `words.json` lists "кринж" under `learned` with `"language": "ru"` once Rekey has quit.
 - [ ] **Unreadable file is kept aside (1.2).** Quit Rekey, replace the content of `words.json` with `{ broken`, start Rekey.
   Expected: Rekey starts as usual; `words.json.bak` holds `{ broken`.
+
+## add-tray-and-settings-ui
+
+Written against the head of the `add-tray-and-settings-ui` PR. The automated `tray-and-settings` set covers the tray Language, a setting applying at once, the single settings window, the indicator and the sound; these steps cover what needs eyes, ears, real apps or a sign-out. Use a Debug build of `src/Rekey.App` with English (US) and Russian installed. Pin the Rekey icon to the visible part of the notification area first (Settings → Personalization → Taskbar → Other system tray icons).
+
+- [ ] **Keycap look (2.1).** Run `dotnet test tests/Rekey.App.Tests` and open `tests/Rekey.App.Tests/bin/Debug/net10.0-windows/keycap-sheet.png`.
+  Expected: every row reads "EN" at 16, 20, 24 and 32 px; paused has an amber edge, off a faded legend, paused-itself a red edge and dot; the dark rows suit a dark taskbar.
+- [ ] **Tray icon and menu (2.2).** Click the tray icon with the left and then the right button. Try each item: Auto Correction off and on, Pause → For 15 minutes then Resume, Pause → Until Rekey restarts then quit and start Rekey, "Turn off in Notepad" after typing in Notepad (and "Turn on in Notepad" after), Settings, About, Quit. Hover the icon while paused.
+  Expected: the menu opens on both clicks and follows the Windows theme; each item does what it says; the icon's edge turns amber while paused and the legend fades while off; the tooltip says how many minutes remain; the pause until restart ends with the restart; Statistics and Check for updates are greyed out; the icon shows "RU" while typing in Russian.
+- [ ] **Pause ends while the menu is open (2.2).** Pause → For 15 minutes, then 14 minutes later open the tray menu, move to Resume with the arrow keys and leave the menu open past the end of the Pause (the menu refreshes every 20 s). Close the menu and open it again.
+  Expected: while open, the menu keeps its items and the highlighted Resume; after reopening it shows Pause instead of Resume.
+- [ ] **Sensitivity (3.2).** In Correction, pick Cautious and type a short wrong-layout Word such as "yt" + Space in Notepad; pick Aggressive and type it again.
+  Expected: the change applies to the next Word without restarting Rekey (report what each setting did).
+- [ ] **Hotkey page (3.3).** Pick Win+Space, then record Win+Space with "My own combination", then record Ctrl+Alt+Space.
+  Expected: Win+Space shows the warning that it takes over the Windows layout shortcut and keeps the previous Hotkey until "Use it anyway"; "Pick another" keeps the previous one; Ctrl+Alt+Space becomes the Hotkey at once and works in Notepad.
+- [ ] **Apps and words (3.4).** Add Windows Terminal with "Add a running app", add a program with "Choose a program…", remove both. Add and remove a Protected Word and a Learned Word (with a language).
+  Expected: added apps show their name and icon and Rekey stays off in them; removed ones correct again; added words appear at once and change the next Word as the word-learning spec says; removed ones disappear; `words.json` matches after Rekey quits.
+- [ ] **Accessibility (3.5).** Fill in [settings-accessibility.md](settings-accessibility.md).
+- [ ] **Indicator in real apps (4.1).** Type "ghbdtn" + Space in Notepad, then in VS Code, then in a browser text box.
+  Expected: in Notepad the badge appears just below the caret; in VS Code and the browser (no system caret) it appears next to the mouse pointer; typing goes on without a pause or lost key; with "Show animations in Windows" off the badge disappears without fading.
+- [ ] **Sounds (4.2).** In General, preview each of the three sounds, turn the sound on and correct a Word, then press Ctrl+Z.
+  Expected: each preview plays its own sound; one sound per Correction, none for the Undo.
+- [ ] **Launch at sign-in (4.3).** Turn on "Start Rekey when I sign in to Windows", sign out and sign in. Then turn Rekey off under Task Manager → Startup apps and open Settings.
+  Expected: Rekey is running with its tray icon after sign-in; after the Task Manager change the switch shows off; turning it on again starts Rekey at the next sign-in.

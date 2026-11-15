@@ -22,6 +22,7 @@ namespace Rekey.Win32.Keyboard {
     private bool _frozen;
     private DateTimeOffset? _lastFreeze;
     private DateTimeOffset? _lastRestart;
+    private bool _restartEnabled = true;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FreezeWatchdog" /> class.
@@ -38,8 +39,14 @@ namespace Rekey.Win32.Keyboard {
       _lastRestart = lastRestart;
     }
 
-    /// <summary>Gets or sets a value indicating whether a repeated freeze restarts Rekey.</summary>
-    public bool RestartEnabled { get; set; } = true;
+    /// <summary>
+    /// Gets or sets a value indicating whether a repeated freeze restarts Rekey; the settings
+    /// thread writes it while the guard's thread reads it.
+    /// </summary>
+    public bool RestartEnabled {
+      get => Volatile.Read(ref _restartEnabled);
+      set => Volatile.Write(ref _restartEnabled, value);
+    }
 
     /// <summary>Checks the worker once.</summary>
     /// <returns>What the host must do.</returns>

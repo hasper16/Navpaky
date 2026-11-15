@@ -1,0 +1,95 @@
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using Rekey.App.Tray;
+using Rekey.App.ViewModels;
+using Rekey.Win32;
+
+namespace Rekey.App.Feedback {
+  // The keycap badge that shows the new Language next to the caret after Rekey switched the
+  // Layout (design D5). One window, created once and reused; it never takes focus.
+  internal sealed class CursorIndicator {
+    public const string WindowTitle = "Rekey indicator";
+
+    private const double _sizeAtStandardDpi = 28;
+    private static readonly TimeSpan _shown = TimeSpan.FromMilliseconds(900);
+    private static readonly Duration _fade = new(TimeSpan.FromMilliseconds(150));
+
+    private readonly Window _window;
+    private readonly Image _image = new();
+    private readonly DispatcherTimer _timer;
+
+    // Counts the badges shown, so a fade that ends after the next badge appeared leaves it.
+    private int _shows;
+
+    public CursorIndicator() {
+      _window = new Window {
+        Title = WindowTitle,
+        WindowStyle = WindowStyle.None,
+        AllowsTransparency = true,
+        Background = Brushes.Transparent,
+        Topmost = true,
+        ShowInTaskbar = false,
+        ShowActivated = false,
+        ResizeMode = ResizeMode.NoResize,
+        SizeToContent = SizeToContent.WidthAndHeight,
+        Focusable = false,
+        IsHitTestVisible = false,
+        Content = _image,
+      };
+      _window.SourceInitialized += (_, _) =>
+          ScreenFacts.MakeOverlay(new WindowInteropHelper(_window).Handle);
+      _timer = new DispatcherTimer { Interval = _shown };
+      _timer.Tick += (_, _) => Hide();
+    }
+
+    public bool IsShown => _window.IsVisible;
+
+    public void Show(string languageCode, bool dark) {
+      double scale = VisualTreeHelper.GetDpi(_image).DpiScaleX;
+      int size = (int)Math.Round(_sizeAtStandardDpi * scale);
+      _image.Source = Keycap.Render(languageCode, TrayState.Active, dark, size);
+      _image.Width = size / scale;
+      _image.Height = size / scale;
+
+      (int x, int y) = ScreenFacts.Mouse();
+      PixelRect? caret = ScreenFacts.Caret() is { } c
+          ? new PixelRect(c.Left, c.Top, c.Right, c.Bottom)
+          : null;
+      (int left, int top, int right, int bottom) =
+          ScreenFacts.WorkAreaAt(caret?.Left ?? x, caret?.Top ?? y);
+      PixelPoint at = IndicatorPlacement.Place(
+          caret, new PixelPoint(x, y), size, new PixelRect(left, top, right, bottom));
+      _window.Left = at.X / scale;
+      _window.Top = at.Y / scale;
+
+      _shows++;
+      _window.BeginAnimation(UIElement.OpacityProperty, null);
+      _window.Opacity = 1;
+      _window.Show();
+      _timer.Stop();
+      _timer.Start();
+    }
+
+    // "Reduce animations" in Windows turns the fade off.
+    private void Hide() {
+      _timer.Stop();
+      if (!SystemParameters.ClientAreaAnimation) {
+        _window.Hide();
+        return;
+      }
+
+      int fading = _shows;
+      var fade = new DoubleAnimation(0, _fade);
+      fade.Completed += (_, _) => {
+        if (fading == _shows) {
+          _window.Hide();
+        }
+      };
+      _window.BeginAnimation(UIElement.OpacityProperty, fade);
+    }
+  }
+}

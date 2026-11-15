@@ -52,9 +52,17 @@ namespace Rekey.DesktopChecks {
       return condition();
     }
 
+    // Shares the file for writing and replacing, so reading never blocks the app's next write.
     private static string? ReadState(string path) {
       try {
-        return File.Exists(path) ? File.ReadAllText(path).Trim() : null;
+        if (!File.Exists(path)) {
+          return null;
+        }
+
+        using var stream = new FileStream(
+            path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd().Trim();
       } catch (IOException) {
         return null;
       }

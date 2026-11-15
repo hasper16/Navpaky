@@ -1,0 +1,66 @@
+<UserControl x:Class="Rekey.App.Views.CorrectionPage"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:app="clr-namespace:Rekey.App"
+             xmlns:detection="clr-namespace:Rekey.Core.Detection;assembly=Rekey.Core"
+             xmlns:views="clr-namespace:Rekey.App.Views">
+  <UserControl.Resources>
+    <views:EqualsConverter x:Key="Equals" />
+  </UserControl.Resources>
+  <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+    <StackPanel Margin="24,16" MaxWidth="640" HorizontalAlignment="Left">
+      <ui:ToggleSwitch Content="{x:Static app:Strings.AutoCorrection}"
+                       IsChecked="{Binding AutoCorrectionEnabled}"
+                       Margin="0,0,0,16" />
+      <TextBlock x:Name="SensitivityLabel"
+                 Text="{x:Static app:Strings.Sensitivity}"
+                 Style="{StaticResource SectionText}" />
+      <StackPanel AutomationProperties.LabeledBy="{Binding ElementName=SensitivityLabel}"
+                  Margin="0,0,0,16">
+        <RadioButton GroupName="Sensitivity"
+                     Content="{x:Static app:Strings.SensitivityBalanced}"
+                     IsChecked="{Binding Sensitivity, Converter={StaticResource Equals},
+                                 ConverterParameter={x:Static detection:Sensitivity.Balanced}}" />
+        <TextBlock Text="{x:Static app:Strings.SensitivityBalancedHint}"
+                   Style="{StaticResource OptionHintText}" />
+        <RadioButton GroupName="Sensitivity"
+                     Content="{x:Static app:Strings.SensitivityCautious}"
+                     IsChecked="{Binding Sensitivity, Converter={StaticResource Equals},
+                                 ConverterParameter={x:Static detection:Sensitivity.Cautious}}" />
+        <TextBlock Text="{x:Static app:Strings.SensitivityCautiousHint}"
+                   Style="{StaticResource OptionHintText}" />
+        <RadioButton GroupName="Sensitivity"
+                     Content="{x:Static app:Strings.SensitivityAggressive}"
+                     IsChecked="{Binding Sensitivity, Converter={StaticResource Equals},
+                                 ConverterParameter={x:Static detection:Sensitivity.Aggressive}}" />
+        <TextBlock Text="{x:Static app:Strings.SensitivityAggressiveHint}"
+                   Style="{StaticResource OptionHintText}" />
+      </StackPanel>
+      <TextBlock x:Name="TriggerLabel"
+                 Text="{x:Static app:Strings.CorrectWhenIPress}"
+                 Style="{StaticResource SectionText}" />
+      <StackPanel Orientation="Horizontal"
+                  AutomationProperties.LabeledBy="{Binding ElementName=TriggerLabel}"
+                  Margin="0,0,0,16">
+        <CheckBox Content="{x:Static app:Strings.TriggerSpace}"
+                  IsChecked="{Binding TriggerOnSpace}"
+                  Margin="0,0,16,0" />
+        <CheckBox Content="{x:Static app:Strings.TriggerEnter}"
+                  IsChecked="{Binding TriggerOnEnter}"
+                  Margin="0,0,16,0" />
+        <CheckBox Content="{x:Static app:Strings.TriggerTab}"
+                  IsChecked="{Binding TriggerOnTab}" />
+      </StackPanel>
+      <ui:ToggleSwitch Content="{x:Static app:Strings.SkipAfterManualSwitch}"
+                       IsChecked="{Binding SkipAfterManualLayoutSwitch}"
+                       Margin="0,0,0,16" />
+      <ui:ToggleSwitch Content="{x:Static app:Strings.VerifiedReplacement}"
+                       IsChecked="{Binding VerifiedReplacement}" />
+      <TextBlock Text="{x:Static app:Strings.VerifiedReplacementHint}"
+                 Style="{StaticResource HintText}"
+                 Margin="0,4,0,0" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>
