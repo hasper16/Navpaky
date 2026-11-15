@@ -1,3 +1,4 @@
+using Rekey.App.Updates;
 using Rekey.Core;
 
 namespace Rekey.App.ViewModels {
@@ -20,6 +21,20 @@ namespace Rekey.App.ViewModels {
     public CurrentApp? CurrentApp { get; set; }
 
     public string? LanguageCode { get; set; }
+
+    // Set by the view from the update scheduler.
+    public UpdateStatus Updates { get; set; }
+
+    public string UpdateItemText => Updates switch {
+      UpdateStatus.Checking => Strings.MenuCheckingForUpdates,
+      UpdateStatus.UpToDate => Strings.MenuUpToDate,
+      UpdateStatus.ReadyToRestart => Strings.MenuRestartToUpdate,
+      UpdateStatus.Failed => Strings.MenuUpdateCheckFailed,
+      _ => Strings.MenuCheckForUpdates,
+    };
+
+    public bool UpdateItemEnabled =>
+        Updates is not (UpdateStatus.Unavailable or UpdateStatus.Checking);
 
     public TrayState State {
       get {

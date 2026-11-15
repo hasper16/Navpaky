@@ -41,6 +41,13 @@ namespace Rekey.App.Tests.ViewModels {
     }
 
     [Fact]
+    public void UpdateCheckSwitchChangesTheSettings() {
+      _model.AutoCheckForUpdates = false;
+
+      Assert.False(_hub.Current.AutoCheckForUpdates);
+    }
+
+    [Fact]
     public void SettingTheSameValueAgainPublishesNothing() {
       _model.AutoCorrectionEnabled = true;
 

@@ -9,6 +9,9 @@
       <ui:ToggleSwitch Content="{x:Static app:Strings.LaunchAtSignIn}"
                        IsChecked="{Binding LaunchAtSignIn}"
                        Margin="0,0,0,16" />
+      <ui:ToggleSwitch Content="{x:Static app:Strings.AutoCheckForUpdates}"
+                       IsChecked="{Binding AutoCheckForUpdates}"
+                       Margin="0,0,0,16" />
       <ui:ToggleSwitch Content="{x:Static app:Strings.ShowCursorIndicator}"
                        IsChecked="{Binding ShowCursorIndicator}" />
       <TextBlock Text="{x:Static app:Strings.ShowCursorIndicatorHint}"

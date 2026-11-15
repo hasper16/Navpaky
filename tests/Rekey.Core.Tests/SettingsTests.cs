@@ -182,5 +182,22 @@ namespace Rekey.Core.Tests {
       Assert.False(restored!.StatisticsEnabled);
       Assert.True(restored.AnalysisLogEnabled);
     }
+
+    [Fact]
+    public void FileWithoutUpdateSettingGetsAutomaticChecksOn() {
+      Settings? settings = JsonSerializer.Deserialize(
+          "{ \"autoCorrectionEnabled\": true }", SettingsJsonContext.Default.Settings);
+
+      Assert.True(settings!.AutoCheckForUpdates);
+    }
+
+    [Fact]
+    public void AutomaticChecksTurnedOffRoundTripThroughJson() {
+      string json = JsonSerializer.Serialize(
+          new Settings(AutoCheckForUpdates: false), SettingsJsonContext.Default.Settings);
+      Settings? restored = JsonSerializer.Deserialize(json, SettingsJsonContext.Default.Settings);
+
+      Assert.False(restored!.AutoCheckForUpdates);
+    }
   }
 }

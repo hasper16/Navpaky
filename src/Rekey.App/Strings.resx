@@ -69,6 +69,18 @@
   <data name="MenuCheckForUpdates" xml:space="preserve">
     <value>Check for updates</value>
   </data>
+  <data name="MenuCheckingForUpdates" xml:space="preserve">
+    <value>Checking for updates…</value>
+  </data>
+  <data name="MenuUpToDate" xml:space="preserve">
+    <value>Rekey is up to date</value>
+  </data>
+  <data name="MenuRestartToUpdate" xml:space="preserve">
+    <value>Restart to update</value>
+  </data>
+  <data name="MenuUpdateCheckFailed" xml:space="preserve">
+    <value>Could not check for updates</value>
+  </data>
   <data name="MenuAbout" xml:space="preserve">
     <value>About Rekey</value>
   </data>
@@ -125,6 +137,9 @@
   </data>
   <data name="PageAbout" xml:space="preserve">
     <value>About</value>
+  </data>
+  <data name="AutoCheckForUpdates" xml:space="preserve">
+    <value>Check for updates automatically</value>
   </data>
   <data name="LaunchAtSignIn" xml:space="preserve">
     <value>Start Rekey when I sign in to Windows</value>
@@ -383,5 +398,14 @@
   </data>
   <data name="ExportFailed" xml:space="preserve">
     <value>Could not save the file.</value>
+  </data>
+  <data name="UninstallTitle" xml:space="preserve">
+    <value>Uninstall Rekey</value>
+  </data>
+  <data name="UninstallDeleteData" xml:space="preserve">
+    <value>Also delete your Rekey settings, word lists, statistics and logs? Choose No to keep them for a later install.</value>
+  </data>
+  <data name="UninstallDataNotDeleted" xml:space="preserve">
+    <value>Some Rekey data could not be deleted because another program is using it. Delete the folder {0} yourself.</value>
   </data>
 </root>

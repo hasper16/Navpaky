@@ -61,5 +61,17 @@ namespace Rekey.Core {
     /// stopped holding them. No details.
     /// </summary>
     HoldTimeout,
+
+    /// <summary>
+    /// A downloaded update did not match the checksum in the release feed, so it was discarded.
+    /// No details.
+    /// </summary>
+    UpdateChecksumFailed,
+
+    /// <summary>
+    /// A downloaded update matched the feed but its code was unsigned or not signed by the Rekey
+    /// publisher, so it was discarded. Details: the signature verdict.
+    /// </summary>
+    UpdateSignatureFailed,
   }
 }

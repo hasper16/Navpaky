@@ -1,3 +1,4 @@
+using Rekey.App.Updates;
 using Rekey.App.ViewModels;
 using Rekey.Core;
 using Rekey.Core.Tests;
@@ -135,6 +136,20 @@ namespace Rekey.App.Tests.ViewModels {
       _tray.LanguageCode = "RU";
 
       Assert.Equal("RU", _tray.LanguageCode);
+    }
+
+    [Theory]
+    [InlineData(nameof(UpdateStatus.Idle), "Check for updates", true)]
+    [InlineData(nameof(UpdateStatus.Unavailable), "Check for updates", false)]
+    [InlineData(nameof(UpdateStatus.Checking), "Checking for updates\u2026", false)]
+    [InlineData(nameof(UpdateStatus.UpToDate), "Rekey is up to date", true)]
+    [InlineData(nameof(UpdateStatus.ReadyToRestart), "Restart to update", true)]
+    [InlineData(nameof(UpdateStatus.Failed), "Could not check for updates", true)]
+    public void UpdateItemSaysWhereTheCheckStands(string status, string text, bool enabled) {
+      _tray.Updates = Enum.Parse<UpdateStatus>(status);
+
+      Assert.Equal(text, _tray.UpdateItemText);
+      Assert.Equal(enabled, _tray.UpdateItemEnabled);
     }
   }
 }

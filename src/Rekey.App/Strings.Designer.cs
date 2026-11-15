@@ -112,6 +112,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Check for updates automatically.
+        /// </summary>
+        public static string AutoCheckForUpdates {
+            get {
+                return ResourceManager.GetString("AutoCheckForUpdates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Correct wrong-layout words automatically.
         /// </summary>
         public static string AutoCorrection {
@@ -454,6 +463,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Checking for updates….
+        /// </summary>
+        public static string MenuCheckingForUpdates {
+            get {
+                return ResourceManager.GetString("MenuCheckingForUpdates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pause.
         /// </summary>
         public static string MenuPause {
@@ -517,6 +535,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restart to update.
+        /// </summary>
+        public static string MenuRestartToUpdate {
+            get {
+                return ResourceManager.GetString("MenuRestartToUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Resume.
         /// </summary>
         public static string MenuResume {
@@ -540,6 +567,24 @@ namespace Rekey.App {
         public static string MenuStatistics {
             get {
                 return ResourceManager.GetString("MenuStatistics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not check for updates.
+        /// </summary>
+        public static string MenuUpdateCheckFailed {
+            get {
+                return ResourceManager.GetString("MenuUpdateCheckFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey is up to date.
+        /// </summary>
+        public static string MenuUpToDate {
+            get {
+                return ResourceManager.GetString("MenuUpToDate", resourceCulture);
             }
         }
         
@@ -1116,6 +1161,33 @@ namespace Rekey.App {
         public static string TurnOnIn {
             get {
                 return ResourceManager.GetString("TurnOnIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some Rekey data could not be deleted because another program is using it. Delete the folder {0} yourself..
+        /// </summary>
+        public static string UninstallDataNotDeleted {
+            get {
+                return ResourceManager.GetString("UninstallDataNotDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Also delete your Rekey settings, word lists, statistics and logs? Choose No to keep them for a later install..
+        /// </summary>
+        public static string UninstallDeleteData {
+            get {
+                return ResourceManager.GetString("UninstallDeleteData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uninstall Rekey.
+        /// </summary>
+        public static string UninstallTitle {
+            get {
+                return ResourceManager.GetString("UninstallTitle", resourceCulture);
             }
         }
         

@@ -72,6 +72,10 @@ namespace Rekey.Core {
   /// otherwise, <see langword="false" />, and the log is deleted. The default is
   /// <see langword="false" />.
   /// </param>
+  /// <param name="AutoCheckForUpdates">
+  /// <see langword="true" /> to check for updates at start and every 24 hours; otherwise,
+  /// <see langword="false" />. The default is <see langword="true" />.
+  /// </param>
   // Each setting is a constructor parameter with a default: in .NET 10, source-generated JSON
   // gives an init-only property that the file omits its type default, not its initializer.
   public sealed record Settings(
@@ -90,7 +94,8 @@ namespace Rekey.Core {
       SwitchSound SwitchSound = SwitchSound.KeyClick,
       bool LaunchAtSignIn = false,
       bool StatisticsEnabled = true,
-      bool AnalysisLogEnabled = false) {
+      bool AnalysisLogEnabled = false,
+      bool AutoCheckForUpdates = true) {
     /// <summary>
     /// The <see cref="PausedUntil" /> value of a Pause that lasts until Rekey restarts.
     /// </summary>
