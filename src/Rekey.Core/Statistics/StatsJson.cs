@@ -6,6 +6,10 @@ namespace Rekey.Core.Statistics {
   internal static class StatsJson {
     private const int _version = 1;
 
+    // No one makes a billion of anything in a day; the bound keeps 30 days added together far
+    // from overflowing.
+    private const long _maxDailyCount = 1_000_000_000;
+
     // Durations beyond a day are not real replacements; the bound keeps every total within
     // what TimeSpan holds.
     private static readonly double _maxMilliseconds = TimeSpan.FromDays(1).TotalMilliseconds;
@@ -56,7 +60,7 @@ namespace Rekey.Core.Statistics {
     private static DayStats? FromFile(DayFile day) {
       var counts = new Dictionary<StatCounter, long>();
       foreach ((string name, long value) in day.Counts ?? []) {
-        if (value < 0) {
+        if (value is < 0 or > _maxDailyCount) {
           return null;
         }
 
@@ -77,6 +81,7 @@ namespace Rekey.Core.Statistics {
       if (file.Buckets is not { Count: DurationStats.BucketCount } buckets
           || buckets.Any(count => count < 0)
           || SumOrNull(buckets) != file.Count
+          || file.Count > _maxDailyCount
           || file.TotalMilliseconds < 0
           || file.TotalMilliseconds > _maxMilliseconds * file.Count
           || file.MinMilliseconds < 0

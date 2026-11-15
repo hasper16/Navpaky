@@ -16,10 +16,14 @@ namespace Rekey.Core.Tests.Statistics {
     }
 
     public static TheoryData<string> BrokenHistograms() {
-      // Bucket counts whose sum overflows, and durations beyond what TimeSpan holds.
+      // Bucket counts whose sum overflows, durations beyond what TimeSpan holds, and more
+      // Corrections in a day than a person can make, which would overflow 30 days added up.
       string overflow = Histogram(1, 1, 1, 1, [long.MaxValue, 1]);
       string huge = Histogram(1, 1e20, 1e20, 1e20, [0, .. new long[199], 1]);
-      return [overflow, huge];
+      string tooMany = Histogram(long.MaxValue, long.MaxValue, 1, 1, [0, long.MaxValue]);
+      string tooManyUndos = "{\"version\":1,\"days\":[{\"day\":\"2026-11-16\","
+          + "\"counts\":{\"undos\":9223372036854775807}}]}";
+      return [overflow, huge, tooMany, tooManyUndos];
     }
 
     public void Dispose() {
