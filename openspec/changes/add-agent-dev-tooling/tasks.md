@@ -10,10 +10,10 @@ All installs run on the owner's machine at user scope (design D1–D3). No task 
 
 ## 2. Graphify
 
-- [ ] 2.1 Install `uv tool install "graphifyy==<pin>"` and run `graphify install --platform agents`; verify `graphify --version` equals the pin and `graphify\SKILL.md` exists in both `C:\Users\Haspe\.ai-global\skills\` and `C:\Users\Haspe\.claude\skills\`
-- [ ] 2.2 Set user environment variables `GRAPHIFY_BACKEND=none`, `GRAPHIFY_QUERY_LOG_DISABLE=1` and `GRAPHIFY_NO_TIPS=1`; verify in a new shell that they equal `none`, `1` and `1`
-- [ ] 2.3 Add `graphify-out/` to `.gitignore` and create `.graphifyignore` (`.private/`, `.claude/worktrees/`, `artifacts/`, `bin/`, `obj/`); verify `graphify update .` in this worktree completes without naming an LLM backend, `graph.json` has no path under `.private/` or `.claude/worktrees/`, and `git status --porcelain` lists nothing under `graphify-out/`
-- [ ] 2.4 Verify `graphify query "where is the keyboard hook callback"` returns a node in `Rekey.Win32` and exits 0
+- [x] 2.1 Install `uv tool install "graphifyy==<pin>"` and run `graphify install --platform agents`; verify `graphify --version` equals the pin and `graphify\SKILL.md` exists in both `C:\Users\Haspe\.ai-global\skills\` and `C:\Users\Haspe\.claude\skills\`
+- [x] 2.2 Set user environment variables `GRAPHIFY_BACKEND=none`, `GRAPHIFY_QUERY_LOG_DISABLE=1` and `GRAPHIFY_NO_TIPS=1`; verify in a new shell that they equal `none`, `1` and `1`
+- [x] 2.3 Add `graphify-out/` to `.gitignore` and create `.graphifyignore` (`.private/`, `.claude/worktrees/`, `artifacts/`, `bin/`, `obj/`); verify `graphify update .` in this worktree completes without naming an LLM backend, `graph.json` has no path under `.private/` or `.claude/worktrees/`, and `git status --porcelain` lists nothing under `graphify-out/`
+- [x] 2.4 Verify `graphify query "where is the keyboard hook callback"` returns a node in `Rekey.Win32` and exits 0
 
 ## 3. ponytail
 
