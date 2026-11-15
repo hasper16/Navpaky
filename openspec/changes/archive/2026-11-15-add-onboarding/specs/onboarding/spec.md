@@ -21,7 +21,7 @@ On the first start for a Windows user, Rekey SHALL open a welcome window that ex
 The welcome window SHALL contain a text field where the user can type a word in the wrong Layout and see Rekey correct it, with a short instruction naming their installed Layouts.
 
 #### Scenario: Successful try
-- **WHEN** the user types "ghbdtn" followed by Space in the try-it field with English (US) active
+- **WHEN** English (US) and Russian are installed, Auto Correction is on, and the user types "ghbdtn" followed by Space in the try-it field with English (US) active
 - **THEN** the field shows "привет "
 - **AND** the welcome window confirms that Rekey works
 
@@ -33,7 +33,7 @@ The welcome window SHALL contain a text field where the user can type a word in 
 The welcome window SHALL let the user set Auto Correction on or off, choose the Hotkey, and turn launch at sign-in on or off (on by default, design decision), and SHALL show how to keep the tray icon visible.
 
 #### Scenario: Launch at sign-in default
-- **WHEN** the user closes the welcome window without changing anything
+- **WHEN** the user closes the welcome window opened at the first start without changing anything
 - **THEN** launch at sign-in is on
 
 ### Requirement: Reopen from tray

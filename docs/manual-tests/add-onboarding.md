@@ -24,7 +24,7 @@ Do not touch the mouse or keyboard for about 2 minutes. The tool keeps `settings
 
 Since this change, the `tray-and-settings` set and the watchdog checks of the default set start the app with the welcome marked completed, so the welcome window does not take the front from their test windows.
 
-Last run: not yet run.
+Last run: 9 of 9 at 812c1f2 on the owner's desktop; `tray-and-settings` 10 of 10 and the default set 36 of 36 on the same commit.
 
 ## By hand
 

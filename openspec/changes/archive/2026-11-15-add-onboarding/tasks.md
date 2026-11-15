@@ -8,12 +8,12 @@
 ## 2. Welcome window
 
 - [x] 2.1 Build the welcome window (keycap, description, privacy statement, choices, tray tip, Done) with WPF UI; verify manually in light and dark mode and with keyboard only (by hand: deferred to `deferred-by-hand.md`)
-- [ ] 2.2 Implement the try-it field with success confirmation via `SwitchFeedback` (design R1); verify manually that "ghbdtn" + Space shows "привет " and the confirmation (automated: desktop set `onboarding`)
+- [x] 2.2 Implement the try-it field with success confirmation via `SwitchFeedback` (design R1); verify manually that "ghbdtn" + Space shows "привет " and the confirmation (automated: desktop set `onboarding`)
 - [x] 2.3 Implement the single-Layout explanation with a link to Windows language settings (`ms-settings:regionlanguage`); verify manually with only one Layout installed (unit tests for the notice; by hand: deferred to `deferred-by-hand.md`)
-- [ ] 2.4 Add "Welcome and setup" to the tray menu; verify manually it reopens the window (automated: desktop set `onboarding`)
+- [x] 2.4 Add "Welcome and setup" to the tray menu; verify manually it reopens the window (automated: desktop set `onboarding` reopens it through the `open-welcome` check command; the click on the real tray item is deferred to `deferred-by-hand.md`)
 - [x] 2.5 Show a one-time toast after the first real Correction; verify manually it appears once (unit tests for once-only; by hand: deferred to `deferred-by-hand.md`)
 
 ## 3. Location warnings
 
 - [x] 3.1 Show the temporary-location warning with an Install option at start-up; verify manually by running from inside a ZIP in Explorer (unit tests for the classifier and the install source; by hand: deferred to `deferred-by-hand.md`, Release build only)
-- [ ] 3.2 Implement the executable-disappearance watcher and notice; verify manually by renaming the running executable's folder copy (notice within 60 s) (unit tests for the watcher; automated: desktop set `onboarding`)
+- [x] 3.2 Implement the executable-disappearance watcher and notice; verify manually by renaming the running executable's folder copy (notice within 60 s) (unit tests for the watcher; automated: desktop set `onboarding`)
