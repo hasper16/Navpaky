@@ -96,3 +96,18 @@ Written against the head of the `add-auto-update-and-installer` PR. Unit tests c
 - [ ] **Local signed test build (4.3).** Follow `docs/release.md` → Local test build on a clean checkout without help.
   Expected: two signed packages in one feed folder, which the update steps above use; note any step that needed guessing.
 
+
+## add-onboarding
+
+Written against the head of the `add-onboarding` PR. Unit tests cover when the welcome opens, the first-start sign-in default, the choices, the Layout notice, the one-time tip and the location classifier; the automated `onboarding` set covers the welcome opening at first start, the try-it Correction and its confirmation, and reopening from the tray. These steps need eyes, a physical keyboard or an installed build. Use a Debug build of `src/Rekey.App` with English (US) and Russian installed unless a step says otherwise. To see the first start again, quit Rekey and delete `%LOCALAPPDATA%\Rekey\settings.json`.
+
+- [ ] **Look and keyboard (2.1).** At a first start, look at the welcome window in light mode, then switch Windows to dark mode (Settings → Personalization → Colors) with the window open. Then use only the keyboard: Tab through every control and press Space or Enter on each.
+  Expected: keycap, description, Undo hint, privacy statement, try-it field, Auto Correction and sign-in switches, Hotkey choice, tray tip and Done read well in both modes and follow the switch at once; every control is reachable in reading order with a visible focus mark; Enter on Done closes the window; Narrator reads the try-it hint with the field.
+- [ ] **Try it with the physical keyboard (2.2).** At a first start, with English (US) active, type "ghbdtn" and Space in the try-it field.
+  Expected: the field shows "привет ", the Layout is Russian and the green confirmation appears; no "Rekey corrected a word" notification follows.
+- [ ] **One Layout installed (2.3).** Remove every Layout but English (US) (keep a note to add Russian back), then open "Welcome and setup" from the tray. Choose "Open language settings". Add Russian back.
+  Expected: an amber notice says Rekey needs at least two Layouts; the button opens Settings → Time & language → Language & region; once Russian is back the notice disappears without reopening the window.
+- [ ] **One-time notification (2.5).** Complete the welcome, then in Notepad type "ghbdtn" and Space; type "ghbdtn" and Space again; quit and start Rekey and correct once more.
+  Expected: only the first Correction shows the Windows notification "Rekey corrected a word — Press Ctrl+Z to undo."; later ones, also after the restart, show none.
+- [ ] **Closing without changes (spec: launch at sign-in default).** At a first start close the welcome window with its X without changing anything; open Task Manager → Startup apps.
+  Expected: Rekey is listed and enabled; the welcome does not open at the next start.

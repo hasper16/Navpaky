@@ -408,4 +408,61 @@
   <data name="UninstallDataNotDeleted" xml:space="preserve">
     <value>Some Rekey data could not be deleted because another program is using it. Delete the folder {0} yourself.</value>
   </data>
+  <data name="MenuWelcome" xml:space="preserve">
+    <value>Welcome and setup</value>
+  </data>
+  <data name="WelcomeTitle" xml:space="preserve">
+    <value>Welcome to Rekey</value>
+  </data>
+  <data name="WelcomeDescription" xml:space="preserve">
+    <value>Rekey fixes a word you typed in the wrong keyboard layout, such as "ghbdtn" instead of "привет", and switches the layout for you.</value>
+  </data>
+  <data name="WelcomeUndo" xml:space="preserve">
+    <value>Not what you meant? Press Ctrl+Z right after a correction, or press your hotkey, to get your typing back.</value>
+  </data>
+  <data name="WelcomePrivacyTitle" xml:space="preserve">
+    <value>Your typing stays on this computer</value>
+  </data>
+  <data name="WelcomePrivacy" xml:space="preserve">
+    <value>Rekey reads keystrokes only to check the word you are typing. It never sends your text anywhere and never uses the clipboard.</value>
+  </data>
+  <data name="WelcomeTryItTitle" xml:space="preserve">
+    <value>Try it</value>
+  </data>
+  <data name="WelcomeTryIt" xml:space="preserve">
+    <value>Type a word in the wrong layout, then press Space. For example, with English (US) on, type ghbdtn for the Russian "привет". Your languages: {0}.</value>
+  </data>
+  <data name="WelcomeTryItField" xml:space="preserve">
+    <value>Try-it field</value>
+  </data>
+  <data name="WelcomeTryItWorked" xml:space="preserve">
+    <value>It works: Rekey corrected the word and switched the layout.</value>
+  </data>
+  <data name="WelcomeOneLayout" xml:space="preserve">
+    <value>Rekey needs at least two keyboard layouts in different languages. Add another one in Windows language settings.</value>
+  </data>
+  <data name="WelcomeLanguageSettings" xml:space="preserve">
+    <value>Open language settings</value>
+  </data>
+  <data name="WelcomeChoicesTitle" xml:space="preserve">
+    <value>Your choices</value>
+  </data>
+  <data name="WelcomeHotkeyTitle" xml:space="preserve">
+    <value>Hotkey for a manual correction</value>
+  </data>
+  <data name="WelcomeTrayTitle" xml:space="preserve">
+    <value>Keep Rekey in sight</value>
+  </data>
+  <data name="WelcomeTrayTip" xml:space="preserve">
+    <value>Windows may hide the Rekey icon under the arrow in the taskbar. To keep it visible, open Settings &gt; Personalization &gt; Taskbar &gt; Other system tray icons and turn Rekey on.</value>
+  </data>
+  <data name="WelcomeDone" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="CorrectionTipTitle" xml:space="preserve">
+    <value>Rekey corrected a word</value>
+  </data>
+  <data name="CorrectionTip" xml:space="preserve">
+    <value>Press Ctrl+Z to undo.</value>
+  </data>
 </root>

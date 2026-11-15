@@ -48,6 +48,11 @@ namespace Rekey.App.Tray {
           .FirstOrDefault(item => Equals(item.Header, header));
     }
 
+    // A Windows notification from the tray icon.
+    public void Notify(string title, string message) {
+      _icon.ShowNotification(title, message);
+    }
+
     public void Dispose() {
       _icon.Dispose();
     }
@@ -101,6 +106,7 @@ namespace Rekey.App.Tray {
       MenuItem updates = Item(_model.UpdateItemText, _commands.Updates);
       updates.IsEnabled = _model.UpdateItemEnabled;
       items.Add(updates);
+      items.Add(Item(Strings.MenuWelcome, _commands.OpenWelcome));
       items.Add(Item(Strings.MenuAbout, _commands.OpenAbout));
       items.Add(new Separator());
       items.Add(Item(Strings.MenuQuit, _commands.Quit));

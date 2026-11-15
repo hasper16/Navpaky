@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using H.NotifyIcon;
 using Rekey.App.Feedback;
+using Rekey.App.Onboarding;
 using Rekey.App.Tray;
 using Rekey.App.Updates;
 using Rekey.App.ViewModels;
@@ -85,6 +86,8 @@ namespace Rekey.App {
     private WordsViewModel? _words;
     private SettingsWindow? _settingsWindow;
     private StatisticsWindow? _statisticsWindow;
+    private WelcomeWindow? _welcomeWindow;
+    private WelcomeViewModel? _welcome;
     private ExportWindow? _exportWindow;
     private CursorIndicator? _indicator;
     private SwitchSoundPlayer? _sounds;
@@ -128,7 +131,7 @@ namespace Rekey.App {
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
       var trayIcon = (TaskbarIcon)FindResource("TrayIcon");
       var commands = new TrayCommands(
-          OpenSettings, OpenStatistics, OnUpdatesItem, OpenAbout, () => Shutdown());
+          OpenSettings, OpenStatistics, OnUpdatesItem, OpenWelcome, OpenAbout, () => Shutdown());
       _trayView = new TrayIconView(trayIcon, _tray, commands);
 #if DEBUG
       AddDebugMenuItems(_trayView);
@@ -139,8 +142,14 @@ namespace Rekey.App {
       trayIcon.ForceCreate(enablesEfficiencyMode: false);
       StartInput(_hub.Current);
       _hub.Changed += OnSettingsChanged;
+
+      // After the subscription, so the first start's launch at sign-in reaches Windows.
+      _hub.Update(WelcomeViewModel.FirstStartDefaults);
       StartTrayFollowers();
       StartUpdates();
+      if (WelcomeViewModel.OpensAtStart(_hub.Current)) {
+        OpenWelcome();
+      }
 #if DEBUG
       if (e.Args.Contains(_checkFreeze)) {
         FreezeTwiceForCheck();
@@ -195,6 +204,7 @@ namespace Rekey.App {
         _updates?.Dispose();
         _foregroundApps?.Dispose();
         _trayView?.Dispose();
+        _welcome?.Dispose();
         _hub?.Dispose();
         _guard?.Dispose();
         base.OnExit(e);
@@ -220,6 +230,17 @@ namespace Rekey.App {
 
     private static HotkeyConflict CheckHotkey(Hotkey hotkey) {
       return HotkeyConflicts.Check(hotkey, LayoutSwitchShortcuts.Read(), HotkeyProbe.IsTaken);
+    }
+
+    // Explorer by its full path opens the Settings page, as a shell link would.
+    private static void OpenLanguageSettings() {
+      string explorer = Path.Join(
+          Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
+      try {
+        Process.Start(explorer, "ms-settings:regionlanguage")?.Dispose();
+      } catch (Win32Exception) {
+        Trace.WriteLine("Rekey could not open the Windows language settings.");
+      }
     }
 
     // The type only: the message names a path inside the user profile.
@@ -507,6 +528,10 @@ namespace Rekey.App {
 
     // Runs on the worker thread after each input event; only Layout changes reach the UI.
     private void FollowLayout(InputEvent inputEvent) {
+      if (inputEvent is LayoutsInstalledChanged installed) {
+        Dispatcher.BeginInvoke(() => _welcome?.UseLayouts(installed.Layouts));
+      }
+
       if (inputEvent is LayoutChanged changed) {
         string code = changed.Layout.LanguageCode;
         Dispatcher.BeginInvoke(() => {
@@ -526,6 +551,10 @@ namespace Rekey.App {
 
       if (response.Sound) {
         _sounds!.Play(_hub.Current.SwitchSound);
+      }
+
+      if (feedback.Cause == SwitchCause.Correction) {
+        NoteCorrection();
       }
 #if DEBUG
       NoteSwitchForCheck(feedback);
@@ -551,6 +580,48 @@ namespace Rekey.App {
       RefreshTray();
     }
 
+    // The try-it field confirms the Correction; a first real one gets the one-time Undo tip.
+    private void NoteCorrection() {
+      bool inTryIt = _welcomeWindow?.TryItHasFocus == true;
+      if (inTryIt) {
+        _welcome?.NoteTryItCorrection();
+      }
+
+      if (CorrectionTip.IsDue(_hub!.Current, inTryIt)) {
+        _hub.Update(CorrectionTip.Shown);
+        _trayView?.Notify(Strings.CorrectionTipTitle, Strings.CorrectionTip);
+      }
+    }
+
+    // One welcome window at a time: asking again brings it to the front.
+    private void OpenWelcome() {
+      if (_welcomeWindow is null) {
+        ReadLaunchAtSignIn();
+        var welcome = new WelcomeViewModel(_hub!, _worker?.InstalledLayouts ?? []);
+        var hotkey = new HotkeyViewModel(_hub!, CheckHotkey);
+        bool dark = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
+        _welcome = welcome;
+        _welcomeWindow = new WelcomeWindow(
+            welcome, new HotkeyPage(hotkey), dark, OpenLanguageSettings);
+        _welcomeWindow.Closed += (_, _) => {
+          welcome.Close();
+          welcome.Dispose();
+          hotkey.Dispose();
+          _welcome = null;
+          _welcomeWindow = null;
+        };
+        _welcomeWindow.Show();
+      }
+
+      BringToFront(_welcomeWindow);
+    }
+
+    // The user may have turned Rekey off under Startup apps in Task Manager meanwhile.
+    private void ReadLaunchAtSignIn() {
+      _launchAtSignIn = _signIn.IsOn();
+      _hub!.Update(settings => settings with { LaunchAtSignIn = _launchAtSignIn });
+    }
+
     private void OpenSettings() {
       ShowSettings(typeof(GeneralPage));
     }
@@ -562,9 +633,7 @@ namespace Rekey.App {
     // One settings window at a time: asking again brings it to the front.
     private void ShowSettings(Type page) {
       if (_settingsWindow is null) {
-        // The user may have turned Rekey off under Startup apps in Task Manager meanwhile.
-        _launchAtSignIn = _signIn.IsOn();
-        _hub!.Update(settings => settings with { LaunchAtSignIn = _launchAtSignIn });
+        ReadLaunchAtSignIn();
         _settingsWindow = CreateSettingsWindow();
 #if DEBUG
         NoteSettingsOpenedForCheck();
