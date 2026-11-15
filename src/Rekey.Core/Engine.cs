@@ -1,6 +1,7 @@
 using System.Buffers;
 using Rekey.Core.Detection;
 using Rekey.Core.Languages;
+using Rekey.Core.Statistics;
 using Rekey.Core.Words;
 
 namespace Rekey.Core {
@@ -251,11 +252,24 @@ namespace Rekey.Core {
       return changed ? [new WordListsChanged()] : [];
     }
 
+    private static StatCounter CounterOf(DecisionKind kind) {
+      return kind switch {
+        DecisionKind.Correct => StatCounter.CorrectDecisions,
+        DecisionKind.Defer => StatCounter.DeferDecisions,
+        _ => StatCounter.KeepDecisions,
+      };
+    }
+
     private static string[] WordsOf(string text) {
       return text.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
     }
 
-    private IReadOnlyList<EngineAction> OnKeyDown(KeyDown keyDown) {
+    // Spec statistics-and-diagnostics: nothing is counted while statistics are off.
+    private EngineAction[] Count(StatCounter counter, TimeSpan? duration = null) {
+      return _settings.StatisticsEnabled ? [new RecordStat(counter, duration)] : [];
+    }
+
+    private EngineAction[] OnKeyDown(KeyDown keyDown) {
       // Modifiers are pressed on the way to Ctrl+Z or as the Hotkey, so they keep the
       // Correction undoable and neither end nor extend the typing gap.
       if (keyDown.Kind != KeyKind.Modifier) {
@@ -327,7 +341,7 @@ namespace Rekey.Core {
 
     // Only a held key has not reached the application yet, so only then can the Word before it
     // be replaced.
-    private IReadOnlyList<EngineAction> Evaluate(KeyDown trigger) {
+    private EngineAction[] Evaluate(KeyDown trigger) {
       IReadOnlyList<Keystroke> word = [.. _word.Keystrokes];
       _word.Add(trigger);
       if (CurrentLayout is not { } layout
@@ -343,21 +357,27 @@ namespace Rekey.Core {
       // Spec word-learning: a Protected Word is kept, and keeping it ends the run before it.
       if (Words.UseProtected(typed, _time.GetUtcNow())) {
         EndRun();
-        return [new WordListsChanged()];
+        return [
+            .. Count(StatCounter.WordsAnalysed),
+            .. Count(StatCounter.ProtectedWordDecisions),
+            new WordListsChanged(),
+        ];
       }
 
       Decision decision = _evaluate?.Invoke(word, layout)
           ?? _detector.Decide(word, layout, _settings.Sensitivity);
+      EngineAction[] counted = [
+          .. Count(StatCounter.WordsAnalysed), .. Count(CounterOf(decision.Kind))];
       Correction? correction = DeferredWords.Add(decision);
       if (correction is null) {
         ContinueOrEndRun(decision, trigger, typed);
-        return [];
+        return counted;
       }
 
       string[] typedWords = [.. _run.TakeLast(correction.Texts.Count - 1), typed];
       EndRun();
       if (typedWords.Length != correction.Texts.Count) {
-        return [];
+        return counted;
       }
 
       var record = new CorrectionRecord(
@@ -370,7 +390,7 @@ namespace Rekey.Core {
           Undoable: trigger.Kind != KeyKind.Enter,
           CorrectionKind.Auto);
       _pending = new PendingReplacement(record, IsUndo: false);
-      return [new ReplaceText(record.Typed, record.Rendering)];
+      return [.. counted, new ReplaceText(record.Typed, record.Rendering)];
     }
 
     // Only Words separated by single spaces stay a run on screen.
@@ -518,13 +538,21 @@ namespace Rekey.Core {
             new SwitchLayout(record.Source),
             new UndoPerformed(record.Typed, record.Rendering),
             .. Changed(LearnFromUndo(record)),
+            .. Count(StatCounter.Undos),
         ];
       }
 
       _lastCorrection = record;
       _recent = null;
       _word.Clear();
-      return [new SwitchLayout(record.Target), .. Changed(LearnFromCorrection(record))];
+      StatCounter counter = record.Kind == CorrectionKind.Auto
+          ? StatCounter.AutoCorrections
+          : StatCounter.ManualCorrections;
+      return [
+          new SwitchLayout(record.Target),
+          .. Changed(LearnFromCorrection(record)),
+          .. Count(counter, finished.Timestamp - record.Time),
+      ];
     }
 
     // Spec word-learning: an Undo protects the Words as typed and forgets the Learned Words the

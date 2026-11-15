@@ -52,7 +52,10 @@ namespace Rekey.Core.Tests {
     public string Word => KeyMapFixtures.EnglishUs.Render(Engine.Word)
         ?? throw new InvalidOperationException("The Word does not render in English (US).");
 
+    // The actions other than counting, which StatisticsTests check apart.
     public List<EngineAction> Actions { get; } = [];
+
+    public List<RecordStat> Stats { get; } = [];
 
     public Typist Type(string text) {
       IReadOnlyList<Keystroke> keystrokes = KeyMapFixtures.EnglishUs.Type(text, capsLock: false)
@@ -152,7 +155,14 @@ namespace Rekey.Core.Tests {
     }
 
     public Typist Send(InputEvent inputEvent) {
-      Actions.AddRange(Engine.Handle(inputEvent));
+      foreach (EngineAction action in Engine.Handle(inputEvent)) {
+        if (action is RecordStat stat) {
+          Stats.Add(stat);
+        } else {
+          Actions.Add(action);
+        }
+      }
+
       return this;
     }
 

@@ -2,8 +2,8 @@
 
 ## 1. Counters
 
-- [ ] 1.1 Define the daily counters model and `stats.json` contract (30 buckets, duration histogram); verify a round-trip test passes
-- [ ] 1.2 Write failing tests: Corrections/Undos/Decisions increment the right counters; turning statistics off deletes them; median from histogram; implement the aggregator; verify they pass
+- [x] 1.1 Define the daily counters model and `stats.json` contract (30 buckets, duration histogram); verify a round-trip test passes
+- [x] 1.2 Write failing tests: Corrections/Undos/Decisions increment the right counters; turning statistics off deletes them; median from histogram; implement the aggregator; verify they pass
 
 ## 2. Incidents
 
