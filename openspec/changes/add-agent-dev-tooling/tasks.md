@@ -4,9 +4,9 @@ All installs run on the owner's machine at user scope (design D1–D3). No task 
 
 ## 1. Pins and check script
 
-- [ ] 1.1 Look up the current releases (Graphify on PyPI `graphifyy`, ponytail plugin release, agent-skills `main` commit) and write `tools/agent-dev-tooling/versions.json` with those pins and the seven curated skill names; verify the file parses with `ConvertFrom-Json` and lists three tools and seven skills
-- [ ] 1.2 Write `tools/agent-dev-tooling/Test-AgentDevTooling.Tests.ps1` with failing cases for each check in design D5 (version match and mismatch, `GRAPHIFY_BACKEND` and `GRAPHIFY_QUERY_LOG_DISABLE` missing or present with a wrong value such as `openai` or `0`, `PONYTAIL_DEFAULT_MODE` not `lite`, marketplace source without the pinned tag, missing skill folder, missing `SOURCE`, security-audit folder hash match and mismatch, lifecycle command present, tool files in `git status`, aggregation to exit code 1); verify it fails because the checks do not exist yet
-- [ ] 1.3 Implement `tools/agent-dev-tooling/Test-AgentDevTooling.ps1` with the smallest code that passes 1.2, then refactor; verify `pwsh -File tools/agent-dev-tooling/Test-AgentDevTooling.Tests.ps1` passes and the script's output holds only names, versions, paths and status codes
+- [x] 1.1 Look up the current releases (Graphify on PyPI `graphifyy`, ponytail plugin release, agent-skills `main` commit) and write `tools/agent-dev-tooling/versions.json` with those pins and the seven curated skill names; verify the file parses with `ConvertFrom-Json` and lists three tools and seven skills
+- [x] 1.2 Write `tools/agent-dev-tooling/Test-AgentDevTooling.Tests.ps1` with failing cases for each check in design D5 (version match and mismatch, `GRAPHIFY_BACKEND` and `GRAPHIFY_QUERY_LOG_DISABLE` missing or present with a wrong value such as `openai` or `0`, `PONYTAIL_DEFAULT_MODE` not `lite`, marketplace source without the pinned tag, missing skill folder, missing `SOURCE`, security-audit folder hash match and mismatch, lifecycle command present, tool files in `git status`, aggregation to exit code 1); verify it fails because the checks do not exist yet
+- [x] 1.3 Implement `tools/agent-dev-tooling/Test-AgentDevTooling.ps1` with the smallest code that passes 1.2, then refactor; verify `pwsh -File tools/agent-dev-tooling/Test-AgentDevTooling.Tests.ps1` passes and the script's output holds only names, versions, paths and status codes
 
 ## 2. Graphify
 
