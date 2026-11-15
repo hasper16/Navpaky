@@ -64,7 +64,11 @@ namespace Rekey.DesktopChecks {
 
     // A command the app takes in place of a click on its tray menu.
     private static void Command(string command) {
-      File.WriteAllText(Path.Join(SystemState.DataFolder, "check-ui-command.txt"), command);
+      // Written aside and moved in, so the app never reads half a command.
+      string path = Path.Join(SystemState.DataFolder, "check-ui-command.txt");
+      string draft = path + ".tmp";
+      File.WriteAllText(draft, command);
+      File.Move(draft, path, overwrite: true);
     }
 
     private static AutomationElement? SettingsWindow() {

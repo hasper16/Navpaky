@@ -3,7 +3,7 @@ using Rekey.Core;
 
 namespace Rekey.App.ViewModels {
   // The Excluded Apps editor of the Apps and words page.
-  internal sealed class ExcludedAppsViewModel : ObservableObject {
+  internal sealed class ExcludedAppsViewModel : ObservableObject, IDisposable {
     private readonly SettingsHub _hub;
     private readonly Func<string, string> _nameOf;
 
@@ -11,13 +11,14 @@ namespace Rekey.App.ViewModels {
       _hub = hub;
       _nameOf = nameOf;
       Apps = List(hub.Current);
-      _hub.Changed += settings => {
-        Apps = List(settings);
-        OnPropertyChanged(nameof(Apps));
-      };
+      _hub.Changed += OnHubChanged;
     }
 
     public IReadOnlyList<ExcludedAppEntry> Apps { get; private set; }
+
+    public void Dispose() {
+      _hub.Changed -= OnHubChanged;
+    }
 
     public void Add(AppId app) {
       _hub.Update(settings => settings with {
@@ -30,6 +31,11 @@ namespace Rekey.App.ViewModels {
         ExcludedApps = new ExcludedAppList(
             settings.ExcludedApps.Entries.Where(entry => entry != app.Key)),
       });
+    }
+
+    private void OnHubChanged(Settings settings) {
+      Apps = List(settings);
+      OnPropertyChanged(nameof(Apps));
     }
 
     private List<ExcludedAppEntry> List(Settings settings) {

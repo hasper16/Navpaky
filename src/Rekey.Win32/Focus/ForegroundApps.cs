@@ -52,6 +52,17 @@ namespace Rekey.Win32.Focus {
     }
 
     /// <summary>
+    /// Returns the application of a top-level window as the tray and Auto Correction name it,
+    /// with the package identity of a Store app, or <see langword="null" /> for Rekey's own
+    /// windows and windows Rekey cannot trace to an application.
+    /// </summary>
+    /// <param name="window">The window handle.</param>
+    /// <returns>The application, or <see langword="null" />.</returns>
+    public static AppId? AppOf(nint window) {
+      return AppOf(new HWND(window));
+    }
+
+    /// <summary>
     /// Installs the hook and reports the application in front now.
     /// </summary>
     public void Start() {
@@ -69,6 +80,19 @@ namespace Rekey.Win32.Focus {
     /// <inheritdoc />
     public void Dispose() {
       _hook?.Dispose();
+    }
+
+    private static AppId? AppOf(HWND window) {
+      _ = PInvoke.GetWindowThreadProcessId(window, out uint processId);
+      if (processId == 0 || processId == (uint)Environment.ProcessId) {
+        return null;
+      }
+
+      AppId app = AppIdentity.Resolve(
+          processId,
+          id => ProcessFacts.Read(id).App,
+          () => AppIdentity.HostedProcess(window));
+      return app.ExePath.Length > 0 || app.Aumid is not null ? app : null;
     }
 
     private static string ClassOf(HWND window) {
@@ -89,20 +113,7 @@ namespace Rekey.Win32.Focus {
     }
 
     private void Report(HWND window) {
-      if (window.IsNull || !CountsAsApp(ClassOf(window))) {
-        return;
-      }
-
-      _ = PInvoke.GetWindowThreadProcessId(window, out uint processId);
-      if (processId == 0 || processId == (uint)Environment.ProcessId) {
-        return;
-      }
-
-      AppId app = AppIdentity.Resolve(
-          processId,
-          id => ProcessFacts.Read(id).App,
-          () => AppIdentity.HostedProcess(window));
-      if (app.ExePath.Length > 0 || app.Aumid is not null) {
+      if (!window.IsNull && CountsAsApp(ClassOf(window)) && AppOf(window) is { } app) {
         Changed?.Invoke(app);
       }
     }

@@ -7,7 +7,7 @@ namespace Rekey.App.ViewModels {
   // The Hotkey page: a preset or a recorded combination becomes the Hotkey at once, unless it
   // conflicts; then the previous Hotkey stays until the user confirms (spec manual-correction,
   // Conflict warning).
-  internal sealed class HotkeyViewModel : ObservableObject {
+  internal sealed class HotkeyViewModel : ObservableObject, IDisposable {
     private const ushort _space = 0x20;
     private const ushort _f1 = 0x70;
     private const ushort _f24 = 0x87;
@@ -20,7 +20,7 @@ namespace Rekey.App.ViewModels {
     public HotkeyViewModel(SettingsHub hub, Func<Hotkey, HotkeyConflict> check) {
       _hub = hub;
       _check = check;
-      _hub.Changed += _ => OnPropertyChanged(nameof(Current));
+      _hub.Changed += OnHubChanged;
     }
 
     public static IReadOnlyList<Hotkey> Presets { get; } = [
@@ -78,6 +78,10 @@ namespace Rekey.App.ViewModels {
       return string.Join('+', parts);
     }
 
+    public void Dispose() {
+      _hub.Changed -= OnHubChanged;
+    }
+
     public void Choose(Hotkey hotkey) {
       HotkeyConflict conflict = _check(hotkey);
       if (conflict == HotkeyConflict.None) {
@@ -117,6 +121,10 @@ namespace Rekey.App.ViewModels {
       }
 
       return "0x" + virtualKey.ToString("X2", CultureInfo.InvariantCulture);
+    }
+
+    private void OnHubChanged(Settings settings) {
+      OnPropertyChanged(nameof(Current));
     }
 
     private void Apply(Hotkey hotkey) {

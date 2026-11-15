@@ -14,7 +14,7 @@ namespace Rekey.App.Tests.ViewModels {
     private readonly HotkeyViewModel _model;
 
     public HotkeyViewModelTests() {
-      _model = new HotkeyViewModel(_hub, hotkey => _conflicts.GetValueOrDefault(hotkey));
+      _model = Create();
     }
 
     public void Dispose() {
@@ -103,6 +103,22 @@ namespace Rekey.App.Tests.ViewModels {
       Hotkey hotkey = Hotkey.Custom(KeyModifiers.Shift | KeyModifiers.Control, 0x70);
 
       Assert.Equal("Ctrl+Shift+F1", HotkeyViewModel.Describe(hotkey));
+    }
+
+    [Fact]
+    public void ADisposedModelNoLongerFollowsTheHub() {
+      using HotkeyViewModel model = Create();
+      var announced = new List<string?>();
+      model.PropertyChanged += (_, e) => announced.Add(e.PropertyName);
+
+      model.Dispose();
+      _hub.Update(settings => settings with { AutoCorrectionEnabled = false });
+
+      Assert.Empty(announced);
+    }
+
+    private HotkeyViewModel Create() {
+      return new HotkeyViewModel(_hub, hotkey => _conflicts.GetValueOrDefault(hotkey));
     }
   }
 }

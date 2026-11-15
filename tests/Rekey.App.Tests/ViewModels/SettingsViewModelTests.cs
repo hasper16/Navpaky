@@ -15,7 +15,7 @@ namespace Rekey.App.Tests.ViewModels {
     public SettingsViewModelTests() {
       _hub = new SettingsHub(new Settings(), _saved.Add, _clock);
       _hub.Changed += _published.Add;
-      _model = new SettingsViewModel(_hub);
+      _model = Create();
     }
 
     public void Dispose() {
@@ -88,6 +88,22 @@ namespace Rekey.App.Tests.ViewModels {
 
       Assert.False(_model.AutoCorrectionEnabled);
       Assert.Contains(string.Empty, announced);
+    }
+
+    [Fact]
+    public void ADisposedModelNoLongerFollowsTheHub() {
+      using SettingsViewModel model = Create();
+      var announced = new List<string?>();
+      model.PropertyChanged += (_, e) => announced.Add(e.PropertyName);
+
+      model.Dispose();
+      _hub.Update(settings => settings with { AutoCorrectionEnabled = false });
+
+      Assert.Empty(announced);
+    }
+
+    private SettingsViewModel Create() {
+      return new SettingsViewModel(_hub);
     }
   }
 }

@@ -17,6 +17,20 @@ namespace Rekey.App {
     private int _settingsOpened;
     private DispatcherTimer? _commandTimer;
 
+    // Publishes a whole check file in one step, so the tool never reads half of it. While the
+    // tool holds the file open the move fails; the next change writes it again.
+    private static void WriteCheckFile(string name, string text) {
+      string path = Path.Join(_dataFolder, name);
+      string draft = path + ".tmp";
+      try {
+        Directory.CreateDirectory(_dataFolder);
+        File.WriteAllText(draft, text);
+        File.Move(draft, path, overwrite: true);
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        // Left for the next write.
+      }
+    }
+
     private void StartUiCheck() {
       _checkingUi = true;
       File.Delete(Path.Join(_dataFolder, _uiCommandFile));
@@ -33,8 +47,15 @@ namespace Rekey.App {
         return;
       }
 
-      string command = File.ReadAllText(path).Trim();
-      File.Delete(path);
+      string command;
+      try {
+        command = File.ReadAllText(path).Trim();
+        File.Delete(path);
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        // The tool is still writing it; the next poll takes it.
+        return;
+      }
+
       if (command == "open-settings") {
         OpenSettings();
         WriteUiState();
@@ -63,8 +84,7 @@ namespace Rekey.App {
       string state = $"language={_tray.LanguageCode} corrections={_corrections} "
           + $"sounds={_sounds?.Played ?? 0} settings-opened={_settingsOpened} "
           + $"indicator={_indicator?.IsShown ?? false}";
-      Directory.CreateDirectory(_dataFolder);
-      File.WriteAllText(Path.Join(_dataFolder, _uiStateFile), state);
+      WriteCheckFile(_uiStateFile, state);
     }
   }
 }

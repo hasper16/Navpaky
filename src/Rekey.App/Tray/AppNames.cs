@@ -18,6 +18,18 @@ namespace Rekey.App.Tray {
       return Choose(description, app.ExePath.Length > 0 ? app.ExePath : app.Key);
     }
 
+    // An Excluded Apps entry: a program path, or the package identity (AUMID) of a Store app,
+    // which names no file.
+    public static string OfKey(string key) {
+      int bang = key.IndexOf('!', StringComparison.Ordinal);
+      if (bang < 0) {
+        return Of(new AppId(key));
+      }
+
+      string family = key[..bang].Split('_')[0];
+      return family[(family.LastIndexOf('.') + 1)..];
+    }
+
     public static string Choose(string? description, string exePath) {
       return string.IsNullOrWhiteSpace(description)
           ? Path.GetFileNameWithoutExtension(exePath)

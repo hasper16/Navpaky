@@ -20,5 +20,11 @@ namespace Rekey.App.Tests.Tray {
     public void DescriptionIsTrimmed() {
       Assert.Equal("Notepad", AppNames.Choose(" Notepad ", @"C:\W\notepad.exe"));
     }
+
+    [Fact]
+    public void PackageIdentityIsNamedByItsPackage() {
+      Assert.Equal(
+          "WindowsTerminal", AppNames.OfKey("Microsoft.WindowsTerminal_8wekyb3d8bbwe!App"));
+    }
   }
 }

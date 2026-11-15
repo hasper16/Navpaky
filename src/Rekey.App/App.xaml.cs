@@ -53,6 +53,9 @@ namespace Rekey.App {
 
     private readonly SignInLaunch _signIn = new();
 
+    // The start-at-sign-in choice last written to or read from Windows; UI thread only.
+    private bool _launchAtSignIn;
+
     private SingleInstanceGuard? _guard;
     private SettingsHub? _hub;
     private TrayViewModel? _tray;
@@ -89,10 +92,12 @@ namespace Rekey.App {
       ApplicationThemeManager.ApplySystemTheme();
 
       // Windows holds the truth about starting at sign-in: Task Manager can change it.
+      _launchAtSignIn = _signIn.IsOn();
       Settings loaded = _settingsStore.Load().ForNewSession() with {
-        LaunchAtSignIn = _signIn.IsOn(),
+        LaunchAtSignIn = _launchAtSignIn,
       };
-      _hub = new SettingsHub(loaded, _settingsStore.Save, TimeProvider.System);
+      _hub = new SettingsHub(
+          loaded, _settingsStore.Save, TimeProvider.System, ReportSettingsNotSaved);
       _indicator = new CursorIndicator();
       _sounds = new SwitchSoundPlayer();
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
@@ -172,6 +177,11 @@ namespace Rekey.App {
       Trace.WriteLine(string.Create(
           CultureInfo.InvariantCulture,
           $"Rekey Incident {incident.Time:O} {incident.Type} {details}"));
+    }
+
+    // The type only: the message names a path inside the user profile.
+    private static void ReportSettingsNotSaved(Exception error) {
+      Trace.WriteLine($"Rekey could not save its settings: {error.GetType().Name}");
     }
 
     // The type only: the message names a path inside the user profile.
@@ -319,10 +329,7 @@ namespace Rekey.App {
 
       bool paused = _tray.State == TrayState.SelfPaused;
       bool resume = _trayView.FindItem(Strings.MenuResume) is not null;
-      Directory.CreateDirectory(_dataFolder);
-      File.WriteAllText(
-          Path.Join(_dataFolder, "check-tray.txt"),
-          $"tooltip-self-paused={paused} resume-item={resume}");
+      WriteCheckFile("check-tray.txt", $"tooltip-self-paused={paused} resume-item={resume}");
     }
 
     private void AddDebugMenuItems(TrayIconView trayView) {
@@ -383,7 +390,11 @@ namespace Rekey.App {
     private void OnSettingsChanged(Settings settings) {
       _worker?.UseSettings(settings);
       _freezeGuard?.UseSettings(settings);
-      if (settings.LaunchAtSignIn != _signIn.IsOn() && Environment.ProcessPath is { } path) {
+
+      // Only the user's own change of this switch writes to Windows, so an unrelated change
+      // never undoes a disable made in Task Manager meanwhile.
+      if (settings.LaunchAtSignIn != _launchAtSignIn && Environment.ProcessPath is { } path) {
+        _launchAtSignIn = settings.LaunchAtSignIn;
         _signIn.Set(settings.LaunchAtSignIn, path);
       }
 
@@ -402,7 +413,8 @@ namespace Rekey.App {
     private void ShowSettings(Type page) {
       if (_settingsWindow is null) {
         // The user may have turned Rekey off under Startup apps in Task Manager meanwhile.
-        _hub!.Update(settings => settings with { LaunchAtSignIn = _signIn.IsOn() });
+        _launchAtSignIn = _signIn.IsOn();
+        _hub!.Update(settings => settings with { LaunchAtSignIn = _launchAtSignIn });
         _settingsWindow = CreateSettingsWindow();
 #if DEBUG
         NoteSettingsOpenedForCheck();
@@ -422,7 +434,7 @@ namespace Rekey.App {
     private SettingsWindow CreateSettingsWindow() {
       var settings = new SettingsViewModel(_hub!);
       var hotkey = new HotkeyViewModel(_hub!, CheckHotkey);
-      var apps = new ExcludedAppsViewModel(_hub!, key => AppNames.Of(new AppId(key)));
+      var apps = new ExcludedAppsViewModel(_hub!, AppNames.OfKey);
       bool dark = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
       SettingsSection[] sections = [
           new(Strings.PageGeneral, SymbolRegular.Settings24,
@@ -436,7 +448,13 @@ namespace Rekey.App {
               new DiagnosticsPage(settings)),
           new(Strings.PageAbout, SymbolRegular.Info24, new AboutPage(dark)),
       ];
-      return new SettingsWindow(sections);
+      var window = new SettingsWindow(sections);
+      window.Closed += (_, _) => {
+        settings.Dispose();
+        hotkey.Dispose();
+        apps.Dispose();
+      };
+      return window;
     }
 
     private void ShowSelfPause(DateTimeOffset? until) {

@@ -15,7 +15,7 @@ namespace Rekey.App.Tests.ViewModels {
     private readonly ExcludedAppsViewModel _model;
 
     public ExcludedAppsViewModelTests() {
-      _model = new ExcludedAppsViewModel(_hub, key => Path.GetFileNameWithoutExtension(key));
+      _model = Create();
     }
 
     public void Dispose() {
@@ -54,6 +54,22 @@ namespace Rekey.App.Tests.ViewModels {
       _hub.Update(settings => settings with { ExcludedApps = new ExcludedAppList([_zebra.Key]) });
 
       Assert.Equal("zebra", Assert.Single(_model.Apps).Name);
+    }
+
+    [Fact]
+    public void ADisposedModelNoLongerFollowsTheHub() {
+      using ExcludedAppsViewModel model = Create();
+      var announced = new List<string?>();
+      model.PropertyChanged += (_, e) => announced.Add(e.PropertyName);
+
+      model.Dispose();
+      _hub.Update(settings => settings with { AutoCorrectionEnabled = false });
+
+      Assert.Empty(announced);
+    }
+
+    private ExcludedAppsViewModel Create() {
+      return new ExcludedAppsViewModel(_hub, key => Path.GetFileNameWithoutExtension(key));
     }
   }
 }

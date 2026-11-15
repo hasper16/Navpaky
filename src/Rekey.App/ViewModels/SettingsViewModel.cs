@@ -5,12 +5,12 @@ using Rekey.Core.Detection;
 namespace Rekey.App.ViewModels {
   // The settings window's view of the settings: each property reads the hub's snapshot and a
   // change replaces it, so the window holds no copy that could go stale.
-  internal sealed class SettingsViewModel : ObservableObject {
+  internal sealed class SettingsViewModel : ObservableObject, IDisposable {
     private readonly SettingsHub _hub;
 
     public SettingsViewModel(SettingsHub hub) {
       _hub = hub;
-      _hub.Changed += _ => OnPropertyChanged(string.Empty);
+      _hub.Changed += OnHubChanged;
     }
 
     public bool AutoCorrectionEnabled {
@@ -76,6 +76,15 @@ namespace Rekey.App.ViewModels {
     public bool RestartAfterFreezeEnabled {
       get => _hub.Current.RestartAfterFreezeEnabled;
       set => _hub.Update(settings => settings with { RestartAfterFreezeEnabled = value });
+    }
+
+    // The hub outlives the settings window, so the window's models let go of it on close.
+    public void Dispose() {
+      _hub.Changed -= OnHubChanged;
+    }
+
+    private void OnHubChanged(Settings settings) {
+      OnPropertyChanged(string.Empty);
     }
 
     private bool Triggers(TriggerKeys key) {

@@ -18,6 +18,10 @@ namespace Rekey.App.Tray {
     private readonly TrayCommands _commands;
     private (string Code, TrayState State, bool Dark, int Size)? _drawn;
 
+    // What the menu was last built from; a refresh with the same content leaves it alone, so
+    // the periodic refresh never resets a menu the user is in.
+    private (bool AutoCorrection, bool Paused, string? Exclude, int Extra)? _built;
+
     public TrayIconView(TaskbarIcon icon, TrayViewModel model, TrayCommands commands) {
       _icon = icon;
       _model = model;
@@ -67,6 +71,13 @@ namespace Rekey.App.Tray {
     }
 
     private void BuildMenu() {
+      var content = (_model.AutoCorrectionEnabled, _model.IsPaused, _model.ExcludeItemText,
+          ExtraItems.Count);
+      if (_built == content) {
+        return;
+      }
+
+      _built = content;
       ItemCollection items = _icon.ContextMenu.Items;
       items.Clear();
       foreach (MenuItem extra in ExtraItems) {
