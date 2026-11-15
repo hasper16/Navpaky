@@ -82,16 +82,18 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.value }}
           EVENT_NAME: ${{ github.event_name }}
-          SIGN_PARAMS: ${{ secrets.VPK_SIGN_PARAMS }}
+          SIGN_PARAMS: ${{ github.event_name == 'push' && secrets.VPK_SIGN_PARAMS || '' }}
         run: |
           $pack = @(
             'pack', '--packId', 'key-switcher', '--packVersion', $env:VERSION,
             '--packDir', 'publish', '--mainExe', 'Rekey.App.exe', '--packTitle', 'Rekey',
             '--delta', 'None', '--exclude', '\.(pdb|xml)$', '--outputDir', 'releases')
-          if ($env:SIGN_PARAMS) {
+          # A dry run never signs, even if a secret of that name exists outside the environment.
+          if ($env:EVENT_NAME -eq 'push') {
+            if (-not $env:SIGN_PARAMS) {
+              throw 'VPK_SIGN_PARAMS is not set in the release environment.'
+            }
             $pack += @('--signParams', $env:SIGN_PARAMS)
-          } elseif ($env:EVENT_NAME -eq 'push') {
-            throw 'VPK_SIGN_PARAMS is not set in the release environment.'
           }
           & .tools/vpk @pack
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
