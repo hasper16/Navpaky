@@ -29,6 +29,9 @@ $auditHash = Get-FolderHash (Join-Path $store 'audit')
 $auditCopy = Join-Path $tmp 'audit-copy'
 Copy-Item -Recurse (Join-Path $store 'audit') $auditCopy
 [IO.File]::AppendAllText((Join-Path $auditCopy 'extra.md'), 'x')
+$staleLink = Join-Path $tmp 'stale-link'
+New-Item -ItemType Directory -Force $staleLink | Out-Null
+Copy-Item -Recurse $auditCopy (Join-Path $staleLink 'audit')
 $cmdsWithShip = Join-Path $tmp 'commands-ship'
 New-Item -ItemType Directory -Force (Join-Path $commands 'opsx'), $cmdsWithShip | Out-Null
 Set-Content (Join-Path $commands 'opsx\apply.md') 'apply'
@@ -86,11 +89,17 @@ $cases = @(
      r = { Test-SecurityAudit $store $store 'audit' $auditHash } },
   @{ n = 'audit hash after one-byte change'; want = $false
      r = { Test-SecurityAudit $tmp $tmp 'audit-copy' $auditHash } },
+  @{ n = 'active audit copy differs from the pin'; want = $false
+     r = { Test-SecurityAudit $store $staleLink 'audit' $auditHash } },
   @{ n = 'audit folder missing'; want = $false; r = { Test-SecurityAudit $store $link 'absent' $auditHash } },
-  @{ n = 'clean repo'; want = $true; r = { Test-NoToolFilesInRepo @(' M AGENTS.md') } },
-  @{ n = 'graph output untracked'; want = $false; r = { Test-NoToolFilesInRepo @('?? graphify-out/graph.json') } },
-  @{ n = 'project skill untracked'; want = $false; r = { Test-NoToolFilesInRepo @('?? .agents/skills/graphify/') } },
-  @{ n = 'project claude skill'; want = $false; r = { Test-NoToolFilesInRepo @('?? .claude/skills/x/SKILL.md') } }
+  @{ n = 'clean repo'; want = $true; r = { Test-NoToolFilesInRepo @(' M AGENTS.md') 0 } },
+  @{ n = 'git status failed'; want = $false; r = { Test-NoToolFilesInRepo @() 128 } },
+  @{ n = 'graph output untracked'; want = $false
+     r = { Test-NoToolFilesInRepo @('?? graphify-out/graph.json') 0 } },
+  @{ n = 'project skill untracked'; want = $false
+     r = { Test-NoToolFilesInRepo @('?? .agents/skills/graphify/') 0 } },
+  @{ n = 'project claude skill'; want = $false
+     r = { Test-NoToolFilesInRepo @('?? .claude/skills/x/SKILL.md') 0 } }
 )
 
 $failures = 0

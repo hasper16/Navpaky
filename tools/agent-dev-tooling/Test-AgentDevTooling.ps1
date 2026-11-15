@@ -97,11 +97,16 @@ function Test-SecurityAudit([string]$storeRoot, [string]$linkRoot, [string]$skil
   $folder = Test-SkillFolder $storeRoot $linkRoot $skill
   $name = "security-audit $skill"
   if (-not $folder.Pass) { return New-Result $name $false $folder.Reason }
+  # The link side is hashed too: an independent stale copy there would be the one tools load.
   $hash = Get-FolderHash (Join-Path $storeRoot $skill)
-  New-Result $name ($hash -eq $pin) "sha256 $hash, pin $pin"
+  $active = Get-FolderHash (Join-Path $linkRoot $skill)
+  New-Result $name ($hash -eq $pin -and $active -eq $pin) "sha256 $hash, active $active, pin $pin"
 }
 
-function Test-NoToolFilesInRepo([string[]]$porcelainLines) {
+function Test-NoToolFilesInRepo([string[]]$porcelainLines, [int]$gitExitCode) {
+  if ($gitExitCode -ne 0) {
+    return New-Result 'no tool files in repo' $false "git status exit $gitExitCode"
+  }
   $hits = @($porcelainLines | Where-Object { $_ -match '^.. "?(graphify-out/|\.claude/skills/|\.agents/skills/)' })
   $reason = if ($hits) { "git status lists $($hits.Count) tool path(s)" } else { 'git status clean for tool paths' }
   New-Result 'no tool files in repo' (-not $hits) $reason
@@ -121,6 +126,11 @@ function Invoke-AgentDevToolingCheck {
   $store = Join-Path $HOME '.ai-global/skills'
   $link = Join-Path $HOME '.claude/skills'
   $repo = (git -C $PSScriptRoot rev-parse --show-toplevel)
+  $gitExit = $LASTEXITCODE
+  if ($gitExit -eq 0) {
+    $status = @(git -C $repo status --porcelain --untracked-files=all)
+    $gitExit = $LASTEXITCODE
+  }
 
   $versionOutput = (graphify --version 2>$null) -join "`n"
   $graphifyExit = $LASTEXITCODE
@@ -141,7 +151,7 @@ function Invoke-AgentDevToolingCheck {
     }
     Test-NoLifecycleCommand (Join-Path $HOME '.claude/commands') $plugins
     Test-SecurityAudit $store $link 'security-audit' $pins.securityAudit.sha256
-    Test-NoToolFilesInRepo @(git -C $repo status --porcelain --untracked-files=all)
+    Test-NoToolFilesInRepo $status $gitExit
   )
   foreach ($r in $results) {
     Write-Output ('{0} {1}: {2}' -f ($(if ($r.Pass) { 'PASS' } else { 'FAIL' })), $r.Name, $r.Reason)
