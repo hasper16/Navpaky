@@ -9,7 +9,7 @@ See `proposal.md` for the motivation. Constraints that shape the approach:
 - Our rules: `AGENTS.md` privacy guardrails, analyzers as the reviewers (warnings as errors), `ub-mode` on every code edit, Conventional Commits, `core.hooksPath = .githooks`.
 - Only Claude Code sessions run the orchestrated flow today.
 
-Owner decisions (2026-11-15): ponytail global at level `lite`; agent-skills as a curated set; Graphify graph kept local and git-ignored, no Graphify git hook, no LLM backend.
+Owner decisions (2026-11-15): ponytail global at level `lite`; agent-skills as a curated set; Graphify graph kept local and git-ignored, no Graphify git hook, no LLM backend; the installed `security-audit` skill joins this change as a review step (D7).
 
 ## Goals / Non-Goals
 
@@ -63,18 +63,53 @@ Owner decisions (2026-11-15): ponytail global at level `lite`; agent-skills as a
 
 ### D4. Orchestrated flow changes
 
-`docs/agents/orchestration.md`, implementer section, gains three lines:
+`docs/agents/orchestration.md`, implementer section, gains four lines:
 
 1. On start, in the worktree: `graphify update .` (first run builds the graph), then use `graphify query` / `path` / `explain` to locate code before broad searches.
 2. Use the curated skills where D3 says they apply.
 3. Before reporting `ready`: `/ponytail-review branch`; fix must-fix findings or explain them in the PR description.
 
-The orchestrator does nothing new: it still merges on required checks and resolved threads. The ponytail review is not a merge gate, so a tool failure never blocks a merge.
+4. Before reporting `ready`, when the diff touches a sensitive area: the guidance-mode security review of D7, recorded in the PR body.
+
+The orchestrator gains one readiness item (D7). The ponytail review is not a merge gate, so a ponytail failure never blocks a merge.
+
+### D7. security-audit: guidance-mode review for sensitive changes
+
+- The skill is already in the canonical store (`C:\Users\Haspe\.ai-global\skills\security-audit\`, from cloudflare/security-audit-skill) and reaches Claude Code through the junction. It is not reinstalled. It ships no version file, so `versions.json` pins it by a SHA-256 over its files (sorted relative path plus content); the check script recomputes it, so a silent update shows up as a mismatch.
+- Owner decision (2026-11-15, relayed by the orchestrator): part of this change.
+- Who and when: the implementer, after its last code commit and before `ready`, in guidance mode. Full audit mode writes an output directory and runs six phases; it stays for an explicit owner request (for example before a release), never a per-PR step.
+- Sensitive areas, with the paths that put a diff in scope:
+
+  | Area | Paths |
+  |---|---|
+  | Keyboard capture, key injection, text replacement, layouts | `src/Rekey.Win32/**`, `NativeMethods.txt` |
+  | Typed-text handling in the engine | `src/Rekey.Core/Engine*.cs`, `src/Rekey.Core/Detection/**`, word-learning and replacement code in `src/Rekey.Core/` |
+  | Logs, diagnostics, Incidents, word-analysis log | `src/Rekey.Core/Diagnostics/**`, `src/Rekey.App/Feedback/**` |
+  | Telemetry | telemetry code added by `add-telemetry` |
+  | Auto-update and installer | `src/Rekey.App/Updates/**`, installer and Velopack config |
+  | Network I/O | any file that adds an HTTP, socket or pipe call |
+  | CI and dependencies | `.github/workflows/**`, `Directory.Packages.props`, `*.csproj` package references |
+
+  The table is copied into `docs/agents/orchestration.md` so both sides use the same list. When unsure, the implementer treats the change as sensitive.
+- Focus of the review for this product: typed text reaching logs, exceptions, files or the network (`AGENTS.md` privacy guardrails); hook callback robustness against injected or malformed input; update download integrity and signature checks; elevation and file-write locations; untrusted data in CI.
+- Sandbox: the skill forbids running target code outside an OS-enforced sandbox. In guidance mode the review is source-only; the build and tests the implementer already runs are its own work, not the skill's.
+- Record in the PR body:
+
+  ```
+  ## Security review
+  Skill: security-audit (guidance mode), reviewed commit <sha>
+  Areas: <areas from the table>
+  Findings: <none | each finding: severity, one line, fixed | deferred: reason>
+  ```
+
+  For a diff outside every area: `Security review: not required`. Findings follow the privacy guardrails: file, line, class of issue, never typed text, Words or window titles.
+- Orchestrator check (new item in step 3 of `docs/agents/orchestration.md`): `gh pr diff <N> --name-only` against the path table; if any path matches, the body must have the section, and `git merge-base --is-ancestor <reviewed-sha> <head>` must hold. If commits after the reviewed one touch a sensitive path, the review is redone. A missing or stale section goes back to the same implementer, like an open thread.
+- Overlap: `security-and-hardening` from agent-skills is for writing code; `security-audit` is the review. D3's table already gives `security-audit` precedence for audits.
 
 ### D5. Pins and the check script
 
 - `tools/agent-dev-tooling/versions.json` holds the Graphify version, the ponytail plugin version and the agent-skills commit, plus the list of curated skills.
-- `tools/agent-dev-tooling/Test-AgentDevTooling.ps1` (PowerShell 7) checks, per tool: Graphify version equals the pin and `graphify --help` exits 0; the two environment variables are set; the Graphify skill folder exists in the canonical store and through `C:\Users\Haspe\.claude\skills`; `claude plugin list` shows ponytail at the pin and `PONYTAIL_DEFAULT_MODE` is `lite`; each curated skill folder exists in the canonical store and carries a `SOURCE` file with the pinned commit; no lifecycle command from agent-skills exists in `C:\Users\Haspe\.claude\commands`; `git status --porcelain` lists nothing under `graphify-out/`, `.claude/skills/` or `.agents/skills/`. Output is one line per check (`PASS`/`FAIL`, check name, reason) and exit code 1 on any failure. It prints paths and versions only.
+- `tools/agent-dev-tooling/Test-AgentDevTooling.ps1` (PowerShell 7) checks, per tool: Graphify version equals the pin and `graphify --help` exits 0; the two environment variables are set; the Graphify skill folder exists in the canonical store and through `C:\Users\Haspe\.claude\skills`; `claude plugin list` shows ponytail at the pin and `PONYTAIL_DEFAULT_MODE` is `lite`; each curated skill folder exists in the canonical store and carries a `SOURCE` file with the pinned commit; no lifecycle command from agent-skills exists in `C:\Users\Haspe\.claude\commands`; the `security-audit` folder exists in the canonical store and through `C:\Users\Haspe\.claude\skills`, and its content hash equals the pin; `git status --porcelain` lists nothing under `graphify-out/`, `.claude/skills/` or `.agents/skills/`. Output is one line per check (`PASS`/`FAIL`, check name, reason) and exit code 1 on any failure. It prints paths and versions only.
 - The checks are functions that take their inputs (command output, paths) as parameters. A case-table test script next to it, `Test-AgentDevTooling.Tests.ps1`, feeds them fake inputs and asserts pass/fail and the exit code, in the style of `.claude/hooks/Test-BlockDangerousGit.ps1` (no Pester dependency).
 - The script is not wired into CI: CI runners do not have the owner's global tools.
 
@@ -89,6 +124,8 @@ This change touches no file under `src/`, `tests/` or `tools/Rekey.DesktopChecks
 - [ponytail and `ub-mode` give different advice] → level `lite` and the precedence line in `AGENTS.md`; if conflicts persist the owner can set `PONYTAIL_DEFAULT_MODE=off` without uninstalling.
 - [Graph is stale after a rebase] → the implementer re-runs `graphify update .` after rebasing; the graph is advisory and never the only source for an edit.
 - [Duplicate skills confuse skill selection] → the overlap table in D3 is copied into `AGENTS.md` as a short precedence list.
+- [Security review skipped because a sensitive path was missed] → the path table lives in one place, the rule is "when unsure, it is sensitive", and the orchestrator checks the diff independently.
+- [Guidance-mode review gives false comfort] → it complements, not replaces, CodeQL, Snyk and the analyzers; full audit mode stays available on request.
 - [More context per session from extra skills and the always-on prompt] → only seven skills, `lite` level, and graph queries replace file reads.
 
 ## Migration Plan

@@ -2,12 +2,12 @@
 
 ## Purpose
 
-Defines the third-party agent tools the development workflow relies on (Graphify, ponytail, agent-skills): their sources, install scope, role in the orchestrated flow, the repo rules they yield to, and how their presence is verified.
+Defines the third-party agent tools and skills the development workflow relies on (Graphify, ponytail, agent-skills, security-audit): their sources, install scope, role in the orchestrated flow, the repo rules they yield to, and how their presence is verified.
 
 ## ADDED Requirements
 
 ### Requirement: Tools come from pinned official sources
-Each tool SHALL be installed only from its official source (PyPI package `graphifyy`, GitHub `DietrichGebert/ponytail`, GitHub `addyosmani/agent-skills`) at a version or commit recorded in `tools/agent-dev-tooling/versions.json`. An update SHALL change that file in the same commit.
+Each tool SHALL be installed only from its official source (PyPI package `graphifyy`, GitHub `DietrichGebert/ponytail`, GitHub `addyosmani/agent-skills`) at a version or commit recorded in `tools/agent-dev-tooling/versions.json`. The already-installed `security-audit` skill SHALL be pinned there by a content hash of its folder. An update SHALL change that file in the same commit.
 
 #### Scenario: Look-alike package is rejected
 - **WHEN** an install step names a package or repository other than the official one (for example PyPI `graphify`)
@@ -64,6 +64,43 @@ Before reporting `ready` to the orchestrator, the implementer SHALL run the pony
 - **WHEN** the self-review reports a must-fix finding
 - **THEN** the PR either contains the fix or its description states why the finding stays
 
+### Requirement: Security review before ready for sensitive changes
+Before reporting `ready`, the implementer SHALL run the `security-audit` skill in guidance mode over its branch's diff when the diff touches a security-sensitive area: keyboard capture, key injection or text replacement, typed-text handling, logs and diagnostics, telemetry, auto-update and installer, network I/O, CI workflows or dependency manifests.
+
+#### Scenario: Sensitive change
+- **WHEN** a branch changes the keyboard capture code
+- **THEN** the implementer runs the guidance-mode security review before reporting `ready`
+
+#### Scenario: Change outside sensitive areas
+- **WHEN** a branch changes only OpenSpec artifacts or UI text resources
+- **THEN** no security review is required and the PR body states "Security review: not required"
+
+#### Scenario: Full audit only on request
+- **WHEN** the implementer runs the security review
+- **THEN** it uses guidance mode and writes no audit output directory; full audit mode runs only when the owner asks for it
+
+### Requirement: Security findings are resolved in the PR
+Each security finding SHALL be fixed in the same PR or listed in the PR body's `Security review` section with a reason for deferring it. That section SHALL name the skill mode, the commit reviewed and the sensitive areas touched. Findings SHALL carry no typed text, Words or window titles.
+
+#### Scenario: Finding fixed
+- **WHEN** the review reports a confirmed finding and the implementer fixes it
+- **THEN** the PR contains the fix and the section lists the finding as fixed
+
+#### Scenario: Finding deferred
+- **WHEN** a finding is not fixed in the PR
+- **THEN** the section lists it with the reason and, where follow-up work is needed, the follow-up's name
+
+### Requirement: Orchestrator verifies the security review
+Before merging a PR whose diff touches a security-sensitive area, the orchestrator SHALL confirm that the PR body has a `Security review` section naming a reviewed commit that is the PR head or an ancestor of it, and SHALL return the PR to the implementer otherwise.
+
+#### Scenario: Section missing
+- **WHEN** a PR touches the auto-update code and its body has no `Security review` section
+- **THEN** the orchestrator sends the PR back to the same implementer and does not merge
+
+#### Scenario: Head moved after the review
+- **WHEN** commits after the reviewed one change files in a sensitive area
+- **THEN** the orchestrator asks the implementer to review again before merging
+
 ### Requirement: Curated skills do not compete with OpenSpec
 Only the curated agent-skills set SHALL be installed. Lifecycle commands that drive specs, plans, builds or releases outside OpenSpec SHALL NOT be installed. Where a curated skill overlaps an existing project skill, the existing skill SHALL be used.
 
@@ -80,7 +117,7 @@ A single check script SHALL report, per tool, pass or fail with a reason, and SH
 
 #### Scenario: All tools present
 - **WHEN** the check script runs on a configured machine
-- **THEN** it reports pass for Graphify, ponytail and agent-skills and exits with code 0
+- **THEN** it reports pass for Graphify, ponytail, agent-skills and security-audit and exits with code 0
 
 #### Scenario: Missing tool
 - **WHEN** one tool is not installed

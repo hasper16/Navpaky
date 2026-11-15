@@ -5,7 +5,7 @@ All installs run on the owner's machine at user scope (design D1–D3). No task 
 ## 1. Pins and check script
 
 - [ ] 1.1 Look up the current releases (Graphify on PyPI `graphifyy`, ponytail plugin release, agent-skills `main` commit) and write `tools/agent-dev-tooling/versions.json` with those pins and the seven curated skill names; verify the file parses with `ConvertFrom-Json` and lists three tools and seven skills
-- [ ] 1.2 Write `tools/agent-dev-tooling/Test-AgentDevTooling.Tests.ps1` with failing cases for each check in design D5 (version match and mismatch, missing skill folder, missing `SOURCE`, lifecycle command present, tool files in `git status`, aggregation to exit code 1); verify it fails because the checks do not exist yet
+- [ ] 1.2 Write `tools/agent-dev-tooling/Test-AgentDevTooling.Tests.ps1` with failing cases for each check in design D5 (version match and mismatch, missing skill folder, missing `SOURCE`, security-audit folder hash match and mismatch, lifecycle command present, tool files in `git status`, aggregation to exit code 1); verify it fails because the checks do not exist yet
 - [ ] 1.3 Implement `tools/agent-dev-tooling/Test-AgentDevTooling.ps1` with the smallest code that passes 1.2, then refactor; verify `pwsh -File tools/agent-dev-tooling/Test-AgentDevTooling.Tests.ps1` passes and the script's output holds only names, versions, paths and status codes
 
 ## 2. Graphify
@@ -26,11 +26,17 @@ All installs run on the owner's machine at user scope (design D1–D3). No task 
 - [ ] 4.1 Clone `addyosmani/agent-skills` at the pinned commit into a temporary folder; copy the seven curated `skills/<name>/` folders into `C:\Users\Haspe\.ai-global\skills\`, each with the repo-level `references/` files it cites and a `SOURCE` file holding repo and commit; verify each folder is visible under `C:\Users\Haspe\.claude\skills\` and no `/spec`, `/plan`, `/build` or `/ship` command from agent-skills exists in `C:\Users\Haspe\.claude\commands\`
 - [ ] 4.2 Verify the new skills appear in a new Claude Code session's skill list and do not replace any existing skill of the same name (none of the seven names exists in the store before 4.1)
 
-## 5. Flow and rules
+## 5. security-audit
 
-- [ ] 5.1 Add to `AGENTS.md` the precedence line (repo rules, `ub-mode`, OpenSpec artifacts and analyzers win over ponytail and agent-skills), the overlap list from design D3, and "no `shortcut:` comments; deferred work goes to `tasks.md` or a follow-up"; verify `AGENTS.md` stays under its current section structure and the `writing-for-agents` skill's checks pass
-- [ ] 5.2 Add the three implementer steps from design D4 to `docs/agents/orchestration.md`; verify each step names the command it runs and the orchestrator section is unchanged
-- [ ] 5.3 Run `pwsh -File tools/agent-dev-tooling/Test-AgentDevTooling.ps1` on the owner's machine; verify every line is `PASS` and the exit code is 0
+- [ ] 5.1 Confirm the installed `C:\Users\Haspe\.ai-global\skills\security-audit\` is the cloudflare/security-audit-skill content (compare `SKILL.md` with that repository's `main`) without reinstalling; compute the folder hash per design D7 and add it to `versions.json`; verify the check script reports `PASS` for security-audit and `FAIL` after a one-byte change to a copy of the folder
+- [ ] 5.2 Run a guidance-mode review on the diff of a past sensitive PR (for example the `add-auto-update-and-installer` merge) as a dry run; verify it writes no output directory, its findings follow the privacy guardrails, and the result fits the PR-body template in design D7
+
+## 6. Flow and rules
+
+- [ ] 6.1 Add to `AGENTS.md` the security review rule (guidance mode before `ready` for sensitive changes, findings never carry typed text), the precedence line (repo rules, `ub-mode`, OpenSpec artifacts and analyzers win over ponytail and agent-skills), the overlap list from design D3, and "no `shortcut:` comments; deferred work goes to `tasks.md` or a follow-up"; verify `AGENTS.md` stays under its current section structure and the `writing-for-agents` skill's checks pass
+- [ ] 6.2 Add the four implementer steps from design D4, the sensitive-path table and the PR-body template from D7 to `docs/agents/orchestration.md`; verify each step names the command it runs
+- [ ] 6.3 Add the security review item to the orchestrator's step 3 readiness check in `docs/agents/orchestration.md` (diff against the path table, section present, reviewed commit is an ancestor of the head, re-review when later commits touch a sensitive path); verify by applying it by hand to PR #32 (sensitive) and to this change's PR (not sensitive) and recording both outcomes in the PR description
+- [ ] 6.4 Run `pwsh -File tools/agent-dev-tooling/Test-AgentDevTooling.ps1` on the owner's machine; verify every line is `PASS` and the exit code is 0
 
 ## Workflow follow-up
 
