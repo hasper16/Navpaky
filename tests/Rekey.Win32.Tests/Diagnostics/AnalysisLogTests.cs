@@ -121,6 +121,24 @@ namespace Rekey.Win32.Tests.Diagnostics {
     }
 
     [Fact]
+    public void ARetryNeverDeletesWordsWrittenAfterTheLogIsOnAgain() {
+      var log = new AnalysisLog(_folder, _time) { Enabled = true };
+      log.Write(_entry);
+      string today = Directory.GetFiles(_folder).Single();
+      using (new FileStream(today, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+        log.Enabled = false;
+        log.Enabled = true;
+      }
+
+      log.Write(_entry with { Word = "ntcn" });
+      log.RetryDeletes();
+
+      string line = Assert.Single(AnalysisLog.ReadAll(_folder));
+      Assert.Contains("ntcn", line, StringComparison.Ordinal);
+      Assert.False(log.HasUndeletedFiles);
+    }
+
+    [Fact]
     public void StartingWithTheLogOffDeletesWhatIsLeft() {
       new AnalysisLog(_folder, _time) { Enabled = true }.Write(_entry);
 

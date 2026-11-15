@@ -112,6 +112,14 @@ namespace Rekey.Win32.Diagnostics {
 
       Directory.CreateDirectory(_folder);
       string path = Path.Join(_folder, FileName(today));
+
+      // A file still waiting to be deleted holds Words from before the log was turned off; a new
+      // entry never joins them, so the delete that follows cannot take it along.
+      RetryDeletes();
+      if (_undeleted.Contains(path, StringComparer.OrdinalIgnoreCase)) {
+        return;
+      }
+
       using FileStream stream = File.Exists(path)
           ? new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.Read)
           : CreateForUserOnly(path);
