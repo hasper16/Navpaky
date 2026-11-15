@@ -1,4 +1,6 @@
-using System.Windows;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using Rekey.App.Updates;
 using Rekey.Win32;
 using Velopack;
@@ -15,34 +17,20 @@ namespace Rekey.App {
       app.Run();
     }
 
-    // Velopack ends the process 30 s after the hook starts; an unanswered question keeps the data.
     private static void Uninstall() {
       string data = DataFolder.Resolve(
           Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), null);
-      new Uninstaller(
-          data,
-          () => new SignInLaunch().Set(false, string.Empty),
-          AskDeleteData,
-          () => ReportNotDeleted(data)).Run();
+      new Uninstaller(data, () => new SignInLaunch().Set(false, string.Empty), AskDeleteData)
+          .Run();
     }
 
-    private static bool AskDeleteData() {
-      MessageBoxResult answer = MessageBox.Show(
-          Strings.UninstallDeleteData,
-          Strings.UninstallTitle,
-          MessageBoxButton.YesNo,
-          MessageBoxImage.Question,
-          MessageBoxResult.No);
-      return answer == MessageBoxResult.Yes;
-    }
-
-    // Another program kept a file open, so the user finishes the deletion by hand.
-    private static void ReportNotDeleted(string data) {
-      MessageBox.Show(
-          UiText.Format(Strings.UninstallDataNotDeleted, data),
-          Strings.UninstallTitle,
-          MessageBoxButton.OK,
-          MessageBoxImage.Warning);
+    // When the question cannot start, the data stays, as when the user declines.
+    private static void AskDeleteData(string data) {
+      try {
+        Process.Start(DataQuestion.StartInfo(data))?.Dispose();
+      } catch (Exception e) when (e is Win32Exception or FileNotFoundException) {
+        Trace.WriteLine($"Rekey could not ask about its data: {e.GetType().Name}");
+      }
     }
   }
 }

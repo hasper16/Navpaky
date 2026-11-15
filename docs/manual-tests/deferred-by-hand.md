@@ -78,13 +78,13 @@ Written against the head of the `add-auto-update-and-installer` PR. Unit tests c
 
 - [ ] **Per-user install (2.1).** Run `key-switcher-win-Setup.exe`.
   Expected: no UAC prompt; Rekey starts with its tray icon; "Rekey" appears in the Start menu and in Settings → Apps → Installed apps; files are under `%LOCALAPPDATA%\key-switcher`, data under `%LOCALAPPDATA%\Rekey`.
-- [ ] **Update from a local feed (2.2).** Install 0.1.0 (Debug), quit it, start `%LOCALAPPDATA%\key-switcher\current\Rekey.App.exe --update-feed <folder> --update-pin "<test subject>" <test CA thumbprint>` with 0.2.0 in the folder, open the tray menu; choose "Restart to update". Then choose the item again with no newer version.
+- [ ] **Update from a local feed (2.2).** Install 0.1.0 (Debug), quit it, start `%LOCALAPPDATA%\key-switcher\current\Rekey.App.exe --update-feed <folder> --update-pin "<test subject>" <test CA thumbprint>` with 0.2.0 in the folder, open the tray menu; choose "Restart to update". The restarted Rekey uses GitHub Releases again, so quit it, start it once more with the same `--update-feed` and `--update-pin` arguments, and choose the item again with no newer version.
   Expected: the item reads "Checking for updates…", then "Restart to update"; Rekey restarts as 0.2.0 (About page); the next check says "Rekey is up to date"; with "Check for updates automatically" off, no check runs at start.
 - [ ] **Update keeps user data (2.3).** Before the update above, change a few settings, add a Protected Word, turn on "Start Rekey when I sign in to Windows" and type a few Words for statistics.
   Expected: after the restart into 0.2.0 the settings, the Protected Word and the statistics are unchanged, and Rekey still starts at the next sign-in.
 - [ ] **Tampered and unsigned packages (3.2).** In the local feed, replace the 0.2.0 `.nupkg` with a copy that has one byte changed (keep `releases.win.json`), and choose "Check for updates". Then restore a 0.2.0 package packed without signing (checksums updated by `vpk pack`) and check again.
   Expected: both times the item reads "Could not check for updates", 0.1.0 keeps running, `%LOCALAPPDATA%\key-switcher\packages` holds no 0.2.0 package, and `%LOCALAPPDATA%\Rekey\incidents.jsonl` gains `UpdateChecksumFailed`, then `UpdateSignatureFailed` with `SignatureVerdict.NotSigned`.
-- [ ] **Uninstall, keeping data (4.1).** With Rekey installed and "Start Rekey when I sign in to Windows" on, uninstall it from Installed apps and answer No.
+- [ ] **Uninstall, keeping data (4.1).** With Rekey installed and "Start Rekey when I sign in to Windows" on, uninstall it from Installed apps, wait a minute before answering the question that appears, and answer No.
   Expected: Rekey closes; `%LOCALAPPDATA%\key-switcher`, the Start menu entry and the Run entry (Task Manager → Startup apps) are gone; `%LOCALAPPDATA%\Rekey` is still there; installing again picks up the old settings and word lists.
 - [ ] **Uninstall, deleting data (4.1).** Uninstall again and answer Yes.
   Expected: `%LOCALAPPDATA%\Rekey` no longer exists and Rekey does not start at the next sign-in.
