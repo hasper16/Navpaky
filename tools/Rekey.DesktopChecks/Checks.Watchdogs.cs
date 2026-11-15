@@ -155,7 +155,7 @@ namespace Rekey.DesktopChecks {
       _restorer.Defer("Rekey restart state", SystemState.KeepFile("restart-state.txt"));
       _restorer.Defer("Rekey tray check file", SystemState.KeepFile("check-tray.txt"));
       _restorer.Defer("test Rekey processes", StopTestApps);
-      File.Delete(Path.Join(SystemState.DataFolder, "settings.json"));
+      SystemState.UseDefaultSettings();
       File.Delete(state);
 
       var start = new ProcessStartInfo(AppPath());
@@ -212,7 +212,7 @@ namespace Rekey.DesktopChecks {
       _restorer.Defer("test Rekey processes", StopTestApps);
 
       // A recent real restart or saved settings could stop the test restart; start clean.
-      File.Delete(Path.Join(SystemState.DataFolder, "settings.json"));
+      SystemState.UseDefaultSettings();
       File.Delete(Path.Join(SystemState.DataFolder, "restart-state.txt"));
       string state = Path.Join(SystemState.DataFolder, "restart-state.txt");
       DateTime stateBefore = File.Exists(state) ? File.GetLastWriteTime(state) : DateTime.MinValue;

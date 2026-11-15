@@ -139,6 +139,24 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Press Ctrl+Z to undo..
+        /// </summary>
+        public static string CorrectionTip {
+            get {
+                return ResourceManager.GetString("CorrectionTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey corrected a word.
+        /// </summary>
+        public static string CorrectionTipTitle {
+            get {
+                return ResourceManager.GetString("CorrectionTipTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Correct when I press.
         /// </summary>
         public static string CorrectWhenIPress {
@@ -436,6 +454,42 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Install.
+        /// </summary>
+        public static string LocationInstall {
+            get {
+                return ResourceManager.GetString("LocationInstall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not now.
+        /// </summary>
+        public static string LocationNotNow {
+            get {
+                return ResourceManager.GetString("LocationNotNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey is not installed.
+        /// </summary>
+        public static string LocationTitle {
+            get {
+                return ResourceManager.GetString("LocationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey is running from a temporary folder, a ZIP file or Downloads. It stops working when this copy is removed. Install Rekey to keep it working and up to date..
+        /// </summary>
+        public static string LocationWarning {
+            get {
+                return ResourceManager.GetString("LocationWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About Rekey.
         /// </summary>
         public static string MenuAbout {
@@ -585,6 +639,42 @@ namespace Rekey.App {
         public static string MenuUpToDate {
             get {
                 return ResourceManager.GetString("MenuUpToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome and setup.
+        /// </summary>
+        public static string MenuWelcome {
+            get {
+                return ResourceManager.GetString("MenuWelcome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string MovedClose {
+            get {
+                return ResourceManager.GetString("MovedClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey keeps working until you quit it or restart the computer, but it will not start again. To keep using it, install Rekey again..
+        /// </summary>
+        public static string MovedNotice {
+            get {
+                return ResourceManager.GetString("MovedNotice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey&apos;s files were moved or deleted.
+        /// </summary>
+        public static string MovedTitle {
+            get {
+                return ResourceManager.GetString("MovedTitle", resourceCulture);
             }
         }
         
@@ -1206,6 +1296,150 @@ namespace Rekey.App {
         public static string VerifiedReplacementHint {
             get {
                 return ResourceManager.GetString("VerifiedReplacementHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your choices.
+        /// </summary>
+        public static string WelcomeChoicesTitle {
+            get {
+                return ResourceManager.GetString("WelcomeChoicesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey fixes a word you typed in the wrong keyboard layout, such as &quot;ghbdtn&quot; instead of &quot;привет&quot;, and switches the layout for you..
+        /// </summary>
+        public static string WelcomeDescription {
+            get {
+                return ResourceManager.GetString("WelcomeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Done.
+        /// </summary>
+        public static string WelcomeDone {
+            get {
+                return ResourceManager.GetString("WelcomeDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hotkey for a manual correction.
+        /// </summary>
+        public static string WelcomeHotkeyTitle {
+            get {
+                return ResourceManager.GetString("WelcomeHotkeyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open language settings.
+        /// </summary>
+        public static string WelcomeLanguageSettings {
+            get {
+                return ResourceManager.GetString("WelcomeLanguageSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey needs at least two keyboard layouts in different languages. Add another one in Windows language settings..
+        /// </summary>
+        public static string WelcomeOneLayout {
+            get {
+                return ResourceManager.GetString("WelcomeOneLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey reads keystrokes only to check the word you are typing. It never sends your text anywhere and never uses the clipboard..
+        /// </summary>
+        public static string WelcomePrivacy {
+            get {
+                return ResourceManager.GetString("WelcomePrivacy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your typing stays on this computer.
+        /// </summary>
+        public static string WelcomePrivacyTitle {
+            get {
+                return ResourceManager.GetString("WelcomePrivacyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to Rekey.
+        /// </summary>
+        public static string WelcomeTitle {
+            get {
+                return ResourceManager.GetString("WelcomeTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows may hide the Rekey icon under the arrow in the taskbar. To keep it visible, open Settings &gt; Personalization &gt; Taskbar &gt; Other system tray icons and turn Rekey on..
+        /// </summary>
+        public static string WelcomeTrayTip {
+            get {
+                return ResourceManager.GetString("WelcomeTrayTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keep Rekey in sight.
+        /// </summary>
+        public static string WelcomeTrayTitle {
+            get {
+                return ResourceManager.GetString("WelcomeTrayTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type a word in the wrong layout, then press Space. For example, with English (US) on, type ghbdtn for the Russian &quot;привет&quot;. Your languages: {0}..
+        /// </summary>
+        public static string WelcomeTryIt {
+            get {
+                return ResourceManager.GetString("WelcomeTryIt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Try-it field.
+        /// </summary>
+        public static string WelcomeTryItField {
+            get {
+                return ResourceManager.GetString("WelcomeTryItField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Try it.
+        /// </summary>
+        public static string WelcomeTryItTitle {
+            get {
+                return ResourceManager.GetString("WelcomeTryItTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It works: Rekey corrected the word and switched the layout..
+        /// </summary>
+        public static string WelcomeTryItWorked {
+            get {
+                return ResourceManager.GetString("WelcomeTryItWorked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not what you meant? Press Ctrl+Z right after a correction, or press your hotkey, to get your typing back..
+        /// </summary>
+        public static string WelcomeUndo {
+            get {
+                return ResourceManager.GetString("WelcomeUndo", resourceCulture);
             }
         }
         

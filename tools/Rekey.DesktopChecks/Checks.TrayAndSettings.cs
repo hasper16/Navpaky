@@ -113,7 +113,9 @@ namespace Rekey.DesktopChecks {
       return Desktop.FindWindow(_indicatorTitle, TimeSpan.Zero) is not null;
     }
 
-    private bool StartUiApp() {
+    // Starts the Debug app with --check-ui and no word lists; a first start has no settings,
+    // otherwise the defaults with the welcome completed.
+    private bool StartUiApp(bool firstStart = false) {
       if (Process.GetProcessesByName(_appName).Length > 0) {
         Expect("prerequisites", false, "close the running Rekey first");
         return false;
@@ -121,14 +123,24 @@ namespace Rekey.DesktopChecks {
 
       // Defaults: Auto Correction on, the indicator on, the sound off; no learned words.
       _restorer.Defer("Rekey settings file", SystemState.KeepFile("settings.json"));
+      _restorer.Defer("Rekey start at sign-in", SystemState.KeepSignInLaunch());
       _restorer.Defer("Rekey word lists", SystemState.KeepFile("words.json"));
       _restorer.Defer("Rekey UI check file", SystemState.KeepFile("check-ui.txt"));
       _restorer.Defer("Rekey UI command file", SystemState.KeepFile("check-ui-command.txt"));
       _restorer.Defer("test Rekey processes", StopTestApps);
-      File.Delete(Path.Join(SystemState.DataFolder, "settings.json"));
-      File.Delete(Path.Join(SystemState.DataFolder, "words.json"));
-      File.Delete(UiStatePath());
+      if (firstStart) {
+        File.Delete(Path.Join(SystemState.DataFolder, "settings.json"));
+      } else {
+        SystemState.UseDefaultSettings();
+      }
 
+      File.Delete(Path.Join(SystemState.DataFolder, "words.json"));
+      return LaunchUiApp();
+    }
+
+    // Starts the Debug app with --check-ui and waits for its first check file.
+    private bool LaunchUiApp() {
+      File.Delete(UiStatePath());
       var start = new ProcessStartInfo(AppPath());
       start.ArgumentList.Add("--check-ui");
       _app = Process.Start(start)

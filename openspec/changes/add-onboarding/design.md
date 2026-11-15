@@ -20,7 +20,7 @@ The original opens a welcome window on first run with a short explanation and a 
 Not a multi-step wizard: content is short, and a page lets users skim. Order: keycap mark + one-sentence description → privacy statement → try-it field → choices → tray pinning tip → Done. The try-it field is a normal WPF `TextBox`; Rekey's hook sees it like any other app, so success proves the whole pipeline. Rekey's own process is never an Excluded App for this reason.
 
 ### D2. Success detection
-The engine emits a `CorrectionApplied` event with the target app id; when it matches Rekey's own process and the focused element is the try-it box, the view-model shows the confirmation.
+The worker already reports every Layout Switch it makes as `SwitchFeedback`; one with cause `Correction` while the welcome window is active and the try-it box has keyboard focus makes the view-model show the confirmation (revision R1).
 
 ### D3. Hook start
 Keyboard capture starts immediately on first run (Windows needs no permission), unlike the original which waits for macOS permissions.
@@ -32,8 +32,18 @@ Keyboard capture starts immediately on first run (Windows needs no permission), 
 - File disappearance: `FileSystemWatcher` on the executable's folder plus a 60 s existence check fallback.
 
 ### D5. Tray pinning tip
-Windows offers no API to pin a tray icon; show an illustration and text: Settings → Personalization → Taskbar → Other system tray icons → Rekey.
+Windows offers no API to pin a tray icon; show text naming the path: Settings → Personalization → Taskbar → Other system tray icons → Rekey (revision R2).
 
 ## Risks / Trade-offs
 
 - [Users dismiss the window without reading] → it can be reopened from the tray; the first Correction also shows a one-time toast "Rekey corrected a word. Press Ctrl+Z to undo."
+
+## Revisions
+
+- **R1. No new engine event.** The design first named a `CorrectionApplied` engine event. The worker's existing `Switched` event already carries `SwitchFeedback` with cause `Correction` after each applied Correction, and only Rekey's own window can hold the try-it box's focus, so the app checks focus instead of comparing app ids. The engine stays unchanged.
+- **R2. Tray tip is text only.** An illustration of the Windows Settings page would go stale with each Windows release; the path in words stays correct and is read by screen readers.
+- **R3. The one-time toast is remembered.** `Settings.CorrectionTipShown` records that the toast after the first real Correction was shown, so it appears once per user, not once per session. A Correction in the try-it field does not count. The toast is a tray notification (`TaskbarIcon.ShowNotification`).
+- **R4. First start defaults.** While `WelcomeCompleted` is false, start-up turns launch at sign-in on through the settings hub, so Windows gets the choice even when the user closes the welcome window without touching it. Closing the window in any way sets `WelcomeCompleted`.
+- **R5. Language settings link.** The single-Layout notice opens `ms-settings:regionlanguage` through `explorer.exe` by its full path. "One Layout" means one language: two Layouts of the same language cannot be corrected between.
+- **R6. Location dialogs.** The temporary-location warning and the disappearance notice are WPF UI message boxes with Install as the primary button; Install runs `key-switcher-win-Setup.exe` from the executable's folder when present, otherwise opens `https://github.com/hasper16/key-switcher/releases/latest`. The Downloads folder comes from `SHGetKnownFolderPath(FOLDERID_Downloads)` in `Rekey.Win32.KnownFolders`; the temporary folders are `Path.GetTempPath()` and `%LOCALAPPDATA%\Temp`.
+- **R7. Desktop checks skip the welcome.** The `tray-and-settings` set and the watchdog checks start the Debug app with `{ "welcomeCompleted": true }` instead of no settings, so the welcome window cannot take the front from their test windows; the new `onboarding` set starts with no settings and puts Rekey's start-at-sign-in entries back afterwards.

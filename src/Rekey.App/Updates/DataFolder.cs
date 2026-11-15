@@ -1,4 +1,5 @@
 using System.IO;
+using Rekey.App.Onboarding;
 using Velopack.Locators;
 
 namespace Rekey.App.Updates {
@@ -9,18 +10,11 @@ namespace Rekey.App.Updates {
     // when the user declines deletion; a packaging mistake must not reach a user's data.
     public static string Resolve(string localAppData, IVelopackLocator? locator) {
       string data = Path.GetFullPath(Path.Join(localAppData, "Rekey"));
-      if (locator?.RootAppDir is { } root && Contains(root, data)) {
+      if (locator?.RootAppDir is { } root && AppLocation.IsInside(root, data)) {
         throw new InvalidOperationException("The data folder lies inside the install root.");
       }
 
       return data;
-    }
-
-    private static bool Contains(string root, string path) {
-      string parent = Path.TrimEndingDirectorySeparator(Path.GetFullPath(root))
-          + Path.DirectorySeparatorChar;
-      return (path + Path.DirectorySeparatorChar).StartsWith(
-          parent, StringComparison.OrdinalIgnoreCase);
     }
   }
 }

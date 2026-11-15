@@ -8,7 +8,8 @@ namespace Rekey.DesktopChecks {
   /// Runs the desktop checks of change add-keyboard-capture-and-layouts on this machine, or with
   /// <c>text-replacement</c> those of change add-text-replacement, or with
   /// <c>auto-correction</c> those of change add-auto-correction, or with
-  /// <c>tray-and-settings</c> those of change add-tray-and-settings-ui.
+  /// <c>tray-and-settings</c> those of change add-tray-and-settings-ui, or with
+  /// <c>onboarding</c> those of change add-onboarding.
   /// </summary>
   /// <remarks>
   /// Output carries counts, kinds and codes only, never typed text. With <c>host</c> it instead
@@ -46,6 +47,12 @@ namespace Rekey.DesktopChecks {
         // The checks' worker only watches; the Debug app under test corrects.
         using var trayAndSettings = new Checks();
         return trayAndSettings.RunTrayAndSettings();
+      }
+
+      if (args is ["onboarding"]) {
+        // The checks' worker only watches; the Debug app under test corrects.
+        using var onboarding = new Checks();
+        return onboarding.RunOnboarding();
       }
 
       if (args is ["console-probe"]) {

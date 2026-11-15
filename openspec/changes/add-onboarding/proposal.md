@@ -24,5 +24,5 @@ None.
 ## Impact
 
 - `Rekey.App`: welcome window and view-model, try-it field, location checks.
-- Settings: `WelcomeCompleted`.
+- Settings: `WelcomeCompleted`, `CorrectionTipShown`.
 - Depends on `add-tray-and-settings-ui` and `add-auto-update-and-installer` (install root and the Install option); the privacy block is filled in by `add-telemetry`.

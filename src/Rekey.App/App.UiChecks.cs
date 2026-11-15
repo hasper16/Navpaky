@@ -4,9 +4,10 @@ using System.Windows.Threading;
 using Rekey.Core;
 
 namespace Rekey.App {
-  // For tools/Rekey.DesktopChecks (set tray-and-settings): with --check-ui the app writes what
-  // its tray, indicator and sound did to check-ui.txt and takes commands from
-  // check-ui-command.txt, standing in for clicks on the tray menu. Debug builds only.
+  // For tools/Rekey.DesktopChecks (sets tray-and-settings and onboarding): with --check-ui the
+  // app writes what its tray, indicator, sound and Undo tip did to check-ui.txt and takes
+  // commands from check-ui-command.txt, standing in for clicks on the tray menu. Debug builds
+  // only.
   internal sealed partial class App {
     private const string _checkUi = "--check-ui";
     private const string _uiStateFile = "check-ui.txt";
@@ -15,6 +16,7 @@ namespace Rekey.App {
     private bool _checkingUi;
     private int _corrections;
     private int _settingsOpened;
+    private int _tips;
     private DispatcherTimer? _commandTimer;
 
     // Publishes a whole check file in one step, so the tool never reads half of it. While the
@@ -59,6 +61,8 @@ namespace Rekey.App {
       if (command == "open-settings") {
         OpenSettings();
         WriteUiState();
+      } else if (command == "open-welcome") {
+        OpenWelcome();
       } else if (command == "quit") {
         Shutdown();
       } else {
@@ -76,6 +80,11 @@ namespace Rekey.App {
       _settingsOpened++;
     }
 
+    private void NoteTipForCheck() {
+      _tips++;
+      WriteUiState();
+    }
+
     private void WriteUiState() {
       if (!_checkingUi || _tray is null) {
         return;
@@ -83,7 +92,7 @@ namespace Rekey.App {
 
       string state = $"language={_tray.LanguageCode} corrections={_corrections} "
           + $"sounds={_sounds?.Played ?? 0} settings-opened={_settingsOpened} "
-          + $"indicator={_indicator?.IsShown ?? false}";
+          + $"indicator={_indicator?.IsShown ?? false} tips={_tips}";
       WriteCheckFile(_uiStateFile, state);
     }
   }
