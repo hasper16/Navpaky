@@ -99,6 +99,46 @@ namespace Rekey.Win32.Tests.Diagnostics {
     }
 
     [Fact]
+    public void TurningOffDeletesEveryFileItCanAndRetriesTheRest() {
+      var log = new AnalysisLog(_folder, _time) { Enabled = true };
+      log.Write(_entry);
+      _time.Advance(TimeSpan.FromDays(1));
+      log.Write(_entry);
+      string[] files = [.. Directory.GetFiles(_folder).Order(StringComparer.Ordinal)];
+
+      // Another app holds the older day open without delete sharing, as an editor may.
+      using (new FileStream(files[0], FileMode.Open, FileAccess.Read, FileShare.Read)) {
+        log.Enabled = false;
+
+        Assert.Equal([files[0]], Directory.GetFiles(_folder));
+        Assert.True(log.HasUndeletedFiles);
+      }
+
+      log.RetryDeletes();
+
+      Assert.Empty(Directory.GetFiles(_folder));
+      Assert.False(log.HasUndeletedFiles);
+    }
+
+    [Fact]
+    public void ARetryNeverDeletesWordsWrittenAfterTheLogIsOnAgain() {
+      var log = new AnalysisLog(_folder, _time) { Enabled = true };
+      log.Write(_entry);
+      string today = Directory.GetFiles(_folder).Single();
+      using (new FileStream(today, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+        log.Enabled = false;
+        log.Enabled = true;
+      }
+
+      log.Write(_entry with { Word = "ntcn" });
+      log.RetryDeletes();
+
+      string line = Assert.Single(AnalysisLog.ReadAll(_folder));
+      Assert.Contains("ntcn", line, StringComparison.Ordinal);
+      Assert.False(log.HasUndeletedFiles);
+    }
+
+    [Fact]
     public void StartingWithTheLogOffDeletesWhatIsLeft() {
       new AnalysisLog(_folder, _time) { Enabled = true }.Write(_entry);
 
