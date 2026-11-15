@@ -24,6 +24,7 @@ using Rekey.Win32.Focus;
 using Rekey.Win32.Hotkeys;
 using Velopack.Locators;
 #if DEBUG
+using Rekey.Win32.Updates;
 using Velopack.Sources;
 #endif
 using Wpf.Ui.Appearance;
@@ -43,6 +44,7 @@ namespace Rekey.App {
     private const string _checkQuit = "--check-quit";
     private const string _checkSettings = "--check-settings";
     private const string _updateFeed = "--update-feed";
+    private const string _updatePin = "--update-pin";
 #endif
 
     // The tray says how many minutes of a Pause remain and notices its end.
@@ -457,15 +459,22 @@ namespace Rekey.App {
     }
 
     private void StartUpdates() {
-      VelopackUpdates service = VelopackUpdates.FromReleases(() => Shutdown());
+      VelopackUpdates service = VelopackUpdates.FromReleases(() => Shutdown(), RecordIncident);
 #if DEBUG
-      // For the by-hand update checks: a local feed folder instead of GitHub Releases.
+      // For the by-hand update checks: a local feed folder instead of GitHub Releases, and a
+      // test publisher (subject, then issuing CA thumbprint) instead of the Rekey one.
       string[] args = Environment.GetCommandLineArgs();
       int feed = Array.IndexOf(args, _updateFeed);
+      int pin = Array.IndexOf(args, _updatePin);
       if (feed >= 0 && feed + 1 < args.Length) {
+        var publisher = pin >= 0 && pin + 2 < args.Length
+            ? new PublisherPin(args[pin + 1], [args[pin + 2]])
+            : PublisherPin.None;
+        var manager = new RekeyUpdateManager(
+            new SimpleFileSource(new DirectoryInfo(args[feed + 1])),
+            package => PackageSignature.Verify(package, RekeyPublisher.MainExe, publisher));
         service = new VelopackUpdates(
-            new RekeyUpdateManager(new SimpleFileSource(new DirectoryInfo(args[feed + 1]))),
-            () => Shutdown());
+            manager, () => Shutdown(), RecordIncident, TimeProvider.System);
       }
 #endif
       _updates = new UpdateScheduler(

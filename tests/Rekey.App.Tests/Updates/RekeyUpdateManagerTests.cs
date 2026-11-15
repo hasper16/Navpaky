@@ -1,4 +1,5 @@
 using Rekey.App.Updates;
+using Rekey.Win32.Updates;
 using Velopack;
 using Xunit;
 
@@ -29,7 +30,7 @@ namespace Rekey.App.Tests.Updates {
     }
 
     private RekeyUpdateManager Manager() {
-      return new RekeyUpdateManager(_feed, _feed.Locator);
+      return new RekeyUpdateManager(_feed, _ => SignatureVerdict.Valid, _feed.Locator);
     }
   }
 }

@@ -13,8 +13,8 @@
 
 ## 3. Authenticity
 
-- [ ] 3.1 Write failing tests for the signature policy (valid pinned publisher passes; unsigned, other publisher, revoked → fail) using test-signed fixtures; implement `WinVerifyTrust` + publisher pin; verify they pass
-- [ ] 3.2 Override `VerifyPackageChecksumAsync` to run checksum then signature checks, discard on failure and record an Incident; verify manually with a tampered package and an unsigned package from a local feed
+- [x] 3.1 Write failing tests for the signature policy (valid pinned publisher passes; unsigned, other publisher, revoked → fail) using test-signed fixtures; implement `WinVerifyTrust` + publisher pin; verify they pass (fixtures per design R6)
+- [x] 3.2 Override `VerifyPackageChecksumAsync` to run checksum then signature checks, discard on failure and record an Incident; verify manually with a tampered package and an unsigned package from a local feed (unit tests with a fake feed pass; the local-feed check is deferred to `deferred-by-hand.md`)
 
 ## 4. Uninstall and release
 
