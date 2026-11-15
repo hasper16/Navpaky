@@ -15,6 +15,7 @@ namespace Rekey.App.Tests.Updates {
       Assert.Equal(
           Path.Join(Environment.SystemDirectory, @"WindowsPowerShell\v1.0\powershell.exe"),
           start.FileName);
+      Assert.Equal(Environment.SystemDirectory, start.WorkingDirectory);
       Assert.False(start.UseShellExecute);
       Assert.True(start.CreateNoWindow);
     }

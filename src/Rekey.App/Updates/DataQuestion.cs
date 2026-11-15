@@ -30,6 +30,8 @@ namespace Rekey.App.Updates {
     public static ProcessStartInfo StartInfo(string dataFolder) {
       var start = new ProcessStartInfo(
           Path.Join(Environment.SystemDirectory, @"WindowsPowerShell\v1.0\powershell.exe")) {
+        // Not the install folder the hook runs in, which an open handle would keep on disk.
+        WorkingDirectory = Environment.SystemDirectory,
         UseShellExecute = false,
         CreateNoWindow = true,
       };
