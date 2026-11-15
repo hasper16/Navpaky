@@ -2,8 +2,8 @@
 
 ## 1. Data layout and versions
 
-- [ ] 1.1 Write a failing test that the user-data folder never lies inside the Velopack root app dir (fake locator with root `%LOCALAPPDATA%\key-switcher`); implement the path resolver; verify it passes
-- [ ] 1.2 Write failing tests for the version gate (lower or equal → rejected); implement; verify they pass
+- [x] 1.1 Write a failing test that the user-data folder never lies inside the Velopack root app dir (fake locator with root `%LOCALAPPDATA%\key-switcher`); implement the path resolver; verify it passes
+- [x] 1.2 Write failing tests for the version gate (lower or equal → rejected); implement; verify they pass
 
 ## 2. Velopack integration
 
