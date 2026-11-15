@@ -18,8 +18,7 @@ namespace Rekey.App.Tray {
     private readonly TrayCommands _commands;
     private (string Code, TrayState State, bool Dark, int Size)? _drawn;
 
-    // What the menu was last built from; a refresh with the same content leaves it alone, so
-    // the periodic refresh never resets a menu the user is in.
+    // What the menu was last built from; a refresh with the same content leaves it alone.
     private (bool AutoCorrection, bool Paused, string? Exclude, int Extra)? _built;
 
     public TrayIconView(TaskbarIcon icon, TrayViewModel model, TrayCommands commands) {
@@ -28,6 +27,9 @@ namespace Rekey.App.Tray {
       _commands = commands;
       _icon.MenuActivation = PopupActivationMode.LeftOrRightClick;
       _icon.ContextMenu = new ContextMenu();
+
+      // A change that came while the menu was open shows once it closes.
+      _icon.ContextMenu.Closed += (_, _) => BuildMenu();
     }
 
     // For the desktop checks: the debug items the app adds go first.
@@ -73,7 +75,10 @@ namespace Rekey.App.Tray {
     private void BuildMenu() {
       var content = (_model.AutoCorrectionEnabled, _model.IsPaused, _model.ExcludeItemText,
           ExtraItems.Count);
-      if (_built == content) {
+
+      // The WPF build of H.NotifyIcon shows this ContextMenu itself, so rebuilding it while
+      // open would drop the user's place in it.
+      if (_built == content || _icon.ContextMenu.IsOpen) {
         return;
       }
 
