@@ -269,6 +269,25 @@ namespace Rekey.Core {
       return _settings.StatisticsEnabled ? [new RecordStat(counter, duration)] : [];
     }
 
+    // Spec statistics-and-diagnostics: the word-analysis log is opt-in.
+    private EngineAction[] Analysis(
+        IReadOnlyList<Keystroke> word,
+        string typed,
+        LayoutId layout,
+        DecisionKind decision,
+        bool protectedWord) {
+      if (!_settings.AnalysisLogEnabled) {
+        return [];
+      }
+
+      TargetRendering[] renderings = [.. _keyMapsInOrder
+          .Where(map => map.Layout != layout)
+          .Select(map => (map.Layout, Text: map.Render(word)))
+          .Where(rendering => rendering.Text is not null)
+          .Select(rendering => new TargetRendering(rendering.Layout, rendering.Text!))];
+      return [new LogAnalysis(typed, layout, renderings, decision, protectedWord)];
+    }
+
     private EngineAction[] OnKeyDown(KeyDown keyDown) {
       // Modifiers are pressed on the way to Ctrl+Z or as the Hotkey, so they keep the
       // Correction undoable and neither end nor extend the typing gap.
@@ -360,6 +379,7 @@ namespace Rekey.Core {
         return [
             .. Count(StatCounter.WordsAnalysed),
             .. Count(StatCounter.ProtectedWordDecisions),
+            .. Analysis(word, typed, layout, DecisionKind.Keep, protectedWord: true),
             new WordListsChanged(),
         ];
       }
@@ -367,7 +387,10 @@ namespace Rekey.Core {
       Decision decision = _evaluate?.Invoke(word, layout)
           ?? _detector.Decide(word, layout, _settings.Sensitivity);
       EngineAction[] counted = [
-          .. Count(StatCounter.WordsAnalysed), .. Count(CounterOf(decision.Kind))];
+          .. Count(StatCounter.WordsAnalysed),
+          .. Count(CounterOf(decision.Kind)),
+          .. Analysis(word, typed, layout, decision.Kind, protectedWord: false),
+      ];
       Correction? correction = DeferredWords.Add(decision);
       if (correction is null) {
         ContinueOrEndRun(decision, trigger, typed);

@@ -154,5 +154,33 @@ namespace Rekey.Core.Tests {
       using JsonDocument document = JsonDocument.Parse(json);
       Assert.Equal(1, document.RootElement.GetProperty("version").GetInt32());
     }
+
+    [Fact]
+    public void StatisticsAreOnAndTheAnalysisLogOffByDefault() {
+      var defaults = new Settings();
+
+      Assert.True(defaults.StatisticsEnabled);
+      Assert.False(defaults.AnalysisLogEnabled);
+    }
+
+    [Fact]
+    public void FileWithoutDiagnosticsSettingsGetsTheDefaults() {
+      Settings? settings = JsonSerializer.Deserialize(
+          "{ \"autoCorrectionEnabled\": true }", SettingsJsonContext.Default.Settings);
+
+      Assert.True(settings!.StatisticsEnabled);
+      Assert.False(settings.AnalysisLogEnabled);
+    }
+
+    [Fact]
+    public void ChangedDiagnosticsSettingsRoundTripThroughJson() {
+      var settings = new Settings(StatisticsEnabled: false, AnalysisLogEnabled: true);
+
+      string json = JsonSerializer.Serialize(settings, SettingsJsonContext.Default.Settings);
+      Settings? restored = JsonSerializer.Deserialize(json, SettingsJsonContext.Default.Settings);
+
+      Assert.False(restored!.StatisticsEnabled);
+      Assert.True(restored.AnalysisLogEnabled);
+    }
   }
 }

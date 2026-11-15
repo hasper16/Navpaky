@@ -12,9 +12,9 @@
 
 ## 3. Word-analysis log
 
-- [ ] 3.1 Add `AnalysisLogEnabled` (off) and `StatisticsEnabled` (on) to `Settings`; verify defaults tests pass
-- [ ] 3.2 Write failing tests: off → no file; on → entries written; 7-day retention; turning off deletes files; implement; verify they pass
-- [ ] 3.3 Apply the user-only DACL on file creation; verify with a test that reads the ACL and finds only the user and SYSTEM
+- [x] 3.1 Add `AnalysisLogEnabled` (off) and `StatisticsEnabled` (on) to `Settings`; verify defaults tests pass
+- [x] 3.2 Write failing tests: off → no file; on → entries written; 7-day retention; turning off deletes files; implement; verify they pass
+- [x] 3.3 Apply the user-only DACL on file creation; verify with a test that reads the ACL and finds only the user and SYSTEM
 
 ## 4. UI and export
 

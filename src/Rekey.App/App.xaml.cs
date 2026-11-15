@@ -14,6 +14,7 @@ using Rekey.App.ViewModels;
 using Rekey.App.Views;
 using Rekey.Core;
 using Rekey.Core.Diagnostics;
+using Rekey.Core.Statistics;
 using Rekey.Core.Words;
 using Rekey.Win32;
 using Rekey.Win32.Focus;
@@ -39,6 +40,9 @@ namespace Rekey.App {
     // The tray says how many minutes of a Pause remain and notices its end.
     private static readonly TimeSpan _trayRefreshPeriod = TimeSpan.FromSeconds(20);
 
+    // Design D2 of add-statistics-and-diagnostics: counters reach the disk every 60 s.
+    private static readonly TimeSpan _statsFlushPeriod = TimeSpan.FromSeconds(60);
+
     // How long a restarted Rekey waits for the frozen one to exit before it starts anyway.
     private static readonly TimeSpan _oldProcessExitWait = TimeSpan.FromSeconds(10);
 
@@ -49,6 +53,7 @@ namespace Rekey.App {
 
     private readonly SettingsStore _settingsStore = new(_dataFolder);
     private readonly RestartStateStore _restartStore = new(_dataFolder);
+    private readonly StatsStore _statsStore = new(_dataFolder);
     private readonly WordListsSaver _wordsSaver =
         new(_wordsStore, TimeProvider.System, ReportWordsNotSaved);
 
@@ -63,6 +68,7 @@ namespace Rekey.App {
     private TrayIconView? _trayView;
     private ForegroundApps? _foregroundApps;
     private DispatcherTimer? _trayTimer;
+    private DispatcherTimer? _statsTimer;
     private WordsViewModel? _words;
     private SettingsWindow? _settingsWindow;
     private CursorIndicator? _indicator;
@@ -147,6 +153,7 @@ namespace Rekey.App {
       // Windows may end the process soon after sign-out starts, so write settings now.
       FlushSettings();
       _wordsSaver.Flush();
+      SaveStatistics();
     }
 
     protected override void OnExit(ExitEventArgs e) {
@@ -156,6 +163,8 @@ namespace Rekey.App {
       } finally {
         _freezeGuard?.Dispose();
         _worker?.Dispose();
+        _statsTimer?.Stop();
+        SaveStatistics();
 
         // After the worker, so its last change is saved too.
         _wordsSaver.Flush();
@@ -175,6 +184,11 @@ namespace Rekey.App {
 
     private static HotkeyConflict CheckHotkey(Hotkey hotkey) {
       return HotkeyConflicts.Check(hotkey, LayoutSwitchShortcuts.Read(), HotkeyProbe.IsTaken);
+    }
+
+    // The type only: the message names a path inside the user profile.
+    private static void ReportStatisticsNotSaved(Exception error) {
+      Trace.WriteLine($"Rekey could not save its statistics: {error.GetType().Name}");
     }
 
     // The type only: the message names a path inside the user profile.
@@ -217,6 +231,8 @@ namespace Rekey.App {
       _words.Show(words ?? WordListsDocument.Empty);
       _worker = new InputWorker(settings, RecordIncident, TimeProvider.System) {
         InitialWords = words ?? WordListsDocument.Empty,
+        InitialStatistics = LoadStatistics(settings),
+        AnalysisLogFolder = Path.Join(_dataFolder, "analysis"),
       };
 
       // A file Rekey could not read stays as it is: this session learns but does not save.
@@ -247,6 +263,38 @@ namespace Rekey.App {
           RestartAfterFreeze,
           TimeProvider.System);
       _freezeGuard.Start();
+    }
+
+    // Spec statistics-and-diagnostics: with statistics off, stored counters are deleted.
+    private StatsDocument LoadStatistics(Settings settings) {
+      try {
+        if (settings.StatisticsEnabled) {
+          return _statsStore.Load();
+        }
+
+        _statsStore.Delete();
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        ReportStatisticsNotSaved(e);
+      }
+
+      return StatsDocument.Empty;
+    }
+
+    // UI thread only, so a save never races the deletion that turning statistics off asks for.
+    private void SaveStatistics() {
+      if (_worker is null || _hub is null) {
+        return;
+      }
+
+      try {
+        if (_hub.Current.StatisticsEnabled) {
+          _statsStore.Save(_worker.Statistics);
+        } else {
+          _statsStore.Delete();
+        }
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        ReportStatisticsNotSaved(e);
+      }
     }
 
     // Runs on the worker thread after each input event.
@@ -305,6 +353,7 @@ namespace Rekey.App {
       Dispatcher.Invoke(() => _trayView?.Dispose(), TimeSpan.FromSeconds(1));
       FlushSettings();
       _wordsSaver.Flush();
+      Dispatcher.Invoke(SaveStatistics, TimeSpan.FromSeconds(1));
 
       // The freeze-restart Incident is still queued.
       _incidents?.Dispose();
@@ -365,6 +414,12 @@ namespace Rekey.App {
       _trayTimer = new DispatcherTimer(
           _trayRefreshPeriod, DispatcherPriority.Background, (_, _) => RefreshTray(), Dispatcher);
       _trayTimer.Start();
+      _statsTimer = new DispatcherTimer(
+          _statsFlushPeriod,
+          DispatcherPriority.Background,
+          (_, _) => SaveStatistics(),
+          Dispatcher);
+      _statsTimer.Start();
     }
 
     private void RefreshTray() {
@@ -406,6 +461,9 @@ namespace Rekey.App {
     private void OnSettingsChanged(Settings settings) {
       _worker?.UseSettings(settings);
       _freezeGuard?.UseSettings(settings);
+      if (!settings.StatisticsEnabled) {
+        SaveStatistics();
+      }
 
       // Only the user's own change of this switch writes to Windows, so an unrelated change
       // never undoes a disable made in Task Manager meanwhile.
