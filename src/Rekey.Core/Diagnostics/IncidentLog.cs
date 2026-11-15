@@ -36,17 +36,22 @@ namespace Rekey.Core.Diagnostics {
     /// <exception cref="IOException">The log cannot be written.</exception>
     /// <exception cref="UnauthorizedAccessException">Access to the log is denied.</exception>
     public void Append(Incident incident) {
-      int lines = _lines ?? ReadLines().Length;
+      // The file may have been deleted or cut short since the last append.
+      int lines = File.Exists(FilePath) ? _lines ?? ReadLines().Length : 0;
       var line = new IncidentLine(
           incident.Time,
           incident.Type,
           [.. incident.Details.Select(detail => $"{detail.GetType().Name}.{detail}")]);
       string json = JsonSerializer.Serialize(line, IncidentJsonContext.Default.IncidentLine);
       Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
-      File.AppendAllText(FilePath, json + "\n", Encoding.UTF8);
+
+      // A write cut off before its line break must not swallow this line.
+      string separator = EndsInsideALine() ? "\n" : string.Empty;
+      File.AppendAllText(FilePath, separator + json + "\n", Encoding.UTF8);
       lines++;
       if (lines > _maxEntries) {
-        string[] kept = ReadLines()[^_maxEntries..];
+        string[] all = ReadLines();
+        string[] kept = all[^Math.Min(all.Length, _maxEntries)..];
         JsonFile.WriteAtomically(FilePath, stream => {
           using var writer = new StreamWriter(stream, leaveOpen: true);
           writer.NewLine = "\n";
@@ -54,7 +59,7 @@ namespace Rekey.Core.Diagnostics {
             writer.WriteLine(text);
           }
         });
-        lines = _maxEntries;
+        lines = kept.Length;
       }
 
       _lines = lines;
@@ -83,6 +88,21 @@ namespace Rekey.Core.Diagnostics {
       }
 
       return new IncidentEntry(time, type, [.. details.OfType<string>()]);
+    }
+
+    private bool EndsInsideALine() {
+      try {
+        using var stream = new FileStream(
+            FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+        if (stream.Length == 0) {
+          return false;
+        }
+
+        stream.Seek(-1, SeekOrigin.End);
+        return stream.ReadByte() != '\n';
+      } catch (Exception e) when (e is FileNotFoundException or DirectoryNotFoundException) {
+        return false;
+      }
     }
 
     private string[] ReadLines() {

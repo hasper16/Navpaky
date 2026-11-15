@@ -31,6 +31,15 @@ namespace Rekey.Core.Tests.Diagnostics {
     }
 
     [Fact]
+    public void LogEntryComesAfterTheReplacement() {
+      // The host writes the log synchronously; the replacement must not wait for it.
+      Typist typist = new Typist(_logging).Type("ghbdtn").Hold(KeyKind.Space);
+
+      Assert.IsType<LogAnalysis>(typist.All[^1]);
+      Assert.Contains(typist.All, action => action is ReplaceText);
+    }
+
+    [Fact]
     public void KeptWordIsLogged() {
       Typist typist = new Typist(_logging).Type("hello").Hold(KeyKind.Space);
 

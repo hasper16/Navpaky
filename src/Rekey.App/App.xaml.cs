@@ -196,6 +196,15 @@ namespace Rekey.App {
       window.Activate();
     }
 
+    private static T ReadForExport<T>(Func<T> read, T fallback) {
+      try {
+        return read();
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        Trace.WriteLine($"Rekey could not read a log for export: {e.GetType().Name}");
+        return fallback;
+      }
+    }
+
     private static HotkeyConflict CheckHotkey(Hotkey hotkey) {
       return HotkeyConflicts.Check(hotkey, LayoutSwitchShortcuts.Read(), HotkeyProbe.IsTaken);
     }
@@ -578,14 +587,12 @@ namespace Rekey.App {
       string version = Assembly.GetExecutingAssembly()
           .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
           ?? "0";
-      IReadOnlyList<IncidentEntry> incidents = [];
-      IReadOnlyList<string> analysis = [];
-      try {
-        incidents = new IncidentLog(_dataFolder).Read();
-        analysis = AnalysisLog.ReadAll(_analysisFolder);
-      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-        Trace.WriteLine($"Rekey could not read its logs for export: {e.GetType().Name}");
-      }
+
+      // Each log on its own, so one that cannot be read still leaves the other in the export.
+      IReadOnlyList<IncidentEntry> incidents = ReadForExport(
+          () => new IncidentLog(_dataFolder).Read(), []);
+      IReadOnlyList<string> analysis = ReadForExport(
+          () => AnalysisLog.ReadAll(_analysisFolder), []);
 
       return new DiagnosticsFacts(
           DateTimeOffset.Now,

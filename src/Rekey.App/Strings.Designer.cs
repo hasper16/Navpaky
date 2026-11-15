@@ -166,6 +166,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not copy: another app is using the clipboard. Try again..
+        /// </summary>
+        public static string ExportCopyFailed {
+            get {
+                return ResourceManager.GetString("ExportCopyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not save the file..
         /// </summary>
         public static string ExportFailed {
@@ -634,7 +643,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to What you type stays in Rekey&apos;s memory and is never saved, logged or sent. Rekey stores its settings, your word lists, counts and a log of keyboard problems on this PC; it saves typed words only in the word-analysis log, and only if you turn it on..
+        ///   Looks up a localized string similar to What you type stays in Rekey&apos;s memory and is never sent anywhere. Rekey stores its settings, your word lists, counts and a log of keyboard problems on this PC; it saves typed words only in the word-analysis log, and only if you turn it on..
         /// </summary>
         public static string PrivacyNote {
             get {

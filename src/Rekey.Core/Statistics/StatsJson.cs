@@ -6,6 +6,10 @@ namespace Rekey.Core.Statistics {
   internal static class StatsJson {
     private const int _version = 1;
 
+    // Durations beyond a day are not real replacements; the bound keeps every total within
+    // what TimeSpan holds.
+    private static readonly double _maxMilliseconds = TimeSpan.FromDays(1).TotalMilliseconds;
+
     public static byte[] Write(StatsDocument document) {
       var file = new StatsFile(_version, [.. document.Days.Select(ToFile)]);
       return JsonSerializer.SerializeToUtf8Bytes(file, StatsJsonContext.Default.StatsFile);
@@ -72,16 +76,26 @@ namespace Rekey.Core.Statistics {
     private static DurationStats? FromFile(DurationFile file) {
       if (file.Buckets is not { Count: DurationStats.BucketCount } buckets
           || buckets.Any(count => count < 0)
-          || file.Count != buckets.Sum()
+          || SumOrNull(buckets) != file.Count
           || file.TotalMilliseconds < 0
+          || file.TotalMilliseconds > _maxMilliseconds * file.Count
           || file.MinMilliseconds < 0
-          || file.MaxMilliseconds < file.MinMilliseconds) {
+          || file.MaxMilliseconds < file.MinMilliseconds
+          || file.MaxMilliseconds > _maxMilliseconds) {
         return null;
       }
 
       return new DurationStats(
           file.Count, file.TotalMilliseconds, file.MinMilliseconds, file.MaxMilliseconds,
           [.. buckets]);
+    }
+
+    private static long? SumOrNull(List<long> counts) {
+      try {
+        return counts.Sum();
+      } catch (OverflowException) {
+        return null;
+      }
     }
 
     internal sealed record StatsFile(int Version, List<DayFile?>? Days);

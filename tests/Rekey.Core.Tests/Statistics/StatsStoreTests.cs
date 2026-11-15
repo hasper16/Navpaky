@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using Rekey.Core.Statistics;
 using Xunit;
@@ -12,6 +13,13 @@ namespace Rekey.Core.Tests.Statistics {
 
     public StatsStoreTests() {
       _folder = Path.Join(_root.FullName, "Rekey");
+    }
+
+    public static TheoryData<string> BrokenHistograms() {
+      // Bucket counts whose sum overflows, and durations beyond what TimeSpan holds.
+      string overflow = Histogram(1, 1, 1, 1, [long.MaxValue, 1]);
+      string huge = Histogram(1, 1e20, 1e20, 1e20, [0, .. new long[199], 1]);
+      return [overflow, huge];
     }
 
     public void Dispose() {
@@ -82,6 +90,7 @@ namespace Rekey.Core.Tests.Statistics {
         + "{\"count\":1,\"totalMilliseconds\":1,\"minMilliseconds\":1,\"maxMilliseconds\":1,"
         + "\"buckets\":[1]}}]}")]
     [InlineData("{\"version\":1,\"days\":[{\"day\":\"2026-11-16\",\"counts\":{\"undos\":-1}}]}")]
+    [MemberData(nameof(BrokenHistograms))]
     public void UnreadableFileIsKeptAsideAndGivesNoDays(string content) {
       Directory.CreateDirectory(_folder);
       var store = new StatsStore(_folder);
@@ -94,6 +103,20 @@ namespace Rekey.Core.Tests.Statistics {
     }
 
     [Fact]
+    public void DeleteAlsoRemovesFilesKeptAside() {
+      Directory.CreateDirectory(_folder);
+      var store = new StatsStore(_folder);
+      File.WriteAllText(store.FilePath, "not json");
+      store.Load();
+      File.WriteAllText(store.FilePath + ".20261116090000000.bak", "{}");
+      store.Save(StatsDocument.Empty);
+
+      store.Delete();
+
+      Assert.Empty(Directory.GetFiles(_folder));
+    }
+
+    [Fact]
     public void DeleteRemovesTheFile() {
       var store = new StatsStore(_folder);
       store.Save(new StatsDocument([DayStats.Empty(_monday)]));
@@ -102,6 +125,19 @@ namespace Rekey.Core.Tests.Statistics {
       store.Delete();
 
       Assert.False(File.Exists(store.FilePath));
+    }
+
+    private static string Histogram(
+        long count, double total, double min, double max, long[] firstBuckets) {
+      long[] rest = new long[DurationStats.BucketCount - firstBuckets.Length];
+      string buckets = string.Join(',', firstBuckets.Concat(rest));
+      string durations = string.Create(CultureInfo.InvariantCulture,
+          $"{{\"count\":{count},\"totalMilliseconds\":{total:R},")
+          + string.Create(CultureInfo.InvariantCulture,
+              $"\"minMilliseconds\":{min:R},\"maxMilliseconds\":{max:R},")
+          + $"\"buckets\":[{buckets}]}}";
+      return "{\"version\":1,\"days\":[{\"day\":\"2026-11-16\",\"counts\":{},"
+          + $"\"durations\":{durations}}}]}}";
     }
   }
 }

@@ -59,6 +59,9 @@ namespace Rekey.Core.Tests {
 
     public List<LogAnalysis> Analyses { get; } = [];
 
+    // Every action in the order the engine returned it.
+    public List<EngineAction> All { get; } = [];
+
     public Typist Type(string text) {
       IReadOnlyList<Keystroke> keystrokes = KeyMapFixtures.EnglishUs.Type(text, capsLock: false)
           ?? throw new ArgumentException("English (US) cannot type the text.", nameof(text));
@@ -158,6 +161,7 @@ namespace Rekey.Core.Tests {
 
     public Typist Send(InputEvent inputEvent) {
       foreach (EngineAction action in Engine.Handle(inputEvent)) {
+        All.Add(action);
         if (action is RecordStat stat) {
           Stats.Add(stat);
         } else if (action is LogAnalysis analysis) {

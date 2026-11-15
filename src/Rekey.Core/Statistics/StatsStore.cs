@@ -52,10 +52,18 @@ namespace Rekey.Core.Statistics {
     }
 
     /// <summary>
-    /// Deletes the counters file, if any.
+    /// Deletes the counters file and any unreadable copies set aside, if there are any.
     /// </summary>
     public void Delete() {
       File.Delete(FilePath);
+      string folder = Path.GetDirectoryName(FilePath)!;
+      if (!Directory.Exists(folder)) {
+        return;
+      }
+
+      foreach (string kept in Directory.EnumerateFiles(folder, "stats.json*.bak")) {
+        File.Delete(kept);
+      }
     }
   }
 }

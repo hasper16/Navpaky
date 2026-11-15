@@ -262,7 +262,7 @@
     <value>Restart Rekey if it stops responding twice</value>
   </data>
   <data name="PrivacyNote" xml:space="preserve">
-    <value>What you type stays in Rekey's memory and is never saved, logged or sent. Rekey stores its settings, your word lists, counts and a log of keyboard problems on this PC; it saves typed words only in the word-analysis log, and only if you turn it on.</value>
+    <value>What you type stays in Rekey's memory and is never sent anywhere. Rekey stores its settings, your word lists, counts and a log of keyboard problems on this PC; it saves typed words only in the word-analysis log, and only if you turn it on.</value>
   </data>
   <data name="AboutTagline" xml:space="preserve">
     <value>Fixes words typed in the wrong keyboard layout.</value>
@@ -377,6 +377,9 @@
   </data>
   <data name="ExportCopied" xml:space="preserve">
     <value>Copied to the clipboard.</value>
+  </data>
+  <data name="ExportCopyFailed" xml:space="preserve">
+    <value>Could not copy: another app is using the clipboard. Try again.</value>
   </data>
   <data name="ExportFailed" xml:space="preserve">
     <value>Could not save the file.</value>

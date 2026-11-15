@@ -1,4 +1,5 @@
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using Microsoft.Win32;
 using Rekey.App.ViewModels;
@@ -16,11 +17,18 @@ namespace Rekey.App.Views {
       InitializeComponent();
       DataContext = model;
       SaveButton.Click += (_, _) => Save();
-      CopyButton.Click += (_, _) => {
-        model.Copy();
-        Status.Text = Strings.ExportCopied;
-      };
+      CopyButton.Click += (_, _) => Copy();
       Loaded += (_, _) => TitleBarButtons.Name(TitleBar);
+    }
+
+    // Another app may hold the clipboard open.
+    private void Copy() {
+      try {
+        _model.Copy();
+        Status.Text = Strings.ExportCopied;
+      } catch (ExternalException) {
+        Status.Text = Strings.ExportCopyFailed;
+      }
     }
 
     private void Save() {

@@ -161,15 +161,17 @@ namespace Rekey.Win32.Diagnostics {
       return DateOnly.FromDateTime(_time.GetLocalNow().DateTime);
     }
 
-    // Files are whole days, so a day leaves once it is 7 or more days old.
+    // Files are whole days, so a day leaves once it is 7 or more days old. The date is kept
+    // only after every expired file is gone, so a failed delete is tried again.
     private void Prune(DateOnly today) {
-      _prunedOn = today;
       DateOnly oldest = today.AddDays(1 - _keptDays);
       string[] expired = [.. LogFiles(_folder)
           .Where(file => DayOf(file) is not { } day || day < oldest)];
       foreach (string file in expired) {
         File.Delete(file);
       }
+
+      _prunedOn = today;
     }
   }
 }

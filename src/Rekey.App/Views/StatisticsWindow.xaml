@@ -12,10 +12,16 @@
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
                  WindowBackdropType="Mica">
-  <StackPanel Grid.IsSharedSizeScope="True">
+  <Grid Grid.IsSharedSizeScope="True">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
     <ui:TitleBar x:Name="TitleBar"
                  Title="{x:Static app:Strings.StatisticsTitle}"
                  ShowMaximize="False" />
+    <!-- The window is as tall as its rows, up to the work area; the rest scrolls. -->
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Focusable="False">
     <StackPanel Margin="24,8,24,24">
       <Grid Margin="0,0,0,8">
         <Grid.ColumnDefinitions>
@@ -66,5 +72,6 @@
                  Content="{x:Static app:Strings.Refresh}"
                  HorizontalAlignment="Left" />
     </StackPanel>
-  </StackPanel>
+    </ScrollViewer>
+  </Grid>
 </ui:FluentWindow>

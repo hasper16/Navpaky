@@ -1,3 +1,4 @@
+using System.Windows;
 using Rekey.App.ViewModels;
 using Wpf.Ui.Appearance;
 
@@ -7,6 +8,7 @@ namespace Rekey.App.Views {
     public StatisticsWindow(StatisticsViewModel model) {
       SystemThemeWatcher.Watch(this);
       InitializeComponent();
+      MaxHeight = SystemParameters.WorkArea.Height;
       DataContext = model;
       RefreshButton.Click += (_, _) => model.Refresh();
       Activated += (_, _) => model.Refresh();

@@ -101,6 +101,30 @@ namespace Rekey.Core.Tests.Diagnostics {
     }
 
     [Fact]
+    public void UnterminatedLastLineDoesNotSwallowTheNextIncident() {
+      Directory.CreateDirectory(_folder);
+      var log = new IncidentLog(_folder);
+      File.WriteAllText(log.FilePath, "{broken");
+
+      log.Append(new Incident(_monday, IncidentType.InputFrozen, []));
+
+      Assert.Equal(IncidentType.InputFrozen, Assert.Single(log.Read()).Type);
+    }
+
+    [Fact]
+    public void LogDeletedAfter500EntriesStartsAgain() {
+      var log = new IncidentLog(_folder);
+      for (int i = 0; i < 500; i++) {
+        log.Append(new Incident(_monday, IncidentType.HookReinstalled, []));
+      }
+
+      File.Delete(log.FilePath);
+      log.Append(new Incident(_monday, IncidentType.SelfPaused, []));
+
+      Assert.Equal(IncidentType.SelfPaused, Assert.Single(log.Read()).Type);
+    }
+
+    [Fact]
     public void MissingLogReadsEmpty() {
       Assert.Empty(new IncidentLog(_folder).Read());
     }

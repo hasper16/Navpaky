@@ -386,11 +386,14 @@ namespace Rekey.Core {
 
       Decision decision = _evaluate?.Invoke(word, layout)
           ?? _detector.Decide(word, layout, _settings.Sensitivity);
-      EngineAction[] counted = [
-          .. Count(StatCounter.WordsAnalysed),
-          .. Count(CounterOf(decision.Kind)),
-          .. Analysis(word, typed, layout, decision.Kind, protectedWord: false),
-      ];
+      EngineAction[] counts = [
+          .. Count(StatCounter.WordsAnalysed), .. Count(CounterOf(decision.Kind))];
+
+      // The host writes the log synchronously, so it comes after the replacement, whose key
+      // has only a few milliseconds to land.
+      EngineAction[] analysis =
+          Analysis(word, typed, layout, decision.Kind, protectedWord: false);
+      EngineAction[] counted = [.. counts, .. analysis];
       Correction? correction = DeferredWords.Add(decision);
       if (correction is null) {
         ContinueOrEndRun(decision, trigger, typed);
@@ -413,7 +416,7 @@ namespace Rekey.Core {
           Undoable: trigger.Kind != KeyKind.Enter,
           CorrectionKind.Auto);
       _pending = new PendingReplacement(record, IsUndo: false);
-      return [.. counted, new ReplaceText(record.Typed, record.Rendering)];
+      return [.. counts, new ReplaceText(record.Typed, record.Rendering), .. analysis];
     }
 
     // Only Words separated by single spaces stay a run on screen.
