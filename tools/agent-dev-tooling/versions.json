@@ -1,0 +1,32 @@
+{
+  "graphify": {
+    "source": "https://pypi.org/project/graphifyy/",
+    "package": "graphifyy",
+    "version": "0.9.109"
+  },
+  "ponytail": {
+    "source": "https://github.com/DietrichGebert/ponytail",
+    "marketplace": "DietrichGebert/ponytail",
+    "tag": "v5.3.3",
+    "commit": "7801d061243d7b753bad0e0b3c057cd250b11755",
+    "version": "5.3.3"
+  },
+  "agentSkills": {
+    "source": "https://github.com/addyosmani/agent-skills",
+    "commit": "39b723ceebf81474d0557c1fecd01eddab585563",
+    "skills": [
+      "security-and-hardening",
+      "debugging-and-error-recovery",
+      "doubt-driven-development",
+      "ci-cd-and-automation",
+      "documentation-and-adrs",
+      "source-driven-development",
+      "code-simplification"
+    ]
+  },
+  "securityAudit": {
+    "source": "https://github.com/cloudflare/security-audit-skill",
+    "commit": "c1c8a8c1471069fb0e188eeaff69b8e8db6564a8",
+    "sha256": "c9ec7a17e582e9089e9dc92bbdaca02538655531f95f0dd5eb34975a6e10a055"
+  }
+}

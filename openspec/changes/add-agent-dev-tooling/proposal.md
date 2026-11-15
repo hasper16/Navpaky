@@ -26,7 +26,7 @@ None.
 
 ## Impact
 
-- Owner's machine (global): `uv` tool `graphifyy`; Claude Code user-scope plugin `ponytail`; seven skill folders in `C:\Users\Haspe\.ai-global\skills\`; user environment variables `GRAPHIFY_BACKEND`, `GRAPHIFY_QUERY_LOG_DISABLE`, `PONYTAIL_DEFAULT_MODE`.
+- Owner's machine (global): `uv` tool `graphifyy`; Claude Code user-scope plugin `ponytail`; seven skill folders in `C:\Users\Haspe\.ai-global\skills\`; user environment variables `GRAPHIFY_BACKEND`, `GRAPHIFY_QUERY_LOG_DISABLE`, `GRAPHIFY_NO_TIPS`, `PONYTAIL_DEFAULT_MODE`.
 - Repo: `.gitignore`, new `.graphifyignore`, new `tools/agent-dev-tooling/` (`versions.json`, `Test-AgentDevTooling.ps1` and its case-table tests), `docs/agents/orchestration.md`, `AGENTS.md`.
 - `security-audit`: no install change; its content hash is pinned in `versions.json` and checked by the script.
 - Orchestrator readiness check: one more item, the PR body's security review section for changes in sensitive areas.

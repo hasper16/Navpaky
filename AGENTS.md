@@ -27,6 +27,8 @@ Tray app that fixes a word typed in the wrong keyboard layout ("ghbdtn" → "п�
 - Comments explain why, not what: write one only where logic is non-obvious, tricky, or needs business context, and keep it short and plain. Self-explanatory code stays uncommented. This overrides the Google guide's "comment almost every method".
 - Public types and members carry XML docs; internal ones only when complex. Before writing XML docs, read `docs/conventions/xml-docs.md` for wording and tags.
 - Analyzers are the reviewers: SonarAnalyzer.CSharp (SonarLint rules), StyleCop.Analyzers (Checkstyle equivalent) and .NET code style run in every build with warnings as errors. Fix the code to satisfy them; a rule is disabled only in `.editorconfig` with a one-line reason, and an in-code suppression carries a `Justification`.
+- Repo rules win over tool guidance: `AGENTS.md`, `ub-mode`, OpenSpec artifacts and analyzers outrank ponytail and the agent-skills set. Write no `shortcut:` comments; deferred work goes to `tasks.md` or a follow-up.
+- Where skills overlap, the existing one wins: `diagnosing-bugs` over `debugging-and-error-recovery`, `domain-modeling` over `documentation-and-adrs` for ADRs and the glossary, `security-audit` over `security-and-hardening` for reviews, `ub-mode` over `code-simplification`, the `ctx7` rule over `source-driven-development` for docs lookup. Tool pins live in `tools/agent-dev-tooling/versions.json`.
 
 ## Privacy guardrails
 
@@ -36,6 +38,7 @@ Rekey sees every keystroke. Typed text exists only in the engine's memory:
 - Corrections and Undo work through key injection; the clipboard is untouched.
 - Tests and fixtures use invented words.
 - The original app's dictionaries, UI texts and server addresses are reference material, never copied (ADR 0003).
+- A change that touches a security-sensitive area (table in `docs/agents/orchestration.md`) gets a `security-audit` review in guidance mode before `ready`, recorded in the PR body. Findings carry file, line, class and severity, never typed text, Words or window titles.
 
 ## Git
 

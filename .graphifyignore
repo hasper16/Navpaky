@@ -1,0 +1,6 @@
+# Graphify: paths the local code graph never indexes (design D1 of add-agent-dev-tooling).
+.private/
+.claude/worktrees/
+artifacts/
+bin/
+obj/

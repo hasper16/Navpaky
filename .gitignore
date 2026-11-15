@@ -505,3 +505,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Graphify code graph (local only, see openspec change add-agent-dev-tooling)
+graphify-out/
