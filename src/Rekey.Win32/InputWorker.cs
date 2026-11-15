@@ -6,7 +6,9 @@ using System.Runtime.InteropServices;
 using Rekey.Core;
 using Rekey.Core.Detection;
 using Rekey.Core.Languages;
+using Rekey.Core.Statistics;
 using Rekey.Core.Words;
+using Rekey.Win32.Diagnostics;
 using Rekey.Win32.Focus;
 using Rekey.Win32.Keyboard;
 using Rekey.Win32.Layouts;
@@ -35,6 +37,11 @@ namespace Rekey.Win32 {
     private const uint _settingsMessage = PInvoke.WM_APP + 4;
     private const uint _wordsMessage = PInvoke.WM_APP + 5;
     private const uint _idleWaitMilliseconds = 250;
+
+    // The settings message carries these flags as they were when it was posted, so a setting
+    // turned off and on again before the worker reads it still deletes what it holds.
+    private const nuint _statisticsFlag = 1;
+    private const nuint _analysisLogFlag = 2;
 
     // Design D6: a pending Layout Switch is checked every 25 ms.
     private const uint _switchWaitMilliseconds = 25;
@@ -82,6 +89,10 @@ namespace Rekey.Win32 {
 
     // Edits from the settings window, waiting for the worker thread.
     private readonly ConcurrentQueue<WordListEdited> _wordEdits = new();
+
+    // Analysed Words waiting until no key is held back, so the file write never delays typing.
+    private readonly List<LogAnalysis> _analysesToWrite = [];
+
     private Engine _engine = new();
     private uint _threadId;
     private Exception? _startError;
@@ -92,6 +103,13 @@ namespace Rekey.Win32 {
     private TextReplacer? _replacer;
     private UiaTextBeforeCaret? _uia;
     private long _seenHoldTimeouts;
+
+    // The installed Layouts as of the latest poll; only the worker thread writes it.
+    private IReadOnlyList<LayoutId> _installedLayouts = [];
+
+    // The worker thread alone records into it; any thread reads its snapshot.
+    private StatsRecorder _stats = new(StatsDocument.Empty);
+    private AnalysisLog? _analysisLog;
 
     // Written by the constructor and then only by the thread that calls UseSettings; the
     // worker reads it.
@@ -226,6 +244,36 @@ namespace Rekey.Win32 {
     public WordListsDocument InitialWords { get; init; } = WordListsDocument.Empty;
 
     /// <summary>
+    /// Gets the usage counters the worker starts with; set it before <see cref="Start" />.
+    /// </summary>
+    public StatsDocument InitialStatistics {
+      get {
+        return _stats.Current;
+      }
+
+      init {
+        _stats = new StatsRecorder(value);
+      }
+    }
+
+    /// <summary>
+    /// Gets the folder of the word-analysis log, or <see langword="null" /> to keep none; set it
+    /// before <see cref="Start" />.
+    /// </summary>
+    public string? AnalysisLogFolder { get; init; }
+
+    /// <summary>
+    /// Gets the usage counters as of the latest counted event; safe to read from any thread.
+    /// </summary>
+    public StatsDocument Statistics => _stats.Current;
+
+    /// <summary>
+    /// Gets the installed Layouts in Windows' order as of the latest poll; safe to read from any
+    /// thread.
+    /// </summary>
+    public IReadOnlyList<LayoutId> InstalledLayouts => Volatile.Read(ref _installedLayouts);
+
+    /// <summary>
     /// Gets the number of Keystrokes in the engine's current Word; read it only on the worker
     /// thread, as from <see cref="Observed" />.
     /// </summary>
@@ -318,7 +366,7 @@ namespace Rekey.Win32 {
     /// <param name="settings">The settings now in effect.</param>
     public void UseSettings(Settings settings) {
       Volatile.Write(ref _latestSettings, settings);
-      PInvoke.PostThreadMessage(_threadId, _settingsMessage, default, default);
+      PInvoke.PostThreadMessage(_threadId, _settingsMessage, FlagsOf(settings), default);
     }
 
     /// <summary>
@@ -371,6 +419,11 @@ namespace Rekey.Win32 {
         _signal.Dispose();
         _started.Dispose();
       }
+    }
+
+    private static WPARAM FlagsOf(Settings settings) {
+      return (settings.StatisticsEnabled ? _statisticsFlag : 0)
+          | (settings.AnalysisLogEnabled ? _analysisLogFlag : 0);
     }
 
     // Hook timestamps count the same milliseconds since system start.
@@ -426,6 +479,11 @@ namespace Rekey.Win32 {
       }
 
       _started.Set();
+      if (AnalysisLogFolder is { } folder) {
+        _analysisLog = new AnalysisLog(folder, _time);
+        UseAnalysisLog(Volatile.Read(ref _latestSettings).AnalysisLogEnabled);
+      }
+
       _uia = new UiaTextBeforeCaret(() => _focus?.TypingElement);
       _replacer = new TextReplacer(
           _uia,
@@ -518,6 +576,7 @@ namespace Rekey.Win32 {
       }
 
       ReportMismatch();
+      WriteAnalyses();
 
       // The user may have switched Layout with the keys just read.
       if (any) {
@@ -655,6 +714,7 @@ namespace Rekey.Win32 {
       List<KeyMap> keyMaps = [.. _layouts.Layouts.Select(KeyMapOf).OfType<KeyMap>()];
       _translator.UseKeyMaps(keyMaps);
       _characterScanCodes = RawInputTranslator.CharacterScanCodes(keyMaps);
+      Volatile.Write(ref _installedLayouts, [.. _layouts.Layouts]);
       Send(new LayoutsInstalledChanged(Now(), _layouts.Layouts, keyMaps));
       FollowForegroundLayout(userMaySwitch: false);
     }
@@ -761,6 +821,7 @@ namespace Rekey.Win32 {
           }
 
           Send(new SettingsChanged(Now(), settings));
+          UseDiagnostics(message.wParam);
           return true;
         case _wordsMessage:
           while (_wordEdits.TryDequeue(out WordListEdited? edit)) {
@@ -793,12 +854,55 @@ namespace Rekey.Win32 {
         case UndoPerformed undone:
           Undone?.Invoke(undone);
           break;
+        case RecordStat stat:
+          _stats.Record(stat, DateOnly.FromDateTime(_time.GetLocalNow().DateTime));
+          break;
+        case LogAnalysis analysis:
+          _analysesToWrite.Add(analysis);
+          break;
         case Rekey.Core.WordListsChanged:
           WordListsChanged?.Invoke(_engine.Words.Snapshot());
           break;
         default:
           break;
       }
+    }
+
+    // Spec statistics-and-diagnostics: turning statistics off deletes the counters, turning the
+    // word-analysis log off deletes the log.
+    private void UseDiagnostics(WPARAM flags) {
+      if ((flags.Value & _statisticsFlag) == 0) {
+        _stats.Clear();
+      }
+
+      UseAnalysisLog((flags.Value & _analysisLogFlag) != 0);
+    }
+
+    private void UseAnalysisLog(bool enabled) {
+      // Words analysed before the log was turned off are not written, even if it is turned on
+      // again before the queue is written.
+      if (!enabled) {
+        _analysesToWrite.Clear();
+      }
+
+      try {
+        _analysisLog?.Enabled = enabled;
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        // A file in use stays until the next change or start; the log never blocks typing.
+      }
+    }
+
+    // Runs once the keys read so far have gone on, as ReportMismatch does.
+    private void WriteAnalyses() {
+      foreach (LogAnalysis analysis in _analysesToWrite) {
+        try {
+          _analysisLog?.Write(analysis);
+        } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+          // A Word that cannot be logged is left out; the log never blocks typing.
+        }
+      }
+
+      _analysesToWrite.Clear();
     }
 
     private void Replace(ReplaceText replace) {

@@ -94,6 +94,24 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Keep a word-analysis log for troubleshooting.
+        /// </summary>
+        public static string AnalysisLogEnabled {
+            get {
+                return ResourceManager.GetString("AnalysisLogEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The log records the words you type and how Rekey judged them. It stays on this PC, only your Windows account can open it, and it keeps 7 days. Turning it off deletes it..
+        /// </summary>
+        public static string AnalysisLogNote {
+            get {
+                return ResourceManager.GetString("AnalysisLogNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Correct wrong-layout words automatically.
         /// </summary>
         public static string AutoCorrection {
@@ -126,6 +144,87 @@ namespace Rekey.App {
         public static string ExcludedApps {
             get {
                 return ResourceManager.GetString("ExcludedApps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copied to the clipboard..
+        /// </summary>
+        public static string ExportCopied {
+            get {
+                return ResourceManager.GetString("ExportCopied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy.
+        /// </summary>
+        public static string ExportCopy {
+            get {
+                return ResourceManager.GetString("ExportCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not copy: another app is using the clipboard. Try again..
+        /// </summary>
+        public static string ExportCopyFailed {
+            get {
+                return ResourceManager.GetString("ExportCopyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not save the file..
+        /// </summary>
+        public static string ExportFailed {
+            get {
+                return ResourceManager.GetString("ExportFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include word-analysis log (contains the words you typed).
+        /// </summary>
+        public static string ExportIncludeLog {
+            get {
+                return ResourceManager.GetString("ExportIncludeLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is exactly the text that will be saved or copied. It holds no typed words unless you include the word-analysis log..
+        /// </summary>
+        public static string ExportNote {
+            get {
+                return ResourceManager.GetString("ExportNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save to file….
+        /// </summary>
+        public static string ExportSave {
+            get {
+                return ResourceManager.GetString("ExportSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saved..
+        /// </summary>
+        public static string ExportSaved {
+            get {
+                return ResourceManager.GetString("ExportSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export diagnostics.
+        /// </summary>
+        public static string ExportTitle {
+            get {
+                return ResourceManager.GetString("ExportTitle", resourceCulture);
             }
         }
         
@@ -454,6 +553,24 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export diagnostics….
+        /// </summary>
+        public static string OpenExport {
+            get {
+                return ResourceManager.GetString("OpenExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show statistics.
+        /// </summary>
+        public static string OpenStatistics {
+            get {
+                return ResourceManager.GetString("OpenStatistics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
         public static string PageAbout {
@@ -526,7 +643,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to What you type stays in Rekey&apos;s memory and is never saved, logged or sent. Rekey stores only its settings and your word lists on this PC..
+        ///   Looks up a localized string similar to What you type stays in Rekey&apos;s memory and is never sent anywhere. Rekey stores its settings, your word lists, counts and a log of keyboard problems on this PC; it saves typed words only in the word-analysis log, and only if you turn it on..
         /// </summary>
         public static string PrivacyNote {
             get {
@@ -549,6 +666,15 @@ namespace Rekey.App {
         public static string ProtectedWords {
             get {
                 return ResourceManager.GetString("ProtectedWords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refresh.
+        /// </summary>
+        public static string Refresh {
+            get {
+                return ResourceManager.GetString("Refresh", resourceCulture);
             }
         }
         
@@ -702,6 +828,186 @@ namespace Rekey.App {
         public static string SoundSoftTick {
             get {
                 return ResourceManager.GetString("SoundSoftTick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatic corrections.
+        /// </summary>
+        public static string StatAutoCorrections {
+            get {
+                return ResourceManager.GetString("StatAutoCorrections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Average correction.
+        /// </summary>
+        public static string StatAverageDuration {
+            get {
+                return ResourceManager.GetString("StatAverageDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Words corrected.
+        /// </summary>
+        public static string StatCorrectDecisions {
+            get {
+                return ResourceManager.GetString("StatCorrectDecisions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Corrections.
+        /// </summary>
+        public static string StatCorrections {
+            get {
+                return ResourceManager.GetString("StatCorrections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Words that waited for the next word.
+        /// </summary>
+        public static string StatDeferDecisions {
+            get {
+                return ResourceManager.GetString("StatDeferDecisions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keep statistics (counts only, never words).
+        /// </summary>
+        public static string StatisticsEnabled {
+            get {
+                return ResourceManager.GetString("StatisticsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Counts only: Rekey never stores the words behind these numbers..
+        /// </summary>
+        public static string StatisticsNote {
+            get {
+                return ResourceManager.GetString("StatisticsNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey statistics.
+        /// </summary>
+        public static string StatisticsTitle {
+            get {
+                return ResourceManager.GetString("StatisticsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Words kept.
+        /// </summary>
+        public static string StatKeepDecisions {
+            get {
+                return ResourceManager.GetString("StatKeepDecisions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manual corrections.
+        /// </summary>
+        public static string StatManualCorrections {
+            get {
+                return ResourceManager.GetString("StatManualCorrections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slowest correction.
+        /// </summary>
+        public static string StatMaxDuration {
+            get {
+                return ResourceManager.GetString("StatMaxDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Typical correction (median).
+        /// </summary>
+        public static string StatMedianDuration {
+            get {
+                return ResourceManager.GetString("StatMedianDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ms.
+        /// </summary>
+        public static string StatMilliseconds {
+            get {
+                return ResourceManager.GetString("StatMilliseconds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fastest correction.
+        /// </summary>
+        public static string StatMinDuration {
+            get {
+                return ResourceManager.GetString("StatMinDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last 30 days.
+        /// </summary>
+        public static string StatMonth {
+            get {
+                return ResourceManager.GetString("StatMonth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Protected words kept.
+        /// </summary>
+        public static string StatProtectedWordDecisions {
+            get {
+                return ResourceManager.GetString("StatProtectedWordDecisions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Today.
+        /// </summary>
+        public static string StatToday {
+            get {
+                return ResourceManager.GetString("StatToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undos.
+        /// </summary>
+        public static string StatUndos {
+            get {
+                return ResourceManager.GetString("StatUndos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Corrections undone.
+        /// </summary>
+        public static string StatUndoShare {
+            get {
+                return ResourceManager.GetString("StatUndoShare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Words analysed.
+        /// </summary>
+        public static string StatWordsAnalysed {
+            get {
+                return ResourceManager.GetString("StatWordsAnalysed", resourceCulture);
             }
         }
         

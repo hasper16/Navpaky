@@ -62,6 +62,16 @@ namespace Rekey.Core {
   /// <see langword="false" />. The default is <see langword="false" />; on start the app reads
   /// the real state from Windows, which the user may change in Task Manager.
   /// </param>
+  /// <param name="StatisticsEnabled">
+  /// <see langword="true" /> to count Words analysed, Corrections, Undos and Decisions per day;
+  /// otherwise, <see langword="false" />, and stored counters are deleted. The default is
+  /// <see langword="true" />.
+  /// </param>
+  /// <param name="AnalysisLogEnabled">
+  /// <see langword="true" /> to keep the word-analysis log, which records typed Words;
+  /// otherwise, <see langword="false" />, and the log is deleted. The default is
+  /// <see langword="false" />.
+  /// </param>
   // Each setting is a constructor parameter with a default: in .NET 10, source-generated JSON
   // gives an init-only property that the file omits its type default, not its initializer.
   public sealed record Settings(
@@ -78,7 +88,9 @@ namespace Rekey.Core {
       bool ShowCursorIndicator = true,
       bool PlaySwitchSound = false,
       SwitchSound SwitchSound = SwitchSound.KeyClick,
-      bool LaunchAtSignIn = false) {
+      bool LaunchAtSignIn = false,
+      bool StatisticsEnabled = true,
+      bool AnalysisLogEnabled = false) {
     /// <summary>
     /// The <see cref="PausedUntil" /> value of a Pause that lasts until Rekey restarts.
     /// </summary>

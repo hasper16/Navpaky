@@ -39,7 +39,7 @@ Written against the head of the `add-tray-and-settings-ui` PR. The automated `tr
 - [ ] **Keycap look (2.1).** Run `dotnet test tests/Rekey.App.Tests` and open `tests/Rekey.App.Tests/bin/Debug/net10.0-windows/keycap-sheet.png`.
   Expected: every row reads "EN" at 16, 20, 24 and 32 px; paused has an amber edge, off a faded legend, paused-itself a red edge and dot; the dark rows suit a dark taskbar.
 - [ ] **Tray icon and menu (2.2).** Click the tray icon with the left and then the right button. Try each item: Auto Correction off and on, Pause → For 15 minutes then Resume, Pause → Until Rekey restarts then quit and start Rekey, "Turn off in Notepad" after typing in Notepad (and "Turn on in Notepad" after), Settings, About, Quit. Hover the icon while paused.
-  Expected: the menu opens on both clicks and follows the Windows theme; each item does what it says; the icon's edge turns amber while paused and the legend fades while off; the tooltip says how many minutes remain; the pause until restart ends with the restart; Statistics and Check for updates are greyed out; the icon shows "RU" while typing in Russian.
+  Expected: the menu opens on both clicks and follows the Windows theme; each item does what it says; the icon's edge turns amber while paused and the legend fades while off; the tooltip says how many minutes remain; the pause until restart ends with the restart; Check for updates is greyed out (Statistics opens the statistics window since add-statistics-and-diagnostics); the icon shows "RU" while typing in Russian.
 - [ ] **Pause ends while the menu is open (2.2).** Pause → For 15 minutes, then 14 minutes later open the tray menu, move to Resume with the arrow keys and leave the menu open past the end of the Pause (the menu refreshes every 20 s). Close the menu and open it again.
   Expected: while open, the menu keeps its items and the highlighted Resume; after reopening it shows Pause instead of Resume.
 - [ ] **Sensitivity (3.2).** In Correction, pick Cautious and type a short wrong-layout Word such as "yt" + Space in Notepad; pick Aggressive and type it again.
@@ -55,3 +55,16 @@ Written against the head of the `add-tray-and-settings-ui` PR. The automated `tr
   Expected: each preview plays its own sound; one sound per Correction, none for the Undo.
 - [ ] **Launch at sign-in (4.3).** Turn on "Start Rekey when I sign in to Windows", sign out and sign in. Then turn Rekey off under Task Manager → Startup apps and open Settings.
   Expected: Rekey is running with its tray icon after sign-in; after the Task Manager change the switch shows off; turning it on again starts Rekey at the next sign-in.
+
+## add-statistics-and-diagnostics
+
+Written against the head of the `add-statistics-and-diagnostics` PR. Unit tests cover the counters, the Incident log, the word-analysis log (including its ACL) and the export text; these steps cover what needs eyes. Use a Debug build of `src/Rekey.App` with English (US) and Russian installed. Data lives in `%LOCALAPPDATA%\Rekey`.
+
+- [ ] **Statistics window with seeded data (4.1).** Quit Rekey and save this as `stats.json` (change both dates to today and yesterday): `{"version":1,"days":[{"day":"2026-11-15","counts":{"wordsAnalysed":30,"autoCorrections":4,"undos":1,"keepDecisions":26,"correctDecisions":4},"durations":null},{"day":"2026-11-16","counts":{"wordsAnalysed":10,"manualCorrections":1},"durations":null}]}`. Start Rekey and choose Statistics in the tray menu. Then type "ghbdtn" + Space in Notepad and press Refresh.
+  Expected: Today shows 10 Words analysed and 1 correction; Last 30 days shows 40 Words analysed, 5 corrections, 1 undo and 20 % undone; durations show "—" until the new correction, then a few milliseconds; choosing Statistics again brings the same window forward; the window follows the Windows theme and a screen reader reads each row's name.
+- [ ] **Statistics off (1.2, 4.1).** In Settings → Diagnostics and privacy turn "Keep statistics" off, open Statistics, then quit Rekey.
+  Expected: `stats.json` is gone at once; the window shows zeros; nothing is counted until the switch is on again.
+- [ ] **Word-analysis log (3.2, 3.3).** Turn the word-analysis log on, type "ghbdtn" + Space and "hello" + Space in Notepad, then open `analysis\analysis-<today>.log` and the file's Properties → Security. Turn the log off.
+  Expected: two lines with the Words, their Russian Renderings and Correct / Keep; Security lists only your account and SYSTEM; after turning off, the `analysis` folder holds no log file.
+- [ ] **Export dialog (4.3).** Open Settings → Diagnostics and privacy → Export diagnostics…, read the preview, tick and untick "Include word-analysis log", choose Save to file, accept the suggested Desktop name, open the saved file; then choose Copy and paste into Notepad.
+  Expected: the preview shows versions, Layouts, settings, statistics and Incidents with `%USERPROFILE%`, `%USERNAME%` and `%COMPUTERNAME%` in place of your folder, name and PC name, and no typed words unless the box is ticked; the saved file and the pasted text equal the preview character for character.

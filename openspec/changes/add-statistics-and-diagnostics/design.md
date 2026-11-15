@@ -41,3 +41,12 @@ Builder produces plain text sections; masking replaces `%USERPROFILE%`, user nam
 
 - [Users enable the analysis log and forget it] → settings page shows its size and a "Turn off and delete" button; retention is 7 days.
 - [Clipboard export of diagnostics is visible to clipboard-history tools] → export defaults to "Save to file"; clipboard is a secondary button. (This is the only place Rekey writes the clipboard, and only on explicit user action.)
+
+## Revisions during implementation
+
+- **R1. Decision breakdown.** "Decisions by reason" counts each evaluated Word once by how it ended: corrected, deferred, kept, or kept because it is a Protected Word. These are the reasons the engine has; the detector's internal scores are not counted.
+- **R2. Replacement duration.** The engine measures it from the key that asked for the Correction (the Trigger Key or the Hotkey) to the end of the replacement, from the timestamps it already receives; cancelled Corrections are not counted.
+- **R3. Ownership.** The worker owns the counters (`StatsRecorder`) and the word-analysis log (`AnalysisLog`), so each has one writer. The UI thread saves the latest counters snapshot. Incidents arrive from the worker, the freeze guard and start-up, so one background task (`QueuedIncidentLog`) writes them.
+- **R4. Log files.** The word-analysis log is one file per local day, `analysis\analysis-YYYY-MM-DD.log`; a day is deleted once it is 7 days old, on start and when the date changes. Lines hold the time, the Layout and the Word, the Renderings in the other installed Layouts and the Decision.
+- **R5. Turning the log off.** Turning the switch off deletes the log at once, so the separate "Turn off and delete" button and the size display are not needed.
+- **R6. Export entry points.** The tray menu opens the statistics window; the Diagnostics and privacy page has the statistics and export buttons. Export reads its facts once when the dialog opens, so the preview does not change while the user reads it.

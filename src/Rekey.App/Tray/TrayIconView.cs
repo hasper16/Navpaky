@@ -100,7 +100,7 @@ namespace Rekey.App.Tray {
 
       items.Add(new Separator());
       items.Add(Item(Strings.MenuSettings, _commands.OpenSettings));
-      items.Add(Disabled(Strings.MenuStatistics));
+      items.Add(Item(Strings.MenuStatistics, _commands.OpenStatistics));
       items.Add(Disabled(Strings.MenuCheckForUpdates));
       items.Add(Item(Strings.MenuAbout, _commands.OpenAbout));
       items.Add(new Separator());

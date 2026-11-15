@@ -32,6 +32,15 @@ namespace Rekey.App.Tests.ViewModels {
     }
 
     [Fact]
+    public void DiagnosticsSwitchesChangeTheSettings() {
+      _model.StatisticsEnabled = false;
+      _model.AnalysisLogEnabled = true;
+
+      Assert.False(_hub.Current.StatisticsEnabled);
+      Assert.True(_hub.Current.AnalysisLogEnabled);
+    }
+
+    [Fact]
     public void SettingTheSameValueAgainPublishesNothing() {
       _model.AutoCorrectionEnabled = true;
 

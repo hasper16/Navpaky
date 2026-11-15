@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,8 +14,11 @@ using Rekey.App.Tray;
 using Rekey.App.ViewModels;
 using Rekey.App.Views;
 using Rekey.Core;
+using Rekey.Core.Diagnostics;
+using Rekey.Core.Statistics;
 using Rekey.Core.Words;
 using Rekey.Win32;
+using Rekey.Win32.Diagnostics;
 using Rekey.Win32.Focus;
 using Rekey.Win32.Hotkeys;
 using Wpf.Ui.Appearance;
@@ -38,16 +42,22 @@ namespace Rekey.App {
     // The tray says how many minutes of a Pause remain and notices its end.
     private static readonly TimeSpan _trayRefreshPeriod = TimeSpan.FromSeconds(20);
 
+    // Design D2 of add-statistics-and-diagnostics: counters reach the disk every 60 s.
+    private static readonly TimeSpan _statsFlushPeriod = TimeSpan.FromSeconds(60);
+
     // How long a restarted Rekey waits for the frozen one to exit before it starts anyway.
     private static readonly TimeSpan _oldProcessExitWait = TimeSpan.FromSeconds(10);
 
     private static readonly string _dataFolder = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Rekey");
 
+    private static readonly string _analysisFolder = Path.Join(_dataFolder, "analysis");
+
     private static readonly WordListsStore _wordsStore = new(_dataFolder);
 
     private readonly SettingsStore _settingsStore = new(_dataFolder);
     private readonly RestartStateStore _restartStore = new(_dataFolder);
+    private readonly StatsStore _statsStore = new(_dataFolder);
     private readonly WordListsSaver _wordsSaver =
         new(_wordsStore, TimeProvider.System, ReportWordsNotSaved);
 
@@ -62,8 +72,11 @@ namespace Rekey.App {
     private TrayIconView? _trayView;
     private ForegroundApps? _foregroundApps;
     private DispatcherTimer? _trayTimer;
+    private DispatcherTimer? _statsTimer;
     private WordsViewModel? _words;
     private SettingsWindow? _settingsWindow;
+    private StatisticsWindow? _statisticsWindow;
+    private ExportWindow? _exportWindow;
     private CursorIndicator? _indicator;
     private SwitchSoundPlayer? _sounds;
 #if DEBUG
@@ -73,6 +86,7 @@ namespace Rekey.App {
 #endif
     private InputWorker? _worker;
     private FreezeGuard? _freezeGuard;
+    private QueuedIncidentLog? _incidents;
 
     // The worker's Word counts as of the latest Trigger Key; only the worker thread writes it.
     private volatile StrongBox<WordCounts>? _wordCounts;
@@ -89,6 +103,7 @@ namespace Rekey.App {
         return;
       }
 
+      _incidents = new QueuedIncidentLog(new IncidentLog(_dataFolder), ReportIncidentNotSaved);
       ApplicationThemeManager.ApplySystemTheme();
 
       // Windows holds the truth about starting at sign-in: Task Manager can change it.
@@ -102,8 +117,8 @@ namespace Rekey.App {
       _sounds = new SwitchSoundPlayer();
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
       var trayIcon = (TaskbarIcon)FindResource("TrayIcon");
-      _trayView = new TrayIconView(
-          trayIcon, _tray, new TrayCommands(OpenSettings, OpenAbout, () => Shutdown()));
+      var commands = new TrayCommands(OpenSettings, OpenStatistics, OpenAbout, () => Shutdown());
+      _trayView = new TrayIconView(trayIcon, _tray, commands);
 #if DEBUG
       AddDebugMenuItems(_trayView);
 #endif
@@ -144,6 +159,7 @@ namespace Rekey.App {
       // Windows may end the process soon after sign-out starts, so write settings now.
       FlushSettings();
       _wordsSaver.Flush();
+      SaveStatistics();
     }
 
     protected override void OnExit(ExitEventArgs e) {
@@ -153,11 +169,16 @@ namespace Rekey.App {
       } finally {
         _freezeGuard?.Dispose();
         _worker?.Dispose();
+        _statsTimer?.Stop();
+        SaveStatistics();
 
         // After the worker, so its last change is saved too.
         _wordsSaver.Flush();
         _wordsSaver.Dispose();
         _sounds?.Dispose();
+
+        // After the worker and the freeze guard, so their last Incidents are written too.
+        _incidents?.Dispose();
         _trayTimer?.Stop();
         _foregroundApps?.Dispose();
         _trayView?.Dispose();
@@ -167,16 +188,35 @@ namespace Rekey.App {
       }
     }
 
+    private static void BringToFront(Window window) {
+      if (window.WindowState == WindowState.Minimized) {
+        window.WindowState = WindowState.Normal;
+      }
+
+      window.Activate();
+    }
+
+    private static T ReadForExport<T>(Func<T> read, T fallback) {
+      try {
+        return read();
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        Trace.WriteLine($"Rekey could not read a log for export: {e.GetType().Name}");
+        return fallback;
+      }
+    }
+
     private static HotkeyConflict CheckHotkey(Hotkey hotkey) {
       return HotkeyConflicts.Check(hotkey, LayoutSwitchShortcuts.Read(), HotkeyProbe.IsTaken);
     }
 
-    // Incidents carry enum values only, so the trace never holds typed text.
-    private static void RecordIncident(Incident incident) {
-      string details = string.Join(',', incident.Details);
-      Trace.WriteLine(string.Create(
-          CultureInfo.InvariantCulture,
-          $"Rekey Incident {incident.Time:O} {incident.Type} {details}"));
+    // The type only: the message names a path inside the user profile.
+    private static void ReportStatisticsNotSaved(Exception error) {
+      Trace.WriteLine($"Rekey could not save its statistics: {error.GetType().Name}");
+    }
+
+    // The type only: the message names a path inside the user profile.
+    private static void ReportIncidentNotSaved(Exception error) {
+      Trace.WriteLine($"Rekey could not write its Incident log: {error.GetType().Name}");
     }
 
     // The type only: the message names a path inside the user profile.
@@ -214,6 +254,8 @@ namespace Rekey.App {
       _words.Show(words ?? WordListsDocument.Empty);
       _worker = new InputWorker(settings, RecordIncident, TimeProvider.System) {
         InitialWords = words ?? WordListsDocument.Empty,
+        InitialStatistics = LoadStatistics(settings),
+        AnalysisLogFolder = _analysisFolder,
       };
 
       // A file Rekey could not read stays as it is: this session learns but does not save.
@@ -246,6 +288,38 @@ namespace Rekey.App {
       _freezeGuard.Start();
     }
 
+    // Spec statistics-and-diagnostics: with statistics off, stored counters are deleted.
+    private StatsDocument LoadStatistics(Settings settings) {
+      try {
+        if (settings.StatisticsEnabled) {
+          return _statsStore.Load();
+        }
+
+        _statsStore.Delete();
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        ReportStatisticsNotSaved(e);
+      }
+
+      return StatsDocument.Empty;
+    }
+
+    // UI thread only, so a save never races the deletion that turning statistics off asks for.
+    private void SaveStatistics() {
+      if (_worker is null || _hub is null) {
+        return;
+      }
+
+      try {
+        if (_hub.Current.StatisticsEnabled) {
+          _statsStore.Save(_worker.Statistics);
+        } else {
+          _statsStore.Delete();
+        }
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        ReportStatisticsNotSaved(e);
+      }
+    }
+
     // Runs on the worker thread after each input event.
     private void RememberWordCounts(InputEvent inputEvent) {
       if (inputEvent is KeyDown { Kind: KeyKind.Space or KeyKind.Enter or KeyKind.Tab }
@@ -271,6 +345,16 @@ namespace Rekey.App {
 #endif
     }
 
+    // Incidents carry enum values only, so neither the trace nor the log holds typed text.
+    // Called on the worker, the freeze guard and the UI thread.
+    private void RecordIncident(Incident incident) {
+      string details = string.Join(',', incident.Details);
+      Trace.WriteLine(string.Create(
+          CultureInfo.InvariantCulture,
+          $"Rekey Incident {incident.Time:O} {incident.Type} {details}"));
+      _incidents?.Record(incident);
+    }
+
     // Runs on the freeze guard's thread while the worker is stuck; the UI thread may still run.
     private void RestartAfterFreeze() {
       // Without the saved time the next process could not keep the once-per-10-minutes limit,
@@ -292,6 +376,10 @@ namespace Rekey.App {
       Dispatcher.Invoke(() => _trayView?.Dispose(), TimeSpan.FromSeconds(1));
       FlushSettings();
       _wordsSaver.Flush();
+      Dispatcher.Invoke(SaveStatistics, TimeSpan.FromSeconds(1));
+
+      // The freeze-restart Incident is still queued.
+      _incidents?.Dispose();
       Environment.Exit(0);
     }
 
@@ -349,6 +437,12 @@ namespace Rekey.App {
       _trayTimer = new DispatcherTimer(
           _trayRefreshPeriod, DispatcherPriority.Background, (_, _) => RefreshTray(), Dispatcher);
       _trayTimer.Start();
+      _statsTimer = new DispatcherTimer(
+          _statsFlushPeriod,
+          DispatcherPriority.Background,
+          (_, _) => SaveStatistics(),
+          Dispatcher);
+      _statsTimer.Start();
     }
 
     private void RefreshTray() {
@@ -390,6 +484,9 @@ namespace Rekey.App {
     private void OnSettingsChanged(Settings settings) {
       _worker?.UseSettings(settings);
       _freezeGuard?.UseSettings(settings);
+      if (!settings.StatisticsEnabled) {
+        SaveStatistics();
+      }
 
       // Only the user's own change of this switch writes to Windows, so an unrelated change
       // never undoes a disable made in Task Manager meanwhile.
@@ -445,7 +542,7 @@ namespace Rekey.App {
           new(Strings.PageAppsAndWords, SymbolRegular.AppsList24,
               new AppsAndWordsPage(apps, _words!)),
           new(Strings.PageDiagnostics, SymbolRegular.ShieldCheckmark24,
-              new DiagnosticsPage(settings)),
+              new DiagnosticsPage(settings, OpenStatistics, OpenExport)),
           new(Strings.PageAbout, SymbolRegular.Info24, new AboutPage(dark)),
       ];
       var window = new SettingsWindow(sections);
@@ -455,6 +552,57 @@ namespace Rekey.App {
         apps.Dispose();
       };
       return window;
+    }
+
+    // One statistics window at a time: asking again brings it to the front.
+    private void OpenStatistics() {
+      if (_statisticsWindow is null) {
+        var model = new StatisticsViewModel(
+            () => _worker?.Statistics ?? StatsDocument.Empty,
+            () => DateOnly.FromDateTime(DateTime.Now));
+        _statisticsWindow = new StatisticsWindow(model);
+        _statisticsWindow.Closed += (_, _) => _statisticsWindow = null;
+        _statisticsWindow.Show();
+      }
+
+      BringToFront(_statisticsWindow);
+    }
+
+    private void OpenExport() {
+      if (_exportWindow is null) {
+        DiagnosticsFacts facts = GatherDiagnostics();
+        var model = new ExportViewModel(
+            includeLog => DiagnosticsReport.Build(facts, PersonalNames.Current, includeLog),
+            Clipboard.SetText);
+        _exportWindow = new ExportWindow(model);
+        _exportWindow.Closed += (_, _) => _exportWindow = null;
+        _exportWindow.Show();
+      }
+
+      BringToFront(_exportWindow);
+    }
+
+    // Read once when the dialog opens, so the preview does not change under the user.
+    private DiagnosticsFacts GatherDiagnostics() {
+      string version = Assembly.GetExecutingAssembly()
+          .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+          ?? "0";
+
+      // Each log on its own, so one that cannot be read still leaves the other in the export.
+      IReadOnlyList<IncidentEntry> incidents = ReadForExport(
+          () => new IncidentLog(_dataFolder).Read(), []);
+      IReadOnlyList<string> analysis = ReadForExport(
+          () => AnalysisLog.ReadAll(_analysisFolder), []);
+
+      return new DiagnosticsFacts(
+          DateTimeOffset.Now,
+          version.Split('+')[0],
+          Environment.OSVersion.Version.ToString(),
+          _worker?.InstalledLayouts ?? [],
+          _hub!.Current,
+          _worker?.Statistics ?? StatsDocument.Empty,
+          incidents,
+          analysis);
     }
 
     private void ShowSelfPause(DateTimeOffset? until) {
