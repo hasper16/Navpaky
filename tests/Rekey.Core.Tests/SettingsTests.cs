@@ -199,5 +199,33 @@ namespace Rekey.Core.Tests {
 
       Assert.False(restored!.AutoCheckForUpdates);
     }
+
+    [Fact]
+    public void OnboardingIsNotDoneByDefault() {
+      var defaults = new Settings();
+
+      Assert.False(defaults.WelcomeCompleted);
+      Assert.False(defaults.CorrectionTipShown);
+    }
+
+    [Fact]
+    public void FileWithoutOnboardingSettingsGetsTheDefaults() {
+      Settings? settings = JsonSerializer.Deserialize(
+          "{ \"autoCorrectionEnabled\": true }", SettingsJsonContext.Default.Settings);
+
+      Assert.False(settings!.WelcomeCompleted);
+      Assert.False(settings.CorrectionTipShown);
+    }
+
+    [Fact]
+    public void FinishedOnboardingRoundTripsThroughJson() {
+      string json = JsonSerializer.Serialize(
+          new Settings(WelcomeCompleted: true, CorrectionTipShown: true),
+          SettingsJsonContext.Default.Settings);
+      Settings? restored = JsonSerializer.Deserialize(json, SettingsJsonContext.Default.Settings);
+
+      Assert.True(restored!.WelcomeCompleted);
+      Assert.True(restored.CorrectionTipShown);
+    }
   }
 }

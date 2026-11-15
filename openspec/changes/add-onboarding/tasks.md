@@ -2,8 +2,8 @@
 
 ## 1. First-run logic
 
-- [ ] 1.1 Add `WelcomeCompleted` to `Settings`; write failing tests that the welcome opens only when it is false and closing sets it; implement; verify they pass
-- [ ] 1.2 Write failing tests for the location classifier (temp, zip segment, Downloads, installed, debug build); implement; verify they pass
+- [x] 1.1 Add `WelcomeCompleted` to `Settings`; write failing tests that the welcome opens only when it is false and closing sets it; implement; verify they pass
+- [x] 1.2 Write failing tests for the location classifier (temp, zip segment, Downloads, installed, debug build); implement; verify they pass
 
 ## 2. Welcome window
 

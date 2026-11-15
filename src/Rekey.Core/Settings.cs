@@ -76,6 +76,15 @@ namespace Rekey.Core {
   /// <see langword="true" /> to check for updates at start and every 24 hours; otherwise,
   /// <see langword="false" />. The default is <see langword="true" />.
   /// </param>
+  /// <param name="WelcomeCompleted">
+  /// <see langword="true" /> once the user completed or closed the welcome window, so it no
+  /// longer opens at start; otherwise, <see langword="false" />. The default is
+  /// <see langword="false" />.
+  /// </param>
+  /// <param name="CorrectionTipShown">
+  /// <see langword="true" /> once Rekey told the user after their first Correction how to undo
+  /// it; otherwise, <see langword="false" />. The default is <see langword="false" />.
+  /// </param>
   // Each setting is a constructor parameter with a default: in .NET 10, source-generated JSON
   // gives an init-only property that the file omits its type default, not its initializer.
   public sealed record Settings(
@@ -95,7 +104,9 @@ namespace Rekey.Core {
       bool LaunchAtSignIn = false,
       bool StatisticsEnabled = true,
       bool AnalysisLogEnabled = false,
-      bool AutoCheckForUpdates = true) {
+      bool AutoCheckForUpdates = true,
+      bool WelcomeCompleted = false,
+      bool CorrectionTipShown = false) {
     /// <summary>
     /// The <see cref="PausedUntil" /> value of a Pause that lasts until Rekey restarts.
     /// </summary>
