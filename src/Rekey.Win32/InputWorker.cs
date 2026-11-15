@@ -879,6 +879,12 @@ namespace Rekey.Win32 {
     }
 
     private void UseAnalysisLog(bool enabled) {
+      // Words analysed before the log was turned off are not written, even if it is turned on
+      // again before the queue is written.
+      if (!enabled) {
+        _analysesToWrite.Clear();
+      }
+
       try {
         _analysisLog?.Enabled = enabled;
       } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
