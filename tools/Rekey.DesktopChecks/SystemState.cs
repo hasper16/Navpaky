@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
+using Rekey.Win32;
 using Windows.Win32;
 using Windows.Win32.UI.Input.KeyboardAndMouse;
 using Windows.Win32.UI.WindowsAndMessaging;
@@ -20,6 +22,9 @@ namespace Rekey.DesktopChecks {
     // each app window".
     private const uint _getPerWindowInput = 0x104E;
     private const uint _setPerWindowInput = 0x104F;
+
+    // The value name SignInLaunch uses for Rekey's entries.
+    private const string _signInName = "Rekey";
 
     public static string DataFolder { get; } = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Rekey");
@@ -95,6 +100,38 @@ namespace Rekey.DesktopChecks {
           File.WriteAllBytes(path, before);
         }
       };
+    }
+
+    // Default settings with the welcome already completed, so the welcome window does not take
+    // the front from the checks' test windows.
+    public static void UseDefaultSettings() {
+      Directory.CreateDirectory(DataFolder);
+      File.WriteAllText(Path.Join(DataFolder, "settings.json"), "{ \"welcomeCompleted\": true }");
+    }
+
+    // Returns how to put Rekey's start-at-sign-in entries back as they were: a first start
+    // turns starting at sign-in on for the Debug build under test.
+    public static Action KeepSignInLaunch() {
+      var launch = new SignInLaunch();
+      (string Key, object? Value)[] before = [
+          (launch.RunKey, ReadValue(launch.RunKey)),
+          (launch.ApprovedKey, ReadValue(launch.ApprovedKey))];
+      return () => {
+        foreach ((string key, object? value) in before) {
+          if (value is null) {
+            using RegistryKey? entries = Registry.CurrentUser.OpenSubKey(key, writable: true);
+            entries?.DeleteValue(_signInName, throwOnMissingValue: false);
+          } else {
+            using RegistryKey entries = Registry.CurrentUser.CreateSubKey(key);
+            entries.SetValue(_signInName, value);
+          }
+        }
+      };
+    }
+
+    private static object? ReadValue(string key) {
+      using RegistryKey? entries = Registry.CurrentUser.OpenSubKey(key);
+      return entries?.GetValue(_signInName);
     }
 
     private static string Quote(string value) {
