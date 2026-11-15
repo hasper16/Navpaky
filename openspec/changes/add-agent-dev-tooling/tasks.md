@@ -17,9 +17,9 @@ All installs run on the owner's machine at user scope (design D1–D3). No task 
 
 ## 3. ponytail
 
-- [ ] 3.1 Read the ponytail plugin manifest and hook scripts at the pinned release and confirm they ship no binaries and make no network calls outside the band's local files; record the result in the PR description
-- [ ] 3.2 Run `claude plugin marketplace add DietrichGebert/ponytail#<pinned tag>` and `claude plugin install ponytail@ponytail --scope user`; set `PONYTAIL_DEFAULT_MODE=lite`; verify `claude plugin marketplace list` shows the source at the pinned tag, `claude plugin list` shows ponytail at the pin and a new session reports level `lite`
-- [ ] 3.3 Verify `/ponytail-review branch` runs on this change's branch and returns a review
+- [x] 3.1 Read the ponytail plugin manifest and hook scripts at the pinned release and confirm they ship no binaries and make no network calls outside the band's local files; record the result in the PR description
+- [x] 3.2 Run `claude plugin marketplace add DietrichGebert/ponytail#<pinned tag>` and `claude plugin install ponytail@ponytail --scope user`; set `PONYTAIL_DEFAULT_MODE=lite`; verify `claude plugin marketplace list` shows the source at the pinned tag, `claude plugin list` shows ponytail at the pin and a new session reports level `lite`
+- [x] 3.3 Verify `/ponytail-review branch` runs on this change's branch and returns a review
 
 ## 4. agent-skills
 
