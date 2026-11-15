@@ -107,6 +107,24 @@ namespace Rekey.Core.Tests.Statistics {
     }
 
     [Fact]
+    public void ThirtyDaysAtTheDailyLimitAddUpWithoutOverflow() {
+      // A day at the limit loads; a month of them still adds up within long and TimeSpan.
+      const long limit = 1_000_000_000;
+      string day = Histogram(limit, limit * 86_400_000d, 0, 86_400_000, [limit]);
+      Directory.CreateDirectory(_folder);
+      var store = new StatsStore(_folder);
+      File.WriteAllText(store.FilePath, day);
+      DayStats loaded = Assert.Single(store.Load().Days);
+      var month = new StatsDocument([.. Enumerable.Range(0, 30).Select(
+          offset => loaded with { Day = _monday.AddDays(-offset) })]);
+
+      StatsTotals totals = StatsTotals.Of(month, _monday, days: 30);
+
+      Assert.Equal(30 * limit, totals.Durations.Count);
+      Assert.Equal(TimeSpan.FromDays(1), totals.Durations.Average);
+    }
+
+    [Fact]
     public void DeleteAlsoRemovesFilesKeptAside() {
       Directory.CreateDirectory(_folder);
       var store = new StatsStore(_folder);

@@ -89,6 +89,10 @@ namespace Rekey.Win32 {
 
     // Edits from the settings window, waiting for the worker thread.
     private readonly ConcurrentQueue<WordListEdited> _wordEdits = new();
+
+    // Analysed Words waiting until no key is held back, so the file write never delays typing.
+    private readonly List<LogAnalysis> _analysesToWrite = [];
+
     private Engine _engine = new();
     private uint _threadId;
     private Exception? _startError;
@@ -572,6 +576,7 @@ namespace Rekey.Win32 {
       }
 
       ReportMismatch();
+      WriteAnalyses();
 
       // The user may have switched Layout with the keys just read.
       if (any) {
@@ -853,7 +858,7 @@ namespace Rekey.Win32 {
           _stats.Record(stat, DateOnly.FromDateTime(_time.GetLocalNow().DateTime));
           break;
         case LogAnalysis analysis:
-          WriteAnalysis(analysis);
+          _analysesToWrite.Add(analysis);
           break;
         case Rekey.Core.WordListsChanged:
           WordListsChanged?.Invoke(_engine.Words.Snapshot());
@@ -881,12 +886,17 @@ namespace Rekey.Win32 {
       }
     }
 
-    private void WriteAnalysis(LogAnalysis analysis) {
-      try {
-        _analysisLog?.Write(analysis);
-      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-        // A Word that cannot be logged is left out; the log never blocks typing.
+    // Runs once the keys read so far have gone on, as ReportMismatch does.
+    private void WriteAnalyses() {
+      foreach (LogAnalysis analysis in _analysesToWrite) {
+        try {
+          _analysisLog?.Write(analysis);
+        } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+          // A Word that cannot be logged is left out; the log never blocks typing.
+        }
       }
+
+      _analysesToWrite.Clear();
     }
 
     private void Replace(ReplaceText replace) {
