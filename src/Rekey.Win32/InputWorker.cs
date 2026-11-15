@@ -634,6 +634,8 @@ namespace Rekey.Win32 {
     }
 
     private void Poll() {
+      // A log file another app held open when the log was turned off.
+      _analysisLog?.RetryDeletes();
       if (_meter.TakeIncident() is { } slow) {
         _recordIncident(slow);
       }

@@ -21,6 +21,10 @@ namespace Rekey.Win32.Diagnostics {
     private const string _dateFormat = "yyyy-MM-dd";
 
     private readonly string _folder;
+
+    // Files that could not be deleted when the log was turned off, as when another app holds one
+    // open; they hold typed Words, so deleting them is tried again.
+    private readonly List<string> _undeleted = [];
     private readonly TimeProvider _time;
     private bool _enabled;
     private DateOnly _prunedOn;
@@ -43,7 +47,10 @@ namespace Rekey.Win32.Diagnostics {
     /// <see langword="false" /> to write nothing and delete the log. The default is
     /// <see langword="false" />.
     /// </value>
-    /// <exception cref="IOException">A log file cannot be deleted.</exception>
+    /// <exception cref="IOException">
+    /// An expired log file cannot be deleted while turning the log on. Files that cannot be
+    /// deleted while turning it off are kept for <see cref="RetryDeletes" /> instead.
+    /// </exception>
     public bool Enabled {
       get {
         return _enabled;
@@ -54,12 +61,16 @@ namespace Rekey.Win32.Diagnostics {
         if (value) {
           Prune(Today());
         } else {
-          foreach (string file in LogFiles(_folder)) {
-            File.Delete(file);
-          }
+          DeleteAll([.. LogFiles(_folder)]);
         }
       }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether a log file could not be deleted when the log was turned
+    /// off and waits for <see cref="RetryDeletes" />.
+    /// </summary>
+    public bool HasUndeletedFiles => _undeleted.Count > 0;
 
     /// <summary>
     /// Returns the lines of every log file, oldest first, each after its date.
@@ -106,6 +117,15 @@ namespace Rekey.Win32.Diagnostics {
           : CreateForUserOnly(path);
       byte[] line = Encoding.UTF8.GetBytes(Format(now, entry) + "\n");
       stream.Write(line);
+    }
+
+    /// <summary>
+    /// Tries again to delete the log files that could not be deleted when the log was turned off.
+    /// </summary>
+    public void RetryDeletes() {
+      if (_undeleted.Count > 0) {
+        DeleteAll([.. _undeleted]);
+      }
     }
 
     private static string Format(DateTimeOffset now, LogAnalysis entry) {
@@ -155,6 +175,19 @@ namespace Rekey.Win32.Diagnostics {
       bool parsed = DateOnly.TryParseExact(
           name, _dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly day);
       return parsed ? day : null;
+    }
+
+    // Spec statistics-and-diagnostics: turning the log off deletes it. Every file is tried, and
+    // one that is in use is remembered for the next try.
+    private void DeleteAll(string[] files) {
+      _undeleted.Clear();
+      foreach (string file in files) {
+        try {
+          File.Delete(file);
+        } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+          _undeleted.Add(file);
+        }
+      }
     }
 
     private DateOnly Today() {
