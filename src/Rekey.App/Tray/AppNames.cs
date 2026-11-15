@@ -21,8 +21,9 @@ namespace Rekey.App.Tray {
     // An Excluded Apps entry: a program path, or the package identity (AUMID) of a Store app,
     // which names no file.
     public static string OfKey(string key) {
+      // A package identity never holds a backslash; a path may hold a "!".
       int bang = key.IndexOf('!', StringComparison.Ordinal);
-      if (bang < 0) {
+      if (bang < 0 || key.Contains('\\', StringComparison.Ordinal)) {
         return Of(new AppId(key));
       }
 

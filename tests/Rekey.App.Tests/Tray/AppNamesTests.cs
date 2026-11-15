@@ -26,5 +26,10 @@ namespace Rekey.App.Tests.Tray {
       Assert.Equal(
           "WindowsTerminal", AppNames.OfKey("Microsoft.WindowsTerminal_8wekyb3d8bbwe!App"));
     }
+
+    [Fact]
+    public void AProgramPathWithABangIsStillAPath() {
+      Assert.Equal("editor", AppNames.OfKey(@"C:\Tools\Acme!Beta\editor.exe"));
+    }
   }
 }
