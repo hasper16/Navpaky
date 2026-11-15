@@ -91,7 +91,7 @@ Each security finding SHALL be fixed in the same PR or listed in the PR body's `
 - **THEN** the section lists it with the reason and, where follow-up work is needed, the follow-up's name
 
 ### Requirement: Orchestrator verifies the security review
-Before merging a PR whose diff touches a security-sensitive area, the orchestrator SHALL confirm that the PR body has a complete `Security review` section (guidance mode, a reviewed commit that is the PR head or an ancestor of it, every touched sensitive area, and findings) and SHALL return the PR to the implementer otherwise. Sensitivity is judged from changed paths and from added network or process calls. The review is stale, and SHALL be redone, when a commit after the reviewed one changes a file in a sensitive area, adds a network or process call, or changes a helper that a reviewed file relies on for a signature, path or input check.
+Before merging a PR whose diff touches a security-sensitive area, the orchestrator SHALL confirm that the PR body has a complete `Security review` section (guidance mode, a reviewed commit that is the PR head or an ancestor of it, every touched sensitive area, and findings) and SHALL return the PR to the implementer otherwise. Sensitivity is judged from changed paths and from added network or process calls. The review is stale, and SHALL be redone, when a commit after the reviewed one changes a file in a sensitive area, adds a network or process call, or changes a helper that a reviewed file relies on for a signature, path, input or redaction check.
 
 #### Scenario: Incomplete section
 - **WHEN** the section names only a reviewed commit
@@ -106,7 +106,7 @@ Before merging a PR whose diff touches a security-sensitive area, the orchestrat
 - **THEN** the orchestrator asks the implementer to review again before merging
 
 #### Scenario: Security helper changed after the review
-- **WHEN** a commit after the reviewed one changes a helper outside every sensitive area that a reviewed file relies on for a signature, path or input check
+- **WHEN** a commit after the reviewed one changes a helper outside every sensitive area that a reviewed file relies on for a signature, path, input or redaction check
 - **THEN** the orchestrator asks the implementer to review again before merging
 
 ### Requirement: Curated skills do not compete with OpenSpec
