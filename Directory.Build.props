@@ -8,6 +8,9 @@
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Stack traces in crash reports name files relative to the repository, not the build
+         machine's folders (add-telemetry, design Risks). -->
+    <PathMap>$(MSBuildThisFileDirectory)=/_/</PathMap>
   </PropertyGroup>
 
   <ItemGroup>

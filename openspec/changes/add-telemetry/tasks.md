@@ -2,9 +2,9 @@
 
 ## 1. Consent and schemas (data shape first)
 
-- [ ] 1.1 Add `DiagnosticsConsent` (both off) to `Settings`; verify defaults and round-trip tests pass
-- [ ] 1.2 Define Usage Digest and setup-signal schema records; write a failing test that rejects schema properties named like text/word/title/path/user and asserts no stable id field; make it pass; verify
-- [ ] 1.3 Add `PathMap` to `Directory.Build.props`; verify a built assembly's stack trace shows repository-relative paths
+- [x] 1.1 Add `DiagnosticsConsent` (both off) to `Settings`; verify defaults and round-trip tests pass
+- [x] 1.2 Define Usage Digest and setup-signal schema records; write a failing test that rejects schema properties named like text/word/title/path/user and asserts no stable id field; make it pass; verify
+- [x] 1.3 Add `PathMap` to `Directory.Build.props`; verify a built assembly's stack trace shows repository-relative paths
 
 ## 2. Crash and freeze reports
 
