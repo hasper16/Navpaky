@@ -24,14 +24,21 @@ namespace Rekey.App.Onboarding {
     public event Action? Disappeared;
 
     public void Start() {
-      _watcher = new FileSystemWatcher(Path.GetDirectoryName(_path)!) {
+      _timer = _time.CreateTimer(_ => Check(), null, CheckPeriod, CheckPeriod);
+      var watcher = new FileSystemWatcher {
         NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName,
       };
-      _watcher.Deleted += (_, _) => Check();
-      _watcher.Renamed += (_, _) => Check();
-      _watcher.Error += (_, _) => Check();
-      _watcher.EnableRaisingEvents = true;
-      _timer = _time.CreateTimer(_ => Check(), null, CheckPeriod, CheckPeriod);
+      watcher.Deleted += (_, _) => Check();
+      watcher.Renamed += (_, _) => Check();
+      watcher.Error += (_, _) => Check();
+      try {
+        // A folder already gone cannot be watched; the minute check still reports it.
+        watcher.Path = Path.GetDirectoryName(_path)!;
+        watcher.EnableRaisingEvents = true;
+        _watcher = watcher;
+      } catch (Exception e) when (e is ArgumentException or IOException) {
+        watcher.Dispose();
+      }
     }
 
     public void Dispose() {

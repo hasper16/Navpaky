@@ -182,6 +182,10 @@ namespace Rekey.DesktopChecks {
       _restorer.Defer("copied Rekey build", () => Directory.Delete(copy, recursive: true));
       CopyFolder(Path.GetDirectoryName(AppPath())!, copy);
       string exe = Path.Join(copy, Path.GetFileName(AppPath()));
+
+      // The app starts its executable watch before it writes this file, so a new file means
+      // the watch runs.
+      File.Delete(UiStatePath());
       using Process app = Process.Start(exe, "--check-ui")
           ?? throw new InvalidOperationException("The copy did not start.");
       bool started = EventLog.WaitFor(() => File.Exists(UiStatePath()), TimeSpan.FromSeconds(15));

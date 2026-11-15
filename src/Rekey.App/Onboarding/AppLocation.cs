@@ -21,8 +21,12 @@ namespace Rekey.App.Onboarding {
     }
 
     public static bool IsInside(string folder, string path) {
-      string parent = Path.TrimEndingDirectorySeparator(Path.GetFullPath(folder))
-          + Path.DirectorySeparatorChar;
+      // A drive root such as D:\ keeps its separator when trimmed.
+      string parent = Path.TrimEndingDirectorySeparator(Path.GetFullPath(folder));
+      if (!Path.EndsInDirectorySeparator(parent)) {
+        parent += Path.DirectorySeparatorChar;
+      }
+
       return (path + Path.DirectorySeparatorChar).StartsWith(
           parent, StringComparison.OrdinalIgnoreCase);
     }

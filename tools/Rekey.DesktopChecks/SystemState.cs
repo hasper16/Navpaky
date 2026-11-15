@@ -113,25 +113,28 @@ namespace Rekey.DesktopChecks {
     // turns starting at sign-in on for the Debug build under test.
     public static Action KeepSignInLaunch() {
       var launch = new SignInLaunch();
-      (string Key, object? Value)[] before = [
+      (string Key, (object Data, RegistryValueKind Kind)? Value)[] before = [
           (launch.RunKey, ReadValue(launch.RunKey)),
           (launch.ApprovedKey, ReadValue(launch.ApprovedKey))];
       return () => {
-        foreach ((string key, object? value) in before) {
-          if (value is null) {
+        foreach ((string key, (object Data, RegistryValueKind Kind)? value) in before) {
+          if (value is not { } kept) {
             using RegistryKey? entries = Registry.CurrentUser.OpenSubKey(key, writable: true);
             entries?.DeleteValue(_signInName, throwOnMissingValue: false);
           } else {
             using RegistryKey entries = Registry.CurrentUser.CreateSubKey(key);
-            entries.SetValue(_signInName, value);
+            entries.SetValue(_signInName, kept.Data, kept.Kind);
           }
         }
       };
     }
 
-    private static object? ReadValue(string key) {
+    // The value as stored, with its kind and without expanding environment variables.
+    private static (object Data, RegistryValueKind Kind)? ReadValue(string key) {
       using RegistryKey? entries = Registry.CurrentUser.OpenSubKey(key);
-      return entries?.GetValue(_signInName);
+      object? data = entries?.GetValue(
+          _signInName, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
+      return data is null ? null : (data, entries!.GetValueKind(_signInName));
     }
 
     private static string Quote(string value) {

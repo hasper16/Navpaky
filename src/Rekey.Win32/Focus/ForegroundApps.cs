@@ -63,6 +63,14 @@ namespace Rekey.Win32.Focus {
     }
 
     /// <summary>
+    /// Returns the window in front now; safe to call from any thread.
+    /// </summary>
+    /// <returns>The window handle, or zero when no window is in front.</returns>
+    public static nint CurrentWindow() {
+      return PInvoke.GetForegroundWindow();
+    }
+
+    /// <summary>
     /// Installs the hook and reports the application in front now.
     /// </summary>
     public void Start() {

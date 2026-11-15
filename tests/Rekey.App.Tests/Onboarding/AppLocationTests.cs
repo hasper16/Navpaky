@@ -33,6 +33,15 @@ namespace Rekey.App.Tests.Onboarding {
     }
 
     [Fact]
+    public void DownloadsAtADriveRootIsTemporary() {
+      LocationFolders atRoot = _folders with { Downloads = @"D:\" };
+
+      Assert.Equal(
+          LocationKind.Temporary,
+          AppLocation.Classify(@"D:\Rekey\Rekey.App.exe", atRoot, debugBuild: false));
+    }
+
+    [Fact]
     public void InstallRootIsInstalled() {
       string exe = @$"{_local}\key-switcher\current\Rekey.App.exe";
 

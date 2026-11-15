@@ -73,9 +73,18 @@ namespace Rekey.App.Tests.Onboarding {
       _gone.Wait(_wait, TestContext.Current.CancellationToken);
 
       _clock.Advance(ExecutableWatch.CheckPeriod);
-      _clock.Advance(ExecutableWatch.CheckPeriod);
 
       Assert.Equal(1, Volatile.Read(ref _notices));
+    }
+
+    [Fact]
+    public void FolderGoneBeforeStartIsNoticedByTheMinuteCheck() {
+      Directory.Delete(_folder, recursive: true);
+      using ExecutableWatch watch = Start();
+
+      _clock.Advance(ExecutableWatch.CheckPeriod);
+
+      Assert.True(_gone.IsSet);
     }
 
     private ExecutableWatch Start() {

@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Interop;
 using Rekey.App.Onboarding;
 using Rekey.App.Tray;
 using Rekey.App.ViewModels;
@@ -29,8 +30,11 @@ namespace Rekey.App.Views {
       };
     }
 
-    // Whether the user is typing in the try-it field right now.
-    public bool TryItHasFocus => IsActive && TryIt.IsKeyboardFocused;
+    // Whether a Correction made while the given window was in front happened in the try-it
+    // field: no other control of this window takes typing.
+    public bool IsTryItIn(nint foreground) {
+      return foreground == new WindowInteropHelper(this).Handle && TryIt.IsKeyboardFocused;
+    }
 
     protected override void OnClosed(EventArgs e) {
       _model.PropertyChanged -= OnModelChanged;

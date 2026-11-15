@@ -348,7 +348,12 @@ namespace Rekey.App {
       _worker.SelfPauseChanged += until => Dispatcher.BeginInvoke(() => ShowSelfPause(until));
       _worker.Observed += RememberWordCounts;
       _worker.Observed += FollowLayout;
-      _worker.Switched += feedback => Dispatcher.BeginInvoke(() => RespondToSwitch(feedback));
+
+      // The window in front is read when the Switch happens, before focus can move on.
+      _worker.Switched += feedback => {
+        nint front = ForegroundApps.CurrentWindow();
+        Dispatcher.BeginInvoke(() => RespondToSwitch(feedback, front));
+      };
       try {
         _worker.Start();
       } catch (Win32Exception) {
@@ -611,7 +616,7 @@ namespace Rekey.App {
       }
     }
 
-    private void RespondToSwitch(SwitchFeedback feedback) {
+    private void RespondToSwitch(SwitchFeedback feedback, nint front) {
       SwitchResponse response = SwitchResponse.For(feedback, _hub!.Current);
       if (response.Indicator) {
         _indicator!.Show(
@@ -624,7 +629,7 @@ namespace Rekey.App {
       }
 
       if (feedback.Cause == SwitchCause.Correction) {
-        NoteCorrection();
+        NoteCorrection(front);
       }
 #if DEBUG
       NoteSwitchForCheck(feedback);
@@ -651,8 +656,8 @@ namespace Rekey.App {
     }
 
     // The try-it field confirms the Correction; a first real one gets the one-time Undo tip.
-    private void NoteCorrection() {
-      bool inTryIt = _welcomeWindow?.TryItHasFocus == true;
+    private void NoteCorrection(nint front) {
+      bool inTryIt = _welcomeWindow?.IsTryItIn(front) == true;
       if (inTryIt) {
         _welcome?.NoteTryItCorrection();
       }

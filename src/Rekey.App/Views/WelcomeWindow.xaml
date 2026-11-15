@@ -108,7 +108,6 @@
       <ui:Button x:Name="Done"
                  Content="{x:Static app:Strings.WelcomeDone}"
                  Appearance="Primary"
-                 IsDefault="True"
                  HorizontalAlignment="Right"
                  MinWidth="120" />
     </Border>
