@@ -20,7 +20,7 @@ Do not touch the mouse or keyboard for about 2 minutes. The tool starts the Debu
 | 3.1 | With the settings window open and the test window in front, Settings again brings the same window to the front and creates no second one |
 | 4.2 | With "Play a sound after a correction" on, a Correction plays one sound and Ctrl+Z right after it (an Undo) plays none |
 
-Not run yet: the orchestrator runs it on the head of the PR.
+Last run: 10 of 10 at e1e3631 on the owner's desktop (prerequisites; 2.2 tray RU and EN; 4.1 badge appears and hides; 3.2 Auto Correction off and on from the settings window; 3.1 Settings reuses the open window; 4.2 one sound per Correction and none on Undo; 2.2 Quit ends the app); the language list and `settings.json` were unchanged afterwards.
 
 ## By hand
 
