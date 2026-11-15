@@ -36,6 +36,7 @@ Set-Content (Join-Path $cmdsWithShip 'ship.md') 'ship'
 
 $plugins = '[{"id":"ponytail@ponytail","version":"5.3.3","scope":"user","enabled":true}]'
 $pluginsOld = '[{"id":"ponytail@ponytail","version":"5.3.2","scope":"user","enabled":true}]'
+$pluginsAgentSkills = '[{"id":"agent-skills@addy-agent-skills","version":"1.0.0","scope":"user","enabled":true}]'
 $pluginsOff = '[{"id":"ponytail@ponytail","version":"5.3.3","scope":"user","enabled":false}]'
 $market = '[{"name":"ponytail","source":"github","repo":"DietrichGebert/ponytail","ref":"v5.3.3"}]'
 $marketNoRef = '[{"name":"ponytail","source":"github","repo":"DietrichGebert/ponytail"}]'
@@ -77,8 +78,10 @@ $cases = @(
   @{ n = 'curated skill missing'; want = $false; r = { Test-CuratedSkill $store $link 'absent' $commit } },
   @{ n = 'curated skill no SOURCE'; want = $false; r = { Test-CuratedSkill $store $link 'no-source' $commit } },
   @{ n = 'curated skill old commit'; want = $false; r = { Test-CuratedSkill $store $link 'old-skill' $commit } },
-  @{ n = 'no lifecycle commands'; want = $true; r = { Test-NoLifecycleCommand $commands } },
-  @{ n = 'lifecycle command present'; want = $false; r = { Test-NoLifecycleCommand $cmdsWithShip } },
+  @{ n = 'no lifecycle commands'; want = $true; r = { Test-NoLifecycleCommand $commands $plugins } },
+  @{ n = 'lifecycle command present'; want = $false; r = { Test-NoLifecycleCommand $cmdsWithShip $plugins } },
+  @{ n = 'agent-skills plugin installed'; want = $false
+     r = { Test-NoLifecycleCommand $commands $pluginsAgentSkills } },
   @{ n = 'audit hash match'; want = $true
      r = { Test-SecurityAudit $store $store 'audit' $auditHash } },
   @{ n = 'audit hash after one-byte change'; want = $false

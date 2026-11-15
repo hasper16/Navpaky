@@ -81,11 +81,15 @@ function Test-CuratedSkill([string]$storeRoot, [string]$linkRoot, [string]$skill
   New-Result $name $ok "SOURCE commit pin $commit"
 }
 
-function Test-NoLifecycleCommand([string]$commandsDir) {
+# Lifecycle commands (/spec, /plan, /build, /ship) arrive either as command files or with the
+# agent-skills Claude Code plugin; both routes compete with OpenSpec.
+function Test-NoLifecycleCommand([string]$commandsDir, [string]$pluginListJson) {
   $lifecycle = 'spec.md', 'plan.md', 'build.md', 'ship.md'
   $found = @(Get-ChildItem -LiteralPath $commandsDir -Recurse -File -EA SilentlyContinue |
     Where-Object { $lifecycle -contains $_.Name } | ForEach-Object Name)
-  $reason = if ($found) { "found $($found -join ', ') in $commandsDir" } else { "none in $commandsDir" }
+  $found += @($pluginListJson | ConvertFrom-Json | Where-Object { $_.id -like 'agent-skills@*' } |
+    ForEach-Object id)
+  $reason = if ($found) { "found $($found -join ', ')" } else { "none in $commandsDir or plugins" }
   New-Result 'no agent-skills lifecycle commands' (-not $found) $reason
 }
 
@@ -114,13 +118,13 @@ function Get-UserEnv([string]$variable) {
 
 function Invoke-AgentDevToolingCheck {
   $pins = Get-Content -Raw (Join-Path $PSScriptRoot 'versions.json') | ConvertFrom-Json
-  $home_ = [Environment]::GetFolderPath('UserProfile')
-  $store = Join-Path $home_ '.ai-global/skills'
-  $link = Join-Path $home_ '.claude/skills'
+  $store = Join-Path $HOME '.ai-global/skills'
+  $link = Join-Path $HOME '.claude/skills'
   $repo = (git -C $PSScriptRoot rev-parse --show-toplevel)
 
   $versionOutput = (graphify --version 2>$null) -join "`n"
   $graphifyExit = $LASTEXITCODE
+  $plugins = (claude plugin list --json 2>$null) -join "`n"
   $results = @(
     Test-GraphifyPackage ((uv tool list 2>$null) -join "`n") $pins.graphify.version
     Test-GraphifyCli $versionOutput $graphifyExit $pins.graphify.version
@@ -128,14 +132,14 @@ function Invoke-AgentDevToolingCheck {
     Test-EnvValue 'GRAPHIFY_QUERY_LOG_DISABLE' (Get-UserEnv 'GRAPHIFY_QUERY_LOG_DISABLE') '1'
     Test-EnvValue 'GRAPHIFY_NO_TIPS' (Get-UserEnv 'GRAPHIFY_NO_TIPS') '1'
     Test-SkillFolder $store $link 'graphify'
-    Test-PonytailPlugin ((claude plugin list --json 2>$null) -join "`n") $pins.ponytail.version
+    Test-PonytailPlugin $plugins $pins.ponytail.version
     Test-PonytailMarketplace ((claude plugin marketplace list --json 2>$null) -join "`n") `
       $pins.ponytail.marketplace $pins.ponytail.tag
     Test-EnvValue 'PONYTAIL_DEFAULT_MODE' (Get-UserEnv 'PONYTAIL_DEFAULT_MODE') 'lite'
     foreach ($skill in $pins.agentSkills.skills) {
       Test-CuratedSkill $store $link $skill $pins.agentSkills.commit
     }
-    Test-NoLifecycleCommand (Join-Path $home_ '.claude/commands')
+    Test-NoLifecycleCommand (Join-Path $HOME '.claude/commands') $plugins
     Test-SecurityAudit $store $link 'security-audit' $pins.securityAudit.sha256
     Test-NoToolFilesInRepo @(git -C $repo status --porcelain --untracked-files=all)
   )
