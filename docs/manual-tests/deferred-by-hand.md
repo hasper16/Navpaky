@@ -105,6 +105,8 @@ Written against the head of the `add-onboarding` PR. Unit tests cover when the w
   Expected: keycap, description, Undo hint, privacy statement, try-it field, Auto Correction and sign-in switches, Hotkey choice, tray tip and Done read well in both modes and follow the switch at once; every control is reachable in reading order with a visible focus mark; Enter or Space on a focused Done closes the window, while Enter in the try-it field does not; Narrator reads the try-it hint with the field.
 - [ ] **Try it with the physical keyboard (2.2).** At a first start, with English (US) active, type "ghbdtn" and Space in the try-it field.
   Expected: the field shows "привет ", the Layout is Russian and the green confirmation appears; no "Rekey corrected a word" notification follows.
+- [ ] **Tray item (2.4).** Complete the welcome, then open the tray menu with a click on the Rekey icon.
+  Expected: the menu lists "Welcome and setup" above "About Rekey"; choosing it opens the welcome window with the current settings, and choosing it again while open brings the same window to the front.
 - [ ] **One Layout installed (2.3).** Remove every Layout but English (US) (keep a note to add Russian back), then open "Welcome and setup" from the tray. Choose "Open language settings". Add Russian back.
   Expected: an amber notice says Rekey needs at least two Layouts; the button opens Settings → Time & language → Language & region; once Russian is back the notice disappears without reopening the window.
 - [ ] **One-time notification (2.5).** Complete the welcome, then in Notepad type "ghbdtn" and Space; type "ghbdtn" and Space again; quit and start Rekey and correct once more.
