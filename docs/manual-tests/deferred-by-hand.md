@@ -84,3 +84,12 @@ Written against the head of the `add-auto-update-and-installer` PR. Unit tests c
   Expected: after the restart into 0.2.0 the settings, the Protected Word and the statistics are unchanged, and Rekey still starts at the next sign-in.
 - [ ] **Tampered and unsigned packages (3.2).** In the local feed, replace the 0.2.0 `.nupkg` with a copy that has one byte changed (keep `releases.win.json`), and choose "Check for updates". Then restore a 0.2.0 package packed without signing (checksums updated by `vpk pack`) and check again.
   Expected: both times the item reads "Could not check for updates", 0.1.0 keeps running, `%LOCALAPPDATA%\key-switcher\packages` holds no 0.2.0 package, and `%LOCALAPPDATA%\Rekey\incidents.jsonl` gains `UpdateChecksumFailed`, then `UpdateSignatureFailed` with `SignatureVerdict.NotSigned`.
+- [ ] **Uninstall, keeping data (4.1).** With Rekey installed and "Start Rekey when I sign in to Windows" on, uninstall it from Installed apps and answer No.
+  Expected: Rekey closes; `%LOCALAPPDATA%\key-switcher`, the Start menu entry and the Run entry (Task Manager → Startup apps) are gone; `%LOCALAPPDATA%\Rekey` is still there; installing again picks up the old settings and word lists.
+- [ ] **Uninstall, deleting data (4.1).** Uninstall again and answer Yes.
+  Expected: `%LOCALAPPDATA%\Rekey` no longer exists and Rekey does not start at the next sign-in.
+- [ ] **Release environment and dry run (4.2).** Owner: create the `release` environment limited to `v*` tags with the `VPK_SIGN_PARAMS` secret (`docs/release.md`, One-time setup). After the change is on `main`, run Release by hand with version `0.0.1`.
+  Expected: the run passes, its Pack log says no signing parameters were provided, it creates no release, and the artifact holds `key-switcher-win-Setup.exe` and the `.nupkg`.
+- [ ] **Local signed test build (4.3).** Follow `docs/release.md` → Local test build on a clean checkout without help.
+  Expected: two signed packages in one feed folder, which the update steps above use; note any step that needed guessing.
+

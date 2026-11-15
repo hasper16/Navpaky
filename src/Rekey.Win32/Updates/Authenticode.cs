@@ -12,8 +12,8 @@ namespace Rekey.Win32.Updates {
       "S6640:Avoid using unsafe code blocks",
       Justification = "WinVerifyTrust takes its arguments through pointers.")]
   internal static unsafe class Authenticode {
-    public static SignatureFacts Read(string path) {
-      TrustResult trust = Verify(path);
+    public static SignatureFacts Read(string path, bool checkRevocation = true) {
+      TrustResult trust = Verify(path, checkRevocation);
       if (trust == TrustResult.NotSigned) {
         return new SignatureFacts(trust, string.Empty, string.Empty);
       }
@@ -39,7 +39,7 @@ namespace Rekey.Win32.Updates {
           : string.Empty;
     }
 
-    private static TrustResult Verify(string path) {
+    private static TrustResult Verify(string path, bool checkRevocation) {
       fixed (char* file = path) {
         var fileInfo = new WINTRUST_FILE_INFO {
           cbStruct = (uint)sizeof(WINTRUST_FILE_INFO),
@@ -48,10 +48,14 @@ namespace Rekey.Win32.Updates {
         var data = new WINTRUST_DATA {
           cbStruct = (uint)sizeof(WINTRUST_DATA),
           dwUIChoice = WINTRUST_DATA_UICHOICE.WTD_UI_NONE,
-          fdwRevocationChecks = WINTRUST_DATA_REVOCATION_CHECKS.WTD_REVOKE_WHOLECHAIN,
+          fdwRevocationChecks = checkRevocation
+              ? WINTRUST_DATA_REVOCATION_CHECKS.WTD_REVOKE_WHOLECHAIN
+              : WINTRUST_DATA_REVOCATION_CHECKS.WTD_REVOKE_NONE,
           dwUnionChoice = WINTRUST_DATA_UNION_CHOICE.WTD_CHOICE_FILE,
           dwStateAction = WINTRUST_DATA_STATE_ACTION.WTD_STATEACTION_VERIFY,
-          dwProvFlags = WINTRUST_DATA_PROVIDER_FLAGS.WTD_REVOCATION_CHECK_CHAIN,
+          dwProvFlags = checkRevocation
+              ? WINTRUST_DATA_PROVIDER_FLAGS.WTD_REVOCATION_CHECK_CHAIN
+              : WINTRUST_DATA_PROVIDER_FLAGS.WTD_REVOCATION_CHECK_NONE,
         };
         data.Anonymous.pFile = &fileInfo;
         Guid action = PInvoke.WINTRUST_ACTION_GENERIC_VERIFY_V2;

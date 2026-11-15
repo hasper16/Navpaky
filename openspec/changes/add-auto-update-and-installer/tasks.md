@@ -18,6 +18,6 @@
 
 ## 4. Uninstall and release
 
-- [ ] 4.1 Implement the uninstall hook (remove `Run` value, ask to delete `%LOCALAPPDATA%\Rekey`); verify manually both answers, and that the data survives when the user declines
-- [ ] 4.2 Create `.github/workflows/release.yml` (tag-triggered, publish, sign via secret store, `vpk pack`, `vpk upload github --publish`); verify with a dry run on a test tag that unsigned PR builds cannot access signing secrets
-- [ ] 4.3 Document the release process and certificate handling in `docs/release.md`; verify a teammate can follow it to produce a local signed test build
+- [x] 4.1 Implement the uninstall hook (remove `Run` value, ask to delete `%LOCALAPPDATA%\Rekey`); verify manually both answers, and that the data survives when the user declines (UninstallerTests pass; the by-hand uninstall is deferred to `deferred-by-hand.md`)
+- [x] 4.2 Create `.github/workflows/release.yml` (tag-triggered, publish, sign via secret store, `vpk pack`, `vpk upload github --publish`); verify with a dry run on a test tag that unsigned PR builds cannot access signing secrets (design R9: no `pull_request` trigger, secret only in the tag-limited `release` environment; the dry run needs the environment and a run from `main`, so it is deferred to `deferred-by-hand.md`)
+- [x] 4.3 Document the release process and certificate handling in `docs/release.md`; verify a teammate can follow it to produce a local signed test build (following it is part of the deferred by-hand pass)

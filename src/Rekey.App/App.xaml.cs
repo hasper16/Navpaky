@@ -462,7 +462,8 @@ namespace Rekey.App {
       VelopackUpdates service = VelopackUpdates.FromReleases(() => Shutdown(), RecordIncident);
 #if DEBUG
       // For the by-hand update checks: a local feed folder instead of GitHub Releases, and a
-      // test publisher (subject, then issuing CA thumbprint) instead of the Rekey one.
+      // test publisher (subject, then issuing CA thumbprint) instead of the Rekey one; a test CA
+      // publishes no revocation list.
       string[] args = Environment.GetCommandLineArgs();
       int feed = Array.IndexOf(args, _updateFeed);
       int pin = Array.IndexOf(args, _updatePin);
@@ -472,7 +473,8 @@ namespace Rekey.App {
             : PublisherPin.None;
         var manager = new RekeyUpdateManager(
             new SimpleFileSource(new DirectoryInfo(args[feed + 1])),
-            package => PackageSignature.Verify(package, RekeyPublisher.MainExe, publisher));
+            package => PackageSignature.Verify(
+                package, RekeyPublisher.MainExe, publisher, checkRevocation: false));
         service = new VelopackUpdates(
             manager, () => Shutdown(), RecordIncident, TimeProvider.System);
       }

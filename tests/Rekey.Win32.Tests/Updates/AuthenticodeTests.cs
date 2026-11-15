@@ -22,6 +22,17 @@ namespace Rekey.Win32.Tests.Updates {
     }
 
     [Fact]
+    public void ChangedFileStaysUntrustedWithoutRevocationChecks() {
+      string copy = Path.Join(_folder, "changed.dll");
+      byte[] bytes = File.ReadAllBytes(_microsoftSigned);
+      bytes[bytes.Length / 2] ^= 0xFF;
+      File.WriteAllBytes(copy, bytes);
+
+      Assert.Equal(TrustResult.Trusted, Authenticode.Read(_microsoftSigned, false).Trust);
+      Assert.Equal(TrustResult.Untrusted, Authenticode.Read(copy, false).Trust);
+    }
+
+    [Fact]
     public void UnsignedFileIsNotSigned() {
       SignatureFacts facts = Authenticode.Read(typeof(AuthenticodeTests).Assembly.Location);
 

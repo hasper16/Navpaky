@@ -1,0 +1,121 @@
+name: Release
+
+# Builds, signs, packs and publishes Rekey to GitHub Releases (design D4 of
+# add-auto-update-and-installer; docs/release.md). Pull requests never run this workflow, and
+# the signing secret lives in the `release` environment, which only `v*` tags may use.
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to pack without publishing (dry run), such as 0.1.0"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    # Only tag runs enter the environment that holds the signing secret; a dry run packs
+    # unsigned and publishes nothing.
+    environment: ${{ github.ref_type == 'tag' && 'release' || '' }}
+    permissions:
+      contents: write
+    env:
+      DOTNET_NOLOGO: true
+      VPK_VERSION: 1.2.161
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Version
+        id: version
+        shell: pwsh
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          $version = if ($env:REF_TYPE -eq 'tag') { $env:REF_NAME.Substring(1) } else { $env:INPUT_VERSION }
+          if ($version -notmatch '^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$') {
+            throw "Not a semantic version: $version"
+          }
+          "value=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Test
+        run: dotnet test -c Release --no-build
+
+      - name: Publish
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: >
+          dotnet publish src/Rekey.App -c Release -r win-x64 --self-contained
+          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:PublishReadyToRun=true -p:Version=$env:VERSION -o publish
+
+      - name: Install vpk
+        run: dotnet tool install vpk --version ${{ env.VPK_VERSION }} --tool-path .tools
+
+      # A tag never publishes unsigned code: Rekey refuses updates its publisher did not sign.
+      - name: Pack
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+          REF_TYPE: ${{ github.ref_type }}
+          SIGN_PARAMS: ${{ secrets.VPK_SIGN_PARAMS }}
+        run: |
+          $pack = @(
+            'pack', '--packId', 'key-switcher', '--packVersion', $env:VERSION,
+            '--packDir', 'publish', '--mainExe', 'Rekey.App.exe', '--packTitle', 'Rekey',
+            '--delta', 'None', '--exclude', '\.(pdb|xml)$', '--outputDir', 'releases')
+          if ($env:SIGN_PARAMS) {
+            $pack += @('--signParams', $env:SIGN_PARAMS)
+          } elseif ($env:REF_TYPE -eq 'tag') {
+            throw 'VPK_SIGN_PARAMS is not set in the release environment.'
+          }
+          & .tools/vpk @pack
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Keep dry-run packages
+        if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v7
+        with:
+          name: releases-${{ steps.version.outputs.value }}
+          path: releases/
+
+      - name: Upload to GitHub Releases
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+          REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $upload = @(
+            'upload', 'github', '--repoUrl', "https://github.com/$env:REPOSITORY",
+            '--token', $env:GITHUB_TOKEN, '--publish', '--releaseName', "Rekey $env:VERSION",
+            '--tag', "v$env:VERSION", '--outputDir', 'releases')
+          if ($env:VERSION.Contains('-')) {
+            $upload += '--pre'
+          }
+          & .tools/vpk @upload
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
