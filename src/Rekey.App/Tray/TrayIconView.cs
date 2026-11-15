@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using H.NotifyIcon;
 using H.NotifyIcon.Core;
 using Microsoft.Win32;
+using Rekey.App.Updates;
 using Rekey.App.ViewModels;
 using Rekey.Win32;
 
@@ -19,7 +20,8 @@ namespace Rekey.App.Tray {
     private (string Code, TrayState State, bool Dark, int Size)? _drawn;
 
     // What the menu was last built from; a refresh with the same content leaves it alone.
-    private (bool AutoCorrection, bool Paused, string? Exclude, int Extra)? _built;
+    private (bool AutoCorrection, bool Paused, string? Exclude, int Extra, UpdateStatus Updates)?
+        _built;
 
     public TrayIconView(TaskbarIcon icon, TrayViewModel model, TrayCommands commands) {
       _icon = icon;
@@ -56,11 +58,6 @@ namespace Rekey.App.Tray {
       return key?.GetValue("SystemUsesLightTheme") is int light && light == 0;
     }
 
-    // Statistics and Check for updates arrive with their own changes (proposal).
-    private static MenuItem Disabled(string text) {
-      return new MenuItem { Header = text, IsEnabled = false };
-    }
-
     private void DrawIcon() {
       var look = (_model.LanguageCode ?? "··", _model.State, TaskbarIsDark(),
           Display.SmallIconSize());
@@ -74,7 +71,7 @@ namespace Rekey.App.Tray {
 
     private void BuildMenu() {
       var content = (_model.AutoCorrectionEnabled, _model.IsPaused, _model.ExcludeItemText,
-          ExtraItems.Count);
+          ExtraItems.Count, _model.Updates);
 
       // The WPF build of H.NotifyIcon shows this ContextMenu itself, so rebuilding it while
       // open would drop the user's place in it.
@@ -101,7 +98,9 @@ namespace Rekey.App.Tray {
       items.Add(new Separator());
       items.Add(Item(Strings.MenuSettings, _commands.OpenSettings));
       items.Add(Item(Strings.MenuStatistics, _commands.OpenStatistics));
-      items.Add(Disabled(Strings.MenuCheckForUpdates));
+      MenuItem updates = Item(_model.UpdateItemText, _commands.Updates);
+      updates.IsEnabled = _model.UpdateItemEnabled;
+      items.Add(updates);
       items.Add(Item(Strings.MenuAbout, _commands.OpenAbout));
       items.Add(new Separator());
       items.Add(Item(Strings.MenuQuit, _commands.Quit));

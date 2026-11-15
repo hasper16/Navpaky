@@ -5,6 +5,9 @@
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <NeutralLanguage>en</NeutralLanguage>
+    <StartupObject>Rekey.App.Program</StartupObject>
+    <Product>Rekey</Product>
+    <AssemblyTitle>Rekey</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup>

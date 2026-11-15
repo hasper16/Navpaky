@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using H.NotifyIcon;
 using Rekey.App.Feedback;
 using Rekey.App.Tray;
+using Rekey.App.Updates;
 using Rekey.App.ViewModels;
 using Rekey.App.Views;
 using Rekey.Core;
@@ -21,6 +22,10 @@ using Rekey.Win32;
 using Rekey.Win32.Diagnostics;
 using Rekey.Win32.Focus;
 using Rekey.Win32.Hotkeys;
+using Velopack.Locators;
+#if DEBUG
+using Velopack.Sources;
+#endif
 using Wpf.Ui.Appearance;
 using SymbolRegular = Wpf.Ui.Controls.SymbolRegular;
 
@@ -37,6 +42,7 @@ namespace Rekey.App {
     private const string _checkAutoResume = "--check-auto-resume";
     private const string _checkQuit = "--check-quit";
     private const string _checkSettings = "--check-settings";
+    private const string _updateFeed = "--update-feed";
 #endif
 
     // The tray says how many minutes of a Pause remain and notices its end.
@@ -48,8 +54,9 @@ namespace Rekey.App {
     // How long a restarted Rekey waits for the frozen one to exit before it starts anyway.
     private static readonly TimeSpan _oldProcessExitWait = TimeSpan.FromSeconds(10);
 
-    private static readonly string _dataFolder = Path.Join(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Rekey");
+    private static readonly string _dataFolder = DataFolder.Resolve(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        VelopackLocator.IsCurrentSet ? VelopackLocator.Current : null);
 
     private static readonly string _analysisFolder = Path.Join(_dataFolder, "analysis");
 
@@ -87,6 +94,7 @@ namespace Rekey.App {
     private InputWorker? _worker;
     private FreezeGuard? _freezeGuard;
     private QueuedIncidentLog? _incidents;
+    private UpdateScheduler? _updates;
 
     // The worker's Word counts as of the latest Trigger Key; only the worker thread writes it.
     private volatile StrongBox<WordCounts>? _wordCounts;
@@ -117,7 +125,8 @@ namespace Rekey.App {
       _sounds = new SwitchSoundPlayer();
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
       var trayIcon = (TaskbarIcon)FindResource("TrayIcon");
-      var commands = new TrayCommands(OpenSettings, OpenStatistics, OpenAbout, () => Shutdown());
+      var commands = new TrayCommands(
+          OpenSettings, OpenStatistics, OnUpdatesItem, OpenAbout, () => Shutdown());
       _trayView = new TrayIconView(trayIcon, _tray, commands);
 #if DEBUG
       AddDebugMenuItems(_trayView);
@@ -129,6 +138,7 @@ namespace Rekey.App {
       StartInput(_hub.Current);
       _hub.Changed += OnSettingsChanged;
       StartTrayFollowers();
+      StartUpdates();
 #if DEBUG
       if (e.Args.Contains(_checkFreeze)) {
         FreezeTwiceForCheck();
@@ -180,6 +190,7 @@ namespace Rekey.App {
         // After the worker and the freeze guard, so their last Incidents are written too.
         _incidents?.Dispose();
         _trayTimer?.Stop();
+        _updates?.Dispose();
         _foregroundApps?.Dispose();
         _trayView?.Dispose();
         _hub?.Dispose();
@@ -445,6 +456,36 @@ namespace Rekey.App {
       _statsTimer.Start();
     }
 
+    private void StartUpdates() {
+      VelopackUpdates service = VelopackUpdates.FromReleases(() => Shutdown());
+#if DEBUG
+      // For the by-hand update checks: a local feed folder instead of GitHub Releases.
+      string[] args = Environment.GetCommandLineArgs();
+      int feed = Array.IndexOf(args, _updateFeed);
+      if (feed >= 0 && feed + 1 < args.Length) {
+        service = new VelopackUpdates(
+            new RekeyUpdateManager(new SimpleFileSource(new DirectoryInfo(args[feed + 1]))),
+            () => Shutdown());
+      }
+#endif
+      _updates = new UpdateScheduler(
+          service, TimeProvider.System, action => Dispatcher.BeginInvoke(action));
+      _updates.StatusChanged += () => {
+        _tray!.Updates = _updates.Status;
+        RefreshTray();
+      };
+      _updates.Start(_hub!.Current.AutoCheckForUpdates);
+    }
+
+    // The tray's update item checks for updates, or restarts into one that is ready.
+    private void OnUpdatesItem() {
+      if (_updates?.Status == UpdateStatus.ReadyToRestart) {
+        _updates.RestartToUpdate();
+      } else {
+        _updates?.CheckNow();
+      }
+    }
+
     private void RefreshTray() {
       _trayView?.Refresh();
 #if DEBUG
@@ -484,6 +525,7 @@ namespace Rekey.App {
     private void OnSettingsChanged(Settings settings) {
       _worker?.UseSettings(settings);
       _freezeGuard?.UseSettings(settings);
+      _updates?.UseAutomaticChecks(settings.AutoCheckForUpdates);
       if (!settings.StatisticsEnabled) {
         SaveStatistics();
       }

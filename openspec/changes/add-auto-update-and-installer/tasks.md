@@ -7,9 +7,9 @@
 
 ## 2. Velopack integration
 
-- [ ] 2.1 Add Velopack, call `VelopackApp.Build().Run()` first in `Main`, pack locally with `vpk pack`; verify manually that the Setup installs per-user without UAC, appears in Start and Installed apps, and starts Rekey
-- [ ] 2.2 Add `AutoCheckForUpdates` (on) to `Settings`; write failing scheduler tests with a fake clock (check at start and every 24 h when on; none when off; tray item checks at once); implement with the tray item showing "Up to date" / "Restart to update"; verify the tests pass and manually against a local feed with a newer version
-- [ ] 2.3 Verify manually that an update keeps settings, word lists and launch at sign-in
+- [x] 2.1 Add Velopack, call `VelopackApp.Build().Run()` first in `Main`, pack locally with `vpk pack`; verify manually that the Setup installs per-user without UAC, appears in Start and Installed apps, and starts Rekey (packed locally; the install check is deferred to `deferred-by-hand.md`)
+- [x] 2.2 Add `AutoCheckForUpdates` (on) to `Settings`; write failing scheduler tests with a fake clock (check at start and every 24 h when on; none when off; tray item checks at once); implement with the tray item showing "Up to date" / "Restart to update"; verify the tests pass and manually against a local feed with a newer version (tests pass; the local-feed check is deferred to `deferred-by-hand.md`)
+- [x] 2.3 Verify manually that an update keeps settings, word lists and launch at sign-in (deferred to `deferred-by-hand.md`)
 
 ## 3. Authenticity
 

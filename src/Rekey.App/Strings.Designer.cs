@@ -112,6 +112,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Check for updates automatically.
+        /// </summary>
+        public static string AutoCheckForUpdates {
+            get {
+                return ResourceManager.GetString("AutoCheckForUpdates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Correct wrong-layout words automatically.
         /// </summary>
         public static string AutoCorrection {
@@ -454,6 +463,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Checking for updates….
+        /// </summary>
+        public static string MenuCheckingForUpdates {
+            get {
+                return ResourceManager.GetString("MenuCheckingForUpdates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pause.
         /// </summary>
         public static string MenuPause {
@@ -517,6 +535,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restart to update.
+        /// </summary>
+        public static string MenuRestartToUpdate {
+            get {
+                return ResourceManager.GetString("MenuRestartToUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Resume.
         /// </summary>
         public static string MenuResume {
@@ -540,6 +567,24 @@ namespace Rekey.App {
         public static string MenuStatistics {
             get {
                 return ResourceManager.GetString("MenuStatistics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not check for updates.
+        /// </summary>
+        public static string MenuUpdateCheckFailed {
+            get {
+                return ResourceManager.GetString("MenuUpdateCheckFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey is up to date.
+        /// </summary>
+        public static string MenuUpToDate {
+            get {
+                return ResourceManager.GetString("MenuUpToDate", resourceCulture);
             }
         }
         

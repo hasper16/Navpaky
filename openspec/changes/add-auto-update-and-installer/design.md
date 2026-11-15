@@ -43,3 +43,11 @@ Velopack uninstall hook (`OnBeforeUninstallFastCallback`) removes the `Run` valu
 ## Open Questions
 
 - Code-signing certificate (owner deferred; for an open-source individual the cheapest option that names the owner as publisher is an open-source code-signing certificate). The publisher pin in D2 is set once it is chosen.
+
+## Revisions during implementation
+
+- **R1. Executable name.** The app keeps its executable name `Rekey.App.exe`, which the desktop checks start by name; Velopack's stub in the install root takes the same name. `Product` and `AssemblyTitle` are "Rekey", so Windows shows "Rekey". The sign-in entry keeps the running executable's path, `%LOCALAPPDATA%\key-switcher\current\Rekey.App.exe`, which an update replaces in place, so launch at sign-in survives updates.
+- **R2. Full packages only.** Velopack rebuilds delta updates into a full package without passing it to `VerifyPackageChecksumAsync`, so deltas are turned off (`MaximumDeltasBeforeFallback = -1`) and every package Rekey applies goes through the signature check.
+- **R3. Tray item.** The update item reads "Check for updates", "Checking for updates…" (greyed), "Rekey is up to date", "Restart to update" or "Could not check for updates", and is greyed when Rekey was not installed by its installer. Choosing it checks at once, or restarts into a downloaded update. A check is skipped while one runs or an update waits for restart.
+- **R4. Setting.** "Check for updates automatically" sits on the General page under the sign-in switch.
+- **R5. Local feed for by-hand checks.** Debug builds accept `--update-feed <folder>` to read a local Velopack feed; Release builds always use GitHub Releases.

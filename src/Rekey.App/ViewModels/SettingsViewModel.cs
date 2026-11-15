@@ -68,6 +68,11 @@ namespace Rekey.App.ViewModels {
       set => _hub.Update(settings => settings with { LaunchAtSignIn = value });
     }
 
+    public bool AutoCheckForUpdates {
+      get => _hub.Current.AutoCheckForUpdates;
+      set => _hub.Update(settings => settings with { AutoCheckForUpdates = value });
+    }
+
     public bool KeyboardWatchdogEnabled {
       get => _hub.Current.KeyboardWatchdogEnabled;
       set => _hub.Update(settings => settings with { KeyboardWatchdogEnabled = value });
