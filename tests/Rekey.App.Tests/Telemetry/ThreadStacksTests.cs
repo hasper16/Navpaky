@@ -20,8 +20,9 @@ namespace Rekey.App.Tests.Telemetry {
       Assert.Contains(frames, frame => frame.Function?.EndsWith(
           nameof(ParkHere), StringComparison.Ordinal) == true
           && frame.Module == "Rekey.App.Tests");
-      Assert.All(frames, frame => Assert.DoesNotContain(
-          Environment.UserName, frame.Module ?? string.Empty, StringComparison.OrdinalIgnoreCase));
+
+      // Module file names hold the user's folder; only assembly names may remain.
+      Assert.All(frames, frame => Assert.DoesNotMatch(@"[\\/:]", frame.Module ?? string.Empty));
     }
 
     [Fact]

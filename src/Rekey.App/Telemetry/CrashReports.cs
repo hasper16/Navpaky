@@ -7,11 +7,12 @@ using Sentry.Protocol;
 
 namespace Rekey.App.Telemetry {
   // Crash and freeze reports through Sentry (spec telemetry, design D1). The hub exists only
-  // while the user agrees to crash reports; withdrawing consent drops what is still queued.
-  // Apply and Dispose run on the UI thread.
+  // while the user agrees to crash reports; withdrawing consent closes the gate first, so
+  // what is still queued fails instead of being sent. Apply and Dispose run on the UI thread.
   internal sealed class CrashReports : IDisposable {
     private readonly CrashReportSetup _setup;
     private volatile IDisposable? _sdk;
+    private ConsentGate? _gate;
 
     public CrashReports(CrashReportSetup setup) {
       _setup = setup;
@@ -19,7 +20,8 @@ namespace Rekey.App.Telemetry {
 
     public void Apply(DiagnosticsConsent consent) {
       if (consent.CrashReports && _sdk is null && _setup.Dsn is { } dsn) {
-        _sdk = SentrySdk.Init(options => Configure(options, dsn));
+        _gate = ConsentGate.ForNetwork();
+        _sdk = SentrySdk.Init(options => Configure(options, dsn, _gate));
       } else if (!consent.CrashReports && _sdk is not null) {
         Stop();
       }
@@ -64,11 +66,13 @@ namespace Rekey.App.Telemetry {
     }
 
     private void Stop() {
+      _gate?.Close();
+      _gate = null;
       _sdk?.Dispose();
       _sdk = null;
     }
 
-    private void Configure(SentryOptions options, string dsn) {
+    private void Configure(SentryOptions options, string dsn, ConsentGate gate) {
       options.Dsn = dsn;
       options.Release = _setup.Release;
       options.IsGlobalModeEnabled = true;
@@ -81,7 +85,10 @@ namespace Rekey.App.Telemetry {
       options.SendClientReports = false;
       options.DisableFileWrite = true;
       options.CacheDirectoryPath = null;
-      options.ShutdownTimeout = TimeSpan.Zero;
+
+      // A fatal crash flushes for this long before the process ends; nothing is cached on disk.
+      options.ShutdownTimeout = TimeSpan.FromSeconds(2);
+      options.CreateHttpMessageHandler = () => gate;
       options.DisableDiagnosticSourceIntegration();
       options.SetBeforeBreadcrumb((_, _) => null);
       options.SetBeforeSend((sentryEvent, hint) => {

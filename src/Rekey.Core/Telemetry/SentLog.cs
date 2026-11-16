@@ -32,7 +32,7 @@ namespace Rekey.Core.Telemetry {
       string line = string.Join(
           ' ', json.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries));
       lock (_lock) {
-        string[] lines = [.. Read().TakeLast(_kept - 1), line];
+        string[] lines = [.. ReadFile().TakeLast(_kept - 1), line];
         JsonFile.WriteAtomically(FilePath, stream => {
           using var writer = new StreamWriter(stream, leaveOpen: true);
           foreach (string kept in lines) {
@@ -48,6 +48,13 @@ namespace Rekey.Core.Telemetry {
     /// <returns>The requests; none when the log is missing.</returns>
     /// <exception cref="IOException">The log exists but cannot be read.</exception>
     public IReadOnlyList<string> Read() {
+      // An open read would make the replace in Append fail and lose that entry.
+      lock (_lock) {
+        return ReadFile();
+      }
+    }
+
+    private string[] ReadFile() {
       try {
         return File.ReadAllLines(FilePath);
       } catch (Exception e) when (e is FileNotFoundException or DirectoryNotFoundException) {

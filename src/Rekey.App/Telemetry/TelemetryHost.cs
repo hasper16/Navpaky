@@ -58,7 +58,7 @@ namespace Rekey.App.Telemetry {
           TimeSpan.FromMinutes(60 + Random.Shared.Next(60)));
       _setupSignal = new SetupSignalOnce(
           hub,
-          progress => TelemetryReports.Setup(hub.Current, layouts(), IsCovered(), progress),
+          progress => TelemetryReports.Setup(hub.Current, layouts(), LanguageOf(), progress),
           json => _post.SendAsync(TelemetryEndpoints.SetupSignal, json, _usage.Token));
     }
 
@@ -120,9 +120,9 @@ namespace Rekey.App.Telemetry {
     }
 
     // Read once for the one-time setup signal; the worker keeps its own copy.
-    private static Func<LayoutId, bool> IsCovered() {
+    private static Func<LayoutId, Language?> LanguageOf() {
       LanguageSet languages = LanguageSet.LoadBundled(DateTimeOffset.UtcNow).Languages;
-      return layout => languages.ProfileFor(layout) is not null;
+      return layout => languages.ProfileFor(layout)?.Language;
     }
 
     private void ReportFreeze(string thread, int managedThreadId) {

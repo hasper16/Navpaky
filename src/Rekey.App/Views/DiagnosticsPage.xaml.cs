@@ -29,15 +29,22 @@ namespace Rekey.App.Views {
             : string.Join(Environment.NewLine + Environment.NewLine, sent);
       };
       SignUpButton.Click += async (_, _) => await signUp.SubmitAsync();
-      signUp.PropertyChanged += OnSignUpChanged;
+
+      // The settings window unloads this page when another section shows and loads it again.
+      Loaded += (_, _) => {
+        signUp.PropertyChanged += OnSignUpChanged;
+        ShowSignUpState();
+      };
       Unloaded += (_, _) => signUp.PropertyChanged -= OnSignUpChanged;
     }
 
     private void OnSignUpChanged(object? sender, PropertyChangedEventArgs e) {
-      if (e.PropertyName != nameof(SignUpViewModel.State)) {
-        return;
+      if (e.PropertyName == nameof(SignUpViewModel.State)) {
+        ShowSignUpState();
       }
+    }
 
+    private void ShowSignUpState() {
       SignUpButton.IsEnabled = _signUp.State != SignUpState.Sending;
       SignUpStatus.Text = _signUp.State switch {
         SignUpState.Invalid => Strings.SignUpInvalid,

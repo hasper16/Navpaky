@@ -41,15 +41,24 @@ namespace Rekey.App.Tests.Telemetry {
 
     [Fact]
     public void SetupSignalCountsLayoutsAndCoveredLanguages() {
-      LayoutId[] layouts = [.. _layouts, new(0x04090409), new(0x041F041F)];
+      // English (UK) shares the English profile with English (US); Turkish has none.
+      LayoutId[] layouts = [.. _layouts, new(0x08090809), new(0x041F041F)];
 
       using JsonDocument json = JsonDocument.Parse(TelemetryReports.Setup(
-          new Settings(), layouts, layout => layout.LanguageId != 0x041F, new(true, false)));
+          new Settings(), layouts, ProfileOf, new(true, false)));
 
       Assert.Equal(4, json.RootElement.GetProperty("layoutCount").GetInt32());
       Assert.Equal(2, json.RootElement.GetProperty("coveredLanguageCount").GetInt32());
       Assert.True(json.RootElement.GetProperty("progress").GetProperty("triedCorrection")
           .GetBoolean());
+    }
+
+    private static Language? ProfileOf(LayoutId layout) {
+      return layout.LanguageId switch {
+        0x0409 or 0x0809 => Language.English,
+        0x0419 => Language.Russian,
+        _ => null,
+      };
     }
 
     private static string RequestId(string json) {

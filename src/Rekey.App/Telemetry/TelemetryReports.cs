@@ -23,10 +23,10 @@ namespace Rekey.App.Telemetry {
     public static string Setup(
         Settings settings,
         IReadOnlyList<LayoutId> layouts,
-        Func<LayoutId, bool> isCovered,
+        Func<LayoutId, Language?> languageOf,
         WelcomeProgress progress) {
-      int covered = layouts.Where(isCovered).Select(layout => layout.LanguageId)
-          .Distinct().Count();
+      // Several Layouts can share one Language, such as English (US) and English (UK).
+      int covered = layouts.Select(languageOf).OfType<Language>().Distinct().Count();
       return TelemetryJson.Write(new SetupSignal(
           Guid.NewGuid(),
           Environment(layouts),
