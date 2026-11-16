@@ -24,7 +24,7 @@ By default the interface language SHALL be Ukrainian when the Windows display la
 - **THEN** Rekey's interface is Ukrainian
 
 #### Scenario: German Windows
-- **WHEN** Windows display language is German
+- **WHEN** Windows display language is German and the user has not chosen a language
 - **THEN** Rekey's interface is English
 
 ### Requirement: User override without restart
