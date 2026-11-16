@@ -12,6 +12,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="TrayOn" xml:space="preserve">
+    <value>Rekey увімкнено</value>
+  </data>
   <data name="TrayPausedMinutes_One" xml:space="preserve">
     <value>Rekey на паузі: залишилася {0} хвилина</value>
   </data>
@@ -23,5 +26,527 @@
   </data>
   <data name="TrayPausedMinutes_Other" xml:space="preserve">
     <value>Rekey на паузі: залишилося {0} хвилини</value>
+  </data>
+  <data name="TrayPausedUntilRestart" xml:space="preserve">
+    <value>Rekey на паузі до перезапуску</value>
+  </data>
+  <data name="TrayOff" xml:space="preserve">
+    <value>Автовиправлення вимкнено</value>
+  </data>
+  <data name="TraySelfPaused" xml:space="preserve">
+    <value>Rekey призупинив себе: він двічі втратив клавіатуру. Повторна спроба через 10 хвилин.</value>
+  </data>
+  <data name="TurnOffIn" xml:space="preserve">
+    <value>Вимкнути в {0}</value>
+  </data>
+  <data name="TurnOnIn" xml:space="preserve">
+    <value>Увімкнути в {0}</value>
+  </data>
+  <data name="MenuAutoCorrection" xml:space="preserve">
+    <value>Автовиправлення</value>
+  </data>
+  <data name="MenuPause" xml:space="preserve">
+    <value>Пауза</value>
+  </data>
+  <data name="MenuPause15" xml:space="preserve">
+    <value>На 15 хвилин</value>
+  </data>
+  <data name="MenuPause30" xml:space="preserve">
+    <value>На 30 хвилин</value>
+  </data>
+  <data name="MenuPause60" xml:space="preserve">
+    <value>На 1 годину</value>
+  </data>
+  <data name="MenuPause180" xml:space="preserve">
+    <value>На 3 години</value>
+  </data>
+  <data name="MenuPauseUntilRestart" xml:space="preserve">
+    <value>До перезапуску Rekey</value>
+  </data>
+  <data name="MenuResume" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="MenuStatistics" xml:space="preserve">
+    <value>Статистика</value>
+  </data>
+  <data name="MenuCheckForUpdates" xml:space="preserve">
+    <value>Перевірити оновлення</value>
+  </data>
+  <data name="MenuCheckingForUpdates" xml:space="preserve">
+    <value>Перевірка оновлень…</value>
+  </data>
+  <data name="MenuUpToDate" xml:space="preserve">
+    <value>У вас остання версія Rekey</value>
+  </data>
+  <data name="MenuRestartToUpdate" xml:space="preserve">
+    <value>Перезапустити для оновлення</value>
+  </data>
+  <data name="MenuUpdateCheckFailed" xml:space="preserve">
+    <value>Не вдалося перевірити оновлення</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>Про Rekey</value>
+  </data>
+  <data name="MenuQuit" xml:space="preserve">
+    <value>Вийти</value>
+  </data>
+  <data name="HotkeyConflictWindows" xml:space="preserve">
+    <value>{0} перемикає розкладку клавіатури у Windows. Як гаряча клавіша вона перейде до Rekey. Використайте її все одно або виберіть іншу.</value>
+  </data>
+  <data name="HotkeyConflictTaken" xml:space="preserve">
+    <value>{0} вже зайнята іншою програмою. Використайте її все одно або виберіть іншу.</value>
+  </data>
+  <data name="HotkeyDoubleShift" xml:space="preserve">
+    <value>Подвійний Shift</value>
+  </data>
+  <data name="HotkeyDoubleCtrl" xml:space="preserve">
+    <value>Подвійний Ctrl</value>
+  </data>
+  <data name="HotkeyDoubleAlt" xml:space="preserve">
+    <value>Подвійний Alt</value>
+  </data>
+  <data name="KeyCtrl" xml:space="preserve">
+    <value>Ctrl</value>
+  </data>
+  <data name="KeyShift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="KeyAlt" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="KeyWin" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="KeySpace" xml:space="preserve">
+    <value>Пробіл</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Налаштування Rekey</value>
+  </data>
+  <data name="PageGeneral" xml:space="preserve">
+    <value>Загальні</value>
+  </data>
+  <data name="PageCorrection" xml:space="preserve">
+    <value>Виправлення</value>
+  </data>
+  <data name="PageHotkey" xml:space="preserve">
+    <value>Гаряча клавіша</value>
+  </data>
+  <data name="PageAppsAndWords" xml:space="preserve">
+    <value>Програми та слова</value>
+  </data>
+  <data name="PageDiagnostics" xml:space="preserve">
+    <value>Діагностика та конфіденційність</value>
+  </data>
+  <data name="PageAbout" xml:space="preserve">
+    <value>Про програму</value>
+  </data>
+  <data name="AutoCheckForUpdates" xml:space="preserve">
+    <value>Перевіряти оновлення автоматично</value>
+  </data>
+  <data name="LaunchAtSignIn" xml:space="preserve">
+    <value>Запускати Rekey під час входу в Windows</value>
+  </data>
+  <data name="ShowCursorIndicator" xml:space="preserve">
+    <value>Показувати нову мову біля курсора</value>
+  </data>
+  <data name="ShowCursorIndicatorHint" xml:space="preserve">
+    <value>Після перемикання розкладки ненадовго з'являється маленька клавіша.</value>
+  </data>
+  <data name="PlaySwitchSound" xml:space="preserve">
+    <value>Відтворювати звук після виправлення</value>
+  </data>
+  <data name="SwitchSoundChoice" xml:space="preserve">
+    <value>Звук</value>
+  </data>
+  <data name="SoundKeyClick" xml:space="preserve">
+    <value>Клацання клавіші</value>
+  </data>
+  <data name="SoundSoftTick" xml:space="preserve">
+    <value>М'який тик</value>
+  </data>
+  <data name="SoundChime" xml:space="preserve">
+    <value>Дзвіночок</value>
+  </data>
+  <data name="PreviewSound" xml:space="preserve">
+    <value>Прослухати</value>
+  </data>
+  <data name="AutoCorrection" xml:space="preserve">
+    <value>Автоматично виправляти слова, набрані не в тій розкладці</value>
+  </data>
+  <data name="Sensitivity" xml:space="preserve">
+    <value>Чутливість</value>
+  </data>
+  <data name="SensitivityBalanced" xml:space="preserve">
+    <value>Збалансована</value>
+  </data>
+  <data name="SensitivityBalancedHint" xml:space="preserve">
+    <value>Виправляє слова, явно набрані не в тій розкладці.</value>
+  </data>
+  <data name="SensitivityCautious" xml:space="preserve">
+    <value>Обережна</value>
+  </data>
+  <data name="SensitivityCautiousHint" xml:space="preserve">
+    <value>Виправляє, лише коли впевнений; менше несподіванок, більше пропусків.</value>
+  </data>
+  <data name="SensitivityAggressive" xml:space="preserve">
+    <value>Активна</value>
+  </data>
+  <data name="SensitivityAggressiveHint" xml:space="preserve">
+    <value>Виправляє більше слів, зокрема короткі; може помилятися.</value>
+  </data>
+  <data name="CorrectWhenIPress" xml:space="preserve">
+    <value>Виправляти під час натискання</value>
+  </data>
+  <data name="TriggerSpace" xml:space="preserve">
+    <value>Пробіл</value>
+  </data>
+  <data name="TriggerEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="TriggerTab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="SkipAfterManualSwitch" xml:space="preserve">
+    <value>Не виправляти, якщо я сам перемкнув розкладку</value>
+  </data>
+  <data name="VerifiedReplacement" xml:space="preserve">
+    <value>Перевіряти текст перед заміною</value>
+  </data>
+  <data name="VerifiedReplacementHint" xml:space="preserve">
+    <value>Rekey спершу перечитує слово, якщо програма це дозволяє.</value>
+  </data>
+  <data name="HotkeyIntro" xml:space="preserve">
+    <value>Натисніть гарячу клавішу, щоб виправити останнє слово, виділений текст або перемкнути розкладку.</value>
+  </data>
+  <data name="HotkeyCustom" xml:space="preserve">
+    <value>Власне сполучення</value>
+  </data>
+  <data name="HotkeyRecord" xml:space="preserve">
+    <value>Записати</value>
+  </data>
+  <data name="HotkeyRecording" xml:space="preserve">
+    <value>Натисніть сполучення…</value>
+  </data>
+  <data name="HotkeyUseAnyway" xml:space="preserve">
+    <value>Все одно використати</value>
+  </data>
+  <data name="HotkeyPickAnother" xml:space="preserve">
+    <value>Вибрати інше</value>
+  </data>
+  <data name="ExcludedApps" xml:space="preserve">
+    <value>Програми, де Rekey не працює</value>
+  </data>
+  <data name="AddRunningApp" xml:space="preserve">
+    <value>Додати запущену програму</value>
+  </data>
+  <data name="BrowseForApp" xml:space="preserve">
+    <value>Вибрати програму…</value>
+  </data>
+  <data name="ProgramFilter" xml:space="preserve">
+    <value>Програми</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Додати</value>
+  </data>
+  <data name="ProtectedWords" xml:space="preserve">
+    <value>Слова, які Rekey ніколи не виправляє</value>
+  </data>
+  <data name="LearnedWords" xml:space="preserve">
+    <value>Слова, які Rekey вивчив</value>
+  </data>
+  <data name="NewWord" xml:space="preserve">
+    <value>Нове слово</value>
+  </data>
+  <data name="WordLanguage" xml:space="preserve">
+    <value>Мова</value>
+  </data>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>Англійська</value>
+  </data>
+  <data name="LanguageRussian" xml:space="preserve">
+    <value>Російська</value>
+  </data>
+  <data name="LanguageUkrainian" xml:space="preserve">
+    <value>Українська</value>
+  </data>
+  <data name="KeyboardWatchdog" xml:space="preserve">
+    <value>Перепідключатися до клавіатури, якщо Windows перестає передавати натискання</value>
+  </data>
+  <data name="RestartAfterFreeze" xml:space="preserve">
+    <value>Перезапускати Rekey, якщо він двічі перестав відповідати</value>
+  </data>
+  <data name="PrivacyNote" xml:space="preserve">
+    <value>Усе, що ви друкуєте, залишається в пам'яті Rekey і нікуди не надсилається. Rekey зберігає на цьому комп'ютері свої налаштування, ваші списки слів, лічильники та журнал проблем із клавіатурою; набрані слова він зберігає лише в журналі аналізу слів і лише якщо ви його ввімкнете.</value>
+  </data>
+  <data name="AboutTagline" xml:space="preserve">
+    <value>Виправляє слова, набрані не в тій розкладці клавіатури.</value>
+  </data>
+  <data name="AboutVersion" xml:space="preserve">
+    <value>Версія {0}</value>
+  </data>
+  <data name="RemoveItem" xml:space="preserve">
+    <value>Видалити {0}</value>
+  </data>
+  <data name="WindowMinimize" xml:space="preserve">
+    <value>Згорнути</value>
+  </data>
+  <data name="WindowMaximize" xml:space="preserve">
+    <value>Розгорнути</value>
+  </data>
+  <data name="WindowClose" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="StatWordsAnalysed" xml:space="preserve">
+    <value>Проаналізовано слів</value>
+  </data>
+  <data name="StatCorrections" xml:space="preserve">
+    <value>Виправлення</value>
+  </data>
+  <data name="StatAutoCorrections" xml:space="preserve">
+    <value>Автоматичні виправлення</value>
+  </data>
+  <data name="StatManualCorrections" xml:space="preserve">
+    <value>Ручні виправлення</value>
+  </data>
+  <data name="StatUndos" xml:space="preserve">
+    <value>Скасування</value>
+  </data>
+  <data name="StatUndoShare" xml:space="preserve">
+    <value>Скасовані виправлення</value>
+  </data>
+  <data name="StatCorrectDecisions" xml:space="preserve">
+    <value>Виправлено слів</value>
+  </data>
+  <data name="StatDeferDecisions" xml:space="preserve">
+    <value>Слова, що чекали наступного слова</value>
+  </data>
+  <data name="StatKeepDecisions" xml:space="preserve">
+    <value>Залишено слів</value>
+  </data>
+  <data name="StatProtectedWordDecisions" xml:space="preserve">
+    <value>Залишено захищених слів</value>
+  </data>
+  <data name="StatMinDuration" xml:space="preserve">
+    <value>Найшвидше виправлення</value>
+  </data>
+  <data name="StatMedianDuration" xml:space="preserve">
+    <value>Звичайне виправлення (медіана)</value>
+  </data>
+  <data name="StatMaxDuration" xml:space="preserve">
+    <value>Найповільніше виправлення</value>
+  </data>
+  <data name="StatAverageDuration" xml:space="preserve">
+    <value>Середнє виправлення</value>
+  </data>
+  <data name="StatMilliseconds" xml:space="preserve">
+    <value>{0} мс</value>
+  </data>
+  <data name="StatToday" xml:space="preserve">
+    <value>Сьогодні</value>
+  </data>
+  <data name="StatMonth" xml:space="preserve">
+    <value>Останні 30 днів</value>
+  </data>
+  <data name="StatisticsTitle" xml:space="preserve">
+    <value>Статистика Rekey</value>
+  </data>
+  <data name="StatisticsNote" xml:space="preserve">
+    <value>Лише числа: Rekey ніколи не зберігає слова, що стоять за ними.</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Оновити</value>
+  </data>
+  <data name="StatisticsEnabled" xml:space="preserve">
+    <value>Вести статистику (лише числа, без слів)</value>
+  </data>
+  <data name="AnalysisLogEnabled" xml:space="preserve">
+    <value>Вести журнал аналізу слів для пошуку проблем</value>
+  </data>
+  <data name="AnalysisLogNote" xml:space="preserve">
+    <value>Журнал записує слова, які ви друкуєте, і те, як Rekey їх оцінив. Він залишається на цьому комп'ютері, відкрити його може лише ваш обліковий запис Windows, і він зберігається 7 днів. Вимкнення видаляє його.</value>
+  </data>
+  <data name="OpenStatistics" xml:space="preserve">
+    <value>Показати статистику</value>
+  </data>
+  <data name="OpenExport" xml:space="preserve">
+    <value>Експорт діагностики…</value>
+  </data>
+  <data name="ExportTitle" xml:space="preserve">
+    <value>Експорт діагностики</value>
+  </data>
+  <data name="ExportNote" xml:space="preserve">
+    <value>Саме цей текст буде збережено або скопійовано. У ньому немає набраних слів, якщо ви не додасте журнал аналізу слів.</value>
+  </data>
+  <data name="ExportIncludeLog" xml:space="preserve">
+    <value>Додати журнал аналізу слів (містить набрані вами слова)</value>
+  </data>
+  <data name="ExportSave" xml:space="preserve">
+    <value>Зберегти у файл…</value>
+  </data>
+  <data name="ExportCopy" xml:space="preserve">
+    <value>Копіювати</value>
+  </data>
+  <data name="ExportSaved" xml:space="preserve">
+    <value>Збережено.</value>
+  </data>
+  <data name="ExportCopied" xml:space="preserve">
+    <value>Скопійовано в буфер обміну.</value>
+  </data>
+  <data name="ExportCopyFailed" xml:space="preserve">
+    <value>Не вдалося скопіювати: буфер обміну зайнятий іншою програмою. Спробуйте ще раз.</value>
+  </data>
+  <data name="ExportFailed" xml:space="preserve">
+    <value>Не вдалося зберегти файл.</value>
+  </data>
+  <data name="UninstallTitle" xml:space="preserve">
+    <value>Видалення Rekey</value>
+  </data>
+  <data name="UninstallDeleteData" xml:space="preserve">
+    <value>Видалити також ваші налаштування Rekey, списки слів, статистику та журнали? Виберіть «Ні», щоб зберегти їх для наступного встановлення.</value>
+  </data>
+  <data name="UninstallDataNotDeleted" xml:space="preserve">
+    <value>Деякі дані Rekey не вдалося видалити, бо їх використовує інша програма. Видаліть теку {0} вручну.</value>
+  </data>
+  <data name="MenuWelcome" xml:space="preserve">
+    <value>Вітання та налаштування</value>
+  </data>
+  <data name="WelcomeTitle" xml:space="preserve">
+    <value>Ласкаво просимо до Rekey</value>
+  </data>
+  <data name="WelcomeDescription" xml:space="preserve">
+    <value>Rekey виправляє слово, набране не в тій розкладці, наприклад «ghbdsn» замість «привіт», і сам перемикає розкладку.</value>
+  </data>
+  <data name="WelcomeUndo" xml:space="preserve">
+    <value>Не те, що ви хотіли? Натисніть Ctrl+Z одразу після виправлення або натисніть гарячу клавішу, щоб повернути набране.</value>
+  </data>
+  <data name="WelcomePrivacyTitle" xml:space="preserve">
+    <value>Ваш текст залишається на цьому комп'ютері</value>
+  </data>
+  <data name="WelcomePrivacy" xml:space="preserve">
+    <value>Rekey читає натискання клавіш лише для перевірки слова, яке ви друкуєте. Він нікуди не надсилає ваш текст і не використовує буфер обміну.</value>
+  </data>
+  <data name="WelcomeTryItTitle" xml:space="preserve">
+    <value>Спробуйте</value>
+  </data>
+  <data name="WelcomeTryIt" xml:space="preserve">
+    <value>Наберіть слово не в тій розкладці й натисніть пробіл. Наприклад, з увімкненою розкладкою English (US) наберіть ghbdsn замість українського «привіт». Ваші мови: {0}.</value>
+  </data>
+  <data name="WelcomeTryItField" xml:space="preserve">
+    <value>Поле для перевірки</value>
+  </data>
+  <data name="WelcomeTryItWorked" xml:space="preserve">
+    <value>Працює: Rekey виправив слово й перемкнув розкладку.</value>
+  </data>
+  <data name="WelcomeOneLayout" xml:space="preserve">
+    <value>Rekey потрібні щонайменше дві розкладки різними мовами. Додайте ще одну в мовних параметрах Windows.</value>
+  </data>
+  <data name="WelcomeLanguageSettings" xml:space="preserve">
+    <value>Відкрити мовні параметри</value>
+  </data>
+  <data name="WelcomeChoicesTitle" xml:space="preserve">
+    <value>Ваш вибір</value>
+  </data>
+  <data name="WelcomeHotkeyTitle" xml:space="preserve">
+    <value>Гаряча клавіша для ручного виправлення</value>
+  </data>
+  <data name="WelcomeTrayTitle" xml:space="preserve">
+    <value>Тримайте Rekey на виду</value>
+  </data>
+  <data name="WelcomeTrayTip" xml:space="preserve">
+    <value>Windows може сховати значок Rekey під стрілкою на панелі завдань. Щоб він був видимий, відкрийте Параметри &gt; Персоналізація &gt; Панель завдань &gt; Інші піктограми в системному лотку та ввімкніть Rekey.</value>
+  </data>
+  <data name="WelcomeDone" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="CorrectionTipTitle" xml:space="preserve">
+    <value>Rekey виправив слово</value>
+  </data>
+  <data name="CorrectionTip" xml:space="preserve">
+    <value>Натисніть Ctrl+Z, щоб скасувати.</value>
+  </data>
+  <data name="LocationTitle" xml:space="preserve">
+    <value>Rekey не встановлено</value>
+  </data>
+  <data name="LocationWarning" xml:space="preserve">
+    <value>Rekey запущено з тимчасової теки, ZIP-архіву або теки «Завантаження». Він перестане працювати, коли цю копію видалять. Встановіть Rekey, щоб він працював і оновлювався.</value>
+  </data>
+  <data name="LocationInstall" xml:space="preserve">
+    <value>Встановити</value>
+  </data>
+  <data name="LocationNotNow" xml:space="preserve">
+    <value>Не зараз</value>
+  </data>
+  <data name="MovedTitle" xml:space="preserve">
+    <value>Файли Rekey переміщено або видалено</value>
+  </data>
+  <data name="MovedNotice" xml:space="preserve">
+    <value>Rekey працюватиме, доки ви його не закриєте або не перезавантажите комп'ютер, але знову не запуститься. Щоб і далі ним користуватися, встановіть Rekey знову.</value>
+  </data>
+  <data name="MovedClose" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="WelcomeDiagnostics" xml:space="preserve">
+    <value>Надсилати анонімні звіти про збої та щоденні лічильники використання, щоб допомогти покращити Rekey. Ніколи — ваш текст.</value>
+  </data>
+  <data name="CrashReportsEnabled" xml:space="preserve">
+    <value>Надсилати звіти про збої та зависання</value>
+  </data>
+  <data name="UsageDigestEnabled" xml:space="preserve">
+    <value>Надсилати щоденні лічильники використання</value>
+  </data>
+  <data name="TelemetryNote" xml:space="preserve">
+    <value>Звіти містять типи помилок, лічильники, версії та ввімкнені чи вимкнені налаштування. У них ніколи немає того, що ви друкуєте, заголовків вікон, імені користувача чи шляхів до файлів. Вимкнення перемикача видаляє те, що ще не надіслано.</value>
+  </data>
+  <data name="ShowWhatWasSent" xml:space="preserve">
+    <value>Показати, що було надіслано</value>
+  </data>
+  <data name="NothingSentYet" xml:space="preserve">
+    <value>Поки нічого не надіслано.</value>
+  </data>
+  <data name="SignUpTitle" xml:space="preserve">
+    <value>Залишайтеся на зв'язку</value>
+  </data>
+  <data name="SignUpEmail" xml:space="preserve">
+    <value>Адреса електронної пошти</value>
+  </data>
+  <data name="SignUpNewVersions" xml:space="preserve">
+    <value>Повідомляти про нові версії</value>
+  </data>
+  <data name="SignUpReportedProblems" xml:space="preserve">
+    <value>Повідомляти про проблеми, про які я повідомив</value>
+  </data>
+  <data name="SignUpSubmit" xml:space="preserve">
+    <value>Підписатися</value>
+  </data>
+  <data name="SignUpInvalid" xml:space="preserve">
+    <value>Введіть адресу електронної пошти й позначте хоча б один варіант.</value>
+  </data>
+  <data name="SignUpSending" xml:space="preserve">
+    <value>Надсилання…</value>
+  </data>
+  <data name="SignUpSent" xml:space="preserve">
+    <value>Дякуємо! Rekey не зберігає вашу адресу на цьому комп'ютері.</value>
+  </data>
+  <data name="SignUpFailed" xml:space="preserve">
+    <value>Не вдалося надіслати. Перевірте з'єднання та спробуйте ще раз.</value>
+  </data>
+  <data name="UiLanguageChoice" xml:space="preserve">
+    <value>Мова інтерфейсу</value>
+  </data>
+  <data name="UiLanguageSystem" xml:space="preserve">
+    <value>Як у Windows</value>
+  </data>
+  <data name="UiLanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="UiLanguageUkrainian" xml:space="preserve">
+    <value>Українська</value>
   </data>
 </root>

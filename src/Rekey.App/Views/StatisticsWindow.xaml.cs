@@ -1,4 +1,5 @@
 using System.Windows;
+using Rekey.App.Localization;
 using Rekey.App.ViewModels;
 using Wpf.Ui.Appearance;
 
@@ -13,6 +14,7 @@ namespace Rekey.App.Views {
       RefreshButton.Click += (_, _) => model.Refresh();
       Activated += (_, _) => model.Refresh();
       Loaded += (_, _) => TitleBarButtons.Name(TitleBar);
+      Localizer.Follow(this, model.Refresh);
     }
   }
 }

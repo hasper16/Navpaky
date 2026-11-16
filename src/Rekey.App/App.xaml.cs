@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using H.NotifyIcon;
 using Rekey.App.Feedback;
+using Rekey.App.Localization;
 using Rekey.App.Onboarding;
 using Rekey.App.Telemetry;
 using Rekey.App.Tray;
@@ -65,6 +66,10 @@ namespace Rekey.App {
     private static readonly string _analysisFolder = Path.Join(_dataFolder, "analysis");
 
     private static readonly WordListsStore _wordsStore = new(_dataFolder);
+
+    // Read before Rekey sets its own interface language: .NET starts it from the Windows
+    // display language (GetUserDefaultUILanguage), which the "system" choice follows.
+    private static readonly CultureInfo _windowsLanguage = CultureInfo.CurrentUICulture;
 
     private readonly SettingsStore _settingsStore = new(_dataFolder);
     private readonly RestartStateStore _restartStore = new(_dataFolder);
@@ -131,6 +136,7 @@ namespace Rekey.App {
       };
       _hub = new SettingsHub(
           loaded, _settingsStore.Save, TimeProvider.System, ReportSettingsNotSaved);
+      UseUiLanguage(loaded.UiLanguage);
       _indicator = new CursorIndicator();
       _sounds = new SwitchSoundPlayer();
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
@@ -225,6 +231,15 @@ namespace Rekey.App {
         _guard?.Dispose();
         base.OnExit(e);
       }
+    }
+
+    // Code reads Strings in this language and XAML follows the Localizer (design D2). The hub's
+    // other listeners run after this one, so view-models rebuild their texts in it.
+    private static void UseUiLanguage(UiLanguage language) {
+      CultureInfo culture = UiCulture.For(language, _windowsLanguage);
+      Strings.Culture = culture;
+      CultureInfo.CurrentUICulture = culture;
+      Localizer.Instance.Use(culture);
     }
 
     private static void BringToFront(Window window) {
@@ -653,6 +668,7 @@ namespace Rekey.App {
     }
 
     private void OnSettingsChanged(Settings settings) {
+      UseUiLanguage(settings.UiLanguage);
       _worker?.UseSettings(settings);
       _freezeGuard?.UseSettings(settings);
       _telemetry?.Apply(settings);
@@ -750,21 +766,21 @@ namespace Rekey.App {
       var apps = new ExcludedAppsViewModel(_hub!, AppNames.OfKey);
       bool dark = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
       SettingsSection[] sections = [
-          new(Strings.PageGeneral, SymbolRegular.Settings24,
+          new("PageGeneral", SymbolRegular.Settings24,
               new GeneralPage(settings, sound => _sounds!.Play(sound))),
-          new(Strings.PageCorrection, SymbolRegular.TextGrammarCheckmark24,
+          new("PageCorrection", SymbolRegular.TextGrammarCheckmark24,
               new CorrectionPage(settings)),
-          new(Strings.PageHotkey, SymbolRegular.Keyboard24, new HotkeyPage(hotkey)),
-          new(Strings.PageAppsAndWords, SymbolRegular.AppsList24,
+          new("PageHotkey", SymbolRegular.Keyboard24, new HotkeyPage(hotkey)),
+          new("PageAppsAndWords", SymbolRegular.AppsList24,
               new AppsAndWordsPage(apps, _words!)),
-          new(Strings.PageDiagnostics, SymbolRegular.ShieldCheckmark24,
+          new("PageDiagnostics", SymbolRegular.ShieldCheckmark24,
               new DiagnosticsPage(
                   settings,
                   _telemetry!.NewSignUp(),
                   _telemetry.ReadSent,
                   OpenStatistics,
                   OpenExport)),
-          new(Strings.PageAbout, SymbolRegular.Info24, new AboutPage(dark)),
+          new("PageAbout", SymbolRegular.Info24, new AboutPage(dark)),
       ];
       var window = new SettingsWindow(sections);
       window.Closed += (_, _) => {

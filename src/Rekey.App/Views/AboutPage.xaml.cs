@@ -1,4 +1,5 @@
 using System.Reflection;
+using Rekey.App.Localization;
 using Rekey.App.Tray;
 using Rekey.App.ViewModels;
 
@@ -11,7 +12,8 @@ namespace Rekey.App.Views {
       string version = Assembly.GetExecutingAssembly()
           .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
           ?? "0";
-      Version.Text = UiText.Format(Strings.AboutVersion, version.Split('+')[0]);
+      Localizer.Follow(
+          this, () => Version.Text = UiText.Format(Strings.AboutVersion, version.Split('+')[0]));
     }
   }
 }

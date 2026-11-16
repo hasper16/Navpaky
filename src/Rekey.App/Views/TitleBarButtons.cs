@@ -2,15 +2,17 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Rekey.App.Localization;
 
 namespace Rekey.App.Views {
   // WPF UI's caption buttons carry only glyphs; screen readers need their names.
   internal static class TitleBarButtons {
     public static void Name(DependencyObject titleBar) {
-      string[] names = [Strings.WindowMinimize, Strings.WindowMaximize, Strings.WindowClose];
+      string[] names = ["WindowMinimize", "WindowMaximize", "WindowClose"];
       List<Button> buttons = [.. Descendants(titleBar).OfType<Button>()];
       for (int i = 0; i < buttons.Count && i < names.Length; i++) {
-        AutomationProperties.SetName(buttons[buttons.Count - names.Length + i], names[i]);
+        buttons[buttons.Count - names.Length + i].SetBinding(
+            AutomationProperties.NameProperty, LocExtension.Binding(names[i]));
       }
     }
 

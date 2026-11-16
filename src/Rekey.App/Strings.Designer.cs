@@ -1390,6 +1390,42 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Interface language.
+        /// </summary>
+        public static string UiLanguageChoice {
+            get {
+                return ResourceManager.GetString("UiLanguageChoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to English.
+        /// </summary>
+        public static string UiLanguageEnglish {
+            get {
+                return ResourceManager.GetString("UiLanguageEnglish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same as Windows.
+        /// </summary>
+        public static string UiLanguageSystem {
+            get {
+                return ResourceManager.GetString("UiLanguageSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Українська.
+        /// </summary>
+        public static string UiLanguageUkrainian {
+            get {
+                return ResourceManager.GetString("UiLanguageUkrainian", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Some Rekey data could not be deleted because another program is using it. Delete the folder {0} yourself..
         /// </summary>
         public static string UninstallDataNotDeleted {

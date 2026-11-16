@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Rekey.App.Localization;
 using Rekey.App.ViewModels;
 using Rekey.Core;
 
@@ -20,16 +21,14 @@ namespace Rekey.App.Views {
       InitializeComponent();
       _model = model;
       foreach (Hotkey preset in HotkeyViewModel.Presets) {
-        var option = new RadioButton {
-          GroupName = "Hotkey",
-          Content = HotkeyViewModel.Describe(preset),
-        };
+        var option = new RadioButton { GroupName = "Hotkey" };
         option.Checked += (_, _) => Choose(preset);
         _presets[option] = preset;
         Options.Children.Add(option);
       }
 
-      _custom = new RadioButton { GroupName = "Hotkey", Content = Strings.HotkeyCustom };
+      _custom = new RadioButton { GroupName = "Hotkey" };
+      _custom.SetBinding(ContentProperty, LocExtension.Binding("HotkeyCustom"));
       _custom.Checked += (_, _) => {
         if (!_showing) {
           StartRecording();
@@ -43,6 +42,7 @@ namespace Rekey.App.Views {
       PickAnother.Click += (_, _) => _model.CancelPending();
       _model.PropertyChanged += OnModelChanged;
       ShowCurrent();
+      Localizer.Follow(this, ShowTexts);
     }
 
     private static KeyModifiers HeldModifiers() {
@@ -108,6 +108,15 @@ namespace Rekey.App.Views {
     }
 
     private void OnModelChanged(object? sender, PropertyChangedEventArgs e) {
+      ShowCurrent();
+    }
+
+    // Hotkey names are built from UI strings, so they follow the interface language.
+    private void ShowTexts() {
+      foreach ((RadioButton option, Hotkey preset) in _presets) {
+        option.Content = HotkeyViewModel.Describe(preset);
+      }
+
       ShowCurrent();
     }
 

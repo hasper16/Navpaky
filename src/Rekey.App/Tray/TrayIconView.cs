@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using H.NotifyIcon;
@@ -20,8 +21,8 @@ namespace Rekey.App.Tray {
     private (string Code, TrayState State, bool Dark, int Size)? _drawn;
 
     // What the menu was last built from; a refresh with the same content leaves it alone.
-    private (bool AutoCorrection, bool Paused, string? Exclude, int Extra, UpdateStatus Updates)?
-        _built;
+    private (bool AutoCorrection, bool Paused, string? Exclude, int Extra, UpdateStatus Updates,
+        CultureInfo? Language)? _built;
 
     public TrayIconView(TaskbarIcon icon, TrayViewModel model, TrayCommands commands) {
       _icon = icon;
@@ -76,7 +77,7 @@ namespace Rekey.App.Tray {
 
     private void BuildMenu() {
       var content = (_model.AutoCorrectionEnabled, _model.IsPaused, _model.ExcludeItemText,
-          ExtraItems.Count, _model.Updates);
+          ExtraItems.Count, _model.Updates, Strings.Culture);
 
       // The WPF build of H.NotifyIcon shows this ContextMenu itself, so rebuilding it while
       // open would drop the user's place in it.

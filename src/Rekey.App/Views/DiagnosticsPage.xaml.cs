@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Rekey.App.Localization;
 using Rekey.App.Telemetry;
 using Rekey.App.ViewModels;
 
@@ -22,12 +23,7 @@ namespace Rekey.App.Views {
       ExportButton.Click += (_, _) => openExport();
 
       // Read on each expand, so the view shows the requests exactly as they were sent.
-      SentExpander.Expanded += (_, _) => {
-        IReadOnlyList<string> sent = readSent();
-        SentText.Text = sent.Count == 0
-            ? Strings.NothingSentYet
-            : string.Join(Environment.NewLine + Environment.NewLine, sent);
-      };
+      SentExpander.Expanded += (_, _) => ShowSent(readSent());
       SignUpButton.Click += async (_, _) => await signUp.SubmitAsync();
 
       // The settings window unloads this page when another section shows and loads it again.
@@ -36,12 +32,24 @@ namespace Rekey.App.Views {
         ShowSignUpState();
       };
       Unloaded += (_, _) => signUp.PropertyChanged -= OnSignUpChanged;
+      Localizer.Follow(this, () => {
+        ShowSignUpState();
+        if (SentExpander.IsExpanded) {
+          ShowSent(readSent());
+        }
+      });
     }
 
     private void OnSignUpChanged(object? sender, PropertyChangedEventArgs e) {
       if (e.PropertyName == nameof(SignUpViewModel.State)) {
         ShowSignUpState();
       }
+    }
+
+    private void ShowSent(IReadOnlyList<string> sent) {
+      SentText.Text = sent.Count == 0
+          ? Strings.NothingSentYet
+          : string.Join(Environment.NewLine + Environment.NewLine, sent);
     }
 
     private void ShowSignUpState() {

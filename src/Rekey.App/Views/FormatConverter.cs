@@ -1,11 +1,13 @@
 using System.Globalization;
 using System.Windows.Data;
+using Rekey.App.Localization;
 
 namespace Rekey.App.Views {
-  // Fills a UI string's placeholder with the bound value, as for "Remove Telegram".
+  // Fills the placeholder of the UI string named by the parameter with the bound value, as for
+  // "Remove Telegram".
   internal sealed class FormatConverter : IValueConverter {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-      return UiText.Format((string)parameter, value);
+      return UiText.Format(Localizer.Instance[(string)parameter], value);
     }
 
     public object ConvertBack(

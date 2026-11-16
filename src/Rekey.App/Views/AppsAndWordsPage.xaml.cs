@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Win32;
+using Rekey.App.Localization;
 using Rekey.App.Tray;
 using Rekey.App.ViewModels;
 using Rekey.Core;
@@ -19,13 +20,11 @@ namespace Rekey.App.Views {
       _words = words;
       Apps.DataContext = apps;
       DataContext = words;
-      (WordLanguage Language, string Name)[] languages = [
-          (WordLanguage.English, Strings.LanguageEnglish),
-          (WordLanguage.Russian, Strings.LanguageRussian),
-          (WordLanguage.Ukrainian, Strings.LanguageUkrainian)];
-      foreach ((WordLanguage language, string name) in languages) {
-        LearnedLanguage.Items.Add(new ComboBoxItem { Content = name, Tag = language });
-      }
+      LearnedLanguage.ItemsSource = new LocalizedChoice[] {
+        new(WordLanguage.English, "LanguageEnglish"),
+        new(WordLanguage.Russian, "LanguageRussian"),
+        new(WordLanguage.Ukrainian, "LanguageUkrainian"),
+      };
 
       LearnedLanguage.SelectedIndex = 0;
       AddRunning.Click += (_, _) => ShowRunningApps();
@@ -74,7 +73,7 @@ namespace Rekey.App.Views {
     }
 
     private void TakeLearned() {
-      if (LearnedLanguage.SelectedItem is ComboBoxItem { Tag: WordLanguage language }
+      if (LearnedLanguage.SelectedValue is WordLanguage language
           && _words.AddLearned(NewLearned.Text, language)) {
         NewLearned.Clear();
       }

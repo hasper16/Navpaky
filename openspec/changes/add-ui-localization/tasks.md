@@ -7,10 +7,10 @@
 
 ## 2. Resources and live switching
 
-- [ ] 2.1 Write the completeness test (same keys and placeholder counts across `.resx`); verify it fails on a deliberately missing key and passes when fixed
-- [ ] 2.2 Implement `Localizer` and the `Loc` markup extension; convert all existing XAML and code strings to keys; verify a test that no literal user-facing strings remain in XAML (grep check)
-- [ ] 2.3 Add `Strings.uk.resx` with full translations; verify the completeness test passes
-- [ ] 2.4 Add the interface language selector (System, English, Ukrainian) to General settings with live switching; verify manually that windows and tray menu change language immediately (automated binding test passes; the by-hand part is deferred to `docs/manual-tests/deferred-by-hand.md`)
+- [x] 2.1 Write the completeness test (same keys and placeholder counts across `.resx`); verify it fails on a deliberately missing key and passes when fixed
+- [x] 2.2 Implement `Localizer` and the `Loc` markup extension; convert all existing XAML and code strings to keys; verify a test that no literal user-facing strings remain in XAML (grep check)
+- [x] 2.3 Add `Strings.uk.resx` with full translations; verify the completeness test passes
+- [x] 2.4 Add the interface language selector (System, English, Ukrainian) to General settings with live switching; verify manually that windows and tray menu change language immediately (automated binding test passes; the by-hand part is deferred to `docs/manual-tests/deferred-by-hand.md`)
 
 ## 3. Review
 

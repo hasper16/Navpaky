@@ -537,4 +537,16 @@
   <data name="SignUpFailed" xml:space="preserve">
     <value>Could not send. Check the connection and try again.</value>
   </data>
+  <data name="UiLanguageChoice" xml:space="preserve">
+    <value>Interface language</value>
+  </data>
+  <data name="UiLanguageSystem" xml:space="preserve">
+    <value>Same as Windows</value>
+  </data>
+  <data name="UiLanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="UiLanguageUkrainian" xml:space="preserve">
+    <value>Українська</value>
+  </data>
 </root>
