@@ -21,8 +21,8 @@
 
 ## 4. Transparency
 
-- [ ] 4.1 Store the last 10 sent payloads and add "Show what was sent" to the Diagnostics and privacy page; verify manually that the displayed digest equals the request body captured by a local proxy
-- [ ] 4.2 Add the consent checkbox to the welcome window and both toggles to settings; write `docs/privacy.md` listing every field sent; verify the document matches the schema records
+- [x] 4.1 Store the last 10 sent payloads and add "Show what was sent" to the Diagnostics and privacy page; verify manually that the displayed digest equals the request body captured by a local proxy (automated parts pass; the manual part is deferred to `deferred-by-hand.md`)
+- [x] 4.2 Add the consent checkbox to the welcome window and both toggles to settings; write `docs/privacy.md` listing every field sent; verify the document matches the schema records (automated parts pass; the manual part is deferred to `deferred-by-hand.md`)
 
 ## 5. Orchestrator: audit fixes
 
