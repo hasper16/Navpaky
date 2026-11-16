@@ -2,7 +2,7 @@
 
 ## 1. Acceptance pass
 
-- [ ] 1.1 Pin the commit of `main` that contains changes 1–14 and run CI plus every `tools/Rekey.DesktopChecks` set on it; verify all pass and note the SHA at the top of `docs/manual-tests/deferred-by-hand.md`
+- [x] 1.1 Pin the commit of `main` that contains changes 1–14 and run CI plus every `tools/Rekey.DesktopChecks` set on it; verify all pass and note the SHA at the top of `docs/manual-tests/deferred-by-hand.md` (passed on 1955903: CI, CodeQL, Snyk; desktop checks tray-and-settings 10/10, onboarding 9/9, full 36/36)
 - [ ] 1.2 Owner runs every unchecked item of `docs/manual-tests/deferred-by-hand.md` on that SHA; verify each item is either ticked or carries a finding (steps, expected, observed)
 - [ ] 1.3 Add one task per finding to group 2, named by capability; verify every finding in the file has a matching task here
 

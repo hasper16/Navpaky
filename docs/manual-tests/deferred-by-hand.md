@@ -4,7 +4,7 @@ By the owner's decision of 2026-11-14, the checks that need a person at the keyb
 
 ## Final acceptance run (add-final-acceptance)
 
-- **Pinned commit:** `main` at `1955903405dc6b77cb70a90f16d7f1a2026c57b0` (merge of PR #42; contains changes 1–14). CI passed on it. Desktop-check sets on it: pending (orchestrator run).
+- **Pinned commit:** `main` at `1955903405dc6b77cb70a90f16d7f1a2026c57b0` (merge of PR #42; contains changes 1–14). CI, CodeQL and Snyk passed on it. Desktop-check sets passed on it (orchestrator run on the owner's PC): tray-and-settings 10/10, onboarding 9/9, full 36/36.
 - **Build:** a Debug build of `src/Rekey.App` from that commit (`dotnet build src/Rekey.App`), unless a step asks for a Release build or the installer. Since `add-tray-and-settings-ui` most settings that steps change in `settings.json` can also be changed in the Settings window; either way works.
 - **How to record:** a passing item gets `[x]`; leave its `Observed:` empty or add a short note. A failing or unclear item stays `[ ]` and its `Observed:` line says what happened (steps that differed, what was seen). Use only the invented Words of the step, no other typed text or window titles. An "Open item" is ticked once decided; write the decision on its `Observed:` line.
 - **Re-runs:** items re-checked after fixes add `Re-run on <sha>: pass` to their `Observed:` line.
