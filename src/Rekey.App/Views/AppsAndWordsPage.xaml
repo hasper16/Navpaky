@@ -23,9 +23,14 @@
               <Button DockPanel.Dock="Right"
                       Content="{l:Loc Remove}"
                       Tag="{Binding}"
-                      Click="OnRemoveApp"
-                      AutomationProperties.Name="{Binding Name, Converter={StaticResource Format},
-                                                  ConverterParameter=RemoveItem}" />
+                      Click="OnRemoveApp">
+                <AutomationProperties.Name>
+                  <MultiBinding Converter="{StaticResource Format}" ConverterParameter="RemoveItem">
+                    <Binding Path="Name" />
+                    <Binding Source="{x:Static l:Localizer.Instance}" Path="Culture" />
+                  </MultiBinding>
+                </AutomationProperties.Name>
+              </Button>
               <Image Source="{Binding Key, Converter={StaticResource AppIcon}}"
                      Width="20"
                      Height="20"
@@ -58,9 +63,14 @@
               <Button DockPanel.Dock="Right"
                       Content="{l:Loc Remove}"
                       Tag="{Binding}"
-                      Click="OnRemoveProtected"
-                      AutomationProperties.Name="{Binding Converter={StaticResource Format},
-                                                  ConverterParameter=RemoveItem}" />
+                      Click="OnRemoveProtected">
+                <AutomationProperties.Name>
+                  <MultiBinding Converter="{StaticResource Format}" ConverterParameter="RemoveItem">
+                    <Binding />
+                    <Binding Source="{x:Static l:Localizer.Instance}" Path="Culture" />
+                  </MultiBinding>
+                </AutomationProperties.Name>
+              </Button>
               <TextBlock Text="{Binding}" VerticalAlignment="Center" />
             </DockPanel>
           </DataTemplate>
@@ -93,14 +103,25 @@
               <Button DockPanel.Dock="Right"
                       Content="{l:Loc Remove}"
                       Tag="{Binding}"
-                      Click="OnRemoveLearned"
-                      AutomationProperties.Name="{Binding Text, Converter={StaticResource Format},
-                                                  ConverterParameter=RemoveItem}" />
+                      Click="OnRemoveLearned">
+                <AutomationProperties.Name>
+                  <MultiBinding Converter="{StaticResource Format}" ConverterParameter="RemoveItem">
+                    <Binding Path="Text" />
+                    <Binding Source="{x:Static l:Localizer.Instance}" Path="Culture" />
+                  </MultiBinding>
+                </AutomationProperties.Name>
+              </Button>
               <TextBlock Text="{Binding Text}" VerticalAlignment="Center" />
-              <TextBlock Text="{Binding Language}"
-                         Style="{StaticResource HintText}"
+              <TextBlock Style="{StaticResource HintText}"
                          VerticalAlignment="Center"
-                         Margin="8,0,0,0" />
+                         Margin="8,0,0,0">
+                <TextBlock.Text>
+                  <MultiBinding Converter="{StaticResource KeyText}">
+                    <Binding Path="LanguageKey" />
+                    <Binding Source="{x:Static l:Localizer.Instance}" Path="Culture" />
+                  </MultiBinding>
+                </TextBlock.Text>
+              </TextBlock>
             </DockPanel>
           </DataTemplate>
         </ItemsControl.ItemTemplate>

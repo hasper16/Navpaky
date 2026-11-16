@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.IO;
 using System.Xml.Linq;
+using Rekey.App.ViewModels;
+using Rekey.Core.Languages;
 using Xunit;
 
 namespace Rekey.App.Tests.Localization {
@@ -33,6 +35,15 @@ namespace Rekey.App.Tests.Localization {
           .Select(Describe)];
 
       Assert.Empty(missing);
+    }
+
+    [Fact]
+    public void EveryWordLanguageHasAName() {
+      foreach (Language language in Enum.GetValues<Language>()) {
+        string key = new LearnedEntry("слово", language).LanguageKey;
+
+        Assert.NotNull(Strings.ResourceManager.GetString(key, CultureInfo.InvariantCulture));
+      }
     }
 
     private static IEnumerable<XAttribute> Attributes() {
