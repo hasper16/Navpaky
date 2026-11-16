@@ -20,7 +20,7 @@ Consent: `CrashReports`. Sent through Sentry for unhandled exceptions and for fr
 | `incidents` tag | Incident types of the last 10 minutes, such as `InputFrozen` |
 | Level, event id, time | set by Sentry |
 
-Exception messages, user, request, extra data, breadcrumbs, device and server names, loaded modules and attachments are dropped. Freeze stacks are read from an in-memory snapshot of the process; the snapshot is never written or sent.
+Exception messages, user, request, extra data, breadcrumbs, device and server names, loaded modules and attachments are dropped. Freeze stacks are read from an in-memory snapshot of the process; the snapshot is never written or sent. "Show what was sent" lists a report when it is handed to Sentry, in the form above; Sentry keeps no offline copy, so a report that fails to arrive is dropped but still listed.
 
 ## Usage Digest
 

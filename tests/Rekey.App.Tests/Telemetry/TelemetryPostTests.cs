@@ -74,6 +74,15 @@ namespace Rekey.App.Tests.Telemetry {
       Assert.Null(handler.SslOptions.RemoteCertificateValidationCallback);
     }
 
+    // Spec telemetry: requests go only to the endpoints fixed in the app; a 307 or 308 would
+    // post the same body to whatever host the response names.
+    [Fact]
+    public void NetworkHandlerFollowsNoRedirect() {
+      using var handler = (SocketsHttpHandler)TelemetryPost.NetworkHandler();
+
+      Assert.False(handler.AllowAutoRedirect);
+    }
+
     private sealed class FakeHandler(Func<HttpRequestMessage, HttpResponseMessage> answer)
         : HttpMessageHandler {
       public List<string> Bodies { get; } = [];

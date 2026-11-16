@@ -16,9 +16,10 @@ namespace Rekey.App.Telemetry {
       _recordSent = recordSent;
     }
 
-    // No custom certificate callback: an invalid certificate fails the request.
+    // No custom certificate callback: an invalid certificate fails the request. No redirects:
+    // a request reaches only the endpoint fixed in the app.
     public static HttpMessageHandler NetworkHandler() {
-      return new SocketsHttpHandler();
+      return new SocketsHttpHandler { AllowAutoRedirect = false };
     }
 
     public async Task<bool> SendAsync(Uri? endpoint, string json, CancellationToken token) {
