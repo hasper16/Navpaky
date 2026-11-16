@@ -23,3 +23,7 @@
 
 - [ ] 4.1 Store the last 10 sent payloads and add "Show what was sent" to the Diagnostics and privacy page; verify manually that the displayed digest equals the request body captured by a local proxy
 - [ ] 4.2 Add the consent checkbox to the welcome window and both toggles to settings; write `docs/privacy.md` listing every field sent; verify the document matches the schema records
+
+## 5. Orchestrator: audit fixes
+
+- [x] 5.1 orchestrator: audit fixes: skip saving an unchanged statistics snapshot, write restart-state.txt atomically, cover an empty or garbage restart-state.txt; verify StatsStore and RestartStateStore tests pass

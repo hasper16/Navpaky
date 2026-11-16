@@ -49,6 +49,19 @@ namespace Rekey.Core.Tests {
       Assert.Null(store.LoadLastRestart());
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData("\0ÿ garbage")]
+    public void SaveAfterAnEmptyOrGarbageFileLoadsBack(string content) {
+      var store = new RestartStateStore(_root.FullName);
+      File.WriteAllText(store.FilePath, content);
+      var time = new DateTimeOffset(2026, 11, 16, 8, 0, 0, TimeSpan.Zero);
+
+      Assert.Null(store.LoadLastRestart());
+      Assert.True(store.TrySaveLastRestart(time));
+      Assert.Equal(time, store.LoadLastRestart());
+    }
+
     [Fact]
     public void SaveCreatesTheFolder() {
       string folder = Path.Join(_root.FullName, "Rekey");
