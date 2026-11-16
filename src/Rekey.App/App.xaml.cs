@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using H.NotifyIcon;
 using Rekey.App.Feedback;
 using Rekey.App.Onboarding;
+using Rekey.App.Telemetry;
 using Rekey.App.Tray;
 using Rekey.App.Updates;
 using Rekey.App.ViewModels;
@@ -103,6 +104,7 @@ namespace Rekey.App {
     private QueuedIncidentLog? _incidents;
     private UpdateScheduler? _updates;
     private ExecutableWatch? _executableWatch;
+    private TelemetryHost? _telemetry;
 
     // The worker's Word counts as of the latest Trigger Key; only the worker thread writes it.
     private volatile StrongBox<WordCounts>? _wordCounts;
@@ -120,6 +122,7 @@ namespace Rekey.App {
       }
 
       _incidents = new QueuedIncidentLog(new IncidentLog(_dataFolder), ReportIncidentNotSaved);
+      _telemetry = new TelemetryHost(_dataFolder, Dispatcher);
       ApplicationThemeManager.ApplySystemTheme();
 
       // Windows holds the truth about starting at sign-in: Task Manager can change it.
@@ -143,6 +146,7 @@ namespace Rekey.App {
 
       // Efficiency Mode throttles the process; the keyboard hook must stay fast.
       trayIcon.ForceCreate(enablesEfficiencyMode: false);
+      _telemetry.Start(_hub.Current);
       StartInput(_hub.Current);
       _hub.Changed += OnSettingsChanged;
 
@@ -208,6 +212,8 @@ namespace Rekey.App {
         _updates?.Dispose();
         _executableWatch?.Dispose();
         _foregroundApps?.Dispose();
+        _telemetry?.Flush();
+        _telemetry?.Dispose();
         _trayView?.Dispose();
         _welcome?.Dispose();
         _hub?.Dispose();
@@ -370,7 +376,9 @@ namespace Rekey.App {
           _restartStore.LoadLastRestart(),
           RecordIncident,
           RestartAfterFreeze,
-          TimeProvider.System);
+          TimeProvider.System) {
+        ReportStall = () => _telemetry?.ReportEngineStall(_worker.ManagedThreadId),
+      };
       _freezeGuard.Start();
     }
 
@@ -642,6 +650,7 @@ namespace Rekey.App {
     private void OnSettingsChanged(Settings settings) {
       _worker?.UseSettings(settings);
       _freezeGuard?.UseSettings(settings);
+      _telemetry?.Apply(settings);
       _updates?.UseAutomaticChecks(settings.AutoCheckForUpdates);
       if (!settings.StatisticsEnabled) {
         SaveStatistics();

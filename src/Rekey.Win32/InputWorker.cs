@@ -325,6 +325,11 @@ namespace Rekey.Win32 {
     /// </summary>
     public long Heartbeat => Volatile.Read(ref _heartbeat);
 
+    /// <summary>
+    /// Gets the managed id of the worker thread, so a freeze report can read its stack.
+    /// </summary>
+    public int ManagedThreadId => _thread.ManagedThreadId;
+
     /// <inheritdoc />
     int IWorkerPulse.QueuedInput => _ring.Count;
 

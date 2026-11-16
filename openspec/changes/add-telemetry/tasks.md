@@ -8,10 +8,10 @@
 
 ## 2. Crash and freeze reports
 
-- [ ] 2.1 Integrate Sentry with the D1 options, initialised only with consent; verify a test that no Sentry hub is created without consent
-- [ ] 2.2 Write failing tests for the `BeforeSend` allowlist (drops user, extra, breadcrumbs, device name; keeps exception types and frames); implement; verify they pass
-- [ ] 2.3 Write a test scanning Core for exception messages built from Word/Rendering values; fix any; verify it passes
-- [ ] 2.4 Implement the freeze watchdog (500 ms ping, 2 s threshold); verify with a test that blocks a fake dispatcher for 3 s and expects one freeze event
+- [x] 2.1 Integrate Sentry with the D1 options, initialised only with consent; verify a test that no Sentry hub is created without consent
+- [x] 2.2 Write failing tests for the `BeforeSend` allowlist (drops user, extra, breadcrumbs, device name; keeps exception types and frames); implement; verify they pass
+- [x] 2.3 Write a test scanning Core for exception messages built from Word/Rendering values; fix any; verify it passes
+- [x] 2.4 Implement the freeze watchdog (500 ms ping, 2 s threshold); verify with a test that blocks a fake dispatcher for 3 s and expects one freeze event
 
 ## 3. Digest, setup signal, sign-up
 

@@ -12,7 +12,7 @@ namespace Rekey.Win32.Tests.Keyboard {
     public void StallOfFiveSecondsIsNotYetAFreeze() {
       FreezeWatchdog watchdog = NewWatchdog();
 
-      Assert.Equal(FreezeOutcome.None, Stall(watchdog, TimeSpan.FromSeconds(5)));
+      Assert.Equal(FreezeOutcome.Stall, Stall(watchdog, TimeSpan.FromSeconds(5)));
     }
 
     [Fact]
@@ -23,6 +23,32 @@ namespace Rekey.Win32.Tests.Keyboard {
 
       Assert.False(outcome.Restart);
       Assert.Equal(IncidentType.InputFrozen, outcome.Incident?.Type);
+    }
+
+    // Spec telemetry: freezes longer than 2 s are reported, before the 5 s Incident threshold.
+    [Fact]
+    public void StallOverTwoSecondsIsReportedOnceWithoutIncident() {
+      FreezeWatchdog watchdog = NewWatchdog();
+
+      FreezeOutcome outcome = Stall(watchdog, TimeSpan.FromSeconds(3));
+      _time.Advance(TimeSpan.FromSeconds(1));
+
+      Assert.Equal(FreezeOutcome.Stall, outcome);
+      Assert.Equal(FreezeOutcome.None, watchdog.Check());
+    }
+
+    [Fact]
+    public void StallOfTwoSecondsIsNotReported() {
+      FreezeWatchdog watchdog = NewWatchdog();
+
+      Assert.Equal(FreezeOutcome.None, Stall(watchdog, TimeSpan.FromSeconds(2)));
+    }
+
+    [Fact]
+    public void FreezeWithoutEarlierCheckIsAlsoAStall() {
+      FreezeWatchdog watchdog = NewWatchdog();
+
+      Assert.True(Stall(watchdog, TimeSpan.FromSeconds(6)).Stalled);
     }
 
     [Fact]

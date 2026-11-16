@@ -15,11 +15,15 @@ namespace Rekey.Win32.Keyboard {
     private static readonly TimeSpan _repeatWindow = TimeSpan.FromHours(1);
     private static readonly TimeSpan _restartGap = TimeSpan.FromMinutes(10);
 
+    // Spec telemetry: a stall over 2 s is reported as a freeze, though not yet an Incident.
+    private static readonly TimeSpan _reportAfter = TimeSpan.FromSeconds(2);
+
     private readonly IWorkerPulse _pulse;
     private readonly TimeProvider _time;
     private long _lastHeartbeat = -1;
     private long _movingSince;
     private bool _frozen;
+    private bool _reported;
     private DateTimeOffset? _lastFreeze;
     private DateTimeOffset? _lastRestart;
     private bool _restartEnabled = true;
@@ -58,11 +62,15 @@ namespace Rekey.Win32.Keyboard {
         _lastHeartbeat = heartbeat;
         _movingSince = _time.GetTimestamp();
         _frozen = false;
+        _reported = false;
         return FreezeOutcome.None;
       }
 
-      if (_frozen || _time.GetElapsedTime(_movingSince) <= _frozenAfter) {
-        return FreezeOutcome.None;
+      TimeSpan stalled = _time.GetElapsedTime(_movingSince);
+      bool report = !_reported && stalled > _reportAfter;
+      _reported |= report;
+      if (_frozen || stalled <= _frozenAfter) {
+        return report ? FreezeOutcome.Stall : FreezeOutcome.None;
       }
 
       _frozen = true;
@@ -73,10 +81,11 @@ namespace Rekey.Win32.Keyboard {
       if (repeated && RestartEnabled && restartAllowed) {
         _lastRestart = now;
         _lastFreeze = null;
-        return new FreezeOutcome(true, new Incident(now, IncidentType.FreezeRestart, []));
+        return new FreezeOutcome(
+            true, new Incident(now, IncidentType.FreezeRestart, []), report);
       }
 
-      return new FreezeOutcome(false, new Incident(now, IncidentType.InputFrozen, []));
+      return new FreezeOutcome(false, new Incident(now, IncidentType.InputFrozen, []), report);
     }
   }
 }

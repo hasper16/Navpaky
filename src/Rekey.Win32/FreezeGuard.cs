@@ -49,6 +49,13 @@ namespace Rekey.Win32 {
     }
 
     /// <summary>
+    /// Gets the host's freeze report for a worker stall over 2 s, called once per stall on the
+    /// guard's thread while the worker is still stuck.
+    /// </summary>
+    /// <value>The report, or <see langword="null" /> to report nothing.</value>
+    public Action? ReportStall { get; init; }
+
+    /// <summary>
     /// Applies the user's choice whether a repeated freeze restarts Rekey; call it from one
     /// thread.
     /// </summary>
@@ -76,6 +83,10 @@ namespace Rekey.Win32 {
     private void Run() {
       while (!_stop.Wait(_checkPeriod)) {
         FreezeOutcome outcome = _watchdog.Check();
+        if (outcome.Stalled) {
+          ReportStall?.Invoke();
+        }
+
         if (outcome.Incident is { } incident) {
           _recordIncident(incident);
         }
