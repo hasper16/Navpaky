@@ -31,14 +31,12 @@ namespace Rekey.Core.Tests.Telemetry {
 
     [Fact]
     public void OnlyIdentifierIsThePerRequestOne() {
-      foreach (Type request in _requests) {
-        string[] ids = [.. AllProperties(request)
-            .Where(property => property.PropertyType == typeof(Guid)
-                || property.Name.EndsWith("Id", StringComparison.Ordinal))
-            .Select(property => property.Name)];
-
-        Assert.Equal(["RequestId"], ids);
-      }
+      Assert.All(
+          _requests.Select(request => AllProperties(request)
+              .Where(property => property.PropertyType == typeof(Guid)
+                  || property.Name.EndsWith("Id", StringComparison.Ordinal))
+              .Select(property => property.Name)),
+          ids => Assert.Equal(["RequestId"], ids));
     }
 
     [Fact]
