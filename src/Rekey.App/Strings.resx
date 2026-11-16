@@ -486,4 +486,49 @@
   <data name="MovedClose" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="WelcomeDiagnostics" xml:space="preserve">
+    <value>Send anonymous crash reports and daily usage counts to help improve Rekey. Never your text.</value>
+  </data>
+  <data name="CrashReportsEnabled" xml:space="preserve">
+    <value>Send crash and freeze reports</value>
+  </data>
+  <data name="UsageDigestEnabled" xml:space="preserve">
+    <value>Send daily usage counts</value>
+  </data>
+  <data name="TelemetryNote" xml:space="preserve">
+    <value>Reports carry error types, counts, versions and on/off settings. They never contain what you type, window titles, your user name or file paths. Turning a switch off deletes what has not been sent yet.</value>
+  </data>
+  <data name="ShowWhatWasSent" xml:space="preserve">
+    <value>Show what was sent</value>
+  </data>
+  <data name="NothingSentYet" xml:space="preserve">
+    <value>Nothing has been sent yet.</value>
+  </data>
+  <data name="SignUpTitle" xml:space="preserve">
+    <value>Stay in touch</value>
+  </data>
+  <data name="SignUpEmail" xml:space="preserve">
+    <value>Email address</value>
+  </data>
+  <data name="SignUpNewVersions" xml:space="preserve">
+    <value>Tell me about new versions</value>
+  </data>
+  <data name="SignUpReportedProblems" xml:space="preserve">
+    <value>Tell me about problems I reported</value>
+  </data>
+  <data name="SignUpSubmit" xml:space="preserve">
+    <value>Sign up</value>
+  </data>
+  <data name="SignUpInvalid" xml:space="preserve">
+    <value>Enter an email address and tick at least one option.</value>
+  </data>
+  <data name="SignUpSending" xml:space="preserve">
+    <value>Sending…</value>
+  </data>
+  <data name="SignUpSent" xml:space="preserve">
+    <value>Thanks! Rekey does not keep your address on this PC.</value>
+  </data>
+  <data name="SignUpFailed" xml:space="preserve">
+    <value>Could not send. Check the connection and try again.</value>
+  </data>
 </root>

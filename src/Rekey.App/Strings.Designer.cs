@@ -166,6 +166,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Send crash and freeze reports.
+        /// </summary>
+        public static string CrashReportsEnabled {
+            get {
+                return ResourceManager.GetString("CrashReportsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apps where Rekey stays off.
         /// </summary>
         public static string ExcludedApps {
@@ -688,6 +697,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Nothing has been sent yet..
+        /// </summary>
+        public static string NothingSentYet {
+            get {
+                return ResourceManager.GetString("NothingSentYet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export diagnostics….
         /// </summary>
         public static string OpenExport {
@@ -931,6 +949,96 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show what was sent.
+        /// </summary>
+        public static string ShowWhatWasSent {
+            get {
+                return ResourceManager.GetString("ShowWhatWasSent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email address.
+        /// </summary>
+        public static string SignUpEmail {
+            get {
+                return ResourceManager.GetString("SignUpEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not send. Check the connection and try again..
+        /// </summary>
+        public static string SignUpFailed {
+            get {
+                return ResourceManager.GetString("SignUpFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter an email address and tick at least one option..
+        /// </summary>
+        public static string SignUpInvalid {
+            get {
+                return ResourceManager.GetString("SignUpInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tell me about new versions.
+        /// </summary>
+        public static string SignUpNewVersions {
+            get {
+                return ResourceManager.GetString("SignUpNewVersions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tell me about problems I reported.
+        /// </summary>
+        public static string SignUpReportedProblems {
+            get {
+                return ResourceManager.GetString("SignUpReportedProblems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sending….
+        /// </summary>
+        public static string SignUpSending {
+            get {
+                return ResourceManager.GetString("SignUpSending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thanks! Rekey does not keep your address on this PC..
+        /// </summary>
+        public static string SignUpSent {
+            get {
+                return ResourceManager.GetString("SignUpSent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign up.
+        /// </summary>
+        public static string SignUpSubmit {
+            get {
+                return ResourceManager.GetString("SignUpSubmit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stay in touch.
+        /// </summary>
+        public static string SignUpTitle {
+            get {
+                return ResourceManager.GetString("SignUpTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Don&apos;t correct after I switch layout myself.
         /// </summary>
         public static string SkipAfterManualSwitch {
@@ -1156,6 +1264,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reports carry error types, counts, versions and on/off settings. They never contain what you type, window titles, your user name or file paths. Turning a switch off deletes what has not been sent yet..
+        /// </summary>
+        public static string TelemetryNote {
+            get {
+                return ResourceManager.GetString("TelemetryNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto Correction is off.
         /// </summary>
         public static string TrayOff {
@@ -1282,6 +1399,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Send daily usage counts.
+        /// </summary>
+        public static string UsageDigestEnabled {
+            get {
+                return ResourceManager.GetString("UsageDigestEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Check text before replacing.
         /// </summary>
         public static string VerifiedReplacement {
@@ -1314,6 +1440,15 @@ namespace Rekey.App {
         public static string WelcomeDescription {
             get {
                 return ResourceManager.GetString("WelcomeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send anonymous crash reports and daily usage counts to help improve Rekey. Never your text..
+        /// </summary>
+        public static string WelcomeDiagnostics {
+            get {
+                return ResourceManager.GetString("WelcomeDiagnostics", resourceCulture);
             }
         }
         

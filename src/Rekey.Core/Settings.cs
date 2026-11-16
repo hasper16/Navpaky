@@ -88,6 +88,14 @@ namespace Rekey.Core {
   /// <param name="DiagnosticsConsent">
   /// What the user agreed Rekey may send about crashes and usage. The default agrees to nothing.
   /// </param>
+  /// <param name="LastDigestDay">
+  /// The local day Rekey last tried to send a Usage Digest, sent or not, or
+  /// <see langword="null" /> when it never tried. The default is <see langword="null" />.
+  /// </param>
+  /// <param name="SetupSignalSent">
+  /// <see langword="true" /> once Rekey sent the one-time setup signal; otherwise,
+  /// <see langword="false" />. The default is <see langword="false" />.
+  /// </param>
   // Each setting is a constructor parameter with a default: in .NET 10, source-generated JSON
   // gives an init-only property that the file omits its type default, not its initializer.
   public sealed record Settings(
@@ -110,7 +118,9 @@ namespace Rekey.Core {
       bool AutoCheckForUpdates = true,
       bool WelcomeCompleted = false,
       bool CorrectionTipShown = false,
-      DiagnosticsConsent DiagnosticsConsent = default) {
+      DiagnosticsConsent DiagnosticsConsent = default,
+      DateOnly? LastDigestDay = null,
+      bool SetupSignalSent = false) {
     /// <summary>
     /// The <see cref="PausedUntil" /> value of a Pause that lasts until Rekey restarts.
     /// </summary>

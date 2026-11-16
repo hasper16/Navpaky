@@ -40,6 +40,19 @@ namespace Rekey.App.Tests.ViewModels {
       Assert.True(_hub.Current.AnalysisLogEnabled);
     }
 
+    // Spec telemetry: settings change crash reports and the Usage Digest separately.
+    [Fact]
+    public void TelemetrySwitchesChangeOneConsentEach() {
+      _model.CrashReportsEnabled = true;
+      Assert.Equal(new DiagnosticsConsent(true, false), _hub.Current.DiagnosticsConsent);
+
+      _model.UsageDigestEnabled = true;
+      _model.CrashReportsEnabled = false;
+
+      Assert.Equal(new DiagnosticsConsent(false, true), _hub.Current.DiagnosticsConsent);
+      Assert.True(_model.UsageDigestEnabled);
+    }
+
     [Fact]
     public void UpdateCheckSwitchChangesTheSettings() {
       _model.AutoCheckForUpdates = false;

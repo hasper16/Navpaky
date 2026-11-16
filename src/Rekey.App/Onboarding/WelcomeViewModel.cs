@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Rekey.App.ViewModels;
 using Rekey.Core;
 using Rekey.Core.Languages;
+using Rekey.Core.Telemetry.Schemas;
 
 namespace Rekey.App.Onboarding {
   // The welcome window (spec onboarding): the main choices read and write the hub's snapshot,
@@ -11,6 +12,7 @@ namespace Rekey.App.Onboarding {
     private readonly SettingsHub _hub;
     private string[] _languages;
     private bool _tryItWorked;
+    private bool _closedWithDone;
 
     public WelcomeViewModel(SettingsHub hub, IReadOnlyList<LayoutId> layouts) {
       _hub = hub;
@@ -27,6 +29,14 @@ namespace Rekey.App.Onboarding {
       get => _hub.Current.LaunchAtSignIn;
       set => _hub.Update(settings => settings with { LaunchAtSignIn = value });
     }
+
+    // Spec telemetry: one checkbox, unticked by default, agrees to every kind of report.
+    public bool DiagnosticsAgreed {
+      get => _hub.Current.DiagnosticsConsent == DiagnosticsConsent.All(true);
+      set => _hub.Update(settings => settings with { DiagnosticsConsent = Agreed(value) });
+    }
+
+    public WelcomeProgress Progress => new(TryItWorked, _closedWithDone);
 
     // Rekey corrects between languages, so two Layouts of one language are not enough. No
     // Layouts at all means the worker has not read them yet.
@@ -59,12 +69,20 @@ namespace Rekey.App.Onboarding {
       TryItWorked = true;
     }
 
+    public void NoteDone() {
+      _closedWithDone = true;
+    }
+
     public void Close() {
       _hub.Update(settings => settings with { WelcomeCompleted = true });
     }
 
     public void Dispose() {
       _hub.Changed -= OnHubChanged;
+    }
+
+    private static DiagnosticsConsent Agreed(bool agreed) {
+      return DiagnosticsConsent.All(agreed);
     }
 
     private static string[] LanguagesOf(IReadOnlyList<LayoutId> layouts) {
@@ -82,6 +100,7 @@ namespace Rekey.App.Onboarding {
     private void OnHubChanged(Settings settings) {
       OnPropertyChanged(nameof(AutoCorrectionEnabled));
       OnPropertyChanged(nameof(LaunchAtSignIn));
+      OnPropertyChanged(nameof(DiagnosticsAgreed));
     }
   }
 }

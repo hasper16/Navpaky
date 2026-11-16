@@ -122,7 +122,6 @@ namespace Rekey.App {
       }
 
       _incidents = new QueuedIncidentLog(new IncidentLog(_dataFolder), ReportIncidentNotSaved);
-      _telemetry = new TelemetryHost(_dataFolder, Dispatcher);
       ApplicationThemeManager.ApplySystemTheme();
 
       // Windows holds the truth about starting at sign-in: Task Manager can change it.
@@ -146,7 +145,13 @@ namespace Rekey.App {
 
       // Efficiency Mode throttles the process; the keyboard hook must stay fast.
       trayIcon.ForceCreate(enablesEfficiencyMode: false);
-      _telemetry.Start(_hub.Current);
+      _telemetry = new TelemetryHost(
+          _dataFolder,
+          Dispatcher,
+          _hub,
+          () => _worker?.Statistics ?? StatsDocument.Empty,
+          () => _worker?.InstalledLayouts ?? []);
+      _telemetry.Start();
       StartInput(_hub.Current);
       _hub.Changed += OnSettingsChanged;
 
@@ -693,6 +698,7 @@ namespace Rekey.App {
             welcome, new HotkeyPage(hotkey), dark, OpenLanguageSettings);
         _welcomeWindow.Closed += (_, _) => {
           welcome.Close();
+          _telemetry?.OnWelcomeClosed(welcome.Progress);
           welcome.Dispose();
           hotkey.Dispose();
           _welcome = null;
@@ -752,7 +758,12 @@ namespace Rekey.App {
           new(Strings.PageAppsAndWords, SymbolRegular.AppsList24,
               new AppsAndWordsPage(apps, _words!)),
           new(Strings.PageDiagnostics, SymbolRegular.ShieldCheckmark24,
-              new DiagnosticsPage(settings, OpenStatistics, OpenExport)),
+              new DiagnosticsPage(
+                  settings,
+                  _telemetry!.NewSignUp(),
+                  _telemetry.ReadSent,
+                  OpenStatistics,
+                  OpenExport)),
           new(Strings.PageAbout, SymbolRegular.Info24, new AboutPage(dark)),
       ];
       var window = new SettingsWindow(sections);

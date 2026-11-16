@@ -15,9 +15,9 @@
 
 ## 3. Digest, setup signal, sign-up
 
-- [ ] 3.1 Write failing tests: at most one digest per day; offline → retry next day, older dropped; withdrawn consent deletes unsent data; implement the scheduler; verify they pass
-- [ ] 3.2 Implement the one-time setup signal on welcome close; verify a test that reopening the welcome does not send again
-- [ ] 3.3 Implement the email sign-up request and UI; verify manually that only one request is sent and nothing is stored after success
+- [x] 3.1 Write failing tests: at most one digest per day; offline → retry next day, older dropped; withdrawn consent deletes unsent data; implement the scheduler; verify they pass
+- [x] 3.2 Implement the one-time setup signal on welcome close; verify a test that reopening the welcome does not send again
+- [x] 3.3 Implement the email sign-up request and UI; verify manually that only one request is sent and nothing is stored after success (unit tests pass; the manual part is deferred to `deferred-by-hand.md`)
 
 ## 4. Transparency
 

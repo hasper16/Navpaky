@@ -2,9 +2,13 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Threading;
 using Microsoft.Diagnostics.Runtime;
+using Rekey.App.ViewModels;
 using Rekey.Core;
 using Rekey.Core.Diagnostics;
+using Rekey.Core.Languages;
+using Rekey.Core.Statistics;
 using Rekey.Core.Telemetry;
+using Rekey.Core.Telemetry.Schemas;
 
 namespace Rekey.App.Telemetry {
   // Everything Rekey may send (spec telemetry), started and stopped by the user's consent.
@@ -15,12 +19,24 @@ namespace Rekey.App.Telemetry {
     private static readonly TimeSpan _incidentWindow = TimeSpan.FromMinutes(10);
 
     private readonly string _dataFolder;
+    private readonly SettingsHub _hub;
     private readonly int _uiThreadId;
     private readonly CrashReports _crashReports;
     private readonly DispatcherFreezeWatch _uiWatch;
+    private readonly TelemetryPost _post;
+    private readonly TelemetryPost _signUpPost;
+    private readonly DigestScheduler _digests;
+    private readonly SetupSignalOnce _setupSignal;
+    private CancellationTokenSource _usage = new();
 
-    public TelemetryHost(string dataFolder, Dispatcher dispatcher) {
+    public TelemetryHost(
+        string dataFolder,
+        Dispatcher dispatcher,
+        SettingsHub hub,
+        Func<StatsDocument> statistics,
+        Func<IReadOnlyList<LayoutId>> layouts) {
       _dataFolder = dataFolder;
+      _hub = hub;
       _uiThreadId = dispatcher.Thread.ManagedThreadId;
       Sent = new SentLog(dataFolder);
       _crashReports = new CrashReports(new CrashReportSetup(
@@ -29,6 +45,21 @@ namespace Rekey.App.Telemetry {
           TimeProvider.System,
           ping => dispatcher.BeginInvoke(DispatcherPriority.Send, ping),
           () => ReportFreeze("Ui", _uiThreadId));
+      _post = new TelemetryPost(TelemetryPost.NetworkHandler(), RecordSent);
+
+      // Design D4: the sign-up is never kept on this PC, not even in the sent log.
+      _signUpPost = new TelemetryPost(TelemetryPost.NetworkHandler(), _ => { });
+      _digests = new DigestScheduler(
+          TimeProvider.System,
+          action => dispatcher.BeginInvoke(action),
+          hub,
+          day => TelemetryReports.Digest(day, hub.Current, statistics(), layouts()),
+          (json, token) => _post.SendAsync(TelemetryEndpoints.UsageDigest, json, token),
+          TimeSpan.FromMinutes(60 + Random.Shared.Next(60)));
+      _setupSignal = new SetupSignalOnce(
+          hub,
+          progress => TelemetryReports.Setup(hub.Current, layouts(), IsCovered(), progress),
+          json => _post.SendAsync(TelemetryEndpoints.SetupSignal, json, _usage.Token));
     }
 
     public static string Version { get; } = (Assembly.GetExecutingAssembly()
@@ -37,13 +68,37 @@ namespace Rekey.App.Telemetry {
 
     public SentLog Sent { get; }
 
-    public void Start(Settings settings) {
-      Apply(settings);
+    public void Start() {
+      Apply(_hub.Current);
       _uiWatch.Start();
+      _digests.Start();
     }
 
     public void Apply(Settings settings) {
       _crashReports.Apply(settings.DiagnosticsConsent);
+      _digests.Apply(settings);
+      if (!settings.DiagnosticsConsent.UsageDigest && !_usage.IsCancellationRequested) {
+        _usage.Cancel();
+        _usage.Dispose();
+        _usage = new CancellationTokenSource();
+      }
+    }
+
+    public void OnWelcomeClosed(WelcomeProgress progress) {
+      _setupSignal.OnWelcomeClosed(progress);
+    }
+
+    public SignUpViewModel NewSignUp() {
+      return new SignUpViewModel(
+          json => _signUpPost.SendAsync(TelemetryEndpoints.SignUp, json, CancellationToken.None));
+    }
+
+    public IReadOnlyList<string> ReadSent() {
+      try {
+        return Sent.Read();
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        return [];
+      }
     }
 
     public void ReportEngineStall(int workerThreadId) {
@@ -56,7 +111,18 @@ namespace Rekey.App.Telemetry {
 
     public void Dispose() {
       _uiWatch.Dispose();
+      _digests.Dispose();
+      _usage.Cancel();
+      _usage.Dispose();
       _crashReports.Dispose();
+      _post.Dispose();
+      _signUpPost.Dispose();
+    }
+
+    // Read once for the one-time setup signal; the worker keeps its own copy.
+    private static Func<LayoutId, bool> IsCovered() {
+      LanguageSet languages = LanguageSet.LoadBundled(DateTimeOffset.UtcNow).Languages;
+      return layout => languages.ProfileFor(layout) is not null;
     }
 
     private void ReportFreeze(string thread, int managedThreadId) {
