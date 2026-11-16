@@ -1,10 +1,9 @@
-# Spec Delta
+# telemetry Specification
 
 ## Purpose
-
 Defines what Rekey may send over the network about crashes and usage, the consent required before anything is sent, and the data that must never leave the user's computer.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Nothing is sent without consent
 Rekey MUST NOT send crash reports, freeze reports, Usage Digests or the setup signal until the user has agreed. The welcome window SHALL ask, with the choice unticked by default, and the user SHALL be able to change it at any time in settings.
@@ -18,7 +17,7 @@ Rekey MUST NOT send crash reports, freeze reports, Usage Digests or the setup si
 - **THEN** no further telemetry is sent and any unsent reports are deleted
 
 ### Requirement: Typed text never leaves the computer
-No network request made by Rekey SHALL contain typed text, Words, Renderings, Protected Words, Learned Words, clipboard content, window titles, the Windows user name, file paths inside the user profile, or memory dumps.
+No network request made by Rekey SHALL contain typed text, Words, Renderings, Protected Words, Learned Words, clipboard content, window titles, the Windows user name, file paths inside the user profile, or memory dumps. The one exception is the email address the user types into the opt-in sign-up form and explicitly submits, sent only in that sign-up request; keystroke-derived text, such as Words and Renderings, is never sent.
 
 #### Scenario: Crash while a Word is buffered
 - **WHEN** Rekey crashes while the current Word is "secret"
@@ -40,7 +39,7 @@ With consent, Rekey SHALL send at most one Usage Digest per day containing only 
 
 #### Scenario: Offline
 - **WHEN** the digest cannot be sent today
-- **THEN** Rekey tries again the next day with that day's counters and discards older unsent digests
+- **THEN** Rekey discards the unsent digest and makes no more Usage Digest attempts that day; the next day's attempt, if made, carries only the counters of the day before it
 
 ### Requirement: One-time setup signal
 With consent, Rekey SHALL send one anonymous setup signal when the welcome window closes, containing versions, UI language, number of installed Layouts and covered Languages, the main settings chosen, and how far the user got in the welcome window.
