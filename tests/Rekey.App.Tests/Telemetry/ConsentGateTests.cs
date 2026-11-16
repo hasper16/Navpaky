@@ -13,9 +13,10 @@ namespace Rekey.App.Tests.Telemetry {
     public async Task OpenGatePassesTheRequestOn() {
       var inner = new CountingHandler();
       using var client = new HttpClient(new ConsentGate { InnerHandler = inner });
+      using var content = new StringContent("{}");
 
       using HttpResponseMessage response = await client.PostAsync(
-          _endpoint, new StringContent("{}"), TestContext.Current.CancellationToken);
+          _endpoint, content, TestContext.Current.CancellationToken);
 
       Assert.Equal(1, inner.Requests);
     }
@@ -25,11 +26,12 @@ namespace Rekey.App.Tests.Telemetry {
       var inner = new CountingHandler();
       var gate = new ConsentGate { InnerHandler = inner };
       using var client = new HttpClient(gate);
+      using var content = new StringContent("{}");
 
       gate.Close();
 
       await Assert.ThrowsAsync<HttpRequestException>(() => client.PostAsync(
-          _endpoint, new StringContent("{}"), TestContext.Current.CancellationToken));
+          _endpoint, content, TestContext.Current.CancellationToken));
       Assert.Equal(0, inner.Requests);
     }
 
