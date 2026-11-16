@@ -67,7 +67,9 @@ namespace Rekey.App {
 
     private static readonly WordListsStore _wordsStore = new(_dataFolder);
 
-    private static readonly CultureInfo _windowsLanguage = WindowsLanguage();
+    // Read before Rekey sets its own interface language: .NET starts it from the Windows
+    // display language (GetUserDefaultUILanguage), which the "system" choice follows.
+    private static readonly CultureInfo _windowsLanguage = CultureInfo.CurrentUICulture;
 
     private readonly SettingsStore _settingsStore = new(_dataFolder);
     private readonly RestartStateStore _restartStore = new(_dataFolder);
@@ -231,22 +233,17 @@ namespace Rekey.App {
       }
     }
 
-    // Read before Rekey sets its own interface language: .NET starts it from the Windows
-    // display language (GetUserDefaultUILanguage), which the "system" choice follows.
-    private static CultureInfo WindowsLanguage() {
-#if DEBUG
-      // The desktop checks find windows and items by their English text.
-      if (Environment.GetCommandLineArgs().Contains(_checkUi)) {
-        return CultureInfo.GetCultureInfo("en");
-      }
-#endif
-      return CultureInfo.CurrentUICulture;
-    }
-
     // Code reads Strings in this language and XAML follows the Localizer (design D2). The hub's
     // other listeners run after this one, so view-models rebuild their texts in it.
     private static void UseUiLanguage(UiLanguage language) {
       CultureInfo culture = UiCulture.For(language, _windowsLanguage);
+#if DEBUG
+      // The desktop checks find windows and items by their English text, whatever is chosen;
+      // the saved choice stays as it is.
+      if (Environment.GetCommandLineArgs().Contains(_checkUi)) {
+        culture = CultureInfo.GetCultureInfo("en");
+      }
+#endif
       Strings.Culture = culture;
       CultureInfo.CurrentUICulture = culture;
       Localizer.Instance.Use(culture);
