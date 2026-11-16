@@ -15,11 +15,17 @@
   <data name="TrayOn" xml:space="preserve">
     <value>Rekey is on</value>
   </data>
-  <data name="TrayPausedMinutes" xml:space="preserve">
+  <data name="TrayPausedMinutes_One" xml:space="preserve">
+    <value>Rekey is paused: {0} minute left</value>
+  </data>
+  <data name="TrayPausedMinutes_Few" xml:space="preserve">
     <value>Rekey is paused: {0} minutes left</value>
   </data>
-  <data name="TrayPausedOneMinute" xml:space="preserve">
-    <value>Rekey is paused: 1 minute left</value>
+  <data name="TrayPausedMinutes_Many" xml:space="preserve">
+    <value>Rekey is paused: {0} minutes left</value>
+  </data>
+  <data name="TrayPausedMinutes_Other" xml:space="preserve">
+    <value>Rekey is paused: {0} minutes left</value>
   </data>
   <data name="TrayPausedUntilRestart" xml:space="preserve">
     <value>Rekey is paused until it restarts</value>

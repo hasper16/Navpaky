@@ -2,8 +2,8 @@
 
 ## 1. Language selection and plurals
 
-- [ ] 1.1 Add `UiLanguage` (`system`) to `Settings`; write failing tests for default mapping (ru → ru, uk → uk, de → en); implement; verify they pass
-- [ ] 1.2 Write failing tests for `Plural.Select` (en, ru, uk on 0–25, 101, 111, 121) and the spec examples ("1 минута / 2 минуты / 5 минут", "1 хвилина / 2 хвилини / 5 хвилин"); implement; verify they pass
+- [x] 1.1 Add `UiLanguage` (`system`) to `Settings`; write failing tests for default mapping (ru → ru, uk → uk, de → en); implement; verify they pass
+- [x] 1.2 Write failing tests for `Plural.Select` (en, ru, uk on 0–25, 101, 111, 121) and the spec examples ("1 минута / 2 минуты / 5 минут", "1 хвилина / 2 хвилини / 5 хвилин"); implement; verify they pass
 
 ## 2. Resources and live switching
 
