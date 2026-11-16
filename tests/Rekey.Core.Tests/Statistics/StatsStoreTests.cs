@@ -138,6 +138,31 @@ namespace Rekey.Core.Tests.Statistics {
       Assert.Empty(Directory.GetFiles(_folder));
     }
 
+    // An idle PC hands the same snapshot every minute; writing it again only wears the disk.
+    [Fact]
+    public void SavingTheSameSnapshotAgainWritesNothing() {
+      var store = new StatsStore(_folder);
+      var document = new StatsDocument([DayStats.Empty(_monday)]);
+      store.Save(document);
+      File.Delete(store.FilePath);
+
+      store.Save(document);
+
+      Assert.False(File.Exists(store.FilePath));
+    }
+
+    [Fact]
+    public void SavingAfterDeleteWritesTheSameSnapshotAgain() {
+      var store = new StatsStore(_folder);
+      var document = new StatsDocument([DayStats.Empty(_monday)]);
+      store.Save(document);
+      store.Delete();
+
+      store.Save(document);
+
+      Assert.True(File.Exists(store.FilePath));
+    }
+
     [Fact]
     public void DeleteRemovesTheFile() {
       var store = new StatsStore(_folder);

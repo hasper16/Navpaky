@@ -48,6 +48,29 @@ namespace Rekey.App.Tests.Onboarding {
       Assert.Same(later, WelcomeViewModel.FirstStartDefaults(later));
     }
 
+    // Spec telemetry: the welcome window asks, unticked by default, with one choice for both.
+    [Fact]
+    public void DiagnosticsStartUntickedAndOneTickAgreesToBoth() {
+      using var model = new WelcomeViewModel(_hub, []);
+      Assert.False(model.DiagnosticsAgreed);
+
+      model.DiagnosticsAgreed = true;
+
+      Assert.Equal(DiagnosticsConsent.All(true), _hub.Current.DiagnosticsConsent);
+      Assert.True(model.DiagnosticsAgreed);
+    }
+
+    [Fact]
+    public void ProgressTellsWhetherTheTryItWorkedAndDoneClosedTheWindow() {
+      using var model = new WelcomeViewModel(_hub, []);
+      Assert.Equal(new(false, false), model.Progress);
+
+      model.NoteTryItCorrection();
+      model.NoteDone();
+
+      Assert.Equal(new(true, true), model.Progress);
+    }
+
     [Fact]
     public void ClosingTheWindowCompletesTheWelcome() {
       using var model = new WelcomeViewModel(_hub, []);

@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using H.NotifyIcon;
 using Rekey.App.Feedback;
 using Rekey.App.Onboarding;
+using Rekey.App.Telemetry;
 using Rekey.App.Tray;
 using Rekey.App.Updates;
 using Rekey.App.ViewModels;
@@ -103,6 +104,7 @@ namespace Rekey.App {
     private QueuedIncidentLog? _incidents;
     private UpdateScheduler? _updates;
     private ExecutableWatch? _executableWatch;
+    private TelemetryHost? _telemetry;
 
     // The worker's Word counts as of the latest Trigger Key; only the worker thread writes it.
     private volatile StrongBox<WordCounts>? _wordCounts;
@@ -143,6 +145,13 @@ namespace Rekey.App {
 
       // Efficiency Mode throttles the process; the keyboard hook must stay fast.
       trayIcon.ForceCreate(enablesEfficiencyMode: false);
+      _telemetry = new TelemetryHost(
+          _dataFolder,
+          Dispatcher,
+          _hub,
+          () => _worker?.Statistics ?? StatsDocument.Empty,
+          () => _worker?.InstalledLayouts ?? []);
+      _telemetry.Start();
       StartInput(_hub.Current);
       _hub.Changed += OnSettingsChanged;
 
@@ -208,6 +217,8 @@ namespace Rekey.App {
         _updates?.Dispose();
         _executableWatch?.Dispose();
         _foregroundApps?.Dispose();
+        _telemetry?.Flush();
+        _telemetry?.Dispose();
         _trayView?.Dispose();
         _welcome?.Dispose();
         _hub?.Dispose();
@@ -370,7 +381,9 @@ namespace Rekey.App {
           _restartStore.LoadLastRestart(),
           RecordIncident,
           RestartAfterFreeze,
-          TimeProvider.System);
+          TimeProvider.System) {
+        ReportStall = () => _telemetry?.ReportEngineStall(_worker.ManagedThreadId),
+      };
       _freezeGuard.Start();
     }
 
@@ -642,6 +655,7 @@ namespace Rekey.App {
     private void OnSettingsChanged(Settings settings) {
       _worker?.UseSettings(settings);
       _freezeGuard?.UseSettings(settings);
+      _telemetry?.Apply(settings);
       _updates?.UseAutomaticChecks(settings.AutoCheckForUpdates);
       if (!settings.StatisticsEnabled) {
         SaveStatistics();
@@ -684,6 +698,7 @@ namespace Rekey.App {
             welcome, new HotkeyPage(hotkey), dark, OpenLanguageSettings);
         _welcomeWindow.Closed += (_, _) => {
           welcome.Close();
+          _telemetry?.OnWelcomeClosed(welcome.Progress);
           welcome.Dispose();
           hotkey.Dispose();
           _welcome = null;
@@ -743,7 +758,12 @@ namespace Rekey.App {
           new(Strings.PageAppsAndWords, SymbolRegular.AppsList24,
               new AppsAndWordsPage(apps, _words!)),
           new(Strings.PageDiagnostics, SymbolRegular.ShieldCheckmark24,
-              new DiagnosticsPage(settings, OpenStatistics, OpenExport)),
+              new DiagnosticsPage(
+                  settings,
+                  _telemetry!.NewSignUp(),
+                  _telemetry.ReadSent,
+                  OpenStatistics,
+                  OpenExport)),
           new(Strings.PageAbout, SymbolRegular.Info24, new AboutPage(dark)),
       ];
       var window = new SettingsWindow(sections);

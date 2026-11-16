@@ -27,7 +27,10 @@ namespace Rekey.App.Views {
       ShowLayouts();
       model.PropertyChanged += OnModelChanged;
       LanguageSettings.Click += (_, _) => openLanguageSettings();
-      Done.Click += (_, _) => Close();
+      Done.Click += (_, _) => {
+        model.NoteDone();
+        Close();
+      };
       TryIt.GotKeyboardFocus += (_, _) => _tryItFocused = true;
       TryIt.LostKeyboardFocus += (_, _) => _tryItFocused = false;
       SourceInitialized += (_, _) => Interlocked.Exchange(

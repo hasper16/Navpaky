@@ -6,14 +6,11 @@ namespace Rekey.Core {
   /// the limit of one restart per 10 minutes holds across restarts.
   /// </summary>
   public sealed class RestartStateStore {
-    private readonly string _folder;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="RestartStateStore" /> class.
     /// </summary>
     /// <param name="folder">The folder that holds the file; it is created when missing.</param>
     public RestartStateStore(string folder) {
-      _folder = folder;
       FilePath = Path.Join(folder, "restart-state.txt");
     }
 
@@ -49,8 +46,9 @@ namespace Rekey.Core {
     /// </returns>
     public bool TrySaveLastRestart(DateTimeOffset time) {
       try {
-        Directory.CreateDirectory(_folder);
-        File.WriteAllText(FilePath, time.ToString("O", CultureInfo.InvariantCulture));
+        string text = time.ToString("O", CultureInfo.InvariantCulture);
+        JsonFile.WriteAtomically(
+            FilePath, stream => stream.Write(System.Text.Encoding.UTF8.GetBytes(text)));
         return true;
       } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
         return false;

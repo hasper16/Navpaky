@@ -8,11 +8,15 @@
     <StartupObject>Rekey.App.Program</StartupObject>
     <Product>Rekey</Product>
     <AssemblyTitle>Rekey</AssemblyTitle>
+    <!-- Managed exceptions only: no native crash minidumps (add-telemetry, design D1). -->
+    <SentryNative>false</SentryNative>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="H.NotifyIcon.Wpf" />
+    <PackageReference Include="Microsoft.Diagnostics.Runtime" />
+    <PackageReference Include="Sentry" />
     <PackageReference Include="Velopack" />
     <PackageReference Include="WPF-UI" />
   </ItemGroup>

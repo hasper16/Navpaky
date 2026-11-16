@@ -24,7 +24,7 @@ None.
 
 ## Impact
 
-- New dependency: Sentry .NET SDK.
+- New dependencies: Sentry .NET SDK; ClrMD (`Microsoft.Diagnostics.Runtime`) to read a frozen thread's stack.
 - New backend endpoint (ours) for the Usage Digest, setup signal and sign-up; out of scope to build here beyond a contract.
 - App: consent block in the welcome window and the Diagnostics and privacy settings page.
 - Settings: `DiagnosticsConsent`. Local file: `sent.jsonl` with the last 10 sent payloads.

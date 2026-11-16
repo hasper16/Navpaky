@@ -93,6 +93,16 @@ namespace Rekey.App.ViewModels {
       set => _hub.Update(settings => settings with { AnalysisLogEnabled = value });
     }
 
+    public bool CrashReportsEnabled {
+      get => _hub.Current.DiagnosticsConsent.CrashReports;
+      set => UpdateConsent(consent => consent with { CrashReports = value });
+    }
+
+    public bool UsageDigestEnabled {
+      get => _hub.Current.DiagnosticsConsent.UsageDigest;
+      set => UpdateConsent(consent => consent with { UsageDigest = value });
+    }
+
     // The hub outlives the settings window, so the window's models let go of it on close.
     public void Dispose() {
       _hub.Changed -= OnHubChanged;
@@ -100,6 +110,12 @@ namespace Rekey.App.ViewModels {
 
     private void OnHubChanged(Settings settings) {
       OnPropertyChanged(string.Empty);
+    }
+
+    private void UpdateConsent(Func<DiagnosticsConsent, DiagnosticsConsent> change) {
+      _hub.Update(settings => settings with {
+        DiagnosticsConsent = change(settings.DiagnosticsConsent),
+      });
     }
 
     private bool Triggers(TriggerKeys key) {

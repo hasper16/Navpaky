@@ -2,7 +2,10 @@ namespace Rekey.Core.Statistics {
   /// <summary>
   /// Loads, saves and deletes the daily counters in <c>stats.json</c>.
   /// </summary>
+  /// <remarks>Not thread-safe: call it from one thread.</remarks>
   public sealed class StatsStore {
+    private StatsDocument? _saved;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="StatsStore" /> class.
     /// </summary>
@@ -43,18 +46,26 @@ namespace Rekey.Core.Statistics {
     }
 
     /// <summary>
-    /// Writes the counters to the file, replacing it in one step.
+    /// Writes the counters to the file, replacing it in one step; the snapshot saved last is
+    /// not written again.
     /// </summary>
     /// <param name="document">The counters to write.</param>
     public void Save(StatsDocument document) {
+      // Snapshots are immutable, so the same reference holds the same counters.
+      if (ReferenceEquals(document, _saved)) {
+        return;
+      }
+
       byte[] json = StatsJson.Write(document);
       JsonFile.WriteAtomically(FilePath, stream => stream.Write(json));
+      _saved = document;
     }
 
     /// <summary>
     /// Deletes the counters file and any unreadable copies set aside, if there are any.
     /// </summary>
     public void Delete() {
+      _saved = null;
       File.Delete(FilePath);
       string folder = Path.GetDirectoryName(FilePath)!;
       if (!Directory.Exists(folder)) {

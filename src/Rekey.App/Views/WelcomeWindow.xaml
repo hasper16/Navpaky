@@ -87,7 +87,10 @@
                          Margin="0,0,0,12" />
         <ui:ToggleSwitch Content="{x:Static app:Strings.LaunchAtSignIn}"
                          IsChecked="{Binding LaunchAtSignIn}"
-                         Margin="0,0,0,16" />
+                         Margin="0,0,0,12" />
+        <CheckBox Content="{x:Static app:Strings.WelcomeDiagnostics}"
+                  IsChecked="{Binding DiagnosticsAgreed}"
+                  Margin="0,0,0,16" />
         <TextBlock Text="{x:Static app:Strings.WelcomeHotkeyTitle}"
                    Style="{StaticResource SectionText}" />
         <!-- The Hotkey page itself, so the choice works the same as in Settings. -->

@@ -119,3 +119,16 @@ Written against the head of the `add-onboarding` PR. Unit tests cover when the w
   Expected: the Downloads copy shows the warning; the installed Rekey shows none.
 - [ ] **Release build moved while running (3.2).** Start the Release build from a folder of its own, then rename that folder in Explorer.
   Expected: within a minute "Rekey's files were moved or deleted" explains that Rekey will not start again and offers Install; Rekey keeps correcting until you quit it.
+
+## add-telemetry
+
+Precondition for the network checks: set the endpoints in `src/Rekey.App/Telemetry/TelemetryEndpoints.cs` to a test backend (none exists yet, so a shipped build sends nothing) and capture traffic with a local HTTPS proxy such as Fiddler, trusting its root certificate only for this test.
+
+- [ ] **Welcome consent (4.2).** Start with a fresh data folder; in the welcome window look at the diagnostics checkbox, then close the window without ticking it.
+  Expected: the checkbox reads "Send anonymous crash reports and daily usage counts…", is unticked, and the proxy shows no request from Rekey.
+- [ ] **Settings toggles (4.2).** Open Settings → Diagnostics and privacy.
+  Expected: "Send crash and freeze reports" and "Send daily usage counts" switch independently, the note under them states what reports carry, and the page reads well in light and dark themes and with Narrator.
+- [ ] **Email sign-up (3.3).** With the proxy running, enter an invented address, tick "Tell me about new versions" and press Sign up.
+  Expected: exactly one request to the sign-up endpoint with that address and purpose; the field empties and the thanks message shows; `sent.jsonl` in the data folder does not contain the address.
+- [ ] **Show what was sent (4.1).** With usage counts on, wait for the daily digest (or set the delay low in a debug build), then expand "Show what was sent".
+  Expected: the last entry equals, byte for byte, the request body the proxy captured.
