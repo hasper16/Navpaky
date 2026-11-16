@@ -39,11 +39,12 @@ namespace Rekey.App.Tests.Localization {
 
     [Fact]
     public void EveryWordLanguageHasAName() {
-      foreach (Language language in Enum.GetValues<Language>()) {
-        string key = new LearnedEntry("слово", language).LanguageKey;
+      List<string> missing = [.. Enum.GetValues<Language>()
+          .Select(language => new LearnedEntry("слово", language).LanguageKey)
+          .Where(key => Strings.ResourceManager.GetString(
+              key, CultureInfo.InvariantCulture) is null)];
 
-        Assert.NotNull(Strings.ResourceManager.GetString(key, CultureInfo.InvariantCulture));
-      }
+      Assert.Empty(missing);
     }
 
     private static IEnumerable<XAttribute> Attributes() {
