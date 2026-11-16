@@ -36,10 +36,39 @@ namespace Rekey.App.Tests.Telemetry {
     }
 
     [Fact]
+    public async Task ClosingTheGateCancelsARequestInFlight() {
+      var inner = new HangingHandler();
+      var gate = new ConsentGate { InnerHandler = inner };
+      using var client = new HttpClient(gate);
+      using var content = new StringContent("{}");
+      Task<HttpResponseMessage> sending = client.PostAsync(
+          _endpoint, content, TestContext.Current.CancellationToken);
+      await inner.Started.Task;
+
+      gate.Close();
+
+      // Within seconds, not the client's 100 s timeout: the gate itself cancels.
+      await Assert.ThrowsAnyAsync<OperationCanceledException>(
+          () => sending.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
     public void NetworkGateFollowsNoRedirect() {
       using ConsentGate gate = ConsentGate.ForNetwork();
 
       Assert.False(Assert.IsType<SocketsHttpHandler>(gate.InnerHandler).AllowAutoRedirect);
+    }
+
+    // Waits on the network until its request is cancelled.
+    private sealed class HangingHandler : HttpMessageHandler {
+      public TaskCompletionSource Started { get; } = new();
+
+      protected override async Task<HttpResponseMessage> SendAsync(
+          HttpRequestMessage request, CancellationToken cancellationToken) {
+        Started.SetResult();
+        await Task.Delay(Timeout.Infinite, cancellationToken);
+        return new HttpResponseMessage(HttpStatusCode.OK);
+      }
     }
 
     private sealed class CountingHandler : HttpMessageHandler {
