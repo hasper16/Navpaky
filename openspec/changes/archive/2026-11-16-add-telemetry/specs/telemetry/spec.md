@@ -40,7 +40,7 @@ With consent, Rekey SHALL send at most one Usage Digest per day containing only 
 
 #### Scenario: Offline
 - **WHEN** the digest cannot be sent today
-- **THEN** Rekey sends nothing more that day, the unsent digest is discarded, and the next day's digest carries only its own counters
+- **THEN** Rekey makes no further digest attempts that day, the unsent digest is discarded, and the next day's digest carries only its own counters
 
 ### Requirement: One-time setup signal
 With consent, Rekey SHALL send one anonymous setup signal when the welcome window closes, containing versions, UI language, number of installed Layouts and covered Languages, the main settings chosen, and how far the user got in the welcome window.
