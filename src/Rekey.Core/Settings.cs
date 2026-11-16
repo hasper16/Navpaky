@@ -96,6 +96,10 @@ namespace Rekey.Core {
   /// <see langword="true" /> once Rekey sent the one-time setup signal; otherwise,
   /// <see langword="false" />. The default is <see langword="false" />.
   /// </param>
+  /// <param name="UiLanguage">
+  /// One of the enumeration values that specifies the language of Rekey's interface. The default
+  /// is <see cref="Core.UiLanguage.System" />.
+  /// </param>
   // Each setting is a constructor parameter with a default: in .NET 10, source-generated JSON
   // gives an init-only property that the file omits its type default, not its initializer.
   public sealed record Settings(
@@ -120,7 +124,8 @@ namespace Rekey.Core {
       bool CorrectionTipShown = false,
       DiagnosticsConsent DiagnosticsConsent = default,
       DateOnly? LastDigestDay = null,
-      bool SetupSignalSent = false) {
+      bool SetupSignalSent = false,
+      UiLanguage UiLanguage = UiLanguage.System) {
     /// <summary>
     /// The <see cref="PausedUntil" /> value of a Pause that lasts until Rekey restarts.
     /// </summary>

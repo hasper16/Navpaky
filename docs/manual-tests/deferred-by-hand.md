@@ -132,3 +132,22 @@ Precondition for the network checks: set the endpoints in `src/Rekey.App/Telemet
   Expected: exactly one request to the sign-up endpoint with that address and purpose; the field empties and the thanks message shows; `sent.jsonl` in the data folder does not contain the address.
 - [ ] **Show what was sent (4.1).** With usage counts on, wait for the daily digest (or set the delay low in a debug build), then expand "Show what was sent".
   Expected: the last entry equals, byte for byte, the request body the proxy captured.
+
+## add-ui-localization
+
+Written against the `change/add-ui-localization` branch (PR to come). The interface has English and Ukrainian only (owner's decision); there is no Russian interface. Unit tests cover the default mapping, plural forms, translation completeness, that XAML shows no literal text, and that bound text follows a language change. Record the sign-off of 3.1 (reviewer, date, build) in `docs/manual-tests/localization.md` when these pass.
+
+- [ ] **Native-speaker review (3.1).** A native Ukrainian speaker reads every string of `src/Rekey.App/Strings.uk.resx` in place: the tray tooltip and menu, each settings page, statistics, export, welcome, the correction tip, the location and moved notices, and the uninstall questions.
+  Expected: wording is natural and consistent (one term per concept, such as "розкладка", "виправлення", "гаряча клавіша"); nothing reads as machine translation.
+- [ ] **Layouts in Ukrainian (3.1).** With the interface in Ukrainian, open every window and settings page at 100 % and 150 % scaling.
+  Expected: no text is cut off, overlaps or forces a horizontal scroll bar; buttons fit their labels.
+- [ ] **Default language (1.1).** Start Rekey with `"uiLanguage"` absent from `settings.json` on Windows with the display language Ukrainian, then Russian, then German (or English).
+  Expected: Ukrainian, Ukrainian, English.
+- [ ] **Live switching (2.4).** Open Settings, Statistics and the welcome window. In Settings → General pick English, then Українська, then Як у Windows.
+  Expected: each pick changes the text of all three open windows, the section list, the combo boxes (including the selected entry), the tray tooltip and the tray menu at once, without a restart; the choice persists after a restart.
+- [ ] **Plural forms (1.2).** In Ukrainian, pause for 15 minutes and hover the tray icon as the time runs down.
+  Expected: "залишилося 15 хвилин", … "залишилося 2 хвилини", "залишилася 1 хвилина".
+- [ ] **Uninstall questions (installer prompts).** Uninstall Rekey on Ukrainian or Russian Windows.
+  Expected: the questions about deleting data are in Ukrainian. They follow the Windows display language, not the setting picked in Rekey (uninstall does not read settings).
+- [ ] **Screen reader.** With Narrator, move through the language combo box and the settings section list in both languages.
+  Expected: each entry is read by its text in the current language, not by a type name.

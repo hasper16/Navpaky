@@ -1,3 +1,4 @@
+using System.Globalization;
 using Rekey.App.Updates;
 using Rekey.Core;
 
@@ -124,9 +125,8 @@ namespace Rekey.App.ViewModels {
       }
 
       int minutes = (int)Math.Ceiling((until - _clock.GetUtcNow()).TotalMinutes);
-      return minutes <= 1
-          ? Strings.TrayPausedOneMinute
-          : UiText.Format(Strings.TrayPausedMinutes, minutes);
+      CultureInfo culture = Strings.Culture ?? CultureInfo.CurrentUICulture;
+      return UiText.Plural(culture, "TrayPausedMinutes", Math.Max(1, minutes));
     }
   }
 }

@@ -1293,18 +1293,36 @@ namespace Rekey.App {
         /// <summary>
         ///   Looks up a localized string similar to Rekey is paused: {0} minutes left.
         /// </summary>
-        public static string TrayPausedMinutes {
+        public static string TrayPausedMinutes_Few {
             get {
-                return ResourceManager.GetString("TrayPausedMinutes", resourceCulture);
+                return ResourceManager.GetString("TrayPausedMinutes_Few", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey is paused: 1 minute left.
+        ///   Looks up a localized string similar to Rekey is paused: {0} minutes left.
         /// </summary>
-        public static string TrayPausedOneMinute {
+        public static string TrayPausedMinutes_Many {
             get {
-                return ResourceManager.GetString("TrayPausedOneMinute", resourceCulture);
+                return ResourceManager.GetString("TrayPausedMinutes_Many", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey is paused: {0} minute left.
+        /// </summary>
+        public static string TrayPausedMinutes_One {
+            get {
+                return ResourceManager.GetString("TrayPausedMinutes_One", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey is paused: {0} minutes left.
+        /// </summary>
+        public static string TrayPausedMinutes_Other {
+            get {
+                return ResourceManager.GetString("TrayPausedMinutes_Other", resourceCulture);
             }
         }
         
@@ -1368,6 +1386,42 @@ namespace Rekey.App {
         public static string TurnOnIn {
             get {
                 return ResourceManager.GetString("TurnOnIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interface language.
+        /// </summary>
+        public static string UiLanguageChoice {
+            get {
+                return ResourceManager.GetString("UiLanguageChoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to English.
+        /// </summary>
+        public static string UiLanguageEnglish {
+            get {
+                return ResourceManager.GetString("UiLanguageEnglish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same as Windows.
+        /// </summary>
+        public static string UiLanguageSystem {
+            get {
+                return ResourceManager.GetString("UiLanguageSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Українська.
+        /// </summary>
+        public static string UiLanguageUkrainian {
+            get {
+                return ResourceManager.GetString("UiLanguageUkrainian", resourceCulture);
             }
         }
         

@@ -1,7 +1,10 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using Rekey.App.Localization;
 using Rekey.App.Updates;
+using Rekey.Core;
 using Rekey.Win32;
 using Velopack;
 
@@ -18,6 +21,9 @@ namespace Rekey.App {
     }
 
     private static void Uninstall() {
+      // The uninstall questions follow the Windows display language, mapped as the "system"
+      // choice is; settings are not read, so uninstalling never writes to the data folder.
+      Strings.Culture = UiCulture.For(UiLanguage.System, CultureInfo.CurrentUICulture);
       string data = DataFolder.Resolve(
           Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), null);
       new Uninstaller(data, () => new SignInLaunch().Set(false, string.Empty), AskDeleteData)

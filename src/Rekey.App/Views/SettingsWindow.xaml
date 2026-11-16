@@ -3,8 +3,8 @@
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-                 xmlns:app="clr-namespace:Rekey.App"
-                 Title="{x:Static app:Strings.SettingsTitle}"
+                 xmlns:l="clr-namespace:Rekey.App.Localization"
+                 Title="{l:Loc SettingsTitle}"
                  Width="760"
                  Height="560"
                  MinWidth="560"
@@ -24,7 +24,7 @@
     <ui:TitleBar x:Name="TitleBar"
                  Grid.Row="0"
                  Grid.ColumnSpan="2"
-                 Title="{x:Static app:Strings.SettingsTitle}" />
+                 Title="{l:Loc SettingsTitle}" />
     <!-- A ListBox rather than WPF UI's NavigationView: its items expose selection to screen
          readers and follow the arrow keys (design D3). -->
     <ListBox x:Name="Sections"
@@ -33,18 +33,32 @@
              Margin="8,0,4,8"
              Background="Transparent"
              BorderThickness="0"
-             AutomationProperties.Name="{x:Static app:Strings.SettingsTitle}">
+             AutomationProperties.Name="{l:Loc SettingsTitle}">
       <ListBox.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal" Margin="4,6">
             <ui:SymbolIcon Symbol="{Binding Icon}" Margin="0,0,12,0" />
-            <TextBlock Text="{Binding Title}" VerticalAlignment="Center" />
+            <TextBlock VerticalAlignment="Center">
+              <TextBlock.Text>
+                <MultiBinding Converter="{StaticResource KeyText}">
+                  <Binding Path="TitleKey" />
+                  <Binding Source="{x:Static l:Localizer.Instance}" Path="Culture" />
+                </MultiBinding>
+              </TextBlock.Text>
+            </TextBlock>
           </StackPanel>
         </DataTemplate>
       </ListBox.ItemTemplate>
       <ListBox.ItemContainerStyle>
         <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-          <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
+          <Setter Property="AutomationProperties.Name">
+            <Setter.Value>
+              <MultiBinding Converter="{StaticResource KeyText}">
+                <Binding Path="TitleKey" />
+                <Binding Source="{x:Static l:Localizer.Instance}" Path="Culture" />
+              </MultiBinding>
+            </Setter.Value>
+          </Setter>
         </Style>
       </ListBox.ItemContainerStyle>
     </ListBox>

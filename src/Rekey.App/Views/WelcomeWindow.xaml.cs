@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Interop;
+using Rekey.App.Localization;
 using Rekey.App.Onboarding;
 using Rekey.App.Tray;
 using Rekey.App.ViewModels;
@@ -24,7 +25,7 @@ namespace Rekey.App.Views {
       DataContext = model;
       Mark.Source = Keycap.Render("EN", TrayState.Active, dark, 64);
       Hotkey.Content = hotkey;
-      ShowLayouts();
+      Localizer.Follow(this, ShowLayouts);
       model.PropertyChanged += OnModelChanged;
       LanguageSettings.Click += (_, _) => openLanguageSettings();
       Done.Click += (_, _) => {

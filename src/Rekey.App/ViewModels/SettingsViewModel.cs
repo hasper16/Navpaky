@@ -63,6 +63,11 @@ namespace Rekey.App.ViewModels {
       set => _hub.Update(settings => settings with { SwitchSound = value });
     }
 
+    public UiLanguage UiLanguage {
+      get => _hub.Current.UiLanguage;
+      set => _hub.Update(settings => settings with { UiLanguage = value });
+    }
+
     public bool LaunchAtSignIn {
       get => _hub.Current.LaunchAtSignIn;
       set => _hub.Update(settings => settings with { LaunchAtSignIn = value });
