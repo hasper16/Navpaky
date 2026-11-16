@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.ExceptionServices;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Rekey.App.Localization;
@@ -40,21 +41,21 @@ namespace Rekey.App.Tests.Localization {
       return binding;
     }
 
+    // WPF objects need an STA thread; a failure there is rethrown on the test's thread with its
+    // original stack.
     private static void RunOnSta(Action test) {
-      Exception? failure = null;
+      ExceptionDispatchInfo? failure = null;
       var thread = new Thread(() => {
         try {
           test();
-        } catch (Exception e) {
-          failure = e;
+        } catch (Exception e) when (e is not OutOfMemoryException) {
+          failure = ExceptionDispatchInfo.Capture(e);
         }
       });
       thread.SetApartmentState(ApartmentState.STA);
       thread.Start();
       thread.Join();
-      if (failure is not null) {
-        throw failure;
-      }
+      failure?.Throw();
     }
   }
 }
