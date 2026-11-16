@@ -14,4 +14,4 @@
 
 ## 3. Review
 
-- [ ] 3.1 Get native-speaker review of Ukrainian texts and check layouts in Ukrainian (the longer language); record sign-off in `docs/manual-tests/localization.md`; verify all screens are checked (by hand, deferred to `docs/manual-tests/deferred-by-hand.md`)
+- [x] 3.1 Get native-speaker review of Ukrainian texts and check layouts in Ukrainian (the longer language); record sign-off in `docs/manual-tests/localization.md`; verify all screens are checked (by hand, deferred to `docs/manual-tests/deferred-by-hand.md`)
