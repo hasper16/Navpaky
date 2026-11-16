@@ -17,7 +17,7 @@ Rekey MUST NOT send crash reports, freeze reports, Usage Digests or the setup si
 - **THEN** no further telemetry is sent and any unsent reports are deleted
 
 ### Requirement: Typed text never leaves the computer
-No network request made by Rekey SHALL contain typed text, Words, Renderings, Protected Words, Learned Words, clipboard content, window titles, the Windows user name, file paths inside the user profile, or memory dumps.
+No network request made by Rekey SHALL contain typed text, Words, Renderings, Protected Words, Learned Words, clipboard content, window titles, the Windows user name, file paths inside the user profile, or memory dumps. The one exception is the email address the user submits in the optional sign-up, sent only in that sign-up request.
 
 #### Scenario: Crash while a Word is buffered
 - **WHEN** Rekey crashes while the current Word is "secret"
@@ -39,7 +39,7 @@ With consent, Rekey SHALL send at most one Usage Digest per day containing only 
 
 #### Scenario: Offline
 - **WHEN** the digest cannot be sent today
-- **THEN** Rekey tries again the next day with that day's counters and discards older unsent digests
+- **THEN** Rekey sends nothing more that day, the unsent digest is discarded, and the next day's digest carries only its own counters
 
 ### Requirement: One-time setup signal
 With consent, Rekey SHALL send one anonymous setup signal when the welcome window closes, containing versions, UI language, number of installed Layouts and covered Languages, the main settings chosen, and how far the user got in the welcome window.
