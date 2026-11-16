@@ -7,7 +7,7 @@ namespace Rekey.Core {
   [JsonConverter(typeof(JsonStringEnumConverter<UiLanguage>))]
   public enum UiLanguage {
     /// <summary>
-    /// The Windows display language when Rekey has it, otherwise English.
+    /// Ukrainian on Ukrainian or Russian Windows, otherwise English.
     /// </summary>
     [JsonStringEnumMemberName("system")]
     System,
@@ -17,12 +17,6 @@ namespace Rekey.Core {
     /// </summary>
     [JsonStringEnumMemberName("en")]
     English,
-
-    /// <summary>
-    /// Russian.
-    /// </summary>
-    [JsonStringEnumMemberName("ru")]
-    Russian,
 
     /// <summary>
     /// Ukrainian.

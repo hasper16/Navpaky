@@ -6,7 +6,7 @@ namespace Rekey.App.Tests.Localization {
   public sealed class PluralTests {
     private static readonly CultureInfo _english = new("en");
 
-    public static TheoryData<int, string> Slavic => new() {
+    public static TheoryData<int, string> Ukrainian => new() {
       { 0, "Many" }, { 1, "One" }, { 2, "Few" },
       { 3, "Few" }, { 4, "Few" }, { 5, "Many" },
       { 6, "Many" }, { 7, "Many" }, { 8, "Many" },
@@ -23,9 +23,8 @@ namespace Rekey.App.Tests.Localization {
         [.. Enumerable.Range(0, 26).Append(101).Append(111).Append(121)];
 
     [Theory]
-    [MemberData(nameof(Slavic))]
-    public void RussianAndUkrainianFollowCldr(int count, string expected) {
-      Assert.Equal(expected, Plural.Select(new CultureInfo("ru"), count).ToString());
+    [MemberData(nameof(Ukrainian))]
+    public void UkrainianFollowsCldr(int count, string expected) {
       Assert.Equal(expected, Plural.Select(new CultureInfo("uk-UA"), count).ToString());
     }
 
@@ -38,9 +37,6 @@ namespace Rekey.App.Tests.Localization {
     }
 
     [Theory]
-    [InlineData("ru", 1, "Rekey на паузе: осталась 1 минута")]
-    [InlineData("ru", 2, "Rekey на паузе: осталось 2 минуты")]
-    [InlineData("ru", 5, "Rekey на паузе: осталось 5 минут")]
     [InlineData("uk", 1, "Rekey на паузі: залишилася 1 хвилина")]
     [InlineData("uk", 2, "Rekey на паузі: залишилося 2 хвилини")]
     [InlineData("uk", 5, "Rekey на паузі: залишилося 5 хвилин")]

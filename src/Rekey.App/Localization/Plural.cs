@@ -1,10 +1,10 @@
 using System.Globalization;
 
 namespace Rekey.App.Localization {
-  // CLDR plural rules for whole numbers in the interface languages (en, ru, uk).
+  // CLDR plural rules for whole numbers in the interface languages (en, uk).
   internal static class Plural {
     public static PluralCategory Select(CultureInfo culture, long count) {
-      if (culture.TwoLetterISOLanguageName is not ("ru" or "uk")) {
+      if (culture.TwoLetterISOLanguageName != "uk") {
         return count == 1 ? PluralCategory.One : PluralCategory.Other;
       }
 
