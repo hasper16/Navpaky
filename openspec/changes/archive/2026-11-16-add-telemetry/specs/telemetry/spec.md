@@ -18,7 +18,7 @@ Rekey MUST NOT send crash reports, freeze reports, Usage Digests or the setup si
 - **THEN** no further telemetry is sent and any unsent reports are deleted
 
 ### Requirement: Typed text never leaves the computer
-No network request made by Rekey SHALL contain typed text, Words, Renderings, Protected Words, Learned Words, clipboard content, window titles, the Windows user name, file paths inside the user profile, or memory dumps. The one exception is the email address the user submits in the optional sign-up, sent only in that sign-up request.
+No network request made by Rekey SHALL contain typed text, Words, Renderings, Protected Words, Learned Words, clipboard content, window titles, the Windows user name, file paths inside the user profile, or memory dumps. The one exception is the email address the user types into the opt-in sign-up form and explicitly submits, sent only in that sign-up request; keystroke-derived text, such as Words and Renderings, is never sent.
 
 #### Scenario: Crash while a Word is buffered
 - **WHEN** Rekey crashes while the current Word is "secret"
