@@ -39,6 +39,11 @@ namespace Rekey.App.Feedback {
         Focusable = false,
         IsHitTestVisible = false,
         Content = _image,
+
+        // An own empty style keeps out WPF UI's default window style, whose MinWidth of 460
+        // and template made the window a large box with the badge in its middle, far from
+        // the caret (re-check of fix 2.6, add-final-acceptance).
+        Style = new Style(typeof(Window)),
       };
 
       // The first window becomes the main window, and WPF UI's theme manager paints a Mica
