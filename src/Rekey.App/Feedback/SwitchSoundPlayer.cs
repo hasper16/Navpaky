@@ -6,6 +6,11 @@ namespace Rekey.App.Feedback {
   // Plays the switch sounds Rekey ships (design D6), loaded once so a Correction never waits
   // for the disk. The sounds are Rekey's own (ADR 0003).
   internal sealed class SwitchSoundPlayer {
+    // Monitor audio drops the start of a sound after a pause. The chime, 350 ms long, was
+    // partly heard there, so less than 350 ms goes missing; 300 ms of lead-in covers that while
+    // keeping the delay after a Correction below a third of a second.
+    private static readonly TimeSpan _leadIn = TimeSpan.FromMilliseconds(300);
+
     private readonly Dictionary<SwitchSound, WaveSound> _players = [];
 
     public SwitchSoundPlayer() {
@@ -17,7 +22,7 @@ namespace Rekey.App.Feedback {
 
         using var bytes = new MemoryStream();
         wave.CopyTo(bytes);
-        _players[sound] = new WaveSound(bytes.ToArray());
+        _players[sound] = new WaveSound(WaveLeadIn.Add(bytes.ToArray(), _leadIn));
       }
     }
 
