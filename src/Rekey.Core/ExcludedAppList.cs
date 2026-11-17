@@ -92,13 +92,32 @@ namespace Rekey.Core {
     /// <summary>
     /// Returns a value indicating whether an application is an Excluded App.
     /// </summary>
+    /// <remarks>
+    /// A path entry also matches a packaged app at another path with the same file name, so a
+    /// launcher stub such as Windows 11's <c>notepad.exe</c> covers the Store app it starts. A
+    /// packaged app at the entry's own path is decided by its <see cref="AppId.Key" /> alone,
+    /// so excluding a frame host does not exclude the apps it hosts.
+    /// </remarks>
     /// <param name="app">The application that owns the focused window.</param>
     /// <returns>
-    /// <see langword="true" /> if the list holds the application's <see cref="AppId.Key" />;
-    /// otherwise, <see langword="false" />.
+    /// <see langword="true" /> if the list holds the application's <see cref="AppId.Key" />
+    /// or, for a packaged app, a path with its file name; otherwise, <see langword="false" />.
     /// </returns>
     public bool Contains(AppId app) {
-      return (_entries ?? _none).Contains(app.Key);
+      ImmutableSortedSet<string> entries = _entries ?? _none;
+      if (entries.Contains(app.Key)) {
+        return true;
+      }
+
+      if (app.Aumid is null) {
+        return false;
+      }
+
+      string path = AppId.Normalise(app.ExePath);
+      string name = Path.GetFileName(path);
+      return name.Length > 0 && entries.Any(entry => entry.Contains('\\', StringComparison.Ordinal)
+          && !string.Equals(entry, path, StringComparison.OrdinalIgnoreCase)
+          && string.Equals(Path.GetFileName(entry), name, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <inheritdoc />

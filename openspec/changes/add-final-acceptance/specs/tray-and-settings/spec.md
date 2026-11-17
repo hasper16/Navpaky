@@ -3,7 +3,7 @@
 ## MODIFIED Requirements
 
 ### Requirement: Excluded Apps editor
-The Apps and words section SHALL let the user add Excluded Apps from running applications or by choosing an executable, and remove them. An Excluded App chosen as an executable SHALL also match a running app whose executable has the same file name, ignoring case, so that a launcher stub and the app it starts count as one (design decision of add-final-acceptance; two different programs with the same file name are both excluded).
+The Apps and words section SHALL let the user add Excluded Apps from running applications or by choosing an executable, and remove them. An Excluded App chosen as an executable SHALL also match a running packaged (Store) app whose executable has the same file name, ignoring case, so that a launcher stub and the Store app it starts count as one (design decision of add-final-acceptance). Programs that are not packaged still match by their full path only.
 
 #### Scenario: Add from running apps
 - **WHEN** the user picks Windows Terminal from the running apps list

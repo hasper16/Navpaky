@@ -22,7 +22,7 @@ None.
 Added after the owner's pass (task 1.3) through `/opsx:update`:
 
 - `text-replacement`: keys typed between the parts of a multi-part replacement land after it (owner decision).
-- `tray-and-settings`: an Excluded App chosen as a file also matches a running app with the same file name (the Windows 11 Notepad stub).
+- `tray-and-settings`: an Excluded App chosen as a file also matches a running Store app with the same file name (the Windows 11 Notepad stub).
 - `auto-update`: the uninstaller waits for the data question before it reports completion, and keeps the data when Rekey was installed again meanwhile.
 - `app-lifecycle`: a second start with arguments tells the user Rekey is already running.
 

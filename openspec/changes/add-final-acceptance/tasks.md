@@ -13,7 +13,7 @@ For each finding: when the spec is wrong, revise it with `/opsx:update` first; t
 - [x] 2.1 layout-management: order installed Layouts by the user's language list, not the load order of their handles, so Win+Space with nothing to correct picks the Layout Windows would; verify a unit test with the owner's list (English (US); Ukrainian with Ukrainian (Enhanced) and Russian) picks English (US) after Russian
 - [x] 2.2 text-replacement: hold typed keys while a multi-part replacement types (owner decision; spec delta first); verify a test where keys arrive between the parts and land after the whole replacement
 - [x] 2.3 tray-and-settings, Hotkey page: "My own combination" records Ctrl+Alt+Space, and a recorded combination shows key names, not raw codes; verify unit tests for both
-- [ ] 2.4 tray-and-settings, Excluded Apps: a program chosen by file also matches a running app with the same file name, which covers the Windows 11 Notepad stub (spec delta first); verify a unit test
+- [x] 2.4 tray-and-settings, Excluded Apps: a program chosen by file also matches a running Store app with the same file name, which covers the Windows 11 Notepad stub (spec delta first); verify a unit test
 - [ ] 2.5 tray-and-settings, accessibility: Settings section items expose their text, not icon glyphs, to screen readers; verify a test on the automation name
 - [ ] 2.6 tray-and-settings, indicator: the indicator window is transparent and the size of the badge (spec wording on placement updated); verify a test on the window's size and transparency
 - [ ] 2.7 tray-and-settings, sounds: Preview plays the chosen sound on every press, for each of the three sounds; verify a test that each sound resource loads and plays
