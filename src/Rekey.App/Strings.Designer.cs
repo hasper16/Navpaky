@@ -1435,6 +1435,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rekey was installed again, so its settings and word lists were kept..
+        /// </summary>
+        public static string UninstallDataKept {
+            get {
+                return ResourceManager.GetString("UninstallDataKept", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Some Rekey data could not be deleted because another program is using it. Delete the folder {0} yourself..
         /// </summary>
         public static string UninstallDataNotDeleted {

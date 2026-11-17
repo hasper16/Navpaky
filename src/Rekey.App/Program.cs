@@ -10,6 +10,8 @@ using Velopack;
 
 namespace Rekey.App {
   internal static class Program {
+    private static readonly TimeSpan _answerWait = TimeSpan.FromSeconds(25);
+
     // Velopack runs first: during install, update and uninstall it calls Rekey with its own
     // arguments and exits before any window, hook or single-instance claim exists.
     [STAThread]
@@ -30,10 +32,16 @@ namespace Rekey.App {
           .Run();
     }
 
-    // When the question cannot start, the data stays, as when the user declines.
+    // Velopack shows "removal complete" once this hook returns, so the hook waits for the
+    // answer, short of Velopack's 30-second limit (fix 2.12 of add-final-acceptance). When the
+    // question cannot start, the data stays, as when the user declines.
     private static void AskDeleteData(string data) {
+      // The hook runs as <install root>\current\Rekey.App.exe.
+      string installRoot = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(
+          AppContext.BaseDirectory))!;
       try {
-        Process.Start(DataQuestion.StartInfo(data))?.Dispose();
+        using Process? question = Process.Start(DataQuestion.StartInfo(data, installRoot));
+        question?.WaitForExit(_answerWait);
       } catch (Exception e) when (e is Win32Exception or FileNotFoundException) {
         Trace.WriteLine($"Rekey could not ask about its data: {e.GetType().Name}");
       }

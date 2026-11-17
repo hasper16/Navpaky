@@ -8,6 +8,7 @@
     <StartupObject>Rekey.App.Program</StartupObject>
     <Product>Rekey</Product>
     <AssemblyTitle>Rekey</AssemblyTitle>
+    <ApplicationIcon>Rekey.ico</ApplicationIcon>
     <!-- Managed exceptions only: no native crash minidumps (add-telemetry, design D1). -->
     <SentryNative>false</SentryNative>
   </PropertyGroup>

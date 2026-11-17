@@ -417,6 +417,9 @@
   <data name="UninstallDataNotDeleted" xml:space="preserve">
     <value>Деякі дані Rekey не вдалося видалити, бо їх використовує інша програма. Видаліть теку {0} вручну.</value>
   </data>
+  <data name="UninstallDataKept" xml:space="preserve">
+    <value>Rekey встановлено знову, тому його налаштування та списки слів збережено.</value>
+  </data>
   <data name="MenuWelcome" xml:space="preserve">
     <value>Знайомство з Rekey</value>
   </data>

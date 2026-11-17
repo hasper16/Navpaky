@@ -51,7 +51,7 @@ For the by-hand checks in `docs/manual-tests/deferred-by-hand.md`. Install the p
 2. Publish and pack a Debug build into one feed folder, signing with the test certificate:
    ```powershell
    dotnet publish src/Rekey.App -c Debug -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=0.1.0 -o publish
-   .tools\vpk pack --packId key-switcher --packVersion 0.1.0 --packDir publish --mainExe Rekey.App.exe --packTitle Rekey --delta None --outputDir C:\RekeyFeed --signParams "/fd sha256 /sha1 <leaf thumbprint>"
+   .tools\vpk pack --packId key-switcher --packVersion 0.1.0 --packDir publish --mainExe Rekey.App.exe --packTitle Rekey --packAuthors Rekey --icon src\Rekey.App\Rekey.ico --runtime win-x64 --delta None --outputDir C:\RekeyFeed --signParams "/fd sha256 /sha1 <leaf thumbprint>"
    ```
    Repeat with `0.2.0` for an update.
 3. Install with `C:\RekeyFeed\key-switcher-win-Setup.exe` (from the 0.1.0 pack; keep a copy before packing 0.2.0). To check updates, quit Rekey and start `%LOCALAPPDATA%\key-switcher\current\Rekey.App.exe --update-feed C:\RekeyFeed --update-pin "CN=Rekey Test Publisher" <CA thumbprint>`.

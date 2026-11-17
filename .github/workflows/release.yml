@@ -87,6 +87,8 @@ jobs:
           $pack = @(
             'pack', '--packId', 'key-switcher', '--packVersion', $env:VERSION,
             '--packDir', 'publish', '--mainExe', 'Rekey.App.exe', '--packTitle', 'Rekey',
+            '--packAuthors', 'Rekey', '--icon', 'src/Rekey.App/Rekey.ico',
+            '--runtime', 'win-x64',
             '--delta', 'None', '--exclude', '\.(pdb|xml)$', '--outputDir', 'releases')
           # A dry run never signs, even if a secret of that name exists outside the environment.
           if ($env:EVENT_NAME -eq 'push') {
