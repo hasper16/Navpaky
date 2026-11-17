@@ -23,7 +23,10 @@
     </Grid.RowDefinitions>
     <ui:TitleBar x:Name="TitleBar" Grid.Row="0" Title="{l:Loc WelcomeTitle}" />
     <!-- One scrolling page rather than a wizard, so the user can skim (design D1). -->
-    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Focusable="False">
+    <ScrollViewer x:Name="Scroller"
+                  Grid.Row="1"
+                  VerticalScrollBarVisibility="Auto"
+                  Focusable="False">
       <StackPanel Margin="24,8,24,16">
         <Image x:Name="Mark"
                Width="64"

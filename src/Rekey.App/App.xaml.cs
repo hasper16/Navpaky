@@ -703,7 +703,7 @@ namespace Rekey.App {
         _welcome?.NoteTryItCorrection();
       }
 
-      if (CorrectionTip.IsDue(_hub!.Current, inTryIt)) {
+      if (CorrectionTip.IsDue(_hub!.Current, inTryIt, NotificationState.AcceptsNotifications())) {
         _hub.Update(CorrectionTip.Shown);
         _trayView?.Notify(Strings.CorrectionTipTitle, Strings.CorrectionTip);
 #if DEBUG
