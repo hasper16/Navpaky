@@ -498,7 +498,8 @@ namespace Rekey.Win32 {
           Volatile.Read(ref _latestSettings).VerifiedReplacement,
           HeldModifiers,
           SendKeys,
-          ConsoleWindows.ForegroundTarget);
+          ConsoleWindows.ForegroundTarget,
+          PauseBetweenParts);
       RefreshLayouts();
       using var focus = new FocusTracker(
           OnFocusChanged, () => _typing.Now(_ring.ActionsWritten));
@@ -845,6 +846,13 @@ namespace Rekey.Win32 {
         default:
           return false;
       }
+    }
+
+    // Keys typed during the pause wait in the hook, then follow the whole replacement.
+    private void PauseBetweenParts(TimeSpan pause) {
+      _gate.NoteProgress(Environment.TickCount64);
+      Thread.Sleep(pause);
+      _gate.NoteProgress(Environment.TickCount64);
     }
 
     private void Execute(EngineAction action) {
