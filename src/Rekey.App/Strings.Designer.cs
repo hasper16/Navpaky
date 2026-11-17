@@ -94,6 +94,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rekey is already running. To start it with these options, quit it from the tray first..
+        /// </summary>
+        public static string AlreadyRunning {
+            get {
+                return ResourceManager.GetString("AlreadyRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Keep a word-analysis log for troubleshooting.
         /// </summary>
         public static string AnalysisLogEnabled {

@@ -22,7 +22,7 @@ For each finding: when the spec is wrong, revise it with `/opsx:update` first; t
 - [x] 2.10 localization: every window's language follows the interface language, also on a live switch, so screen readers read Ukrainian text; verify a test on a window's language after a switch
 - [x] 2.11 onboarding: the welcome window scrolls with the wheel anywhere over it; the one-time tip counts as shown only when Windows can show it (spec delta first); verify unit tests
 - [x] 2.12 auto-update (the publisher name is "Rekey" until the owner names another; the dry-run Release workflow with the new `vpk pack` arguments is run by the orchestrator in 3.1): exe and installed app carry the app icon and a publisher name; `vpk pack` gets `--runtime win-x64`; uninstall deletes data only when no new installation exists, and asks the data question before the "removal complete" box (spec delta first); verify unit tests and the dry-run Release workflow
-- [ ] 2.13 app-lifecycle: a second start with arguments while Rekey runs tells the user Rekey is already running instead of exiting silently (spec delta first); verify a unit test
+- [x] 2.13 app-lifecycle: a second start with arguments while Rekey runs tells the user Rekey is already running instead of exiting silently (spec delta first); verify a unit test
 - [ ] 2.14 docs: `docs/release.md` names where to keep the first version and says to clear the publish folder between versions; the ZIP step publishes a single file like the Release workflow; the moved-build step renames the exe file; verify by reading
 
 ## 3. Re-check and close

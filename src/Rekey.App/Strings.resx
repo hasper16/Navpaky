@@ -417,6 +417,9 @@
   <data name="UninstallDataNotDeleted" xml:space="preserve">
     <value>Some Rekey data could not be deleted because another program is using it. Delete the folder {0} yourself.</value>
   </data>
+  <data name="AlreadyRunning" xml:space="preserve">
+    <value>Rekey is already running. To start it with these options, quit it from the tray first.</value>
+  </data>
   <data name="UninstallDataKept" xml:space="preserve">
     <value>Rekey was installed again, so its settings and word lists were kept.</value>
   </data>
