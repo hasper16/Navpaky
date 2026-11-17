@@ -112,7 +112,7 @@ namespace Rekey.Win32 {
 
     // The worker thread alone records into it; any thread reads its snapshot.
     private StatsRecorder _stats = new(StatsDocument.Empty);
-    private AnalysisLog? _analysisLog;
+    private AnalysisLogWriter? _analysisLog;
 
     // Written by the constructor and then only by the thread that calls UseSettings; the
     // worker reads it.
@@ -424,6 +424,7 @@ namespace Rekey.Win32 {
 
       _hook.Dispose();
       if (stopped) {
+        _analysisLog?.Dispose();
         _signal.Dispose();
         _started.Dispose();
       }
@@ -488,7 +489,7 @@ namespace Rekey.Win32 {
 
       _started.Set();
       if (AnalysisLogFolder is { } folder) {
-        _analysisLog = new AnalysisLog(folder, _time);
+        _analysisLog = new AnalysisLogWriter(new AnalysisLog(folder, _time));
         UseAnalysisLog(Volatile.Read(ref _latestSettings).AnalysisLogEnabled);
       }
 
@@ -903,21 +904,13 @@ namespace Rekey.Win32 {
         _analysesToWrite.Clear();
       }
 
-      try {
-        _analysisLog?.Enabled = enabled;
-      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-        // A file in use stays until the next change or start; the log never blocks typing.
-      }
+      _analysisLog?.UseEnabled(enabled);
     }
 
     // Runs once the keys read so far have gone on, as ReportMismatch does.
     private void WriteAnalyses() {
       foreach (LogAnalysis analysis in _analysesToWrite) {
-        try {
-          _analysisLog?.Write(analysis);
-        } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-          // A Word that cannot be logged is left out; the log never blocks typing.
-        }
+        _analysisLog?.Write(analysis);
       }
 
       _analysesToWrite.Clear();
