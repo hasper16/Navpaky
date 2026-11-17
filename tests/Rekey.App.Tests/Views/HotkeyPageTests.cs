@@ -31,5 +31,25 @@ namespace Rekey.App.Tests.Views {
         Assert.Equal(Strings.HotkeyRecording, ((TextBox)page.FindName("Recorder")).Text);
       });
     }
+
+    // Re-check of 2.3: another app had registered Ctrl+Alt+Space as a global hotkey, so Windows
+    // never sent it to the recorder; Rekey's keyboard hook still sees it and offers it.
+    [Fact]
+    public void ChordSeenByTheKeyboardHookIsRecorded() {
+      Sta.Run(() => {
+        var listening = new List<bool>();
+        var chords = new ChordRecorder(listening.Add);
+        using var hub = new SettingsHub(new Settings(), _ => { }, new ManualClock());
+        using var model = new HotkeyViewModel(hub, _ => HotkeyConflict.None);
+        var page = new HotkeyPage(model, chords);
+        ((Button)page.FindName("Record")).RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+
+        chords.Offer(KeyModifiers.Control | KeyModifiers.Alt, 0x20);
+
+        Assert.Equal(
+            Hotkey.Custom(KeyModifiers.Control | KeyModifiers.Alt, 0x20), hub.Current.Hotkey);
+        Assert.Equal([true, false], listening);
+      });
+    }
   }
 }

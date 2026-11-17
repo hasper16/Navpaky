@@ -110,6 +110,7 @@ namespace Rekey.App {
     private UpdateScheduler? _updates;
     private ExecutableWatch? _executableWatch;
     private TelemetryHost? _telemetry;
+    private ChordRecorder? _chords;
 
     // The worker's Word counts as of the latest Trigger Key; only the worker thread writes it.
     private volatile StrongBox<WordCounts>? _wordCounts;
@@ -388,6 +389,9 @@ namespace Rekey.App {
 
       _worker.WordListsChanged += lists => Dispatcher.BeginInvoke(() => _words.Show(lists));
       _worker.SelfPauseChanged += until => Dispatcher.BeginInvoke(() => ShowSelfPause(until));
+      _chords = new ChordRecorder(on => _worker.RecordChords = on);
+      _worker.ChordPressed += (modifiers, key) =>
+          Dispatcher.BeginInvoke(() => _chords.Offer(modifiers, key));
       _worker.Observed += RememberWordCounts;
       _worker.Observed += FollowLayout;
 
@@ -725,7 +729,7 @@ namespace Rekey.App {
         bool dark = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
         _welcome = welcome;
         _welcomeWindow = new WelcomeWindow(
-            welcome, new HotkeyPage(hotkey), dark, OpenLanguageSettings);
+            welcome, new HotkeyPage(hotkey, _chords), dark, OpenLanguageSettings);
         _welcomeWindow.Closed += (_, _) => {
           welcome.Close();
           _telemetry?.OnWelcomeClosed(welcome.Progress);
@@ -784,7 +788,7 @@ namespace Rekey.App {
               new GeneralPage(settings, sound => _sounds!.Play(sound))),
           new("PageCorrection", SymbolRegular.TextGrammarCheckmark24,
               new CorrectionPage(settings)),
-          new("PageHotkey", SymbolRegular.Keyboard24, new HotkeyPage(hotkey)),
+          new("PageHotkey", SymbolRegular.Keyboard24, new HotkeyPage(hotkey, _chords)),
           new("PageAppsAndWords", SymbolRegular.AppsList24,
               new AppsAndWordsPage(apps, _words!)),
           new("PageDiagnostics", SymbolRegular.ShieldCheckmark24,

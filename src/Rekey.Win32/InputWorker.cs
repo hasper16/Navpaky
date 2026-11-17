@@ -114,6 +114,9 @@ namespace Rekey.Win32 {
     private StatsRecorder _stats = new(StatsDocument.Empty);
     private AnalysisLogWriter? _analysisLog;
 
+    // Written by the UI thread only.
+    private bool _recordChords;
+
     // Written by the constructor and then only by the thread that calls UseSettings; the
     // worker reads it.
     private Settings _latestSettings;
@@ -239,6 +242,25 @@ namespace Rekey.Win32 {
     /// for the cursor indicator and the switch sound.
     /// </summary>
     public event Action<SwitchFeedback>? Switched;
+
+    /// <summary>
+    /// Occurs on the worker thread, while <see cref="RecordChords" /> is on, for each key pressed
+    /// with modifiers: the modifiers and the virtual-key code.
+    /// </summary>
+    /// <remarks>
+    /// The hook sees a combination another app registered as a global hotkey, which Windows
+    /// never sends to Rekey's windows.
+    /// </remarks>
+    public event Action<KeyModifiers, ushort>? ChordPressed;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether <see cref="ChordPressed" /> reports key presses;
+    /// the Hotkey page turns it on while it records. Any thread may set it.
+    /// </summary>
+    public bool RecordChords {
+      get => Volatile.Read(ref _recordChords);
+      set => Volatile.Write(ref _recordChords, value);
+    }
 
     /// <summary>
     /// Gets the Protected Words and Learned Words the engine starts with; set it before
@@ -554,6 +576,10 @@ namespace Rekey.Win32 {
         }
 
         RecordTyping(raw, inputEvent);
+        if (RecordChords && Chords.Of(raw, inputEvent) is { } chord) {
+          ChordPressed?.Invoke(chord.Modifiers, chord.VirtualKey);
+        }
+
         if (inputEvent is KeyDown { Kind: KeyKind.Character } keyDown) {
           // Focus may have moved inside the window before its WinEvent arrived.
           inputEvent = keyDown with { FocusConfirmed = _keyConfirmer.Confirm(raw) };
