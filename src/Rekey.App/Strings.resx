@@ -424,7 +424,7 @@
     <value>Rekey was installed again, so its settings and word lists were kept.</value>
   </data>
   <data name="MenuWelcome" xml:space="preserve">
-    <value>Getting started</value>
+    <value>Getting started with {0}</value>
   </data>
   <data name="WelcomeTitle" xml:space="preserve">
     <value>Welcome to Rekey</value>

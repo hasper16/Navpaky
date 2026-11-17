@@ -661,7 +661,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Getting started.
+        ///   Looks up a localized string similar to Getting started with {0}.
         /// </summary>
         public static string MenuWelcome {
             get {

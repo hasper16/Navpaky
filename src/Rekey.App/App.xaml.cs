@@ -123,7 +123,7 @@ namespace Rekey.App {
       _guard = SingleInstanceGuard.TryAcquire(SingleInstanceGuard.NameForCurrentUser());
       if (_guard is null) {
         if (SecondLaunch.Message(e.Args) is { } message) {
-          MessageBox.Show(message, "Rekey", MessageBoxButton.OK, MessageBoxImage.Information);
+          MessageBox.Show(message, Product.Name, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         Shutdown();

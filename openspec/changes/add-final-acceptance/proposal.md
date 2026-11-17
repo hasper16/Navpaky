@@ -25,7 +25,7 @@ Added after the owner's pass (task 1.3) through `/opsx:update`:
 - `tray-and-settings`: an Excluded App chosen as a file also matches a running Store app with the same file name (the Windows 11 Notepad stub).
 - `auto-update`: the uninstaller waits for the data question before it reports completion, and keeps the data when Rekey was installed again meanwhile.
 - `app-lifecycle`: a second start with arguments tells the user Rekey is already running.
-- `onboarding`: the tray item that reopens the welcome window is named "Getting started" ("Знайомство з Rekey"), apart from Settings.
+- `onboarding`: the tray item that reopens the welcome window is named "Getting started with Rekey" ("Знайомство з Rekey"), with the product name taken from one place, apart from Settings.
 
 ## Impact
 

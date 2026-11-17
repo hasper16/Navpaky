@@ -109,7 +109,7 @@ namespace Rekey.App.Tray {
       MenuItem updates = Item(_model.UpdateItemText, _commands.Updates);
       updates.IsEnabled = _model.UpdateItemEnabled;
       items.Add(updates);
-      items.Add(Item(Strings.MenuWelcome, _commands.OpenWelcome));
+      items.Add(Item(UiText.Format(Strings.MenuWelcome, Product.Name), _commands.OpenWelcome));
       items.Add(Item(Strings.MenuAbout, _commands.OpenAbout));
       items.Add(new Separator());
       items.Add(Item(Strings.MenuQuit, _commands.Quit));
