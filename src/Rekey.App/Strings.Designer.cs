@@ -652,7 +652,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Welcome and setup.
+        ///   Looks up a localized string similar to Getting started.
         /// </summary>
         public static string MenuWelcome {
             get {
@@ -1039,11 +1039,20 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Don&apos;t correct after I switch layout myself.
+        ///   Looks up a localized string similar to Skip the word I start right after switching layout myself.
         /// </summary>
         public static string SkipAfterManualSwitch {
             get {
                 return ResourceManager.GetString("SkipAfterManualSwitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey leaves the next word alone when you start it within 2 seconds of your own layout switch..
+        /// </summary>
+        public static string SkipAfterManualSwitchHint {
+            get {
+                return ResourceManager.GetString("SkipAfterManualSwitchHint", resourceCulture);
             }
         }
         

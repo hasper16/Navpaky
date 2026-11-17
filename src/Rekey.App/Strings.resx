@@ -211,7 +211,10 @@
     <value>Tab</value>
   </data>
   <data name="SkipAfterManualSwitch" xml:space="preserve">
-    <value>Don't correct after I switch layout myself</value>
+    <value>Skip the word I start right after switching layout myself</value>
+  </data>
+  <data name="SkipAfterManualSwitchHint" xml:space="preserve">
+    <value>Rekey leaves the next word alone when you start it within 2 seconds of your own layout switch.</value>
   </data>
   <data name="VerifiedReplacement" xml:space="preserve">
     <value>Check text before replacing</value>
@@ -415,7 +418,7 @@
     <value>Some Rekey data could not be deleted because another program is using it. Delete the folder {0} yourself.</value>
   </data>
   <data name="MenuWelcome" xml:space="preserve">
-    <value>Welcome and setup</value>
+    <value>Getting started</value>
   </data>
   <data name="WelcomeTitle" xml:space="preserve">
     <value>Welcome to Rekey</value>

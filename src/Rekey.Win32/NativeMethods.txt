@@ -91,3 +91,5 @@ CoTaskMemFree
 GetKeyNameText
 MapVirtualKey
 PlaySound
+SHCreateItemFromParsingName
+IShellItem
