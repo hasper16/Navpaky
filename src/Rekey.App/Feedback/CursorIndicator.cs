@@ -40,6 +40,14 @@ namespace Rekey.App.Feedback {
         IsHitTestVisible = false,
         Content = _image,
       };
+
+      // The first window becomes the main window, and WPF UI's theme manager paints a Mica
+      // backdrop over the main window whenever a watched window applies the theme: the badge
+      // then sat in an opaque grey box (fix 2.6 of add-final-acceptance).
+      if (Application.Current is { } app && app.MainWindow == _window) {
+        app.MainWindow = null;
+      }
+
       _window.SourceInitialized += (_, _) =>
           ScreenFacts.MakeOverlay(new WindowInteropHelper(_window).Handle);
       _timer = new DispatcherTimer { Interval = _shown };
