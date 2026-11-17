@@ -39,7 +39,7 @@ namespace Rekey.App {
       "CA1001:Types that own disposable fields should be disposable",
       Justification = "WPF ends the Application through OnExit, which disposes the fields.")]
   internal sealed partial class App {
-    private const string _restartedAfterFreeze = "--restarted-after-freeze";
+    private const string _restartedAfterFreeze = SecondLaunch.RestartedAfterFreeze;
 #if DEBUG
     private const string _checkFreeze = "--check-freeze";
     private const string _checkSelfPause = "--check-self-pause";

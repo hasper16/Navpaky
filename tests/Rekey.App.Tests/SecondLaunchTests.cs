@@ -13,5 +13,12 @@ namespace Rekey.App.Tests {
     public void SecondLaunchWithArgumentsSaysRekeyIsRunning() {
       Assert.Equal(Strings.AlreadyRunning, SecondLaunch.Message(["--update-feed", "Feed"]));
     }
+
+    // A replacement Rekey started after a freeze waits for the frozen one and must never stop
+    // the user with a message.
+    [Fact]
+    public void RestartAfterAFreezeSaysNothing() {
+      Assert.Null(SecondLaunch.Message(["--restarted-after-freeze", "1234"]));
+    }
   }
 }
