@@ -50,9 +50,9 @@ namespace Rekey.Win32.Diagnostics {
     /// <param name="timeout">How long to wait at most.</param>
     /// <returns>Whether the work was done in time.</returns>
     public bool Drain(TimeSpan timeout) {
-      var done = new ManualResetEventSlim();
-      Post(done.Set);
-      return done.Wait(timeout);
+      var done = new TaskCompletionSource();
+      Post(() => done.TrySetResult());
+      return done.Task.Wait(timeout);
     }
 
     /// <inheritdoc />
