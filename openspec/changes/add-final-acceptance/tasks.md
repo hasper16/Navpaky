@@ -10,7 +10,7 @@
 
 For each finding: when the spec is wrong, revise it with `/opsx:update` first; then write a failing test, fix, and verify the test and the full automated suite pass (one commit per capability). Owner requests that need new behaviour (tray icon redesign, start-up window, install-time questions, update check on the About page, ideas from the original) are not fixed here; the orchestrator takes them to the owner as their own changes.
 
-- [ ] 2.1 layout-management: order installed Layouts by the user's language list, not the load order of their handles, so Win+Space with nothing to correct picks the Layout Windows would; verify a unit test with the owner's list (English (US); Ukrainian with Ukrainian (Enhanced) and Russian) picks English (US) after Russian
+- [x] 2.1 layout-management: order installed Layouts by the user's language list, not the load order of their handles, so Win+Space with nothing to correct picks the Layout Windows would; verify a unit test with the owner's list (English (US); Ukrainian with Ukrainian (Enhanced) and Russian) picks English (US) after Russian
 - [ ] 2.2 text-replacement: hold typed keys while a multi-part replacement types (owner decision; spec delta first); verify a test where keys arrive between the parts and land after the whole replacement
 - [ ] 2.3 tray-and-settings, Hotkey page: "My own combination" records Ctrl+Alt+Space, and a recorded combination shows key names, not raw codes; verify unit tests for both
 - [ ] 2.4 tray-and-settings, Excluded Apps: a program chosen by file also matches a running app with the same file name, which covers the Windows 11 Notepad stub (spec delta first); verify a unit test

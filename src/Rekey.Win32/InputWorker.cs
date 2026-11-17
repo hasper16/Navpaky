@@ -75,7 +75,10 @@ namespace Rekey.Win32 {
     private readonly Action<Incident> _recordIncident;
     private readonly TimeProvider _time;
     private readonly RawInputTranslator _translator;
-    private readonly LayoutList _layouts = new(SystemLayouts.ReadHandles, SystemLayouts.Read);
+
+    private readonly LayoutList _layouts =
+        new(SystemLayouts.ReadHandles, SystemLayouts.Read, UserLayoutOrder.Read);
+
     private readonly Dictionary<LayoutId, KeyMap?> _keyMaps = [];
     private readonly LayoutSwitcher _switcher;
     private readonly ForegroundLayout _foregroundLayout;

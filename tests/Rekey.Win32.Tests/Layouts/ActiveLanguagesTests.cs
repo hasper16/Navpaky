@@ -12,7 +12,7 @@ namespace Rekey.Win32.Tests.Layouts {
 
     [Fact]
     public void EnglishAndRussianLayoutsActivateOnlyEnglishAndRussian() {
-      var list = new LayoutList(() => [.. _handles], () => new NoVariants());
+      var list = new LayoutList(() => [.. _handles], () => new NoVariants(), () => []);
 
       Publish(list);
 
@@ -21,7 +21,7 @@ namespace Rekey.Win32.Tests.Layouts {
 
     [Fact]
     public void AddingAUkrainianLayoutActivatesUkrainian() {
-      var list = new LayoutList(() => [.. _handles], () => new NoVariants());
+      var list = new LayoutList(() => [.. _handles], () => new NoVariants(), () => []);
       Publish(list);
 
       _handles.Add(0x04220422);
