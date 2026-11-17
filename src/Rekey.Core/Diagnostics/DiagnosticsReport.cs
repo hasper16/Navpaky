@@ -46,12 +46,23 @@ namespace Rekey.Core.Diagnostics {
 
       if (includeAnalysisLog) {
         text.AppendLine().AppendLine("[Word-analysis log]");
-        foreach (string line in facts.AnalysisLog) {
+        foreach (string line in Columns(facts.AnalysisLog)) {
           text.AppendLine(line);
         }
       }
 
       return Mask(text.ToString(), names);
+    }
+
+    // The log separates its fields with tabs, which a text box shows unevenly; padding each
+    // field to its column's width keeps the columns aligned in a fixed-width font.
+    private static IEnumerable<string> Columns(IReadOnlyList<string> lines) {
+      string[][] rows = [.. lines.Select(line => line.Split('\t'))];
+      int columns = rows.Length == 0 ? 0 : rows.Max(row => row.Length);
+      int[] widths = [.. Enumerable.Range(0, columns)
+          .Select(column => rows.Max(row => column < row.Length ? row[column].Length : 0))];
+      return rows.Select(row => string.Join(
+          "  ", row.Select((field, column) => field.PadRight(widths[column]))).TrimEnd());
     }
 
     // Design D5: the profile path and the machine name first, since they often contain the user
