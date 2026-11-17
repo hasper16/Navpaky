@@ -9,7 +9,7 @@ Until change 7, every change waited before merge for the owner to run its by-han
 - The owner runs every unchecked item in `docs/manual-tests/deferred-by-hand.md` on one commit of `main` that contains all other roadmap changes, at a Windows desktop.
 - Each failure is recorded as a finding under its item (steps, expected, observed; no typed text beyond the invented Words of the checklist) and fixed in this change: a code fix with a failing test first, or a spec revision through `/opsx:update` when the spec itself was wrong.
 - Items that pass are ticked in `deferred-by-hand.md`; the by-hand tasks the earlier changes left unticked are ticked in their archived `tasks.md` with a pointer to the run.
-- No new behavior is planned. If a fix changes required behavior, the matching delta spec is added to this change at that point and `skip_specs` is removed.
+- No new behavior is planned. The fixes that change required behavior carry delta specs (see Modified Capabilities).
 
 ## Capabilities
 
@@ -19,7 +19,12 @@ None.
 
 ### Modified Capabilities
 
-None planned. Fixes that turn out to change a requirement add a delta for that capability (for example `manual-correction` or `auto-correction`) through `/opsx:update`.
+Added after the owner's pass (task 1.3) through `/opsx:update`:
+
+- `text-replacement`: keys typed between the parts of a multi-part replacement land after it (owner decision).
+- `tray-and-settings`: an Excluded App chosen as a file also matches a running app with the same file name (the Windows 11 Notepad stub).
+- `auto-update`: the uninstaller waits for the data question before it reports completion, and keeps the data when Rekey was installed again meanwhile.
+- `app-lifecycle`: a second start with arguments tells the user Rekey is already running.
 
 ## Impact
 

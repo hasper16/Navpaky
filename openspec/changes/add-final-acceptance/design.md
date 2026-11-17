@@ -22,6 +22,17 @@ See proposal.md for why. Each earlier change ticks its tasks on automated eviden
 - **Fixes are grouped by capability.** One commit per capability's fixes, so the tasks list can grow one group per affected area once the findings are known.
 - **Desktop automated checks still run.** Before the by-hand pass, the orchestrator's usual automated gate (CI plus every `tools/Rekey.DesktopChecks` set on the pinned commit) passes; the by-hand pass starts from a green automated state.
 
+### Fix decisions (added after the pass, task 1.3)
+
+- **Layout order (2.1).** Windows switches Layouts in the order of the user's language list (`HKCU\Control Panel\International\User Profile`: the `Languages` list, then each language's `LLLL:KLID` input-method values in their numeric order). `GetKeyboardLayoutList` and `Preload` give load order, which differs once Layouts were added and removed. `LayoutList` keeps reading handles from `GetKeyboardLayoutList` and sorts the resolved Layouts by the user list, read with the registry in its refresh on the worker thread; a Layout the list does not name keeps its handle order after the named ones. Alternative: `Preload` order; rejected, it showed the same wrong order on the owner's PC.
+- **Hold during a multi-part replacement (2.2).** The hold gate's 150 ms valve (design D1 of add-text-replacement) counts from the latest progress of the worker, not only from the hold's start: the worker marks progress before each part of a replacement it types in parts (50 ms pauses, design D4 of add-manual-correction). Held keys therefore wait for the whole replacement, while a worker that stops making progress still opens the valve 150 ms later. One writer: the worker writes the progress tick, the hook only reads it.
+- **Excluded App by file name (2.4).** A path entry matches a running app with the same full path or, failing that, the same file name, ignoring case. Resolving launcher stubs to their packages would need a table per stub; matching by name covers them all at the cost of excluding same-named programs.
+- **One-time tip (2.11).** The tip counts as shown only when `SHQueryUserNotificationState` (UI thread, before showing) reports that notifications are accepted; otherwise it waits for the next Correction.
+- **Second start with arguments (2.13).** The second process shows a message box (no owner window, UI thread) when it has arguments, then exits; without arguments it exits silently as before.
+- **Uninstall (2.12).** The uninstall hook waits up to 25 s for the data-question process before returning, so Velopack's completion message comes after the answer. After Yes, the question script waits up to 30 s for the old install root's `Update.exe` to disappear; when it is still there (Rekey installed again meanwhile, or removal stuck), the data stays and the user is told.
+- **Single-file in the ZIP step (2.14).** The Release workflow already publishes one self-contained file; the by-hand step published a multi-file folder, which cannot run from a ZIP. Only the step changes; the onboarding spec stays.
+- **Analysis-log write (2.9).** The worker hands analysis lines to a dedicated writer thread through a queue; the writer owns the file. Turning the log off waits for the queue to drain before deleting.
+
 ## Risks / Trade-offs
 
 - [Late discovery: a by-hand failure may come from an early change and ripple into later ones] → Fixes go spec first and the full automated suite runs on every fix commit; items touched by a fix are re-run by hand.
