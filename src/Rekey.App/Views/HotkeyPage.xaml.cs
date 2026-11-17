@@ -34,6 +34,9 @@ namespace Rekey.App.Views {
           StartRecording();
         }
       };
+
+      // A custom Hotkey keeps the option checked, so a click on it raises no Checked.
+      _custom.Click += (_, _) => StartRecording();
       Options.Children.Add(_custom);
       Record.Click += (_, _) => StartRecording();
       Recorder.PreviewKeyDown += OnRecorderKey;

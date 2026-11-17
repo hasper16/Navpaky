@@ -105,6 +105,18 @@ namespace Rekey.App.Tests.ViewModels {
       Assert.Equal("Ctrl+Shift+F1", HotkeyViewModel.Describe(hotkey));
     }
 
+    // Fix 2.3 of add-final-acceptance: a key without a letter shows its name, not its code.
+    [Fact]
+    public void NumpadKeyIsNamedNotCoded() {
+      Hotkey hotkey = Hotkey.Custom(KeyModifiers.Shift | KeyModifiers.Control, 0x6B);
+
+      string text = HotkeyViewModel.Describe(hotkey);
+
+      Assert.StartsWith("Ctrl+Shift+", text, StringComparison.Ordinal);
+      Assert.DoesNotContain("0x", text, StringComparison.Ordinal);
+      Assert.NotEqual("Ctrl+Shift+", text);
+    }
+
     [Fact]
     public void ADisposedModelNoLongerFollowsTheHub() {
       using HotkeyViewModel model = Create();

@@ -106,7 +106,7 @@ namespace Rekey.App.ViewModels {
       OnPropertyChanged(nameof(Current));
     }
 
-    // Letters and digits name themselves; other keys go by their Windows key code.
+    // Letters and digits name themselves; other keys go by the name Windows gives them.
     private static string KeyName(ushort virtualKey) {
       if (virtualKey == _space) {
         return Strings.KeySpace;
@@ -120,7 +120,7 @@ namespace Rekey.App.ViewModels {
         return "F" + (virtualKey - _f1 + 1).ToString(CultureInfo.InvariantCulture);
       }
 
-      return "0x" + virtualKey.ToString("X2", CultureInfo.InvariantCulture);
+      return KeyNames.Of(virtualKey);
     }
 
     private void OnHubChanged(Settings settings) {

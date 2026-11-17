@@ -88,3 +88,5 @@ CERT_E_REVOKED
 SHGetKnownFolderPath
 FOLDERID_Downloads
 CoTaskMemFree
+GetKeyNameText
+MapVirtualKey
