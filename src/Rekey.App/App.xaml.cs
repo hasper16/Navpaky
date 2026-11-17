@@ -137,6 +137,10 @@ namespace Rekey.App {
       _hub = new SettingsHub(
           loaded, _settingsStore.Save, TimeProvider.System, ReportSettingsNotSaved);
       UseUiLanguage(loaded.UiLanguage);
+      EventManager.RegisterClassHandler(
+          typeof(Window),
+          FrameworkElement.LoadedEvent,
+          new RoutedEventHandler((window, _) => Localizer.BindLanguage((Window)window)));
       _indicator = new CursorIndicator();
       _sounds = new SwitchSoundPlayer();
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());

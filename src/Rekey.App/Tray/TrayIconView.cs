@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using H.NotifyIcon;
 using H.NotifyIcon.Core;
 using Microsoft.Win32;
+using Rekey.App.Localization;
 using Rekey.App.Updates;
 using Rekey.App.ViewModels;
 using Rekey.Win32;
@@ -30,6 +31,7 @@ namespace Rekey.App.Tray {
       _commands = commands;
       _icon.MenuActivation = PopupActivationMode.LeftOrRightClick;
       _icon.ContextMenu = new ContextMenu();
+      Localizer.BindLanguage(_icon.ContextMenu);
 
       // A change that came while the menu was open shows once it closes.
       _icon.ContextMenu.Closed += (_, _) => BuildMenu();
