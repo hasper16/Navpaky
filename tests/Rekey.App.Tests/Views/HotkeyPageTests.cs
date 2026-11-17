@@ -1,4 +1,3 @@
-using System.Runtime.ExceptionServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -12,10 +11,11 @@ using Xunit;
 namespace Rekey.App.Tests.Views {
   // Fix 2.3 of add-final-acceptance: with a custom Hotkey already chosen, its option is already
   // checked, so a click on it must still start recording.
+  [Collection(nameof(Sta))]
   public sealed class HotkeyPageTests {
     [Fact]
     public void ClickOnTheCheckedCustomOptionStartsRecording() {
-      RunOnSta(() => {
+      Sta.Run(() => {
         var settings = new Settings {
           Hotkey = Hotkey.Custom(KeyModifiers.Control | KeyModifiers.Shift, 0x6B),
         };
@@ -30,22 +30,6 @@ namespace Rekey.App.Tests.Views {
 
         Assert.Equal(Strings.HotkeyRecording, ((TextBox)page.FindName("Recorder")).Text);
       });
-    }
-
-    // WPF objects need an STA thread; a failure there is rethrown with its original stack.
-    private static void RunOnSta(Action test) {
-      ExceptionDispatchInfo? failure = null;
-      var thread = new Thread(() => {
-        try {
-          test();
-        } catch (Exception e) when (e is not OutOfMemoryException) {
-          failure = ExceptionDispatchInfo.Capture(e);
-        }
-      });
-      thread.SetApartmentState(ApartmentState.STA);
-      thread.Start();
-      thread.Join();
-      failure?.Throw();
     }
   }
 }

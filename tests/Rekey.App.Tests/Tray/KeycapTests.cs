@@ -6,6 +6,7 @@ using Rekey.App.ViewModels;
 using Xunit;
 
 namespace Rekey.App.Tests.Tray {
+  [Collection(nameof(Sta))]
   public sealed class KeycapTests {
     private static readonly int[] _sizes = [16, 20, 24, 32];
 
