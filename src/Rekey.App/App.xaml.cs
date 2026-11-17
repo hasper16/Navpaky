@@ -215,7 +215,6 @@ namespace Rekey.App {
         // After the worker, so its last change is saved too.
         _wordsSaver.Flush();
         _wordsSaver.Dispose();
-        _sounds?.Dispose();
 
         // After the worker and the freeze guard, so their last Incidents are written too.
         _incidents?.Dispose();

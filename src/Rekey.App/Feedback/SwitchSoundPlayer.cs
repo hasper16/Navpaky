@@ -1,22 +1,23 @@
 using System.IO;
-using System.Media;
 using Rekey.Core;
+using Rekey.Win32;
 
 namespace Rekey.App.Feedback {
   // Plays the switch sounds Rekey ships (design D6), loaded once so a Correction never waits
   // for the disk. The sounds are Rekey's own (ADR 0003).
-  internal sealed class SwitchSoundPlayer : IDisposable {
-    private readonly Dictionary<SwitchSound, SoundPlayer> _players = [];
+  internal sealed class SwitchSoundPlayer {
+    private readonly Dictionary<SwitchSound, WaveSound> _players = [];
 
     public SwitchSoundPlayer() {
       foreach (SwitchSound sound in Enum.GetValues<SwitchSound>()) {
-        if (Open(sound) is not { } wave) {
+        using Stream? wave = Open(sound);
+        if (wave is null) {
           continue;
         }
 
-        var player = new SoundPlayer(wave);
-        player.Load();
-        _players[sound] = player;
+        using var bytes = new MemoryStream();
+        wave.CopyTo(bytes);
+        _players[sound] = new WaveSound(bytes.ToArray());
       }
     }
 
@@ -34,16 +35,9 @@ namespace Rekey.App.Feedback {
     public int Played { get; private set; }
 
     public void Play(SwitchSound sound) {
-      if (_players.TryGetValue(sound, out SoundPlayer? player)) {
+      if (_players.TryGetValue(sound, out WaveSound? player)) {
         Played++;
         player.Play();
-      }
-    }
-
-    public void Dispose() {
-      foreach (SoundPlayer player in _players.Values) {
-        player.Stream?.Dispose();
-        player.Dispose();
       }
     }
   }

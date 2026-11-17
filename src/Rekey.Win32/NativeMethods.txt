@@ -90,3 +90,4 @@ FOLDERID_Downloads
 CoTaskMemFree
 GetKeyNameText
 MapVirtualKey
+PlaySound
