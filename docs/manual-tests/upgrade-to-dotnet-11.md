@@ -15,9 +15,16 @@ The tool now finds the Debug app in `src/Navpaky.App/bin/Debug/<its own target f
 
 ## Velopack update over the installed 0.4.2
 
-The installed 0.4.2 is a Release build: it takes only signed, non-pre-release versions from GitHub Releases (`docs/release.md`), and a release would reach every user. So the install is checked by installing over 0.4.2, and the updater on a test feed:
+The installed 0.4.2 is a local unsigned test pack of 7c187ac, not a GitHub release. Keep `C:\RekeyTest\pack-7c187ac\releases`: its `navpaky-app-win-Setup.exe` puts 0.4.2 back.
 
-- [ ] **Install over 0.4.2:** run the `Release` workflow by hand (`workflow_dispatch`) on this branch with version `0.4.3`, download the `releases-0.4.3` artifact, and run its `navpaky-app-win-Setup.exe` with 0.4.2 installed. Confirm Navpaky starts as 0.4.3 and settings and word lists carried over.
-- [ ] **Updater, .NET 10 to .NET 11:** follow `docs/release.md`, Local test build, packing `0.4.2` from `main` before this change and `0.4.3` from this branch into the test feed; install the 0.4.2 pack and start it with `--update-feed`. Confirm it finds 0.4.3, applies it and restarts as 0.4.3. Afterwards uninstall the test install, keeping data, and reinstall the owner's 0.4.2 from GitHub Releases.
-- [ ] After the update, auto-correction, the tray and the settings window work as before (one Correction of "ghbdtn" in Notepad is enough).
-- [ ] The install folder (`%LOCALAPPDATA%\navpaky-app`) is within 10% of 186 MB, the 0.4.2 size. New size: ____ MB.
+- [ ] **Pack this branch as 0.4.3** the same way, from the repository root on this branch (`.tools\vpk` as in `docs/release.md`; `<sha>` is the commit):
+  ```powershell
+  dotnet publish src/Navpaky.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishReadyToRun=true -p:Version=0.4.3 -o C:\RekeyTest\pack-<sha>\publish
+  .tools\vpk pack --packId navpaky-app --packVersion 0.4.3 --packDir C:\RekeyTest\pack-<sha>\publish --mainExe Navpaky.App.exe --packTitle Navpaky --packAuthors 'Pavlo Yeremenko' --icon src\Navpaky.App\Navpaky.ico --runtime win-x64 --delta None --exclude '\.(pdb|xml)$' --outputDir C:\RekeyTest\pack-<sha>\releases
+  ```
+- [ ] **Install over 0.4.2:** with 0.4.2 installed, run `C:\RekeyTest\pack-<sha>\releases\navpaky-app-win-Setup.exe`. Navpaky starts as 0.4.3 (About page), and settings and word lists carried over.
+- [ ] After the install, auto-correction, the tray and the settings window work as before (one Correction of "ghbdtn" in Notepad is enough).
+- [ ] `%LOCALAPPDATA%\navpaky-app\current\Navpaky.App.exe` is within 10% of 186 MB, its 0.4.2 size. New size: ____ MB.
+- [ ] Put 0.4.2 back with `C:\RekeyTest\pack-7c187ac\releases\navpaky-app-win-Setup.exe` if the owner wants to keep it until the next release.
+
+The in-app updater applies a package only when the pinned publisher signed it, so it refuses these unsigned packs. Checking it from .NET 10 to .NET 11 needs the signed test feed of `docs/release.md`, Local test build (0.4.2 from 7c187ac, 0.4.3 from this branch); that is a by-hand check, not a merge gate. A `workflow_dispatch` run of `release.yml` also packs this branch unsigned, without the `release` environment, if a CI-built pack is wanted instead.
