@@ -53,7 +53,7 @@ Written against the head of the `add-word-learning` PR. The rules are covered by
 
 Written against the head of the `add-tray-and-settings-ui` PR. The automated `tray-and-settings` set covers the tray Language, a setting applying at once, the single settings window, the indicator and the sound; these steps cover what needs eyes, ears, real apps or a sign-out. Use a Debug build of `src/Navpaky.App` with English (US) and Russian installed. Pin the Navpaky icon to the visible part of the notification area first (Settings → Personalization → Taskbar → Other system tray icons).
 
-- [x] **Keycap look (2.1).** Run `dotnet test tests/Navpaky.App.Tests` and open `tests/Navpaky.App.Tests/bin/Debug/net10.0-windows/keycap-sheet.png`.
+- [x] **Keycap look (2.1).** Run `dotnet test tests/Navpaky.App.Tests` and open `tests/Navpaky.App.Tests/bin/Debug/net11.0-windows/keycap-sheet.png`.
   Expected: every row reads "EN" at 16, 20, 24 and 32 px; paused has an amber edge, off a faded legend, paused-itself a red edge and dot; the dark rows suit a dark taskbar.
   Observed: Matches the spec. The owner wants the tray icons redesigned: its own change, not a fix here.
 - [x] **Tray icon and menu (2.2).** Click the tray icon with the left and then the right button. Try each item: Auto Correction off and on, Pause → For 15 minutes then Resume, Pause → Until Navpaky restarts then quit and start Navpaky, "Turn off in Notepad" after typing in Notepad (and "Turn on in Notepad" after), Settings, About, Quit. Hover the icon while paused.
@@ -237,3 +237,8 @@ Written against the head of the `rename-to-navpaky` PR. Uninstall any test insta
   Observed: failed on c435388 (reported as a reinstall, data kept; fixed in 7c187ac, design D8); pass on 7c187ac: both data folders and the install root deleted.
 - [ ] **Reinstall while the question is open (5.1).** Uninstall, leave the data question open for more than a minute, run the setup again, then answer Yes.
   Expected: a message says Navpaky was installed again and its settings and word lists were kept; both data folders are still there.
+
+## upgrade-to-dotnet-11
+
+- [ ] **Watchdog and focus after sleep (keyboard-capture, Input timing survives sleep).** With Navpaky running, put the PC to sleep for at least a minute, wake it, then type "ghbdtn" + Space in Notepad, switch to another window with Alt+Tab and type it again.
+  Expected: both become "привет " as before sleep; the diagnostics page shows no new hook-drop Incident.

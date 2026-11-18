@@ -190,7 +190,7 @@ namespace Navpaky.Win32.Keyboard {
       long started = _time.GetTimestamp();
       if (code == PInvoke.HC_ACTION) {
         KBDLLHOOKSTRUCT* info = (KBDLLHOOKSTRUCT*)lParam.Value;
-        Volatile.Write(ref _lastInputTick, Environment.TickCount64);
+        Volatile.Write(ref _lastInputTick, InputClock.Now);
         bool injected = (info->flags & KBDLLHOOKSTRUCT_FLAGS.LLKHF_INJECTED) != 0;
         if (!injected || info->dwExtraInfo != InjectedInput.Tag) {
           uint message = (uint)wParam.Value;
@@ -219,7 +219,7 @@ namespace Navpaky.Win32.Keyboard {
     private LRESULT OnMouse(int code, WPARAM wParam, LPARAM lParam) {
       long started = _time.GetTimestamp();
       if (code == PInvoke.HC_ACTION) {
-        Volatile.Write(ref _lastInputTick, Environment.TickCount64);
+        Volatile.Write(ref _lastInputTick, InputClock.Now);
 
         // Moves and wheel turns only prove the hook is alive; button presses end the Word.
         if ((uint)wParam.Value is PInvoke.WM_LBUTTONDOWN or PInvoke.WM_RBUTTONDOWN

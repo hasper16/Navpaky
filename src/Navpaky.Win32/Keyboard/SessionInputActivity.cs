@@ -18,13 +18,7 @@ namespace Navpaky.Win32.Keyboard {
     public long SystemLastInputTick {
       get {
         var info = new LASTINPUTINFO { cbSize = (uint)Marshal.SizeOf<LASTINPUTINFO>() };
-        long now = Environment.TickCount64;
-        if (!PInvoke.GetLastInputInfo(ref info)) {
-          return now;
-        }
-
-        // GetLastInputInfo counts in 32 bits; widen it by its distance from the 64-bit now.
-        return now - unchecked((uint)now - info.dwTime);
+        return PInvoke.GetLastInputInfo(ref info) ? InputClock.Widen(info.dwTime) : InputClock.Now;
       }
     }
 
