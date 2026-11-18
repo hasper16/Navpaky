@@ -240,5 +240,5 @@ Written against the head of the `rename-to-navpaky` PR. Uninstall any test insta
 
 ## upgrade-to-dotnet-11
 
-- [ ] **Watchdog and focus after sleep (keyboard-capture, Input timing survives sleep).** With Navpaky running, put the PC to sleep for at least a minute, wake it, then type "ghbdtn" + Space in Notepad, switch to another window with Alt+Tab and type it again.
+- [ ] **Watchdog and focus after sleep (keyboard-capture, Input timing survives sleep).** With Navpaky running, put the PC to sleep for at least a minute and wake it. Select English (US), type "ghbdtn" + Space in a Notepad window, switch with Alt+Tab to a second Notepad window, select English (US) again and type the same keys.
   Expected: both become "привет " as before sleep; the diagnostics page shows no new hook-drop Incident.

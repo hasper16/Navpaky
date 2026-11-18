@@ -15,9 +15,9 @@ The tool now finds the Debug app in `src/Navpaky.App/bin/Debug/<its own target f
 
 ## Velopack update over the installed 0.4.2
 
-The installed 0.4.2 is a Release build: it takes updates only from GitHub Releases and only when the Navpaky publisher signed them, while a dry run packs unsigned. Pick one way:
+The installed 0.4.2 is a Release build: it takes only signed, non-pre-release versions from GitHub Releases (`docs/release.md`), and a release would reach every user. So the install is checked by installing over 0.4.2, and the updater on a test feed:
 
-- [ ] **In-app update (preferred):** push a signed pre-release tag from this branch's merge, such as `v0.4.3-net11.1` (`docs/release.md`, Publishing a release), then let the installed 0.4.2 find and apply it from the tray. Confirm Navpaky restarts as the new version.
-- [ ] **Or install over it:** run the `Release` workflow by hand (`workflow_dispatch`) with a version above 0.4.2, download the `releases-*` artifact, and run its `navpaky-app-win-Setup.exe` with 0.4.2 installed. Confirm settings and word lists carried over.
+- [ ] **Install over 0.4.2:** run the `Release` workflow by hand (`workflow_dispatch`) on this branch with version `0.4.3`, download the `releases-0.4.3` artifact, and run its `navpaky-app-win-Setup.exe` with 0.4.2 installed. Confirm Navpaky starts as 0.4.3 and settings and word lists carried over.
+- [ ] **Updater, .NET 10 to .NET 11:** follow `docs/release.md`, Local test build, packing `0.4.2` from `main` before this change and `0.4.3` from this branch into the test feed; install the 0.4.2 pack and start it with `--update-feed`. Confirm it finds 0.4.3, applies it and restarts as 0.4.3. Afterwards uninstall the test install, keeping data, and reinstall the owner's 0.4.2 from GitHub Releases.
 - [ ] After the update, auto-correction, the tray and the settings window work as before (one Correction of "ghbdtn" in Notepad is enough).
 - [ ] The install folder (`%LOCALAPPDATA%\navpaky-app`) is within 10% of 186 MB, the 0.4.2 size. New size: ____ MB.

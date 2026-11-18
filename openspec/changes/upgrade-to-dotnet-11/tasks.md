@@ -2,7 +2,7 @@
 
 ## 1. Target framework (design D1, D2)
 
-- [x] 1.1 Add `DotNetTargetFramework` = `net11.0` to `Directory.Build.props`; every `*.csproj` takes `$(DotNetTargetFramework)` or `$(DotNetTargetFramework)-windows`; the JSON readers use .NET 11's generic `GetTypeInfo<T>()` (CA2263). Verify: `git grep -n "net10" -- ':!openspec/changes/archive'` is empty and `dotnet build Navpaky.slnx -c Release -warnaserror` passes on SDK 11.0.100.
+- [x] 1.1 Add `DotNetTargetFramework` = `net11.0` to `Directory.Build.props`; every `*.csproj` takes `$(DotNetTargetFramework)` or `$(DotNetTargetFramework)-windows`; the JSON readers use .NET 11's generic `GetTypeInfo<T>()` (CA2263). Verify: `git grep -n "net10" -- '*.csproj' '*.props' '*.cs' 'docs/manual-tests'` is empty and `dotnet build Navpaky.slnx -c Release -warnaserror` passes on SDK 11.0.100.
 - [x] 1.2 `Checks.AppPath` takes the framework folder from the tool's own output folder; manual-test docs name `net11.0-windows`. Verify: the build of `tools/Navpaky.DesktopChecks` passes; the path is exercised by the desktop sets in 4.1.
 
 ## 2. Input clock (design D3)
