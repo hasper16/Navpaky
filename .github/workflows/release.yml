@@ -87,7 +87,7 @@ jobs:
           $pack = @(
             'pack', '--packId', 'navpaky-app', '--packVersion', $env:VERSION,
             '--packDir', 'publish', '--mainExe', 'Navpaky.App.exe', '--packTitle', 'Navpaky',
-            '--packAuthors', 'Navpaky', '--icon', 'src/Navpaky.App/Navpaky.ico',
+            '--packAuthors', 'Pavlo Yeremenko', '--icon', 'src/Navpaky.App/Navpaky.ico',
             '--runtime', 'win-x64',
             '--delta', 'None', '--exclude', '\.(pdb|xml)$', '--outputDir', 'releases')
           # A dry run never signs, even if a secret of that name exists outside the environment.

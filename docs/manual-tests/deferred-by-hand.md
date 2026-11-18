@@ -222,7 +222,7 @@ Written against the head of PR #41. The interface has English and Ukrainian only
 Written against the head of the `rename-to-navpaky` PR. Uninstall any test install of the old Rekey (`%LOCALAPPDATA%\key-switcher`) first and turn off its "Rekey" entry under Task Manager → Startup apps if one is left. Build packages as `docs/release.md` describes ("Local test build").
 
 - [ ] **Install under the new name (1.1, 1.2).** Run `navpaky-app-win-Setup.exe`.
-  Expected: the installer and Settings → Apps → Installed apps say "Navpaky" (publisher Navpaky); the Start menu entry reads "Navpaky"; files are under `%LOCALAPPDATA%\navpaky-app`; settings appear under `%APPDATA%\Navpaky` and statistics under `%LOCALAPPDATA%\Navpaky` after the first change; the tray tooltip, About page and welcome window say Navpaky in English and in Ukrainian.
+  Expected: the installer and Settings → Apps → Installed apps say "Navpaky" (publisher Pavlo Yeremenko); the Start menu entry reads "Navpaky"; files are under `%LOCALAPPDATA%\navpaky-app`; settings appear under `%APPDATA%\Navpaky` and statistics under `%LOCALAPPDATA%\Navpaky` after the first change; the tray tooltip, About page and welcome window say Navpaky in English and in Ukrainian.
 - [ ] **Start at sign-in and single instance (1.1).** Turn on "Start Navpaky when I sign in to Windows", then start `Navpaky.App.exe` a second time.
   Expected: Task Manager → Startup apps lists Navpaky; the second start exits and one tray icon remains.
 - [ ] **Uninstall keeps data apart (1.1).** Uninstall and answer No to deleting data.

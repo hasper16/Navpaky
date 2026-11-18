@@ -51,7 +51,7 @@ For the by-hand checks in `docs/manual-tests/deferred-by-hand.md`. Install the p
 2. Publish and pack a Debug build into one feed folder (here `%USERPROFILE%\NavpakyFeed`: any folder your account can write works, but not the `C:\` root, which a standard user cannot write), signing with the test certificate. Delete the `publish` folder before each version, so the second pack holds no files of the first:
    ```powershell
    dotnet publish src/Navpaky.App -c Debug -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=0.1.0 -o publish
-   .tools\vpk pack --packId navpaky-app --packVersion 0.1.0 --packDir publish --mainExe Navpaky.App.exe --packTitle Navpaky --packAuthors Navpaky --icon src\Navpaky.App\Navpaky.ico --runtime win-x64 --delta None --outputDir $env:USERPROFILE\NavpakyFeed --signParams "/fd sha256 /sha1 <leaf thumbprint>"
+   .tools\vpk pack --packId navpaky-app --packVersion 0.1.0 --packDir publish --mainExe Navpaky.App.exe --packTitle Navpaky --packAuthors 'Pavlo Yeremenko' --icon src\Navpaky.App\Navpaky.ico --runtime win-x64 --delta None --outputDir $env:USERPROFILE\NavpakyFeed --signParams "/fd sha256 /sha1 <leaf thumbprint>"
    ```
    Repeat with `0.2.0` for an update.
 3. Install with `%USERPROFILE%\NavpakyFeed\navpaky-app-win-Setup.exe` from the 0.1.0 pack: packing 0.2.0 replaces it, so first copy it out, for example to `%USERPROFILE%\NavpakySetup-0.1.0.exe`. To check updates, quit Navpaky and start `%LOCALAPPDATA%\navpaky-app\current\Navpaky.App.exe --update-feed %USERPROFILE%\NavpakyFeed --update-pin "CN=Navpaky Test Publisher" <CA thumbprint>`.

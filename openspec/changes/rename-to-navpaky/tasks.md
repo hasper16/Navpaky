@@ -3,7 +3,7 @@
 ## 1. Product identities (data shape first)
 
 - [x] 1.1 Change the identity tests first so they fail: data folders lie outside the install root (`DataFolderTests`), mutex `Local\Navpaky-<SID>` (`SingleInstanceGuard`), Run value `Navpaky` (`SignInLaunchTests`), setup `navpaky-app-win-Setup.exe` (`InstallSourceTests`), export file `navpaky-diagnostics-*.txt`, crash type `Navpaky.Freeze.*`, tray tooltip texts. Then set `Product.Name`, `DataFolder`, `SingleInstanceGuard`, `SignInLaunch`, `InstallSource.SetupName`, `ExportViewModel`, `CrashReports` to the new names. Verify: `dotnet test` on `Rekey.App.Tests` and `Rekey.Win32.Tests` passes.
-- [x] 1.2 Release workflow and docs: `--packId navpaky-app`, `--packTitle Navpaky`, `--packAuthors Navpaky`, `--releaseName "Navpaky <version>"`, `--mainExe Navpaky.App.exe`; `VelopackUpdates.Repository` unchanged. Verify: `git grep -n "key-switcher"` lists only the repository URL and its references.
+- [x] 1.2 Release workflow and docs: `--packId navpaky-app`, `--packTitle Navpaky`, `--packAuthors "Pavlo Yeremenko"` (the publisher Installed apps shows), `--releaseName "Navpaky <version>"`, `--mainExe Navpaky.App.exe`; `VelopackUpdates.Repository` unchanged. Verify: `git grep -n "key-switcher"` lists only the repository URL and its references.
 
 ## 2. Internal names
 
