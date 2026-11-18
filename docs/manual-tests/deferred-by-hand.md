@@ -18,9 +18,9 @@ The steps change the Hotkey in `%LOCALAPPDATA%\Rekey\settings.json` while Rekey 
 - [x] **Double tap of Shift (1.2, 2.1).** Start Rekey with `"autoCorrectionEnabled": false` and `"hotkey": "doubleShift"`. In Notepad type "ghbdtn" and tap Shift twice quickly. Switch back to English (US), press Enter for a new line, then type "Ghbdtn" holding Shift for the capital and tap Shift once.
   Expected: the first Word becomes "привет" and the Layout Russian; the second is left as typed (the Shift held for "G" does not count as a tap).
   Observed:
-- [ ] **Win+Space with the physical keys (1.4).** Quit Rekey, set `"hotkey": "winSpace"`, start Rekey. In Notepad, in English (US), type "ghbdtn" and press Win+Space; then on a new empty line press Win+Space once more; then press Win alone.
+- [x] **Win+Space with the physical keys (1.4).** Quit Rekey, set `"hotkey": "winSpace"`, start Rekey. In Notepad, in English (US), type "ghbdtn" and press Win+Space; then on a new empty line press Win+Space once more; then press Win alone.
   Expected: "ghbdtn" becomes "привет" and the Layout is Russian, with no Windows layout pop-up switching a second time and no Start menu; on the empty line the Layout becomes the one after Russian in Windows' order (English (US) when only those two are installed) and Start stays closed; Win alone opens Start as usual.
-  Observed: Finding (task 2.1): on an empty line after Russian, Win+Space switched to Ukrainian instead of English (US). Layouts installed: English (US); Ukrainian with Ukrainian (Enhanced) and Russian keyboards. Rekey follows the load order of the layout handles, not the user's language list that Windows uses. The other steps passed.
+  Observed: Finding (task 2.1): on an empty line after Russian, Win+Space switched to Ukrainian instead of English (US). Layouts installed: English (US); Ukrainian with Ukrainian (Enhanced) and Russian keyboards. Rekey follows the load order of the layout handles, not the user's language list that Windows uses. The other steps passed. Re-run on 359c730 (task 2.1): pass, Win+Space after Russian goes to English (US).
 - [x] **Selection a control does not expose (3.2).** Quit Rekey, set `"hotkey": "doubleShift"`, start Rekey. Open the Run dialog (Win+R), switch to English (US), type "ghbdtn", select it with Shift+Home and tap Shift twice.
   Expected: if the field exposes its selection, it becomes "привет"; if it does not, the text stays "ghbdtn" and only the Layout switches. Report which happened.
   Observed: The Run field does not expose its selection: only the Layout switched.
@@ -63,20 +63,20 @@ Written against the head of the `add-tray-and-settings-ui` PR. The automated `tr
 - [x] **Sensitivity (3.2).** In Correction, pick Cautious and type a short wrong-layout Word such as "yt" + Space in Notepad; pick Aggressive and type it again.
   Expected: the change applies to the next Word without restarting Rekey (report what each setting did).
   Observed:
-- [ ] **Hotkey page (3.3).** Pick Win+Space, then record Win+Space with "My own combination", then record Ctrl+Alt+Space.
+- [x] **Hotkey page (3.3).** Pick Win+Space, then record Win+Space with "My own combination", then record Ctrl+Alt+Space.
   Expected: Win+Space shows the warning that it takes over the Windows layout shortcut and keeps the previous Hotkey until "Use it anyway"; "Pick another" keeps the previous one; Ctrl+Alt+Space becomes the Hotkey at once and works in Notepad.
-  Observed: Finding (task 2.3): "My own combination" does not record Ctrl+Alt+Space and keeps the previous combination, shown as "Ctrl+Shift+0x6B" (a raw key code instead of a key name). The Win+Space warning, "Use it anyway" and "Pick another" pass.
+  Observed: Finding (task 2.3): "My own combination" does not record Ctrl+Alt+Space and keeps the previous combination, shown as "Ctrl+Shift+0x6B" (a raw key code instead of a key name). The Win+Space warning, "Use it anyway" and "Pick another" pass. Re-run on 4d98b6c (task 2.3): pass, Ctrl+Alt+Space records (another app had it as a global hotkey; Rekey now takes it from its keyboard hook) and the conflict warning shows.
 - [x] **Apps and words (3.4).** Add Windows Terminal with "Add a running app", add a program with "Choose a program…", remove both. Add and remove a Protected Word and a Learned Word (with a language).
   Expected: added apps show their name and icon and Rekey stays off in them; removed ones correct again; added words appear at once and change the next Word as the word-learning spec says; removed ones disappear; `words.json` matches after Rekey quits.
   Observed: Passes with "Add a running app". Finding (task 2.4): a program chosen with "Choose a program…" as C:\Windows\notepad.exe does not exclude Notepad: on Windows 11 that file starts the Store Notepad, whose path differs.
-- [ ] **Accessibility (3.5).** Fill in [settings-accessibility.md](settings-accessibility.md).
-  Observed: Finding (task 2.5): with the Ukrainian interface Narrator reads "////" for each Settings section (icon glyphs). The other Narrator rows wait for the re-check after task 2.10.
-- [ ] **Indicator in real apps (4.1).** Type "ghbdtn" + Space in Notepad, then in VS Code, then in a browser text box.
+- [x] **Accessibility (3.5).** Fill in [settings-accessibility.md](settings-accessibility.md).
+  Observed: Finding (task 2.5): with the Ukrainian interface Narrator reads "////" for each Settings section (icon glyphs). The other Narrator rows wait for the re-check after task 2.10. Re-run on b50d5bb (tasks 2.5, 2.10): every Settings control has its name and no icon glyph reaches Narrator (SettingsAutomationTests); with the English interface Narrator reads names correctly. Narrator cannot speak Ukrainian on this PC: only an English voice is installed and Windows ships no Ukrainian one, so the Ukrainian names and Narrator's own Ukrainian position text ("Елемент 2 з 6") come out garbled. Environment limit.
+- [x] **Indicator in real apps (4.1).** Type "ghbdtn" + Space in Notepad, then in VS Code, then in a browser text box.
   Expected: in Notepad the badge appears just below the caret; in VS Code and the browser (no system caret) it appears next to the mouse pointer; typing goes on without a pause or lost key; with "Show animations in Windows" off the badge disappears without fading.
-  Observed: Finding (task 2.6): the badge sits in an opaque box of about 460x320 px (light or dark grey) in every app. Placement: under the caret in Notepad and the browser, next to the pointer in VS Code. No pause, no lost keys, no fade with animations off.
-- [ ] **Sounds (4.2).** In General, preview each of the three sounds, turn the sound on and correct a Word, then press Ctrl+Z.
+  Observed: Finding (task 2.6): the badge sits in an opaque box of about 460x320 px (light or dark grey) in every app. Placement: under the caret in Notepad and the browser, next to the pointer in VS Code. No pause, no lost keys, no fade with animations off. Re-run on 438164f (task 2.6): pass, small badge at the Notepad caret, next to the pointer in Firefox (no system caret there).
+- [x] **Sounds (4.2).** In General, preview each of the three sounds, turn the sound on and correct a Word, then press Ctrl+Z.
   Expected: each preview plays its own sound; one sound per Correction, none for the Undo.
-  Observed: Finding (task 2.7): Preview plays only every second or third press, and only the bell sound is ever heard; the other two are silent on Preview. One sound per Correction, none on Undo: pass.
+  Observed: Finding (task 2.7): Preview plays only every second or third press, and only the bell sound is ever heard; the other two are silent on Preview. One sound per Correction, none on Undo: pass. Deferred (owner decision 2026-11-18): plays on the Realtek speakers; on the LG monitor's DisplayPort audio sounds are still dropped at random after four attempts (design, Known limitations).
 - [x] **Launch at sign-in (4.3).** Turn on "Start Rekey when I sign in to Windows", sign out and sign in. Then turn Rekey off under Task Manager → Startup apps and open Settings.
   Expected: Rekey is running with its tray icon after sign-in; after the Task Manager change the switch shows off; turning it on again starts Rekey at the next sign-in.
   Observed:
@@ -144,9 +144,9 @@ Written against the head of the `add-auto-update-and-installer` PR. Unit tests c
 
 Written against the head of the `add-onboarding` PR. Unit tests cover when the welcome opens, the first-start sign-in default, the choices, the Layout notice, the one-time tip and the location classifier; the automated `onboarding` set covers the welcome opening at first start, the try-it Correction and its confirmation, and reopening from the tray. These steps need eyes, a physical keyboard or an installed build. Use a Debug build of `src/Rekey.App` with English (US) and Russian installed unless a step says otherwise. To see the first start again, quit Rekey and delete `%LOCALAPPDATA%\Rekey\settings.json`. The location steps need a Release build published as one file, as the Release workflow does: `dotnet publish src/Rekey.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o <folder>` (a multi-file publish cannot run from inside a ZIP: Explorer extracts only the exe). Since add-final-acceptance the tray item is named "Getting started with Rekey" ("Знайомство з Rekey").
 
-- [ ] **Look and keyboard (2.1).** At a first start, look at the welcome window in light mode, then switch Windows to dark mode (Settings → Personalization → Colors) with the window open. Then use only the keyboard: Tab through every control and press Space or Enter on each.
+- [x] **Look and keyboard (2.1).** At a first start, look at the welcome window in light mode, then switch Windows to dark mode (Settings → Personalization → Colors) with the window open. Then use only the keyboard: Tab through every control and press Space or Enter on each.
   Expected: keycap, description, Undo hint, privacy statement, try-it field, Auto Correction and sign-in switches, Hotkey choice, tray tip and Done read well in both modes and follow the switch at once; every control is reachable in reading order with a visible focus mark; Enter or Space on a focused Done closes the window, while Enter in the try-it field does not; Narrator reads the try-it hint with the field.
-  Observed: Finding (task 2.10): themes, Tab order and Enter pass; with the Ukrainian interface Narrator reads only the English words and skips Cyrillic.
+  Observed: Finding (task 2.10): themes, Tab order and Enter pass; with the Ukrainian interface Narrator reads only the English words and skips Cyrillic. Re-run on b50d5bb (task 2.10): window languages follow the interface (test); Narrator cannot speak Ukrainian on this PC, no Ukrainian voice. Environment limit.
 - [x] **Try it with the physical keyboard (2.2).** At a first start, with English (US) active, type "ghbdtn" and Space in the try-it field.
   Expected: the field shows "привет ", the Layout is Russian and the green confirmation appears; no "Rekey corrected a word" notification follows.
   Observed:
@@ -168,9 +168,9 @@ Written against the head of the `add-onboarding` PR. Unit tests cover when the w
 - [x] **Run from Downloads and from the installed location (3.1).** Copy the publish folder to your Downloads folder and start it there; then install Rekey with its setup and start the installed one.
   Expected: the Downloads copy shows the warning; the installed Rekey shows none.
   Observed:
-- [ ] **Release build moved while running (3.2).** Start the Release build from a folder of its own, then rename `Rekey.App.exe` in Explorer (Windows does not let a folder be renamed while an exe in it runs).
+- [x] **Release build moved while running (3.2).** Start the Release build from a folder of its own, then rename `Rekey.App.exe` in Explorer (Windows does not let a folder be renamed while an exe in it runs).
   Expected: within a minute "Rekey's files were moved or deleted" explains that Rekey will not start again and offers Install; Rekey keeps correcting until you quit it.
-  Observed: Finding (task 2.14): Windows does not let a folder be renamed while the exe in it runs; renaming the exe file instead showed the notice with Install and Close.
+  Observed: Finding (task 2.14): Windows does not let a folder be renamed while the exe in it runs; renaming the exe file instead showed the notice with Install and Close. Passes with the step as now written (rename the exe), on 1955903.
 
 ## add-telemetry
 
@@ -196,9 +196,9 @@ Written against the head of PR #41. The interface has English and Ukrainian only
 - [x] **Native-speaker review (3.1).** A native Ukrainian speaker reads every string of `src/Rekey.App/Strings.uk.resx` in place: the tray tooltip and menu, each settings page, statistics, export, welcome, the correction tip, the location and moved notices, and the uninstall questions.
   Expected: wording is natural and consistent (one term per concept, such as "розкладка", "виправлення", "гаряча клавіша"); nothing reads as machine translation.
   Observed: Passes except the tray item "Вітання та налаштування", which reads like the Settings item: rename (task 2.8).
-- [ ] **Layouts in Ukrainian (3.1).** With the interface in Ukrainian, open every window and settings page at 100 % and 150 % scaling.
+- [x] **Layouts in Ukrainian (3.1).** With the interface in Ukrainian, open every window and settings page at 100 % and 150 % scaling.
   Expected: no text is cut off, overlaps or forces a horizontal scroll bar; buttons fit their labels.
-  Observed: Finding (task 2.8): the Settings section list cuts "Діагностика та конфіденційність" and shows a horizontal scroll bar; everything else fits at 100 % and 150 %.
+  Observed: Finding (task 2.8): the Settings section list cuts "Діагностика та конфіденційність" and shows a horizontal scroll bar; everything else fits at 100 % and 150 %. Re-run on 359c730 (task 2.8): pass, the section list fits its longest name with no scroll bar.
 - [x] **Default language (1.1).** Start Rekey with `"uiLanguage"` absent from `settings.json` on Windows with the display language Ukrainian, then Russian, then German (or English).
   Expected: Ukrainian, Ukrainian, English.
   Observed: Not run (owner decision): unit tests cover the mapping, and "Як у Windows" gave Ukrainian in Live switching.
@@ -211,6 +211,6 @@ Written against the head of PR #41. The interface has English and Ukrainian only
 - [x] **Uninstall questions (installer prompts).** Uninstall Rekey on Ukrainian or Russian Windows.
   Expected: the questions about deleting data are in Ukrainian. They follow the Windows display language, not the setting picked in Rekey (uninstall does not read settings).
   Observed: Note (task 2.12): the "removal complete" box appears together with the keep-data question; the question should come first.
-- [ ] **Screen reader.** With Narrator, move through the language combo box and the settings section list in both languages.
+- [x] **Screen reader.** With Narrator, move through the language combo box and the settings section list in both languages.
   Expected: each entry is read by its text in the current language, not by a type name.
-  Observed: Moved to the re-check after task 2.10.
+  Observed: Moved to the re-check after task 2.10. Re-run on b50d5bb: closed as the same environment limit as Accessibility (no Ukrainian Narrator voice).
