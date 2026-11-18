@@ -27,11 +27,11 @@ For each finding: when the spec is wrong, revise it with `/opsx:update` first; t
 
 ## 3. Re-check and close
 
-- [ ] 3.1 Owner re-runs by hand the items touched by group 2 on the new head; verify each is ticked with that SHA noted (done 2026-11-18 except: Run from inside a ZIP with the single-file publish, and the uninstall order on 0.3.2/b50d5bb; Email sign-up and Show what was sent wait for a telemetry test backend; Narrator in Ukrainian closed as an environment limit, no Ukrainian voice on the owner's PC)
+- [x] 3.1 Owner re-runs by hand the items touched by group 2 on the new head; verify each is ticked with that SHA noted (done 2026-11-18, last on 0.3.2 = b50d5bb; deferred by the owner: sounds on monitor audio, the Undo tip in Do Not Disturb, and Email sign-up and Show what was sent until a telemetry test backend exists; Narrator in Ukrainian closed as an environment limit)
 - [x] 3.2 Tick the deferred by-hand tasks of the archived changes, each with a pointer to the run in `deferred-by-hand.md`; verify no by-hand task in `openspec/changes/archive/*/tasks.md` is left unticked (each was ticked by its change with a note that the by-hand part was deferred to `deferred-by-hand.md`, which now records this run; no unticked task remains)
 
 ## Workflow follow-up
 
-- Deferred by the owner (2026-11-18), own task later: switch sounds still dropped at random on DisplayPort/HDMI monitor audio (2.7; tried pinned memory, a lead-in, a silence loop, one open waveOut stream), and the Undo tip lost in Windows 11 Do Not Disturb (2.11; tried a notification-state gate, ignoring quiet time, counting it shown on NIN_BALLOONSHOW). See design, Known limitations.
+- Deferred by the owner (2026-11-18), own task later: switch sounds still dropped at random on DisplayPort/HDMI monitor audio (2.7; tried pinned memory, a lead-in, a silence loop, one open waveOut stream), and the Undo tip lost in Windows 11 Do Not Disturb (2.11; tried a notification-state gate, ignoring quiet time, counting it shown on NIN_BALLOONSHOW). Email sign-up and Show what was sent (telemetry, 4.1 and 3.3 of add-telemetry) wait for the first telemetry test backend. See design, Known limitations.
 
 - Archive the change after its PR is merged; if group 2 added delta specs, the archive syncs them to `openspec/specs/`.

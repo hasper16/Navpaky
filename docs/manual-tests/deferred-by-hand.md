@@ -162,9 +162,9 @@ Written against the head of the `add-onboarding` PR. Unit tests cover when the w
 - [x] **Closing without changes (spec: launch at sign-in default).** At a first start close the welcome window with its X without changing anything; open Task Manager → Startup apps.
   Expected: Rekey is listed and enabled; the welcome does not open at the next start.
   Observed:
-- [ ] **Run from inside a ZIP (3.1).** Zip the Release publish folder, open the ZIP in Explorer and double-click `Rekey.App.exe` inside it (choose Run if Explorer asks). Choose Install.
+- [x] **Run from inside a ZIP (3.1).** Zip the Release publish folder, open the ZIP in Explorer and double-click `Rekey.App.exe` inside it (choose Run if Explorer asks). Choose Install.
   Expected: a "Rekey is not installed" message says this copy stops working when removed and offers Install and Not now; Install opens the latest release page in the browser (no setup in the ZIP). Repeat with `key-switcher-win-Setup.exe` placed next to `Rekey.App.exe` in the ZIP: Install starts that setup.
-  Observed: Finding (task 2.14): the ZIP held a plain multi-file publish; Explorer extracts only the exe, which fails at once (Rekey.App.dll missing), so no warning can show. Release builds publish a single file; the step now does the same.
+  Observed: Finding (task 2.14): the ZIP held a plain multi-file publish; Explorer extracts only the exe, which fails at once (Rekey.App.dll missing), so no warning can show. Release builds publish a single file; the step now does the same. Re-run on 0.3.1 (2c31514; this path unchanged since) with a single-file publish: pass, the "not installed" message with Install and Not now.
 - [x] **Run from Downloads and from the installed location (3.1).** Copy the publish folder to your Downloads folder and start it there; then install Rekey with its setup and start the installed one.
   Expected: the Downloads copy shows the warning; the installed Rekey shows none.
   Observed:
@@ -182,12 +182,12 @@ Written against the head of PR #39. Precondition for the network checks: set the
 - [x] **Settings toggles (4.2).** Open Settings → Diagnostics and privacy.
   Expected: "Send crash and freeze reports" and "Send daily usage counts" switch independently, the note under them states what reports carry, and the page reads well in light and dark themes and with Narrator.
   Observed: Visual only (no test backend).
-- [ ] **Email sign-up (3.3).** With the proxy running, enter an invented address, tick "Tell me about new versions" and press Sign up.
+- [x] **Email sign-up (3.3).** With the proxy running, enter an invented address, tick "Tell me about new versions" and press Sign up.
   Expected: exactly one request to the sign-up endpoint with that address and purpose; the field empties and the thanks message shows; `sent.jsonl` in the data folder does not contain the address.
-  Observed: Not run: no telemetry test backend.
-- [ ] **Show what was sent (4.1).** With usage counts on, wait for the daily digest (or set the delay low in a debug build), then expand "Show what was sent".
+  Observed: Not run: no telemetry test backend. Deferred (owner decision 2026-11-18) to the first telemetry test backend: none exists yet.
+- [x] **Show what was sent (4.1).** With usage counts on, wait for the daily digest (or set the delay low in a debug build), then expand "Show what was sent".
   Expected: the last entry equals, byte for byte, the request body the proxy captured.
-  Observed: Not run: no telemetry test backend.
+  Observed: Not run: no telemetry test backend. Deferred (owner decision 2026-11-18) to the first telemetry test backend: none exists yet.
 
 ## add-ui-localization
 
@@ -210,7 +210,7 @@ Written against the head of PR #41. The interface has English and Ukrainian only
   Observed:
 - [x] **Uninstall questions (installer prompts).** Uninstall Rekey on Ukrainian or Russian Windows.
   Expected: the questions about deleting data are in Ukrainian. They follow the Windows display language, not the setting picked in Rekey (uninstall does not read settings).
-  Observed: Note (task 2.12): the "removal complete" box appears together with the keep-data question; the question should come first.
+  Observed: Note (task 2.12): the "removal complete" box appears together with the keep-data question; the question should come first. Re-run on 0.3.2 (b50d5bb, task 2.12): pass, Velopack's progress box stays during the open question and "removal complete" shows only after the wait; after No and a reinstall the settings were kept.
 - [x] **Screen reader.** With Narrator, move through the language combo box and the settings section list in both languages.
   Expected: each entry is read by its text in the current language, not by a type name.
   Observed: Moved to the re-check after task 2.10. Re-run on b50d5bb: closed as the same environment limit as Accessibility (no Ukrainian Narrator voice).
