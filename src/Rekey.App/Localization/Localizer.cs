@@ -55,6 +55,19 @@ namespace Rekey.App.Localization {
       });
     }
 
+    // Every window takes the interface language when it loads. Once per process, before any window
+    // opens.
+    public static void BindEveryWindow() {
+      EventManager.RegisterClassHandler(
+          typeof(Window),
+          FrameworkElement.LoadedEvent,
+          new RoutedEventHandler((window, _) => {
+            if (!BindingOperations.IsDataBound((Window)window, FrameworkElement.LanguageProperty)) {
+              BindLanguage((Window)window);
+            }
+          }));
+    }
+
     public void Use(CultureInfo culture) {
       if (Equals(culture, Culture)) {
         return;

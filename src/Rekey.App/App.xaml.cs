@@ -136,6 +136,7 @@ namespace Rekey.App {
 
       _incidents = new QueuedIncidentLog(new IncidentLog(_dataFolder), ReportIncidentNotSaved);
       ApplicationThemeManager.ApplySystemTheme();
+      IconText.HideFromScreenReaders();
 
       // Windows holds the truth about starting at sign-in: Task Manager can change it.
       _launchAtSignIn = _signIn.IsOn();
