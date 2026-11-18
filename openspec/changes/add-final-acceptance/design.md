@@ -34,6 +34,10 @@ See proposal.md for why. Each earlier change ticks its tasks on automated eviden
 - **Single-file in the ZIP step (2.14).** The Release workflow already publishes one self-contained file; the by-hand step published a multi-file folder, which cannot run from a ZIP. Only the step changes; the onboarding spec stays.
 - **Analysis-log write (2.9).** The worker hands analysis lines to a dedicated writer thread through a queue; the writer owns the file. Turning the log off waits for the queue to drain before deleting.
 
+## Known limitations (owner decision 2026-11-18: deferred to a later task)
+
+- **Switch sounds on monitor audio (2.7).** On the owner's LG monitor (Display Audio over DisplayPort) sounds are still dropped at random, for Corrections and Preview; the Realtek speakers play every sound. Tried: playing from pinned memory, a 300 ms silent lead-in, a PlaySound silence loop while typing, and one open waveOut stream fed with silence (current behaviour, head 2c31514).
+- **Undo tip in Do Not Disturb (2.11).** With Do Not Disturb on, the tip does not appear and is not kept in the notification centre. Tried: gating on `SHQueryUserNotificationState` (does not see Windows 11 Do Not Disturb), sending without "respect quiet time" (still dropped), and counting the tip as shown only on NIN_BALLOONSHOW (current behaviour, head 2c31514).
 ## Risks / Trade-offs
 
 - [Late discovery: a by-hand failure may come from an early change and ripple into later ones] → Fixes go spec first and the full automated suite runs on every fix commit; items touched by a fix are re-run by hand.

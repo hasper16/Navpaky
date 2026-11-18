@@ -32,4 +32,6 @@ For each finding: when the spec is wrong, revise it with `/opsx:update` first; t
 
 ## Workflow follow-up
 
+- Deferred by the owner (2026-11-18), own task later: switch sounds still dropped at random on DisplayPort/HDMI monitor audio (2.7; tried pinned memory, a lead-in, a silence loop, one open waveOut stream), and the Undo tip lost in Windows 11 Do Not Disturb (2.11; tried a notification-state gate, ignoring quiet time, counting it shown on NIN_BALLOONSHOW). See design, Known limitations.
+
 - Archive the change after its PR is merged; if group 2 added delta specs, the archive syncs them to `openspec/specs/`.
