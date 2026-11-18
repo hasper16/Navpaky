@@ -94,6 +94,15 @@ namespace Rekey.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rekey is already running. To start it with these options, quit it from the tray first..
+        /// </summary>
+        public static string AlreadyRunning {
+            get {
+                return ResourceManager.GetString("AlreadyRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Keep a word-analysis log for troubleshooting.
         /// </summary>
         public static string AnalysisLogEnabled {
@@ -652,7 +661,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Welcome and setup.
+        ///   Looks up a localized string similar to Getting started with {0}.
         /// </summary>
         public static string MenuWelcome {
             get {
@@ -1039,11 +1048,20 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Don&apos;t correct after I switch layout myself.
+        ///   Looks up a localized string similar to Skip the word I start right after switching layout myself.
         /// </summary>
         public static string SkipAfterManualSwitch {
             get {
                 return ResourceManager.GetString("SkipAfterManualSwitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey leaves the next word alone when you start it within 2 seconds of your own layout switch..
+        /// </summary>
+        public static string SkipAfterManualSwitchHint {
+            get {
+                return ResourceManager.GetString("SkipAfterManualSwitchHint", resourceCulture);
             }
         }
         
@@ -1422,6 +1440,15 @@ namespace Rekey.App {
         public static string UiLanguageUkrainian {
             get {
                 return ResourceManager.GetString("UiLanguageUkrainian", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rekey was installed again, so its settings and word lists were kept..
+        /// </summary>
+        public static string UninstallDataKept {
+            get {
+                return ResourceManager.GetString("UninstallDataKept", resourceCulture);
             }
         }
         

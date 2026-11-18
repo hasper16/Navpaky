@@ -138,6 +138,30 @@ namespace Rekey.Win32.Tests.Keyboard {
       Assert.Equal(0, _gate.Timeouts);
     }
 
+    // Fix 2.2 of add-final-acceptance: keys wait for a replacement typed in parts.
+    [Fact]
+    public void WorkerProgressKeepsTheHoldPast150Milliseconds() {
+      Letter();
+      Space();
+      _tick += 100;
+      _gate.NoteProgress(_tick);
+      _tick += 100;
+
+      Assert.Equal(Holding.Held, Letter());
+      Assert.Equal(0, _gate.Timeouts);
+    }
+
+    [Fact]
+    public void ValveOpens150MillisecondsAfterTheLastProgress() {
+      Letter();
+      Space();
+      _gate.NoteProgress(_tick + 100);
+      _tick += 251;
+
+      Assert.Equal(Holding.None, Letter());
+      Assert.Equal(1, _gate.Timeouts);
+    }
+
     [Fact]
     public void FullRingNeverHolds() {
       Letter();

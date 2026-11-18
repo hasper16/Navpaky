@@ -54,8 +54,10 @@
                   IsChecked="{Binding TriggerOnTab}" />
       </StackPanel>
       <ui:ToggleSwitch Content="{l:Loc SkipAfterManualSwitch}"
-                       IsChecked="{Binding SkipAfterManualLayoutSwitch}"
-                       Margin="0,0,0,16" />
+                       IsChecked="{Binding SkipAfterManualLayoutSwitch}" />
+      <TextBlock Text="{l:Loc SkipAfterManualSwitchHint}"
+                 Style="{StaticResource HintText}"
+                 Margin="0,4,0,16" />
       <ui:ToggleSwitch Content="{l:Loc VerifiedReplacement}"
                        IsChecked="{Binding VerifiedReplacement}" />
       <TextBlock Text="{l:Loc VerifiedReplacementHint}"

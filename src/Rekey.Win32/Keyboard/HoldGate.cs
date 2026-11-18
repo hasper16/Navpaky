@@ -6,18 +6,19 @@ namespace Rekey.Win32.Keyboard {
   /// text before them (design D1 and D4).
   /// </summary>
   /// <remarks>
-  /// <see cref="Judge" /> runs on the hook thread only and owns every field but three: the
-  /// worker alone writes the released sequence, the armed Undo and the policy. Nothing
-  /// allocates or locks.
+  /// <see cref="Judge" /> runs on the hook thread only and owns every field but four: the
+  /// worker alone writes the released sequence, the armed Undo, the policy and its progress.
+  /// Nothing allocates or locks.
   /// </remarks>
   internal sealed class HoldGate {
-    // Design D1: typing is never held back longer than this.
+    // Design D1: typing is never held back longer than this after the worker's last progress.
     private const long _valveMilliseconds = 150;
     private const long _nothing = -1;
 
     // Written by the worker only.
     private long _released = _nothing;
     private long _undoArmed = _nothing;
+    private long _progress = _nothing;
     private HookPolicy _policy = HookPolicy.HoldNothing;
     private HotkeyDetector? _hotkey;
 
@@ -92,6 +93,15 @@ namespace Rekey.Win32.Keyboard {
     /// </summary>
     public void Release(long sequence) {
       Volatile.Write(ref _released, sequence);
+    }
+
+    /// <summary>
+    /// Records that the worker is still typing a replacement at a tick, so held keys keep waiting
+    /// for it; called by the worker only.
+    /// </summary>
+    /// <param name="tick">The milliseconds since system start.</param>
+    public void NoteProgress(long tick) {
+      Volatile.Write(ref _progress, tick);
     }
 
     /// <summary>
@@ -195,13 +205,14 @@ namespace Rekey.Win32.Keyboard {
     }
 
     // While held keys wait for the worker, every key waits behind them, so none overtakes
-    // another; the valve lets typing through once the worker is too slow.
+    // another; the valve lets typing through once the worker is too slow. A replacement typed in
+    // parts reports progress, so keys never land between its parts.
     private Holding ContinueHold(long tick, bool hasRoom) {
       if (_valveOpenFor == _lastHeld) {
         return Holding.None;
       }
 
-      if (tick - _holdStart > _valveMilliseconds) {
+      if (tick - Math.Max(_holdStart, Volatile.Read(ref _progress)) > _valveMilliseconds) {
         _valveOpenFor = _lastHeld;
         Volatile.Write(ref _timeouts, _timeouts + 1);
         return Holding.None;

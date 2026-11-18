@@ -92,7 +92,8 @@ namespace Rekey.App {
 
       string state = $"language={_tray.LanguageCode} corrections={_corrections} "
           + $"sounds={_sounds?.Played ?? 0} settings-opened={_settingsOpened} "
-          + $"indicator={_indicator?.IsShown ?? false} tips={_tips}";
+          + $"indicator={_indicator?.IsShown ?? false} "
+          + $"indicator-at-caret={_indicator?.LastAtCaret ?? false} tips={_tips}";
       WriteCheckFile(_uiStateFile, state);
     }
   }

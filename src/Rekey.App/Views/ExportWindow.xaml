@@ -28,16 +28,22 @@
       <CheckBox Content="{l:Loc ExportIncludeLog}"
                 IsChecked="{Binding IncludeAnalysisLog}" />
     </StackPanel>
-    <TextBox x:Name="PreviewBox"
-             Grid.Row="2"
-             Margin="24,0,24,8"
-             Text="{Binding Preview, Mode=OneWay}"
-             IsReadOnly="True"
-             FontFamily="Consolas"
-             TextWrapping="NoWrap"
-             VerticalScrollBarVisibility="Auto"
-             HorizontalScrollBarVisibility="Auto"
-             AutomationProperties.Name="{l:Loc ExportTitle}" />
+    <!-- The themed text box shows no horizontal scroll bar, so long lines were cut off: it
+         takes the text's full size and this viewer scrolls it. -->
+    <ScrollViewer Grid.Row="2"
+                  Margin="24,0,24,8"
+                  Focusable="False"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Auto">
+      <TextBox x:Name="PreviewBox"
+               Text="{Binding Preview, Mode=OneWay}"
+               IsReadOnly="True"
+               FontFamily="Consolas"
+               TextWrapping="NoWrap"
+               VerticalScrollBarVisibility="Disabled"
+               HorizontalScrollBarVisibility="Disabled"
+               AutomationProperties.Name="{l:Loc ExportTitle}" />
+    </ScrollViewer>
     <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="24,0,24,24">
       <ui:Button x:Name="SaveButton"
                  Content="{l:Loc ExportSave}"

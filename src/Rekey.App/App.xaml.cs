@@ -39,7 +39,7 @@ namespace Rekey.App {
       "CA1001:Types that own disposable fields should be disposable",
       Justification = "WPF ends the Application through OnExit, which disposes the fields.")]
   internal sealed partial class App {
-    private const string _restartedAfterFreeze = "--restarted-after-freeze";
+    private const string _restartedAfterFreeze = SecondLaunch.RestartedAfterFreeze;
 #if DEBUG
     private const string _checkFreeze = "--check-freeze";
     private const string _checkSelfPause = "--check-self-pause";
@@ -110,9 +110,13 @@ namespace Rekey.App {
     private UpdateScheduler? _updates;
     private ExecutableWatch? _executableWatch;
     private TelemetryHost? _telemetry;
+    private ChordRecorder? _chords;
 
     // The worker's Word counts as of the latest Trigger Key; only the worker thread writes it.
     private volatile StrongBox<WordCounts>? _wordCounts;
+
+    // When typing last kept the audio output awake; only the worker thread writes it.
+    private long _lastSoundWake;
 
     protected override void OnStartup(StartupEventArgs e) {
       base.OnStartup(e);
@@ -122,12 +126,17 @@ namespace Rekey.App {
       // tray.
       _guard = SingleInstanceGuard.TryAcquire(SingleInstanceGuard.NameForCurrentUser());
       if (_guard is null) {
+        if (SecondLaunch.Message(e.Args) is { } message) {
+          MessageBox.Show(message, Product.Name, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
         Shutdown();
         return;
       }
 
       _incidents = new QueuedIncidentLog(new IncidentLog(_dataFolder), ReportIncidentNotSaved);
       ApplicationThemeManager.ApplySystemTheme();
+      IconText.HideFromScreenReaders();
 
       // Windows holds the truth about starting at sign-in: Task Manager can change it.
       _launchAtSignIn = _signIn.IsOn();
@@ -137,7 +146,14 @@ namespace Rekey.App {
       _hub = new SettingsHub(
           loaded, _settingsStore.Save, TimeProvider.System, ReportSettingsNotSaved);
       UseUiLanguage(loaded.UiLanguage);
+      EventManager.RegisterClassHandler(
+          typeof(Window),
+          FrameworkElement.LoadedEvent,
+          new RoutedEventHandler((window, _) => Localizer.BindLanguage((Window)window)));
       _indicator = new CursorIndicator();
+#if DEBUG
+      _indicator.Placed += WriteUiState;
+#endif
       _sounds = new SwitchSoundPlayer();
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
       var trayIcon = (TaskbarIcon)FindResource("TrayIcon");
@@ -381,8 +397,12 @@ namespace Rekey.App {
 
       _worker.WordListsChanged += lists => Dispatcher.BeginInvoke(() => _words.Show(lists));
       _worker.SelfPauseChanged += until => Dispatcher.BeginInvoke(() => ShowSelfPause(until));
+      _chords = new ChordRecorder(on => _worker.RecordChords = on);
+      _worker.ChordPressed += (modifiers, key) =>
+          Dispatcher.BeginInvoke(() => _chords.Offer(modifiers, key));
       _worker.Observed += RememberWordCounts;
       _worker.Observed += FollowLayout;
+      _worker.Observed += KeepSoundAwake;
 
       // Where typing went is read when the Switch happens, before focus can move on.
       _worker.Switched += feedback => {
@@ -442,6 +462,22 @@ namespace Rekey.App {
     }
 
     // Runs on the worker thread after each input event.
+    // Runs on the worker thread for every input: typing keeps monitor audio awake for a
+    // Correction's sound, asked for at most once a second.
+    private void KeepSoundAwake(InputEvent inputEvent) {
+      long now = Environment.TickCount64;
+      if (inputEvent is not KeyDown { Kind: KeyKind.Character } || now - _lastSoundWake < 1000) {
+        return;
+      }
+
+      _lastSoundWake = now;
+      Dispatcher.BeginInvoke(() => {
+        if (_hub!.Current.PlaySwitchSound) {
+          _sounds?.KeepAwake();
+        }
+      });
+    }
+
     private void RememberWordCounts(InputEvent inputEvent) {
       if (inputEvent is KeyDown { Kind: KeyKind.Space or KeyKind.Enter or KeyKind.Tab }
           && _worker is { } worker) {
@@ -701,12 +737,16 @@ namespace Rekey.App {
       }
 
       if (CorrectionTip.IsDue(_hub!.Current, inTryIt)) {
-        _hub.Update(CorrectionTip.Shown);
-        _trayView?.Notify(Strings.CorrectionTipTitle, Strings.CorrectionTip);
-#if DEBUG
-        NoteTipForCheck();
-#endif
+        // Counted as shown only once Windows shows it; until then each Correction asks again.
+        _trayView?.Notify(Strings.CorrectionTipTitle, Strings.CorrectionTip, TipShown);
       }
+    }
+
+    private void TipShown() {
+      _hub!.Update(CorrectionTip.Shown);
+#if DEBUG
+      NoteTipForCheck();
+#endif
     }
 
     // One welcome window at a time: asking again brings it to the front.
@@ -718,7 +758,7 @@ namespace Rekey.App {
         bool dark = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
         _welcome = welcome;
         _welcomeWindow = new WelcomeWindow(
-            welcome, new HotkeyPage(hotkey), dark, OpenLanguageSettings);
+            welcome, new HotkeyPage(hotkey, _chords), dark, OpenLanguageSettings);
         _welcomeWindow.Closed += (_, _) => {
           welcome.Close();
           _telemetry?.OnWelcomeClosed(welcome.Progress);
@@ -777,7 +817,7 @@ namespace Rekey.App {
               new GeneralPage(settings, sound => _sounds!.Play(sound))),
           new("PageCorrection", SymbolRegular.TextGrammarCheckmark24,
               new CorrectionPage(settings)),
-          new("PageHotkey", SymbolRegular.Keyboard24, new HotkeyPage(hotkey)),
+          new("PageHotkey", SymbolRegular.Keyboard24, new HotkeyPage(hotkey, _chords)),
           new("PageAppsAndWords", SymbolRegular.AppsList24,
               new AppsAndWordsPage(apps, _words!)),
           new("PageDiagnostics", SymbolRegular.ShieldCheckmark24,

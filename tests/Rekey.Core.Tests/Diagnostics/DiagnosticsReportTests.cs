@@ -8,10 +8,15 @@ namespace Rekey.Core.Tests.Diagnostics {
   // Incidents, no typed text unless the user adds the word-analysis log, and masks personal
   // paths and names (design D5).
   public sealed class DiagnosticsReportTests {
+    private const string _analysisLine =
+        "2026-11-16 09:00:00.000\t04090409:ghbdtn\t04190419:привет\tCorrect";
+
+    // The same line as the export shows it.
+    private const string _exportedLine =
+        "2026-11-16 09:00:00.000  04090409:ghbdtn  04190419:привет  Correct";
+
     private static readonly DateTimeOffset _monday = new(2026, 11, 16, 9, 0, 0, TimeSpan.Zero);
     private static readonly PersonalNames _anna = new(@"C:\Users\anna", "anna", "ANNA-PC");
-    private static readonly string _analysisLine =
-        "2026-11-16 09:00:00.000\t04090409:ghbdtn\t04190419:привет\tCorrect";
 
     [Fact]
     public void ExportHoldsVersionsLayoutsSettingsCountersAndIncidents() {
@@ -38,7 +43,29 @@ namespace Rekey.Core.Tests.Diagnostics {
     public void IncludedWordAnalysisLogIsExported() {
       string report = DiagnosticsReport.Build(Facts(), _anna, includeAnalysisLog: true);
 
-      Assert.Contains(_analysisLine, report, StringComparison.Ordinal);
+      Assert.Contains(_exportedLine, report, StringComparison.Ordinal);
+    }
+
+    // Fix 2.9 of add-final-acceptance: tab-separated lines ran together in the preview.
+    [Fact]
+    public void WordAnalysisLinesShowInAlignedColumns() {
+      DiagnosticsFacts facts = Facts() with {
+        AnalysisLog = [
+            "2026-11-16 09:00:00.000\t04090409:ghbdtn\t04190419:привет\tCorrect",
+            "2026-11-16 09:00:01.000\t04090409:ok\t04190419:щл\tKeep",
+        ],
+      };
+
+      string report = DiagnosticsReport.Build(facts, _anna, includeAnalysisLog: true);
+
+      string[] lines = [.. report.Split(Environment.NewLine)
+          .Where(line => line.StartsWith("2026-11-16 09:00:0", StringComparison.Ordinal))];
+      Assert.Equal(2, lines.Length);
+      Assert.DoesNotContain('\t', lines[0]);
+      Assert.Equal(lines[0].IndexOf("Correct", StringComparison.Ordinal),
+          lines[1].IndexOf("Keep", StringComparison.Ordinal));
+      Assert.Equal(lines[0].IndexOf("04190419", StringComparison.Ordinal),
+          lines[1].IndexOf("04190419", StringComparison.Ordinal));
     }
 
     [Fact]

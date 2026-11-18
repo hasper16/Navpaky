@@ -48,11 +48,11 @@ For the by-hand checks in `docs/manual-tests/deferred-by-hand.md`. Install the p
    $leaf.Thumbprint; $ca.Thumbprint
    ```
    A test CA publishes no revocation list, so Debug builds skip the revocation check for a package from `--update-feed`; Release builds always check it.
-2. Publish and pack a Debug build into one feed folder, signing with the test certificate:
+2. Publish and pack a Debug build into one feed folder (here `%USERPROFILE%\RekeyFeed`: any folder your account can write works, but not the `C:\` root, which a standard user cannot write), signing with the test certificate. Delete the `publish` folder before each version, so the second pack holds no files of the first:
    ```powershell
    dotnet publish src/Rekey.App -c Debug -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=0.1.0 -o publish
-   .tools\vpk pack --packId key-switcher --packVersion 0.1.0 --packDir publish --mainExe Rekey.App.exe --packTitle Rekey --delta None --outputDir C:\RekeyFeed --signParams "/fd sha256 /sha1 <leaf thumbprint>"
+   .tools\vpk pack --packId key-switcher --packVersion 0.1.0 --packDir publish --mainExe Rekey.App.exe --packTitle Rekey --packAuthors Rekey --icon src\Rekey.App\Rekey.ico --runtime win-x64 --delta None --outputDir $env:USERPROFILE\RekeyFeed --signParams "/fd sha256 /sha1 <leaf thumbprint>"
    ```
    Repeat with `0.2.0` for an update.
-3. Install with `C:\RekeyFeed\key-switcher-win-Setup.exe` (from the 0.1.0 pack; keep a copy before packing 0.2.0). To check updates, quit Rekey and start `%LOCALAPPDATA%\key-switcher\current\Rekey.App.exe --update-feed C:\RekeyFeed --update-pin "CN=Rekey Test Publisher" <CA thumbprint>`.
+3. Install with `%USERPROFILE%\RekeyFeed\key-switcher-win-Setup.exe` from the 0.1.0 pack: packing 0.2.0 replaces it, so first copy it out, for example to `%USERPROFILE%\RekeySetup-0.1.0.exe`. To check updates, quit Rekey and start `%LOCALAPPDATA%\key-switcher\current\Rekey.App.exe --update-feed %USERPROFILE%\RekeyFeed --update-pin "CN=Rekey Test Publisher" <CA thumbprint>`.
 4. Afterwards uninstall Rekey and remove both test certificates from `Cert:\CurrentUser\My` and the CA from `Cert:\CurrentUser\Root`.

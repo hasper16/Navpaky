@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Runtime.ExceptionServices;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Rekey.App.Localization;
@@ -8,10 +7,11 @@ using Xunit;
 namespace Rekey.App.Tests.Localization {
   // A language change reaches text already on screen: {l:Loc} bindings and LocalizedChoice
   // entries, such as a combo box's items, update without rebuilding the view.
+  [Collection(nameof(Sta))]
   public sealed class LiveSwitchingTests {
     [Fact]
     public void BoundTextFollowsTheLanguage() {
-      RunOnSta(() => {
+      Sta.Run(() => {
         CultureInfo before = Localizer.Instance.Culture;
         try {
           Localizer.Instance.Use(CultureInfo.GetCultureInfo("en"));
@@ -32,6 +32,27 @@ namespace Rekey.App.Tests.Localization {
       });
     }
 
+    // Fix 2.10 of add-final-acceptance: screen readers pick their voice from an element's
+    // language, which stayed en-US under a Ukrainian interface, so Narrator skipped Cyrillic.
+    [Fact]
+    public void BoundLanguageFollowsTheInterfaceLanguage() {
+      Sta.Run(() => {
+        CultureInfo before = Localizer.Instance.Culture;
+        try {
+          Localizer.Instance.Use(CultureInfo.GetCultureInfo("en"));
+          var view = new TextBlock();
+          Localizer.BindLanguage(view);
+          Assert.Equal("en", view.Language.IetfLanguageTag);
+
+          Localizer.Instance.Use(CultureInfo.GetCultureInfo("uk"));
+
+          Assert.Equal("uk", view.Language.IetfLanguageTag);
+        } finally {
+          Localizer.Instance.Use(before);
+        }
+      });
+    }
+
     // The binding App.xaml's LocalizedChoice template uses.
     private static MultiBinding ChoiceBinding() {
       var binding = new MultiBinding { Converter = new KeyTextConverter() };
@@ -39,23 +60,6 @@ namespace Rekey.App.Tests.Localization {
       binding.Bindings.Add(
           new Binding(nameof(Localizer.Culture)) { Source = Localizer.Instance });
       return binding;
-    }
-
-    // WPF objects need an STA thread; a failure there is rethrown on the test's thread with its
-    // original stack.
-    private static void RunOnSta(Action test) {
-      ExceptionDispatchInfo? failure = null;
-      var thread = new Thread(() => {
-        try {
-          test();
-        } catch (Exception e) when (e is not OutOfMemoryException) {
-          failure = ExceptionDispatchInfo.Capture(e);
-        }
-      });
-      thread.SetApartmentState(ApartmentState.STA);
-      thread.Start();
-      thread.Join();
-      failure?.Throw();
     }
   }
 }

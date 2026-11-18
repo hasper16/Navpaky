@@ -12,14 +12,16 @@ namespace Rekey.App.Views {
     private readonly HotkeyViewModel _model;
     private readonly Dictionary<RadioButton, Hotkey> _presets = [];
     private readonly RadioButton _custom;
+    private readonly ChordRecorder? _chords;
     private bool _recording;
 
     // Set while the page checks the radio button of the current Hotkey itself.
     private bool _showing;
 
-    public HotkeyPage(HotkeyViewModel model) {
+    public HotkeyPage(HotkeyViewModel model, ChordRecorder? chords = null) {
       InitializeComponent();
       _model = model;
+      _chords = chords;
       foreach (Hotkey preset in HotkeyViewModel.Presets) {
         var option = new RadioButton { GroupName = "Hotkey" };
         option.Checked += (_, _) => Choose(preset);
@@ -34,10 +36,20 @@ namespace Rekey.App.Views {
           StartRecording();
         }
       };
+
+      // A custom Hotkey keeps the option checked, so a click on it raises no Checked.
+      _custom.Click += (_, _) => StartRecording();
       Options.Children.Add(_custom);
       Record.Click += (_, _) => StartRecording();
       Recorder.PreviewKeyDown += OnRecorderKey;
-      Recorder.LostKeyboardFocus += (_, _) => StopRecording();
+
+      // Another app's global hotkey may activate that app; the hook still brings its keys, so
+      // only a focus move inside Rekey ends recording.
+      Recorder.LostKeyboardFocus += (_, e) => {
+        if (e.NewFocus is not null) {
+          StopRecording();
+        }
+      };
       UseAnyway.Click += (_, _) => _model.ConfirmPending();
       PickAnother.Click += (_, _) => _model.CancelPending();
       _model.PropertyChanged += OnModelChanged;
@@ -74,6 +86,11 @@ namespace Rekey.App.Views {
     }
 
     private void StartRecording() {
+      if (!_recording && _chords is not null) {
+        _chords.Pressed += OnChord;
+        _chords.Start();
+      }
+
       _recording = true;
       Recorder.Text = Strings.HotkeyRecording;
       Recorder.Focus();
@@ -81,9 +98,30 @@ namespace Rekey.App.Views {
 
     private void StopRecording() {
       if (_recording) {
-        _recording = false;
+        EndRecording();
         ShowCurrent();
       }
+    }
+
+    private void EndRecording() {
+      _recording = false;
+      if (_chords is not null) {
+        _chords.Pressed -= OnChord;
+        _chords.Stop();
+      }
+    }
+
+    // The same combination may come from the window and from the hook; the first one counts.
+    private void TakeChord(KeyModifiers modifiers, ushort virtualKey) {
+      if (_recording && HotkeyViewModel.Recorded(modifiers, virtualKey) is { } hotkey) {
+        EndRecording();
+        _model.Choose(hotkey);
+        ShowCurrent();
+      }
+    }
+
+    private void OnChord(KeyModifiers modifiers, ushort virtualKey) {
+      TakeChord(modifiers, virtualKey);
     }
 
     private void OnRecorderKey(object sender, KeyEventArgs e) {
@@ -99,12 +137,7 @@ namespace Rekey.App.Views {
       }
 
       e.Handled = true;
-      var virtualKey = (ushort)KeyInterop.VirtualKeyFromKey(key);
-      if (HotkeyViewModel.Recorded(HeldModifiers(), virtualKey) is { } hotkey) {
-        _recording = false;
-        _model.Choose(hotkey);
-        ShowCurrent();
-      }
+      TakeChord(HeldModifiers(), (ushort)KeyInterop.VirtualKeyFromKey(key));
     }
 
     private void OnModelChanged(object? sender, PropertyChangedEventArgs e) {

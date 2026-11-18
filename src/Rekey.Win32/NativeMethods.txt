@@ -88,3 +88,16 @@ CERT_E_REVOKED
 SHGetKnownFolderPath
 FOLDERID_Downloads
 CoTaskMemFree
+GetKeyNameText
+MapVirtualKey
+SHCreateItemFromParsingName
+IShellItem
+waveOutOpen
+waveOutPrepareHeader
+waveOutUnprepareHeader
+waveOutWrite
+waveOutReset
+waveOutClose
+WAVE_MAPPER
+WHDR_DONE
+WAVE_FORMAT_PCM

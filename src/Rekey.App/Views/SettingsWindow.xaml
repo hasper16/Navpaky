@@ -4,8 +4,9 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:l="clr-namespace:Rekey.App.Localization"
+                 xmlns:v="clr-namespace:Rekey.App.Views"
                  Title="{l:Loc SettingsTitle}"
-                 Width="760"
+                 Width="820"
                  Height="560"
                  MinWidth="560"
                  MinHeight="420"
@@ -18,7 +19,8 @@
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="220" />
+      <!-- As wide as the longest section name, so no language cuts one off. -->
+      <ColumnDefinition Width="Auto" MinWidth="220" MaxWidth="320" />
       <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
     <ui:TitleBar x:Name="TitleBar"
@@ -33,12 +35,13 @@
              Margin="8,0,4,8"
              Background="Transparent"
              BorderThickness="0"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
              AutomationProperties.Name="{l:Loc SettingsTitle}">
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <StackPanel Orientation="Horizontal" Margin="4,6">
-            <ui:SymbolIcon Symbol="{Binding Icon}" Margin="0,0,12,0" />
-            <TextBlock VerticalAlignment="Center">
+          <DockPanel Margin="4,6">
+            <v:DecorativeIcon DockPanel.Dock="Left" Symbol="{Binding Icon}" Margin="0,0,12,0" />
+            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap">
               <TextBlock.Text>
                 <MultiBinding Converter="{StaticResource KeyText}">
                   <Binding Path="TitleKey" />
@@ -46,7 +49,7 @@
                 </MultiBinding>
               </TextBlock.Text>
             </TextBlock>
-          </StackPanel>
+          </DockPanel>
         </DataTemplate>
       </ListBox.ItemTemplate>
       <ListBox.ItemContainerStyle>

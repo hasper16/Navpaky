@@ -211,7 +211,10 @@
     <value>Tab</value>
   </data>
   <data name="SkipAfterManualSwitch" xml:space="preserve">
-    <value>Не виправляти, якщо я сам перемкнув розкладку</value>
+    <value>Пропускати слово одразу після мого перемикання розкладки</value>
+  </data>
+  <data name="SkipAfterManualSwitchHint" xml:space="preserve">
+    <value>Rekey не виправляє наступне слово, якщо ви почали його протягом 2 секунд після власного перемикання розкладки.</value>
   </data>
   <data name="VerifiedReplacement" xml:space="preserve">
     <value>Перевіряти текст перед заміною</value>
@@ -414,8 +417,14 @@
   <data name="UninstallDataNotDeleted" xml:space="preserve">
     <value>Деякі дані Rekey не вдалося видалити, бо їх використовує інша програма. Видаліть теку {0} вручну.</value>
   </data>
+  <data name="AlreadyRunning" xml:space="preserve">
+    <value>Rekey уже запущено. Щоб запустити його з цими параметрами, спершу закрийте його в треї.</value>
+  </data>
+  <data name="UninstallDataKept" xml:space="preserve">
+    <value>Rekey встановлено знову, тому його налаштування та списки слів збережено.</value>
+  </data>
   <data name="MenuWelcome" xml:space="preserve">
-    <value>Вітання та налаштування</value>
+    <value>Знайомство з {0}</value>
   </data>
   <data name="WelcomeTitle" xml:space="preserve">
     <value>Ласкаво просимо до Rekey</value>

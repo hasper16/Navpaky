@@ -62,6 +62,24 @@ namespace Rekey.Core.Tests {
       Assert.True(list.Contains(new AppId(_frameHost)));
     }
 
+    // Fix 2.4 of add-final-acceptance: Windows 11 starts the Store Notepad from a stub.
+    [Fact]
+    public void ProgramChosenThroughAStubMatchesTheAppItStartsByFileName() {
+      var list = new ExcludedAppList([@"C:\Windows\notepad.exe"]);
+      var storeNotepad = new AppId(
+          @"C:\Program Files\WindowsApps\Zorbit.Notepad_1.0_x64__8abc\Notepad\Notepad.exe",
+          "Zorbit.Notepad_8abc!App");
+
+      Assert.True(list.Contains(storeNotepad));
+    }
+
+    [Fact]
+    public void ProgramWithAnotherFileNameIsNotExcluded() {
+      var list = new ExcludedAppList([@"C:\Apps\Zorbit\Editor.exe"]);
+
+      Assert.False(list.Contains(new AppId(@"C:\Apps\Zorbit\Viewer.exe")));
+    }
+
     [Fact]
     public void OtherAppOfTheSameFrameHostIsNotExcluded() {
       var list = new ExcludedAppList([_aumid]);

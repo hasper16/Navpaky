@@ -6,8 +6,10 @@ using Rekey.App.ViewModels;
 using Xunit;
 
 namespace Rekey.App.Tests.Tray {
+  [Collection(nameof(Sta))]
   public sealed class KeycapTests {
     private static readonly int[] _sizes = [16, 20, 24, 32];
+    private static readonly int[] _iconSizes = [16, 20, 24, 32, 48, 64, 256];
 
     [Theory]
     [InlineData(16)]
@@ -66,6 +68,21 @@ namespace Rekey.App.Tests.Tray {
       });
 
       Assert.True(new FileInfo(path).Length > 0);
+    }
+
+    // Fix 2.12 of add-final-acceptance: the exe and the installed app had no icon. This writes
+    // the app icon from the light keycap; src/Rekey.App/Rekey.ico is a copy of it.
+    [Fact]
+    public void WritesTheAppIcon() {
+      string path = Path.Join(AppContext.BaseDirectory, "app-icon.ico");
+
+      byte[] icon = OnSta(() => IconFile.Bytes([.. _iconSizes
+          .Select(size => Keycap.Render("EN", TrayState.Active, dark: false, size))]));
+      File.WriteAllBytes(path, icon);
+
+      Assert.Equal(_iconSizes.Length, BitConverter.ToUInt16(icon, 4));
+      using var small = new System.Drawing.Icon(path, 16, 16);
+      Assert.Equal(16, small.Width);
     }
 
     private static byte[] Pixels(BitmapSource image) {

@@ -75,7 +75,10 @@ namespace Rekey.Win32 {
     private readonly Action<Incident> _recordIncident;
     private readonly TimeProvider _time;
     private readonly RawInputTranslator _translator;
-    private readonly LayoutList _layouts = new(SystemLayouts.ReadHandles, SystemLayouts.Read);
+
+    private readonly LayoutList _layouts =
+        new(SystemLayouts.ReadHandles, SystemLayouts.Read, UserLayoutOrder.Read);
+
     private readonly Dictionary<LayoutId, KeyMap?> _keyMaps = [];
     private readonly LayoutSwitcher _switcher;
     private readonly ForegroundLayout _foregroundLayout;
@@ -109,7 +112,10 @@ namespace Rekey.Win32 {
 
     // The worker thread alone records into it; any thread reads its snapshot.
     private StatsRecorder _stats = new(StatsDocument.Empty);
-    private AnalysisLog? _analysisLog;
+    private AnalysisLogWriter? _analysisLog;
+
+    // Written by the UI thread only.
+    private bool _recordChords;
 
     // Written by the constructor and then only by the thread that calls UseSettings; the
     // worker reads it.
@@ -236,6 +242,25 @@ namespace Rekey.Win32 {
     /// for the cursor indicator and the switch sound.
     /// </summary>
     public event Action<SwitchFeedback>? Switched;
+
+    /// <summary>
+    /// Occurs on the worker thread, while <see cref="RecordChords" /> is on, for each key pressed
+    /// with modifiers: the modifiers and the virtual-key code.
+    /// </summary>
+    /// <remarks>
+    /// The hook sees a combination another app registered as a global hotkey, which Windows
+    /// never sends to Rekey's windows.
+    /// </remarks>
+    public event Action<KeyModifiers, ushort>? ChordPressed;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether <see cref="ChordPressed" /> reports key presses;
+    /// the Hotkey page turns it on while it records. Any thread may set it.
+    /// </summary>
+    public bool RecordChords {
+      get => Volatile.Read(ref _recordChords);
+      set => Volatile.Write(ref _recordChords, value);
+    }
 
     /// <summary>
     /// Gets the Protected Words and Learned Words the engine starts with; set it before
@@ -421,6 +446,7 @@ namespace Rekey.Win32 {
 
       _hook.Dispose();
       if (stopped) {
+        _analysisLog?.Dispose();
         _signal.Dispose();
         _started.Dispose();
       }
@@ -485,7 +511,7 @@ namespace Rekey.Win32 {
 
       _started.Set();
       if (AnalysisLogFolder is { } folder) {
-        _analysisLog = new AnalysisLog(folder, _time);
+        _analysisLog = new AnalysisLogWriter(new AnalysisLog(folder, _time));
         UseAnalysisLog(Volatile.Read(ref _latestSettings).AnalysisLogEnabled);
       }
 
@@ -495,7 +521,8 @@ namespace Rekey.Win32 {
           Volatile.Read(ref _latestSettings).VerifiedReplacement,
           HeldModifiers,
           SendKeys,
-          ConsoleWindows.ForegroundTarget);
+          ConsoleWindows.ForegroundTarget,
+          PauseBetweenParts);
       RefreshLayouts();
       using var focus = new FocusTracker(
           OnFocusChanged, () => _typing.Now(_ring.ActionsWritten));
@@ -549,6 +576,10 @@ namespace Rekey.Win32 {
         }
 
         RecordTyping(raw, inputEvent);
+        if (RecordChords && Chords.Of(raw, inputEvent) is { } chord) {
+          ChordPressed?.Invoke(chord.Modifiers, chord.VirtualKey);
+        }
+
         if (inputEvent is KeyDown { Kind: KeyKind.Character } keyDown) {
           // Focus may have moved inside the window before its WinEvent arrived.
           inputEvent = keyDown with { FocusConfirmed = _keyConfirmer.Confirm(raw) };
@@ -844,6 +875,13 @@ namespace Rekey.Win32 {
       }
     }
 
+    // Keys typed during the pause wait in the hook, then follow the whole replacement.
+    private void PauseBetweenParts(TimeSpan pause) {
+      _gate.NoteProgress(Environment.TickCount64);
+      Thread.Sleep(pause);
+      _gate.NoteProgress(Environment.TickCount64);
+    }
+
     private void Execute(EngineAction action) {
       switch (action) {
         case RecordIncident record:
@@ -892,21 +930,13 @@ namespace Rekey.Win32 {
         _analysesToWrite.Clear();
       }
 
-      try {
-        _analysisLog?.Enabled = enabled;
-      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-        // A file in use stays until the next change or start; the log never blocks typing.
-      }
+      _analysisLog?.UseEnabled(enabled);
     }
 
     // Runs once the keys read so far have gone on, as ReportMismatch does.
     private void WriteAnalyses() {
       foreach (LogAnalysis analysis in _analysesToWrite) {
-        try {
-          _analysisLog?.Write(analysis);
-        } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-          // A Word that cannot be logged is left out; the log never blocks typing.
-        }
+        _analysisLog?.Write(analysis);
       }
 
       _analysesToWrite.Clear();

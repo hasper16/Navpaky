@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using H.NotifyIcon;
 using H.NotifyIcon.Core;
 using Microsoft.Win32;
+using Rekey.App.Localization;
 using Rekey.App.Updates;
 using Rekey.App.ViewModels;
 using Rekey.Win32;
@@ -20,6 +21,9 @@ namespace Rekey.App.Tray {
     private readonly TrayCommands _commands;
     private (string Code, TrayState State, bool Dark, int Size)? _drawn;
 
+    // What to do once Windows shows the latest balloon.
+    private Action? _onShown;
+
     // What the menu was last built from; a refresh with the same content leaves it alone.
     private (bool AutoCorrection, bool Paused, string? Exclude, int Extra, UpdateStatus Updates,
         CultureInfo? Language)? _built;
@@ -30,9 +34,17 @@ namespace Rekey.App.Tray {
       _commands = commands;
       _icon.MenuActivation = PopupActivationMode.LeftOrRightClick;
       _icon.ContextMenu = new ContextMenu();
+      Localizer.BindLanguage(_icon.ContextMenu);
 
       // A change that came while the menu was open shows once it closes.
       _icon.ContextMenu.Closed += (_, _) => BuildMenu();
+
+      // Windows reports a balloon it showed (NIN_BALLOONSHOW); one it dropped stays silent.
+      _icon.TrayBalloonTipShown += (_, _) => {
+        Action? shown = _onShown;
+        _onShown = null;
+        shown?.Invoke();
+      };
     }
 
     // For the desktop checks: the debug items the app adds go first.
@@ -49,8 +61,10 @@ namespace Rekey.App.Tray {
           .FirstOrDefault(item => Equals(item.Header, header));
     }
 
-    // A Windows notification from the tray icon.
-    public void Notify(string title, string message) {
+    // A Windows notification from the tray icon; shown runs once Windows really showed it, as
+    // in Do Not Disturb it drops the balloon, also from the notification centre (fix 2.11).
+    public void Notify(string title, string message, Action? shown = null) {
+      _onShown = shown;
       _icon.ShowNotification(title, message);
     }
 
@@ -107,7 +121,7 @@ namespace Rekey.App.Tray {
       MenuItem updates = Item(_model.UpdateItemText, _commands.Updates);
       updates.IsEnabled = _model.UpdateItemEnabled;
       items.Add(updates);
-      items.Add(Item(Strings.MenuWelcome, _commands.OpenWelcome));
+      items.Add(Item(UiText.Format(Strings.MenuWelcome, Product.Name), _commands.OpenWelcome));
       items.Add(Item(Strings.MenuAbout, _commands.OpenAbout));
       items.Add(new Separator());
       items.Add(Item(Strings.MenuQuit, _commands.Quit));
