@@ -51,9 +51,10 @@ namespace Rekey.App.Tray {
           .FirstOrDefault(item => Equals(item.Header, header));
     }
 
-    // A Windows notification from the tray icon.
+    // A Windows notification from the tray icon. It ignores quiet time, so in Do Not Disturb
+    // Windows keeps it in the notification centre instead of dropping it (fix 2.11).
     public void Notify(string title, string message) {
-      _icon.ShowNotification(title, message);
+      _icon.ShowNotification(title, message, respectQuietTime: false);
     }
 
     public void Dispose() {

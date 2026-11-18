@@ -115,6 +115,9 @@ namespace Rekey.App {
     // The worker's Word counts as of the latest Trigger Key; only the worker thread writes it.
     private volatile StrongBox<WordCounts>? _wordCounts;
 
+    // When typing last kept the audio output awake; only the worker thread writes it.
+    private long _lastSoundWake;
+
     protected override void OnStartup(StartupEventArgs e) {
       base.OnStartup(e);
       WaitForFrozenInstance(e.Args);
@@ -147,6 +150,9 @@ namespace Rekey.App {
           FrameworkElement.LoadedEvent,
           new RoutedEventHandler((window, _) => Localizer.BindLanguage((Window)window)));
       _indicator = new CursorIndicator();
+#if DEBUG
+      _indicator.Placed += WriteUiState;
+#endif
       _sounds = new SwitchSoundPlayer();
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
       var trayIcon = (TaskbarIcon)FindResource("TrayIcon");
@@ -394,6 +400,7 @@ namespace Rekey.App {
           Dispatcher.BeginInvoke(() => _chords.Offer(modifiers, key));
       _worker.Observed += RememberWordCounts;
       _worker.Observed += FollowLayout;
+      _worker.Observed += KeepSoundAwake;
 
       // Where typing went is read when the Switch happens, before focus can move on.
       _worker.Switched += feedback => {
@@ -453,6 +460,22 @@ namespace Rekey.App {
     }
 
     // Runs on the worker thread after each input event.
+    // Runs on the worker thread for every input: typing keeps monitor audio awake for a
+    // Correction's sound, asked for at most once a second.
+    private void KeepSoundAwake(InputEvent inputEvent) {
+      long now = Environment.TickCount64;
+      if (inputEvent is not KeyDown { Kind: KeyKind.Character } || now - _lastSoundWake < 1000) {
+        return;
+      }
+
+      _lastSoundWake = now;
+      Dispatcher.BeginInvoke(() => {
+        if (_hub!.Current.PlaySwitchSound) {
+          _sounds?.KeepAwake();
+        }
+      });
+    }
+
     private void RememberWordCounts(InputEvent inputEvent) {
       if (inputEvent is KeyDown { Kind: KeyKind.Space or KeyKind.Enter or KeyKind.Tab }
           && _worker is { } worker) {
@@ -711,7 +734,7 @@ namespace Rekey.App {
         _welcome?.NoteTryItCorrection();
       }
 
-      if (CorrectionTip.IsDue(_hub!.Current, inTryIt, NotificationState.AcceptsNotifications())) {
+      if (CorrectionTip.IsDue(_hub!.Current, inTryIt)) {
         _hub.Update(CorrectionTip.Shown);
         _trayView?.Notify(Strings.CorrectionTipTitle, Strings.CorrectionTip);
 #if DEBUG

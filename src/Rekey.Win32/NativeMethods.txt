@@ -93,4 +93,3 @@ MapVirtualKey
 PlaySound
 SHCreateItemFromParsingName
 IShellItem
-SHQueryUserNotificationState

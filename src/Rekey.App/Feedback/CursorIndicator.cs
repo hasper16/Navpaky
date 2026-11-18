@@ -15,12 +15,20 @@ namespace Rekey.App.Feedback {
     public const string WindowTitle = "Rekey indicator";
 
     private const double _sizeAtStandardDpi = 28;
+    private const int _caretTries = 5;
     private static readonly TimeSpan _shown = TimeSpan.FromMilliseconds(900);
     private static readonly Duration _fade = new(TimeSpan.FromMilliseconds(150));
+
+    // Right after Rekey switched the Layout and typed, an edit control may have no caret for a
+    // moment, while it has one at rest (owner's probe in Notepad, re-check of fix 2.6): the
+    // caret is asked for again for up to 100 ms before the badge goes to the pointer.
+    private static readonly TimeSpan _caretRetry = TimeSpan.FromMilliseconds(20);
 
     private readonly Window _window;
     private readonly Image _image = new();
     private readonly DispatcherTimer _timer;
+    private readonly DispatcherTimer _caretTimer;
+    private int _caretTriesLeft;
 
     // Counts the badges shown, so a fade that ends after the next badge appeared leaves it.
     private int _shows;
@@ -57,7 +65,15 @@ namespace Rekey.App.Feedback {
           ScreenFacts.MakeOverlay(new WindowInteropHelper(_window).Handle);
       _timer = new DispatcherTimer { Interval = _shown };
       _timer.Tick += (_, _) => Hide();
+      _caretTimer = new DispatcherTimer { Interval = _caretRetry };
+      _caretTimer.Tick += (_, _) => Place();
     }
+
+    // For the desktop checks and the by-hand re-check: the badge is placed, maybe after retries.
+    public event Action? Placed;
+
+    // Whether the last badge went to the caret rather than the pointer.
+    public bool LastAtCaret { get; private set; }
 
     public bool IsShown => _window.IsVisible;
 
@@ -67,17 +83,31 @@ namespace Rekey.App.Feedback {
       _image.Source = Keycap.Render(languageCode, TrayState.Active, dark, size);
       _image.Width = size / scale;
       _image.Height = size / scale;
+      _caretTriesLeft = _caretTries;
+      Place();
+    }
 
-      (int x, int y) = ScreenFacts.Mouse();
+    // Shows the badge at the caret, or at the pointer once the caret stayed unknown.
+    private void Place() {
+      _caretTimer.Stop();
       PixelRect? caret = ScreenFacts.Caret() is { } c
           ? new PixelRect(c.Left, c.Top, c.Right, c.Bottom)
           : null;
+      if (caret is null && --_caretTriesLeft > 0) {
+        _caretTimer.Start();
+        return;
+      }
+
+      double scale = VisualTreeHelper.GetDpi(_image).DpiScaleX;
+      int size = (int)Math.Round(_sizeAtStandardDpi * scale);
+      (int x, int y) = ScreenFacts.Mouse();
       (int left, int top, int right, int bottom) =
           ScreenFacts.WorkAreaAt(caret?.Left ?? x, caret?.Top ?? y);
       PixelPoint at = IndicatorPlacement.Place(
           caret, new PixelPoint(x, y), size, new PixelRect(left, top, right, bottom));
       _window.Left = at.X / scale;
       _window.Top = at.Y / scale;
+      LastAtCaret = caret is not null;
 
       _shows++;
       _window.BeginAnimation(UIElement.OpacityProperty, null);
@@ -85,6 +115,7 @@ namespace Rekey.App.Feedback {
       _window.Show();
       _timer.Stop();
       _timer.Start();
+      Placed?.Invoke();
     }
 
     // "Reduce animations" in Windows turns the fade off.

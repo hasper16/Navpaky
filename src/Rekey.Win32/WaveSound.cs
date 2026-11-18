@@ -29,13 +29,29 @@ namespace Rekey.Win32 {
       wave.CopyTo(_wave);
     }
 
+    /// <summary>Stops the sound this process plays, if any.</summary>
+    public static void StopAll() {
+      PInvoke.PlaySound(default(PCWSTR), HMODULE.Null, 0);
+    }
+
     /// <summary>Starts playing the sound, stopping any sound this process plays.</summary>
     public void Play() {
+      Start(SND_FLAGS.SND_ASYNC);
+    }
+
+    /// <summary>
+    /// Starts playing the sound over and over, stopping any sound this process plays.
+    /// </summary>
+    public void PlayLooping() {
+      Start(SND_FLAGS.SND_ASYNC | SND_FLAGS.SND_LOOP);
+    }
+
+    private void Start(SND_FLAGS flags) {
       fixed (byte* bytes = _wave) {
         PInvoke.PlaySound(
             new PCWSTR((char*)bytes),
             HMODULE.Null,
-            SND_FLAGS.SND_MEMORY | SND_FLAGS.SND_ASYNC | SND_FLAGS.SND_NODEFAULT);
+            SND_FLAGS.SND_MEMORY | SND_FLAGS.SND_NODEFAULT | flags);
       }
     }
   }

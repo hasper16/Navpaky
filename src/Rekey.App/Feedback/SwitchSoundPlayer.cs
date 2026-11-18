@@ -1,30 +1,37 @@
 using System.IO;
+using System.Windows.Threading;
 using Rekey.Core;
 using Rekey.Win32;
 
 namespace Rekey.App.Feedback {
   // Plays the switch sounds Rekey ships (design D6), loaded once so a Correction never waits
-  // for the disk. The sounds are Rekey's own (ADR 0003).
+  // for the disk. The sounds are Rekey's own (ADR 0003). Silence keeps monitor audio awake
+  // while the user types (SoundScheduler). Used on the UI thread only.
   internal sealed class SwitchSoundPlayer {
-    // Monitor audio drops the start of a sound after a pause. The chime, 350 ms long, was
-    // partly heard there, so less than 350 ms goes missing; 300 ms of lead-in covers that while
-    // keeping the delay after a Correction below a third of a second.
-    private static readonly TimeSpan _leadIn = TimeSpan.FromMilliseconds(300);
-
-    private readonly Dictionary<SwitchSound, WaveSound> _players = [];
+    private readonly Dictionary<SwitchSound, (WaveSound Sound, TimeSpan Length)> _players = [];
+    private readonly WaveSound? _silence;
+    private readonly SoundScheduler _scheduler;
 
     public SwitchSoundPlayer() {
       foreach (SwitchSound sound in Enum.GetValues<SwitchSound>()) {
-        using Stream? wave = Open(sound);
-        if (wave is null) {
-          continue;
+        if (Read(sound) is { } wave) {
+          _players[sound] = (new WaveSound(wave), WaveFile.Length(wave));
         }
-
-        using var bytes = new MemoryStream();
-        wave.CopyTo(bytes);
-        _players[sound] = new WaveSound(WaveLeadIn.Add(bytes.ToArray(), _leadIn));
       }
+
+      if (Read(SwitchSound.Chime) is { } template) {
+        _silence = new WaveSound(WaveFile.Silence(template, TimeSpan.FromSeconds(1)));
+      }
+
+      _scheduler = new SoundScheduler(
+          () => _silence?.PlayLooping(),
+          WaveSound.StopAll,
+          (sound, _) => _players[sound].Sound.Play(),
+          Later);
     }
+
+    // For the desktop checks: how many sounds played since start.
+    public int Played { get; private set; }
 
     public static Stream? Open(SwitchSound sound) {
       string name = sound switch {
@@ -36,14 +43,36 @@ namespace Rekey.App.Feedback {
           .GetManifestResourceStream($"Rekey.Sounds.{name}.wav");
     }
 
-    // For the desktop checks: how many sounds played since start.
-    public int Played { get; private set; }
-
     public void Play(SwitchSound sound) {
-      if (_players.TryGetValue(sound, out WaveSound? player)) {
+      if (_players.TryGetValue(sound, out (WaveSound Sound, TimeSpan Length) player)) {
         Played++;
-        player.Play();
+        _scheduler.Play(sound, player.Length);
       }
+    }
+
+    // The user is typing, so a Correction and its sound may come soon.
+    public void KeepAwake() {
+      _scheduler.KeepAwake();
+    }
+
+    private static byte[]? Read(SwitchSound sound) {
+      using Stream? wave = Open(sound);
+      if (wave is null) {
+        return null;
+      }
+
+      using var bytes = new MemoryStream();
+      wave.CopyTo(bytes);
+      return bytes.ToArray();
+    }
+
+    private static void Later(TimeSpan delay, Action then) {
+      var timer = new DispatcherTimer { Interval = delay };
+      timer.Tick += (_, _) => {
+        timer.Stop();
+        then();
+      };
+      timer.Start();
     }
   }
 }
