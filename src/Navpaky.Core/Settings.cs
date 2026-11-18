@@ -100,7 +100,7 @@ namespace Navpaky.Core {
   /// One of the enumeration values that specifies the language of Navpaky's interface. The default
   /// is <see cref="Core.UiLanguage.System" />.
   /// </param>
-  // Each setting is a constructor parameter with a default: in .NET 10, source-generated JSON
+  // Each setting is a constructor parameter with a default: since .NET 10, source-generated JSON
   // gives an init-only property that the file omits its type default, not its initializer.
   public sealed record Settings(
       bool AutoCorrectionEnabled = true,

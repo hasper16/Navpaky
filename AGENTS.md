@@ -1,6 +1,6 @@
 # Navpaky for Windows
 
-Tray app that fixes a word typed in the wrong keyboard layout ("ghbdtn" → "привет") and switches the layout. Windows analog of the macOS app Rekey. C# / .NET 10, WPF.
+Tray app that fixes a word typed in the wrong keyboard layout ("ghbdtn" → "привет") and switches the layout. Windows analog of the macOS app Rekey. C# / .NET 11, WPF.
 
 ## Context to read
 

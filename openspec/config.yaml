@@ -12,9 +12,10 @@ context: |
   Use the domain terms from GLOSSARY.md exactly (Layout, Word, Rendering, Correction, Layout Switch,
   Protected Word, Excluded App, ...). Architecture decisions live in docs/adr/.
 
-  Stack: C# / .NET 10 LTS, WPF (MVVM, CommunityToolkit.Mvvm), Win32 via CsWin32 (P/Invoke),
-  UI Automation for in-place replacement, H.NotifyIcon.Wpf for the tray, Velopack for updates,
-  xUnit for tests. WPF does not support NativeAOT: publish self-contained single-file + ReadyToRun.
+  Stack: C# / .NET 11 (STS; .NET 12 LTS next, ADR 0005), WPF (MVVM, CommunityToolkit.Mvvm),
+  Win32 via CsWin32 (P/Invoke), UI Automation for in-place replacement, H.NotifyIcon.Wpf for
+  the tray, Velopack for updates, xUnit for tests. WPF does not support NativeAOT: publish
+  self-contained single-file + ReadyToRun.
 
   Solution layout: Navpaky.Core (pure logic, no Win32, fully unit-testable),
   Navpaky.Win32 (keyboard hook, layouts, input injection, UIA), Navpaky.App (WPF, tray, windows).
