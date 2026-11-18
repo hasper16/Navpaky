@@ -1,7 +1,7 @@
 # text-replacement Specification
 
 ## Purpose
-Defines how a Correction changes the text on screen, keeps the user's keys in order, avoids damaging text Rekey has lost track of, and can be undone.
+Defines how a Correction changes the text on screen, keeps the user's keys in order, avoids damaging text Navpaky has lost track of, and can be undone.
 
 ## Requirements
 
@@ -23,7 +23,7 @@ A Correction SHALL replace exactly the characters of the corrected Word(s) with 
 
 #### Scenario: Window that does not take typed text
 - **WHEN** a Correction would apply in a window where typed text is not known to arrive
-- **THEN** Rekey erases nothing and leaves the Word as typed
+- **THEN** Navpaky erases nothing and leaves the Word as typed
 
 ### Requirement: Key order is preserved
 The Trigger Key that caused a Correction, and any keys the user presses while the Correction is being applied, SHALL reach the application after the corrected text and in the order they were pressed. This holds for a replacement typed in several parts too: keys pressed between the parts are held until the last part is typed (owner decision in add-final-acceptance).
@@ -52,7 +52,7 @@ A Correction or Undo MUST NOT read or change the clipboard.
 - **THEN** the clipboard still holds "secret"
 
 ### Requirement: Verified replacement
-When the focused control exposes its text, Rekey SHALL check that the text immediately before the caret equals the Word's current Rendering before changing it. When the text shows the Word changed (the Word sits just before the caret with other characters attached after it, as an autocomplete leaves it), the Correction MUST be cancelled, the text left untouched, and the cancellation recorded. Verified replacement SHALL be on by default and can be turned off in settings.
+When the focused control exposes its text, Navpaky SHALL check that the text immediately before the caret equals the Word's current Rendering before changing it. When the text shows the Word changed (the Word sits just before the caret with other characters attached after it, as an autocomplete leaves it), the Correction MUST be cancelled, the text left untouched, and the cancellation recorded. Verified replacement SHALL be on by default and can be turned off in settings.
 
 #### Scenario: Matching text
 - **WHEN** the focused editor exposes its text and it ends with "ghbdtn" before the caret
@@ -60,30 +60,30 @@ When the focused control exposes its text, Rekey SHALL check that the text immed
 
 #### Scenario: Autocomplete changed the text
 - **WHEN** an editor auto-completed "ghbdtn" to "ghbdtnxyz" before the caret
-- **THEN** Rekey makes no change and records a cancelled Correction
+- **THEN** Navpaky makes no change and records a cancelled Correction
 
 #### Scenario: Control does not expose text
 - **WHEN** the focused control does not expose its text
-- **THEN** Rekey replaces the Word by erasing and retyping it
+- **THEN** Navpaky replaces the Word by erasing and retyping it
 
 ### Requirement: Unreliable text readback
-When the text a control returns before the caret ends with the Word but is longer than asked, Rekey SHALL replace by retyping, never by selecting. When an app twice returns text that shows no Word at the caret, Rekey SHALL cancel those Corrections and then replace by retyping, without the check, in that app until Rekey restarts (design decision; the original also falls back to retyping where its in-place path does not work).
+When the text a control returns before the caret ends with the Word but is longer than asked, Navpaky SHALL replace by retyping, never by selecting. When an app twice returns text that shows no Word at the caret, Navpaky SHALL cancel those Corrections and then replace by retyping, without the check, in that app until Navpaky restarts (design decision; the original also falls back to retyping where its in-place path does not work).
 
 #### Scenario: Control returns more than the Word
 - **WHEN** the focused control returns "x ghbdtn" when asked for the text just before the caret, which ends with "ghbdtn"
-- **THEN** Rekey replaces the Word by erasing and retyping it, never by selecting
+- **THEN** Navpaky replaces the Word by erasing and retyping it, never by selecting
 
 #### Scenario: App whose text readback is unreliable
 - **WHEN** an editor twice returns text before the caret that shows no Word at the caret
 - **THEN** those two Corrections are cancelled
-- **AND** later Corrections in that app replace the Word by erasing and retyping it, without the check, until Rekey restarts
+- **AND** later Corrections in that app replace the Word by erasing and retyping it, without the check, until Navpaky restarts
 
 #### Scenario: Same Word earlier on the line
 - **WHEN** "ghbdtn" was typed earlier on the line and the editor returns text before the caret in which that earlier copy is the only "ghbdtn"
 - **THEN** the read counts as showing no Word at the caret
 
 ### Requirement: Undo within 5 seconds
-If the user presses Ctrl+Z within the Undo Window (5 seconds, as in the original) of a Correction not triggered by Enter, and before any other key, click or focus change, Rekey SHALL restore the text as originally typed and the previous Layout, and SHALL NOT pass that Ctrl+Z to the application.
+If the user presses Ctrl+Z within the Undo Window (5 seconds, as in the original) of a Correction not triggered by Enter, and before any other key, click or focus change, Navpaky SHALL restore the text as originally typed and the previous Layout, and SHALL NOT pass that Ctrl+Z to the application.
 
 #### Scenario: Immediate undo
 - **WHEN** a Correction changed "ghbdtn " to "привет " and the user presses Ctrl+Z 2 seconds later
