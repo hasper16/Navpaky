@@ -9,8 +9,8 @@
            Height="64"
            HorizontalAlignment="Left"
            Margin="0,0,0,16"
-           AutomationProperties.Name="Rekey" />
-    <TextBlock Text="Rekey" FontSize="28" FontWeight="SemiBold" />
+           AutomationProperties.Name="Navpaky" />
+    <TextBlock Text="Navpaky" FontSize="28" FontWeight="SemiBold" />
     <TextBlock Text="{l:Loc AboutTagline}" Margin="0,4,0,8" Focusable="True" />
     <TextBlock x:Name="Version" Style="{StaticResource HintText}" Focusable="True" />
   </StackPanel>

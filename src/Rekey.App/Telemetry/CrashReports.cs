@@ -39,7 +39,7 @@ namespace Rekey.App.Telemetry {
       SentrySdk.CaptureEvent(new SentryEvent {
         Level = SentryLevel.Warning,
         SentryExceptions = [new SentryException {
-          Type = $"Rekey.Freeze.{thread}",
+          Type = $"Navpaky.Freeze.{thread}",
           Stacktrace = new SentryStackTrace { Frames = [.. frames.Reverse()] },
         }],
       });

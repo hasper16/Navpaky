@@ -94,7 +94,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey is already running. To start it with these options, quit it from the tray first..
+        ///   Looks up a localized string similar to Navpaky is already running. To start it with these options, quit it from the tray first..
         /// </summary>
         public static string AlreadyRunning {
             get {
@@ -112,7 +112,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The log records the words you type and how Rekey judged them. It stays on this PC, only your Windows account can open it, and it keeps 7 days. Turning it off deletes it..
+        ///   Looks up a localized string similar to The log records the words you type and how Navpaky judged them. It stays on this PC, only your Windows account can open it, and it keeps 7 days. Turning it off deletes it..
         /// </summary>
         public static string AnalysisLogNote {
             get {
@@ -157,7 +157,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey corrected a word.
+        ///   Looks up a localized string similar to Navpaky corrected a word.
         /// </summary>
         public static string CorrectionTipTitle {
             get {
@@ -184,7 +184,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Apps where Rekey stays off.
+        ///   Looks up a localized string similar to Apps where Navpaky stays off.
         /// </summary>
         public static string ExcludedApps {
             get {
@@ -283,7 +283,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} switches the keyboard layout in Windows. As the Hotkey, Rekey will take it over. Use it anyway or pick another..
+        ///   Looks up a localized string similar to {0} switches the keyboard layout in Windows. As the Hotkey, Navpaky will take it over. Use it anyway or pick another..
         /// </summary>
         public static string HotkeyConflictWindows {
             get {
@@ -454,7 +454,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start Rekey when I sign in to Windows.
+        ///   Looks up a localized string similar to Start Navpaky when I sign in to Windows.
         /// </summary>
         public static string LaunchAtSignIn {
             get {
@@ -463,7 +463,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Words Rekey has learned.
+        ///   Looks up a localized string similar to Words Navpaky has learned.
         /// </summary>
         public static string LearnedWords {
             get {
@@ -490,7 +490,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey is not installed.
+        ///   Looks up a localized string similar to Navpaky is not installed.
         /// </summary>
         public static string LocationTitle {
             get {
@@ -499,7 +499,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey is running from a temporary folder, a ZIP file or Downloads. It stops working when this copy is removed. Install Rekey to keep it working and up to date..
+        ///   Looks up a localized string similar to Navpaky is running from a temporary folder, a ZIP file or Downloads. It stops working when this copy is removed. Install Navpaky to keep it working and up to date..
         /// </summary>
         public static string LocationWarning {
             get {
@@ -508,7 +508,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to About Rekey.
+        ///   Looks up a localized string similar to About Navpaky.
         /// </summary>
         public static string MenuAbout {
             get {
@@ -589,7 +589,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Until Rekey restarts.
+        ///   Looks up a localized string similar to Until Navpaky restarts.
         /// </summary>
         public static string MenuPauseUntilRestart {
             get {
@@ -652,7 +652,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey is up to date.
+        ///   Looks up a localized string similar to Navpaky is up to date.
         /// </summary>
         public static string MenuUpToDate {
             get {
@@ -679,7 +679,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey keeps working until you quit it or restart the computer, but it will not start again. To keep using it, install Rekey again..
+        ///   Looks up a localized string similar to Navpaky keeps working until you quit it or restart the computer, but it will not start again. To keep using it, install Navpaky again..
         /// </summary>
         public static string MovedNotice {
             get {
@@ -688,7 +688,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey&apos;s files were moved or deleted.
+        ///   Looks up a localized string similar to Navpaky&apos;s files were moved or deleted.
         /// </summary>
         public static string MovedTitle {
             get {
@@ -805,7 +805,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to What you type stays in Rekey&apos;s memory and is never sent anywhere. Rekey stores its settings, your word lists, counts and a log of keyboard problems on this PC; it saves typed words only in the word-analysis log, and only if you turn it on..
+        ///   Looks up a localized string similar to What you type stays in Navpaky&apos;s memory and is never sent anywhere. Navpaky stores its settings, your word lists, counts and a log of keyboard problems on this PC; it saves typed words only in the word-analysis log, and only if you turn it on..
         /// </summary>
         public static string PrivacyNote {
             get {
@@ -823,7 +823,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Words Rekey never corrects.
+        ///   Looks up a localized string similar to Words Navpaky never corrects.
         /// </summary>
         public static string ProtectedWords {
             get {
@@ -859,7 +859,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restart Rekey if it stops responding twice.
+        ///   Looks up a localized string similar to Restart Navpaky if it stops responding twice.
         /// </summary>
         public static string RestartAfterFreeze {
             get {
@@ -931,7 +931,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey settings.
+        ///   Looks up a localized string similar to Navpaky settings.
         /// </summary>
         public static string SettingsTitle {
             get {
@@ -949,7 +949,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A small key appears for a moment after Rekey switches the layout..
+        ///   Looks up a localized string similar to A small key appears for a moment after Navpaky switches the layout..
         /// </summary>
         public static string ShowCursorIndicatorHint {
             get {
@@ -1021,7 +1021,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thanks! Rekey does not keep your address on this PC..
+        ///   Looks up a localized string similar to Thanks! Navpaky does not keep your address on this PC..
         /// </summary>
         public static string SignUpSent {
             get {
@@ -1057,7 +1057,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey leaves the next word alone when you start it within 2 seconds of your own layout switch..
+        ///   Looks up a localized string similar to Navpaky leaves the next word alone when you start it within 2 seconds of your own layout switch..
         /// </summary>
         public static string SkipAfterManualSwitchHint {
             get {
@@ -1147,7 +1147,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Counts only: Rekey never stores the words behind these numbers..
+        ///   Looks up a localized string similar to Counts only: Navpaky never stores the words behind these numbers..
         /// </summary>
         public static string StatisticsNote {
             get {
@@ -1156,7 +1156,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey statistics.
+        ///   Looks up a localized string similar to Navpaky statistics.
         /// </summary>
         public static string StatisticsTitle {
             get {
@@ -1300,7 +1300,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey is on.
+        ///   Looks up a localized string similar to Navpaky is on.
         /// </summary>
         public static string TrayOn {
             get {
@@ -1309,7 +1309,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey is paused: {0} minutes left.
+        ///   Looks up a localized string similar to Navpaky is paused: {0} minutes left.
         /// </summary>
         public static string TrayPausedMinutes_Few {
             get {
@@ -1318,7 +1318,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey is paused: {0} minutes left.
+        ///   Looks up a localized string similar to Navpaky is paused: {0} minutes left.
         /// </summary>
         public static string TrayPausedMinutes_Many {
             get {
@@ -1327,7 +1327,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey is paused: {0} minute left.
+        ///   Looks up a localized string similar to Navpaky is paused: {0} minute left.
         /// </summary>
         public static string TrayPausedMinutes_One {
             get {
@@ -1336,7 +1336,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey is paused: {0} minutes left.
+        ///   Looks up a localized string similar to Navpaky is paused: {0} minutes left.
         /// </summary>
         public static string TrayPausedMinutes_Other {
             get {
@@ -1345,7 +1345,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey is paused until it restarts.
+        ///   Looks up a localized string similar to Navpaky is paused until it restarts.
         /// </summary>
         public static string TrayPausedUntilRestart {
             get {
@@ -1354,7 +1354,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey paused itself: it lost the keyboard twice. It retries in 10 minutes..
+        ///   Looks up a localized string similar to Navpaky paused itself: it lost the keyboard twice. It retries in 10 minutes..
         /// </summary>
         public static string TraySelfPaused {
             get {
@@ -1444,7 +1444,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey was installed again, so its settings and word lists were kept..
+        ///   Looks up a localized string similar to Navpaky was installed again, so its settings and word lists were kept..
         /// </summary>
         public static string UninstallDataKept {
             get {
@@ -1453,7 +1453,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Some Rekey data could not be deleted because another program is using it. Delete the folder {0} yourself..
+        ///   Looks up a localized string similar to Some Navpaky data could not be deleted because another program is using it. Delete the folder {0} yourself..
         /// </summary>
         public static string UninstallDataNotDeleted {
             get {
@@ -1462,7 +1462,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Also delete your Rekey settings, word lists, statistics and logs? Choose No to keep them for a later install..
+        ///   Looks up a localized string similar to Also delete your Navpaky settings, word lists, statistics and logs? Choose No to keep them for a later install..
         /// </summary>
         public static string UninstallDeleteData {
             get {
@@ -1471,7 +1471,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uninstall Rekey.
+        ///   Looks up a localized string similar to Uninstall Navpaky.
         /// </summary>
         public static string UninstallTitle {
             get {
@@ -1498,7 +1498,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey reads the word back first where the app allows it..
+        ///   Looks up a localized string similar to Navpaky reads the word back first where the app allows it..
         /// </summary>
         public static string VerifiedReplacementHint {
             get {
@@ -1516,7 +1516,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey fixes a word you typed in the wrong keyboard layout, such as &quot;ghbdtn&quot; instead of &quot;привет&quot;, and switches the layout for you..
+        ///   Looks up a localized string similar to Navpaky fixes a word you typed in the wrong keyboard layout, such as &quot;ghbdtn&quot; instead of &quot;привет&quot;, and switches the layout for you..
         /// </summary>
         public static string WelcomeDescription {
             get {
@@ -1525,7 +1525,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Send anonymous crash reports and daily usage counts to help improve Rekey. Never your text..
+        ///   Looks up a localized string similar to Send anonymous crash reports and daily usage counts to help improve Navpaky. Never your text..
         /// </summary>
         public static string WelcomeDiagnostics {
             get {
@@ -1561,7 +1561,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey needs at least two keyboard layouts in different languages. Add another one in Windows language settings..
+        ///   Looks up a localized string similar to Navpaky needs at least two keyboard layouts in different languages. Add another one in Windows language settings..
         /// </summary>
         public static string WelcomeOneLayout {
             get {
@@ -1570,7 +1570,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rekey reads keystrokes only to check the word you are typing. It never sends your text anywhere and never uses the clipboard..
+        ///   Looks up a localized string similar to Navpaky reads keystrokes only to check the word you are typing. It never sends your text anywhere and never uses the clipboard..
         /// </summary>
         public static string WelcomePrivacy {
             get {
@@ -1588,7 +1588,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Welcome to Rekey.
+        ///   Looks up a localized string similar to Welcome to Navpaky.
         /// </summary>
         public static string WelcomeTitle {
             get {
@@ -1597,7 +1597,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows may hide the Rekey icon under the arrow in the taskbar. To keep it visible, open Settings &gt; Personalization &gt; Taskbar &gt; Other system tray icons and turn Rekey on..
+        ///   Looks up a localized string similar to Windows may hide the Navpaky icon under the arrow in the taskbar. To keep it visible, open Settings &gt; Personalization &gt; Taskbar &gt; Other system tray icons and turn Navpaky on..
         /// </summary>
         public static string WelcomeTrayTip {
             get {
@@ -1606,7 +1606,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Keep Rekey in sight.
+        ///   Looks up a localized string similar to Keep Navpaky in sight.
         /// </summary>
         public static string WelcomeTrayTitle {
             get {
@@ -1642,7 +1642,7 @@ namespace Rekey.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to It works: Rekey corrected the word and switched the layout..
+        ///   Looks up a localized string similar to It works: Navpaky corrected the word and switched the layout..
         /// </summary>
         public static string WelcomeTryItWorked {
             get {

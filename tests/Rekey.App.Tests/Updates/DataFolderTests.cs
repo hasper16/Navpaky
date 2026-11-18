@@ -10,19 +10,19 @@ namespace Rekey.App.Tests.Updates {
 
     [Fact]
     public void DataLivesOutsideTheInstallRoot() {
-      string data = DataFolder.Resolve(_localAppData, Installed(@$"{_localAppData}\key-switcher"));
+      string data = DataFolder.Resolve(_localAppData, Installed(@$"{_localAppData}\navpaky"));
 
-      Assert.Equal(@$"{_localAppData}\Rekey", data);
+      Assert.Equal(@$"{_localAppData}\Navpaky Data", data);
     }
 
     [Fact]
     public void DataFolderIsTheSameWhenRekeyIsNotInstalled() {
-      Assert.Equal(@$"{_localAppData}\Rekey", DataFolder.Resolve(_localAppData, null));
+      Assert.Equal(@$"{_localAppData}\Navpaky Data", DataFolder.Resolve(_localAppData, null));
     }
 
     [Theory]
-    [InlineData(@"C:\Users\Invented\AppData\Local\Rekey")]
-    [InlineData(@"C:\Users\Invented\AppData\Local\rekey\")]
+    [InlineData(@"C:\Users\Invented\AppData\Local\Navpaky Data")]
+    [InlineData(@"C:\Users\Invented\AppData\Local\navpaky data\")]
     [InlineData(@"C:\Users\Invented\AppData\Local")]
     public void InstallRootHoldingTheDataIsRefused(string root) {
       Assert.Throws<InvalidOperationException>(
@@ -31,14 +31,14 @@ namespace Rekey.App.Tests.Updates {
 
     [Fact]
     public void RootSharingOnlyANamePrefixIsAccepted() {
-      string data = DataFolder.Resolve(_localAppData, Installed(@$"{_localAppData}\Rekey2"));
+      string data = DataFolder.Resolve(_localAppData, Installed(@$"{_localAppData}\Navpaky Data2"));
 
-      Assert.Equal(@$"{_localAppData}\Rekey", data);
+      Assert.Equal(@$"{_localAppData}\Navpaky Data", data);
     }
 
     private static TestVelopackLocator Installed(string root) {
       return new TestVelopackLocator(
-          "key-switcher", "1.0.0", Path.Join(root, "packages"), Path.Join(root, "current"),
+          "navpaky", "1.0.0", Path.Join(root, "packages"), Path.Join(root, "current"),
           root, Path.Join(root, "Update.exe"), "win", NullVelopackLogger.Instance, null,
           Path.Join(root, "current", "Rekey.App.exe"));
     }

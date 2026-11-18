@@ -23,12 +23,14 @@ namespace Rekey.Win32 {
     /// <summary>
     /// Returns the claim name for the current user in the current session.
     /// </summary>
-    /// <returns>The name <c>Local\Rekey-</c> followed by the user's security identifier.</returns>
+    /// <returns>
+    /// The name <c>Local\Navpaky-</c> followed by the user's security identifier.
+    /// </returns>
     public static string NameForCurrentUser() {
       using WindowsIdentity user = WindowsIdentity.GetCurrent();
       SecurityIdentifier sid =
           user.User ?? throw new InvalidOperationException("The process has no user identity.");
-      return $@"Local\Rekey-{sid.Value}";
+      return $@"Local\Navpaky-{sid.Value}";
     }
 
     /// <summary>

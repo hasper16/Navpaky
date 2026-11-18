@@ -37,11 +37,11 @@ namespace Rekey.App.Tests.Localization {
     }
 
     [Theory]
-    [InlineData("uk", 1, "Rekey на паузі: залишилася 1 хвилина")]
-    [InlineData("uk", 2, "Rekey на паузі: залишилося 2 хвилини")]
-    [InlineData("uk", 5, "Rekey на паузі: залишилося 5 хвилин")]
-    [InlineData("en", 1, "Rekey is paused: 1 minute left")]
-    [InlineData("en", 5, "Rekey is paused: 5 minutes left")]
+    [InlineData("uk", 1, "Navpaky на паузі: залишилася 1 хвилина")]
+    [InlineData("uk", 2, "Navpaky на паузі: залишилося 2 хвилини")]
+    [InlineData("uk", 5, "Navpaky на паузі: залишилося 5 хвилин")]
+    [InlineData("en", 1, "Navpaky is paused: 1 minute left")]
+    [InlineData("en", 5, "Navpaky is paused: 5 minutes left")]
     public void PausedToolTipUsesThePluralForm(string language, int minutes, string expected) {
       string text = UiText.Plural(new CultureInfo(language), "TrayPausedMinutes", minutes);
 

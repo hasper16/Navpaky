@@ -18,7 +18,7 @@ namespace Rekey.App.Tests.Localization {
       List<string> found = [.. Attributes()
           .Where(attribute => attribute.Value.Contains("Strings.", StringComparison.Ordinal)
               || (_textAttributes.Contains(attribute.Name.LocalName)
-                  && attribute.Value != "Rekey"
+                  && attribute.Value != Product.Name
                   && !attribute.Value.StartsWith("{l:Loc ", StringComparison.Ordinal)
                   && !attribute.Value.StartsWith("{Binding", StringComparison.Ordinal)))
           .Select(Describe)];

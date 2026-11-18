@@ -7,7 +7,7 @@ using Xunit;
 namespace Rekey.App.Tests.Updates {
   public sealed class DataQuestionTests {
     private const string _data = @"C:\Users\Invented\AppData\Local\Rekey";
-    private const string _install = @"C:\Users\Invented\AppData\Local\key-switcher";
+    private const string _install = @"C:\Users\Invented\AppData\Local\navpaky";
 
     [Fact]
     public void RunsWindowsPowerShellFromSystem32() {

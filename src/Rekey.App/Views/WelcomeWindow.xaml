@@ -33,7 +33,7 @@
                Height="64"
                HorizontalAlignment="Left"
                Margin="0,0,0,12"
-               AutomationProperties.Name="Rekey" />
+               AutomationProperties.Name="Navpaky" />
         <TextBlock Text="{l:Loc WelcomeDescription}"
                    TextWrapping="Wrap"
                    FontSize="16"

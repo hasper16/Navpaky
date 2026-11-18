@@ -26,7 +26,7 @@ namespace Rekey.App.Tests.ViewModels {
     [Fact]
     public void ActiveByDefault() {
       Assert.Equal(TrayState.Active, _tray.State);
-      Assert.Equal("Rekey is on", _tray.ToolTip);
+      Assert.Equal("Navpaky is on", _tray.ToolTip);
     }
 
     [Fact]
@@ -35,7 +35,7 @@ namespace Rekey.App.Tests.ViewModels {
       _clock.Advance(TimeSpan.FromMinutes(10.5));
 
       Assert.Equal(TrayState.Paused, _tray.State);
-      Assert.Equal("Rekey is paused: 20 minutes left", _tray.ToolTip);
+      Assert.Equal("Navpaky is paused: 20 minutes left", _tray.ToolTip);
       Assert.True(_tray.IsPaused);
     }
 
@@ -44,7 +44,7 @@ namespace Rekey.App.Tests.ViewModels {
       _tray.Pause(PausePreset.FifteenMinutes);
       _clock.Advance(TimeSpan.FromMinutes(14.5));
 
-      Assert.Equal("Rekey is paused: 1 minute left", _tray.ToolTip);
+      Assert.Equal("Navpaky is paused: 1 minute left", _tray.ToolTip);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ namespace Rekey.App.Tests.ViewModels {
       _tray.Pause(PausePreset.UntilRestart);
 
       Assert.Equal(TrayState.Paused, _tray.State);
-      Assert.Equal("Rekey is paused until it restarts", _tray.ToolTip);
+      Assert.Equal("Navpaky is paused until it restarts", _tray.ToolTip);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ namespace Rekey.App.Tests.ViewModels {
 
       Assert.Equal(TrayState.SelfPaused, _tray.State);
       Assert.Equal(
-          "Rekey paused itself: it lost the keyboard twice. It retries in 10 minutes.",
+          "Navpaky paused itself: it lost the keyboard twice. It retries in 10 minutes.",
           _tray.ToolTip);
       Assert.True(_tray.IsPaused);
     }
@@ -142,7 +142,7 @@ namespace Rekey.App.Tests.ViewModels {
     [InlineData(nameof(UpdateStatus.Idle), "Check for updates", true)]
     [InlineData(nameof(UpdateStatus.Unavailable), "Check for updates", false)]
     [InlineData(nameof(UpdateStatus.Checking), "Checking for updates\u2026", false)]
-    [InlineData(nameof(UpdateStatus.UpToDate), "Rekey is up to date", true)]
+    [InlineData(nameof(UpdateStatus.UpToDate), "Navpaky is up to date", true)]
     [InlineData(nameof(UpdateStatus.ReadyToRestart), "Restart to update", true)]
     [InlineData(nameof(UpdateStatus.Failed), "Could not check for updates", true)]
     public void UpdateItemSaysWhereTheCheckStands(string status, string text, bool enabled) {

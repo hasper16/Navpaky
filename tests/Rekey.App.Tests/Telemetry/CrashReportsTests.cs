@@ -93,7 +93,7 @@ namespace Rekey.App.Tests.Telemetry {
       SentrySdk.Flush(TimeSpan.FromSeconds(5));
 
       string sent = Assert.Single(_transport.Sent);
-      Assert.Contains("Rekey.Freeze.Engine", sent, StringComparison.Ordinal);
+      Assert.Contains("Navpaky.Freeze.Engine", sent, StringComparison.Ordinal);
       Assert.Contains("Worker.Run", sent, StringComparison.Ordinal);
     }
 

@@ -13,7 +13,7 @@
 
   <!-- Its icon and menu are built at run time from the tray view-model
        (Tray/TrayIconView). -->
-  <tb:TaskbarIcon x:Key="TrayIcon" ToolTipText="Rekey" />
+  <tb:TaskbarIcon x:Key="TrayIcon" ToolTipText="Navpaky" />
 
   <Style x:Key="SectionText" TargetType="TextBlock">
     <Setter Property="FontWeight" Value="SemiBold" />

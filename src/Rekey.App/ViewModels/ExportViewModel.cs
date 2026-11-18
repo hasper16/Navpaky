@@ -34,7 +34,7 @@ namespace Rekey.App.ViewModels {
 
     public static string DefaultFileName(DateTimeOffset time) {
       return string.Create(
-          CultureInfo.InvariantCulture, $"rekey-diagnostics-{time:yyyyMMdd-HHmmss}.txt");
+          CultureInfo.InvariantCulture, $"navpaky-diagnostics-{time:yyyyMMdd-HHmmss}.txt");
     }
 
     // UTF-8 without a byte order mark, so the file holds the preview's bytes and nothing else.

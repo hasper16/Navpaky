@@ -27,7 +27,7 @@ Pull-request workflows never see the secret: `release.yml` has no `pull_request`
    git push origin v0.2.0
    ```
 3. `release.yml` builds, tests, publishes a self-contained single-file `win-x64` build, signs and packs it with `vpk pack`, and uploads it with `vpk upload github --publish`. A version with a suffix (`v0.2.0-beta.1`) becomes a pre-release, which installed copies ignore.
-4. Check the release has `key-switcher-win-Setup.exe`, `key-switcher-<version>-full.nupkg` and `releases.win.json`.
+4. Check the release has `navpaky-win-Setup.exe`, `navpaky-<version>-full.nupkg` and `releases.win.json`.
 
 The run fails instead of publishing when `VPK_SIGN_PARAMS` is missing.
 
@@ -51,8 +51,8 @@ For the by-hand checks in `docs/manual-tests/deferred-by-hand.md`. Install the p
 2. Publish and pack a Debug build into one feed folder (here `%USERPROFILE%\RekeyFeed`: any folder your account can write works, but not the `C:\` root, which a standard user cannot write), signing with the test certificate. Delete the `publish` folder before each version, so the second pack holds no files of the first:
    ```powershell
    dotnet publish src/Rekey.App -c Debug -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=0.1.0 -o publish
-   .tools\vpk pack --packId key-switcher --packVersion 0.1.0 --packDir publish --mainExe Rekey.App.exe --packTitle Rekey --packAuthors Rekey --icon src\Rekey.App\Rekey.ico --runtime win-x64 --delta None --outputDir $env:USERPROFILE\RekeyFeed --signParams "/fd sha256 /sha1 <leaf thumbprint>"
+   .tools\vpk pack --packId navpaky --packVersion 0.1.0 --packDir publish --mainExe Rekey.App.exe --packTitle Rekey --packAuthors Rekey --icon src\Rekey.App\Rekey.ico --runtime win-x64 --delta None --outputDir $env:USERPROFILE\RekeyFeed --signParams "/fd sha256 /sha1 <leaf thumbprint>"
    ```
    Repeat with `0.2.0` for an update.
-3. Install with `%USERPROFILE%\RekeyFeed\key-switcher-win-Setup.exe` from the 0.1.0 pack: packing 0.2.0 replaces it, so first copy it out, for example to `%USERPROFILE%\RekeySetup-0.1.0.exe`. To check updates, quit Rekey and start `%LOCALAPPDATA%\key-switcher\current\Rekey.App.exe --update-feed %USERPROFILE%\RekeyFeed --update-pin "CN=Rekey Test Publisher" <CA thumbprint>`.
+3. Install with `%USERPROFILE%\RekeyFeed\navpaky-win-Setup.exe` from the 0.1.0 pack: packing 0.2.0 replaces it, so first copy it out, for example to `%USERPROFILE%\RekeySetup-0.1.0.exe`. To check updates, quit Rekey and start `%LOCALAPPDATA%\navpaky\current\Rekey.App.exe --update-feed %USERPROFILE%\RekeyFeed --update-pin "CN=Rekey Test Publisher" <CA thumbprint>`.
 4. Afterwards uninstall Rekey and remove both test certificates from `Cert:\CurrentUser\My` and the CA from `Cert:\CurrentUser\Root`.

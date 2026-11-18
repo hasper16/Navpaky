@@ -61,7 +61,7 @@ namespace Rekey.App.Tests.ViewModels {
       var time = new DateTimeOffset(2026, 11, 16, 9, 5, 7, TimeSpan.Zero);
 
       Assert.Equal(
-          "rekey-diagnostics-20261116-090507.txt", ExportViewModel.DefaultFileName(time));
+          "navpaky-diagnostics-20261116-090507.txt", ExportViewModel.DefaultFileName(time));
     }
   }
 }

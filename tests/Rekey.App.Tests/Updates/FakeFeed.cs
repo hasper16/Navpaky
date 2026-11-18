@@ -18,7 +18,7 @@ namespace Rekey.App.Tests.Updates {
       Directory.CreateDirectory(Path.Join(_root, "packages"));
       Directory.CreateDirectory(Path.Join(_root, "current"));
       Locator = new TestVelopackLocator(
-          "key-switcher", runningVersion, Path.Join(_root, "packages"),
+          "navpaky", runningVersion, Path.Join(_root, "packages"),
           Path.Join(_root, "current"), _root, Path.Join(_root, "Update.exe"), "win",
           NullVelopackLogger.Instance, null, Path.Join(_root, "current", "Rekey.App.exe"));
     }
@@ -35,9 +35,9 @@ namespace Rekey.App.Tests.Updates {
       }
 
       byte[] bytes = File.ReadAllBytes(package);
-      string name = $"key-switcher-{version}-full.nupkg";
+      string name = $"navpaky-{version}-full.nupkg";
       _assets.Add(new VelopackAsset {
-        PackageId = "key-switcher",
+        PackageId = "navpaky",
         Version = SemanticVersion.Parse(version),
         Type = VelopackAssetType.Full,
         FileName = name,

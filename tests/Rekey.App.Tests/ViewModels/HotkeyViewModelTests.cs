@@ -49,7 +49,7 @@ namespace Rekey.App.Tests.ViewModels {
 
       Assert.Equal(Hotkey.DoubleShift, _hub.Current.Hotkey);
       Assert.Equal(
-          "Win+Space switches the keyboard layout in Windows. As the Hotkey, Rekey will take it "
+          "Win+Space switches the keyboard layout in Windows. As the Hotkey, Navpaky will take it "
               + "over. Use it anyway or pick another.",
           _model.ConflictText);
     }

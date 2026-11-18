@@ -109,20 +109,20 @@ Written against the head of the `add-statistics-and-diagnostics` PR. Unit tests 
 
 Written against the head of the `add-auto-update-and-installer` PR. Unit tests cover the data folder, the version gate, the update scheduler, the tray item text and the update manager against a fake feed; these steps need an installer and a person. Build packages as `docs/release.md` describes ("Local test build"); use a standard (non-administrator) Windows account and a machine without an earlier Rekey install. The update steps need a Debug build packed twice (for example 0.1.0 and 0.2.0) into one local feed folder and signed with the test certificate from `docs/release.md`, started with `--update-feed <folder> --update-pin "<test subject>" <test CA thumbprint>`.
 
-- [x] **Per-user install (2.1).** Run `key-switcher-win-Setup.exe`.
-  Expected: no UAC prompt; Rekey starts with its tray icon; "Rekey" appears in the Start menu and in Settings → Apps → Installed apps; files are under `%LOCALAPPDATA%\key-switcher`, data under `%LOCALAPPDATA%\Rekey`.
-  Observed: Notes (task 2.12, 2.11): the welcome window scrolls with the wheel only over its scroll bar; the exe and the Installed apps entry have no icon; the publisher reads "key-switcher".
-- [x] **Update from a local feed (2.2).** Install 0.1.0 (Debug), quit it, start `%LOCALAPPDATA%\key-switcher\current\Rekey.App.exe --update-feed <folder> --update-pin "<test subject>" <test CA thumbprint>` with 0.2.0 in the folder, open the tray menu; choose "Restart to update". The restarted Rekey uses GitHub Releases again, so quit it, start it once more with the same `--update-feed` and `--update-pin` arguments, and choose the item again with no newer version.
+- [x] **Per-user install (2.1).** Run `navpaky-win-Setup.exe`.
+  Expected: no UAC prompt; Rekey starts with its tray icon; "Rekey" appears in the Start menu and in Settings → Apps → Installed apps; files are under `%LOCALAPPDATA%\navpaky`, data under `%LOCALAPPDATA%\Rekey`.
+  Observed: Notes (task 2.12, 2.11): the welcome window scrolls with the wheel only over its scroll bar; the exe and the Installed apps entry have no icon; the publisher reads "navpaky".
+- [x] **Update from a local feed (2.2).** Install 0.1.0 (Debug), quit it, start `%LOCALAPPDATA%\navpaky\current\Rekey.App.exe --update-feed <folder> --update-pin "<test subject>" <test CA thumbprint>` with 0.2.0 in the folder, open the tray menu; choose "Restart to update". The restarted Rekey uses GitHub Releases again, so quit it, start it once more with the same `--update-feed` and `--update-pin` arguments, and choose the item again with no newer version.
   Expected: the item reads "Checking for updates…", then "Restart to update"; Rekey restarts as 0.2.0 (About page); the next check says "Rekey is up to date"; with "Check for updates automatically" off, no check runs at start.
   Observed: The first try said "up to date": the installer-started Rekey was still running, so the second launch with --update-feed exited without notice (task 2.13). Not checked: no check at start with automatic checks off.
 - [x] **Update keeps user data (2.3).** Before the update above, change a few settings, add a Protected Word, turn on "Start Rekey when I sign in to Windows" and type a few Words for statistics.
   Expected: after the restart into 0.2.0 the settings, the Protected Word and the statistics are unchanged, and Rekey still starts at the next sign-in.
   Observed:
 - [x] **Tampered and unsigned packages (3.2).** In the local feed, replace the 0.2.0 `.nupkg` with a copy that has one byte changed (keep `releases.win.json`), and choose "Check for updates". Then restore a 0.2.0 package packed without signing (checksums updated by `vpk pack`) and check again.
-  Expected: both times the item reads "Could not check for updates", 0.1.0 keeps running, `%LOCALAPPDATA%\key-switcher\packages` holds no 0.2.0 package, and `%LOCALAPPDATA%\Rekey\incidents.jsonl` gains `UpdateChecksumFailed`, then `UpdateSignatureFailed` with `SignatureVerdict.NotSigned`.
+  Expected: both times the item reads "Could not check for updates", 0.1.0 keeps running, `%LOCALAPPDATA%\navpaky\packages` holds no 0.2.0 package, and `%LOCALAPPDATA%\Rekey\incidents.jsonl` gains `UpdateChecksumFailed`, then `UpdateSignatureFailed` with `SignatureVerdict.NotSigned`.
   Observed: Note (task 2.8): the tray item reads "Turn off in Windows Terminal Host" (process description) instead of the app name.
 - [x] **Uninstall, keeping data (4.1).** With Rekey installed and "Start Rekey when I sign in to Windows" on, uninstall it from Installed apps, wait a minute before answering the question that appears, and answer No.
-  Expected: Rekey closes; `%LOCALAPPDATA%\key-switcher`, the Start menu entry and the Run entry (Task Manager → Startup apps) are gone; `%LOCALAPPDATA%\Rekey` is still there; installing again picks up the old settings and word lists.
+  Expected: Rekey closes; `%LOCALAPPDATA%\navpaky`, the Start menu entry and the Run entry (Task Manager → Startup apps) are gone; `%LOCALAPPDATA%\Rekey` is still there; installing again picks up the old settings and word lists.
   Observed: After reinstalling, "Start Rekey when I sign in" is off although it was on: uninstall removes the Run entry. Owner decision: restore it through an install-time question, in its own change.
 - [x] **Uninstall, deleting data (4.1).** Uninstall again and answer Yes.
   Expected: `%LOCALAPPDATA%\Rekey` no longer exists and Rekey does not start at the next sign-in.
@@ -133,7 +133,7 @@ Written against the head of the `add-auto-update-and-installer` PR. Unit tests c
 - [x] **Open item: reinstall while the uninstall question is open.** The data question deletes `%LOCALAPPDATA%\Rekey` on Yes without checking whether Rekey was installed again while it was open, so a new installation's data could be lost. Evaluate an installation marker check before deletion (CodeRabbit finding on PR #32, deferred by orchestrator decision).
   Observed: Decision (owner): check the installation marker before deleting data (task 2.12).
 - [x] **Release environment and dry run (4.2).** Owner: create the `release` environment limited to `v*` tags with the `VPK_SIGN_PARAMS` secret (`docs/release.md`, One-time setup). After the change is on `main`, run Release by hand with version `0.0.1`.
-  Expected: the run passes, its Pack log says no signing parameters were provided, it creates no release, and the artifact holds `key-switcher-win-Setup.exe` and the `.nupkg`.
+  Expected: the run passes, its Pack log says no signing parameters were provided, it creates no release, and the artifact holds `navpaky-win-Setup.exe` and the `.nupkg`.
   Observed: Run on main: green, no release, artifact with Setup and .nupkg. Finding (task 2.12): Pack warns "No architecture specified with --runtime, defaulting to x86" while publish uses win-x64.
 - [x] **Local signed test build (4.3).** Follow `docs/release.md` → Local test build on a clean checkout without help.
   Expected: two signed packages in one feed folder, which the update steps above use; note any step that needed guessing.
@@ -163,7 +163,7 @@ Written against the head of the `add-onboarding` PR. Unit tests cover when the w
   Expected: Rekey is listed and enabled; the welcome does not open at the next start.
   Observed:
 - [x] **Run from inside a ZIP (3.1).** Zip the Release publish folder, open the ZIP in Explorer and double-click `Rekey.App.exe` inside it (choose Run if Explorer asks). Choose Install.
-  Expected: a "Rekey is not installed" message says this copy stops working when removed and offers Install and Not now; Install opens the latest release page in the browser (no setup in the ZIP). Repeat with `key-switcher-win-Setup.exe` placed next to `Rekey.App.exe` in the ZIP: Install starts that setup.
+  Expected: a "Rekey is not installed" message says this copy stops working when removed and offers Install and Not now; Install opens the latest release page in the browser (no setup in the ZIP). Repeat with `navpaky-win-Setup.exe` placed next to `Rekey.App.exe` in the ZIP: Install starts that setup.
   Observed: Finding (task 2.14): the ZIP held a plain multi-file publish; Explorer extracts only the exe, which fails at once (Rekey.App.dll missing), so no warning can show. Release builds publish a single file; the step now does the same. Re-run on 0.3.1 (2c31514; this path unchanged since) with a single-file publish: pass, the "not installed" message with Install and Not now.
 - [x] **Run from Downloads and from the installed location (3.1).** Copy the publish folder to your Downloads folder and start it there; then install Rekey with its setup and start the installed one.
   Expected: the Downloads copy shows the warning; the installed Rekey shows none.

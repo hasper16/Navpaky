@@ -24,10 +24,10 @@ namespace Rekey.DesktopChecks {
     private const uint _setPerWindowInput = 0x104F;
 
     // The value name SignInLaunch uses for Rekey's entries.
-    private const string _signInName = "Rekey";
+    private const string _signInName = "Navpaky";
 
     public static string DataFolder { get; } = Path.Join(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Rekey");
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Navpaky Data");
 
     // Where the language list is saved before the checks change it, so a crashed run can still
     // be undone with the restore-languages command.

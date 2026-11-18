@@ -13,28 +13,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TrayOn" xml:space="preserve">
-    <value>Rekey is on</value>
+    <value>Navpaky is on</value>
   </data>
   <data name="TrayPausedMinutes_One" xml:space="preserve">
-    <value>Rekey is paused: {0} minute left</value>
+    <value>Navpaky is paused: {0} minute left</value>
   </data>
   <data name="TrayPausedMinutes_Few" xml:space="preserve">
-    <value>Rekey is paused: {0} minutes left</value>
+    <value>Navpaky is paused: {0} minutes left</value>
   </data>
   <data name="TrayPausedMinutes_Many" xml:space="preserve">
-    <value>Rekey is paused: {0} minutes left</value>
+    <value>Navpaky is paused: {0} minutes left</value>
   </data>
   <data name="TrayPausedMinutes_Other" xml:space="preserve">
-    <value>Rekey is paused: {0} minutes left</value>
+    <value>Navpaky is paused: {0} minutes left</value>
   </data>
   <data name="TrayPausedUntilRestart" xml:space="preserve">
-    <value>Rekey is paused until it restarts</value>
+    <value>Navpaky is paused until it restarts</value>
   </data>
   <data name="TrayOff" xml:space="preserve">
     <value>Auto Correction is off</value>
   </data>
   <data name="TraySelfPaused" xml:space="preserve">
-    <value>Rekey paused itself: it lost the keyboard twice. It retries in 10 minutes.</value>
+    <value>Navpaky paused itself: it lost the keyboard twice. It retries in 10 minutes.</value>
   </data>
   <data name="TurnOffIn" xml:space="preserve">
     <value>Turn off in {0}</value>
@@ -61,7 +61,7 @@
     <value>For 3 hours</value>
   </data>
   <data name="MenuPauseUntilRestart" xml:space="preserve">
-    <value>Until Rekey restarts</value>
+    <value>Until Navpaky restarts</value>
   </data>
   <data name="MenuResume" xml:space="preserve">
     <value>Resume</value>
@@ -79,7 +79,7 @@
     <value>Checking for updates…</value>
   </data>
   <data name="MenuUpToDate" xml:space="preserve">
-    <value>Rekey is up to date</value>
+    <value>Navpaky is up to date</value>
   </data>
   <data name="MenuRestartToUpdate" xml:space="preserve">
     <value>Restart to update</value>
@@ -88,13 +88,13 @@
     <value>Could not check for updates</value>
   </data>
   <data name="MenuAbout" xml:space="preserve">
-    <value>About Rekey</value>
+    <value>About Navpaky</value>
   </data>
   <data name="MenuQuit" xml:space="preserve">
     <value>Quit</value>
   </data>
   <data name="HotkeyConflictWindows" xml:space="preserve">
-    <value>{0} switches the keyboard layout in Windows. As the Hotkey, Rekey will take it over. Use it anyway or pick another.</value>
+    <value>{0} switches the keyboard layout in Windows. As the Hotkey, Navpaky will take it over. Use it anyway or pick another.</value>
   </data>
   <data name="HotkeyConflictTaken" xml:space="preserve">
     <value>{0} is already used by another app. Use it anyway or pick another.</value>
@@ -124,7 +124,7 @@
     <value>Space</value>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
-    <value>Rekey settings</value>
+    <value>Navpaky settings</value>
   </data>
   <data name="PageGeneral" xml:space="preserve">
     <value>General</value>
@@ -148,13 +148,13 @@
     <value>Check for updates automatically</value>
   </data>
   <data name="LaunchAtSignIn" xml:space="preserve">
-    <value>Start Rekey when I sign in to Windows</value>
+    <value>Start Navpaky when I sign in to Windows</value>
   </data>
   <data name="ShowCursorIndicator" xml:space="preserve">
     <value>Show the new language next to the cursor</value>
   </data>
   <data name="ShowCursorIndicatorHint" xml:space="preserve">
-    <value>A small key appears for a moment after Rekey switches the layout.</value>
+    <value>A small key appears for a moment after Navpaky switches the layout.</value>
   </data>
   <data name="PlaySwitchSound" xml:space="preserve">
     <value>Play a sound after a correction</value>
@@ -214,13 +214,13 @@
     <value>Skip the word I start right after switching layout myself</value>
   </data>
   <data name="SkipAfterManualSwitchHint" xml:space="preserve">
-    <value>Rekey leaves the next word alone when you start it within 2 seconds of your own layout switch.</value>
+    <value>Navpaky leaves the next word alone when you start it within 2 seconds of your own layout switch.</value>
   </data>
   <data name="VerifiedReplacement" xml:space="preserve">
     <value>Check text before replacing</value>
   </data>
   <data name="VerifiedReplacementHint" xml:space="preserve">
-    <value>Rekey reads the word back first where the app allows it.</value>
+    <value>Navpaky reads the word back first where the app allows it.</value>
   </data>
   <data name="HotkeyIntro" xml:space="preserve">
     <value>Press the Hotkey to fix the last word, the selected text, or switch the layout.</value>
@@ -241,7 +241,7 @@
     <value>Pick another</value>
   </data>
   <data name="ExcludedApps" xml:space="preserve">
-    <value>Apps where Rekey stays off</value>
+    <value>Apps where Navpaky stays off</value>
   </data>
   <data name="AddRunningApp" xml:space="preserve">
     <value>Add a running app</value>
@@ -259,10 +259,10 @@
     <value>Add</value>
   </data>
   <data name="ProtectedWords" xml:space="preserve">
-    <value>Words Rekey never corrects</value>
+    <value>Words Navpaky never corrects</value>
   </data>
   <data name="LearnedWords" xml:space="preserve">
-    <value>Words Rekey has learned</value>
+    <value>Words Navpaky has learned</value>
   </data>
   <data name="NewWord" xml:space="preserve">
     <value>New word</value>
@@ -283,10 +283,10 @@
     <value>Reconnect to the keyboard when Windows stops sending keys</value>
   </data>
   <data name="RestartAfterFreeze" xml:space="preserve">
-    <value>Restart Rekey if it stops responding twice</value>
+    <value>Restart Navpaky if it stops responding twice</value>
   </data>
   <data name="PrivacyNote" xml:space="preserve">
-    <value>What you type stays in Rekey's memory and is never sent anywhere. Rekey stores its settings, your word lists, counts and a log of keyboard problems on this PC; it saves typed words only in the word-analysis log, and only if you turn it on.</value>
+    <value>What you type stays in Navpaky's memory and is never sent anywhere. Navpaky stores its settings, your word lists, counts and a log of keyboard problems on this PC; it saves typed words only in the word-analysis log, and only if you turn it on.</value>
   </data>
   <data name="AboutTagline" xml:space="preserve">
     <value>Fixes words typed in the wrong keyboard layout.</value>
@@ -358,10 +358,10 @@
     <value>Last 30 days</value>
   </data>
   <data name="StatisticsTitle" xml:space="preserve">
-    <value>Rekey statistics</value>
+    <value>Navpaky statistics</value>
   </data>
   <data name="StatisticsNote" xml:space="preserve">
-    <value>Counts only: Rekey never stores the words behind these numbers.</value>
+    <value>Counts only: Navpaky never stores the words behind these numbers.</value>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Refresh</value>
@@ -373,7 +373,7 @@
     <value>Keep a word-analysis log for troubleshooting</value>
   </data>
   <data name="AnalysisLogNote" xml:space="preserve">
-    <value>The log records the words you type and how Rekey judged them. It stays on this PC, only your Windows account can open it, and it keeps 7 days. Turning it off deletes it.</value>
+    <value>The log records the words you type and how Navpaky judged them. It stays on this PC, only your Windows account can open it, and it keeps 7 days. Turning it off deletes it.</value>
   </data>
   <data name="OpenStatistics" xml:space="preserve">
     <value>Show statistics</value>
@@ -409,28 +409,28 @@
     <value>Could not save the file.</value>
   </data>
   <data name="UninstallTitle" xml:space="preserve">
-    <value>Uninstall Rekey</value>
+    <value>Uninstall Navpaky</value>
   </data>
   <data name="UninstallDeleteData" xml:space="preserve">
-    <value>Also delete your Rekey settings, word lists, statistics and logs? Choose No to keep them for a later install.</value>
+    <value>Also delete your Navpaky settings, word lists, statistics and logs? Choose No to keep them for a later install.</value>
   </data>
   <data name="UninstallDataNotDeleted" xml:space="preserve">
-    <value>Some Rekey data could not be deleted because another program is using it. Delete the folder {0} yourself.</value>
+    <value>Some Navpaky data could not be deleted because another program is using it. Delete the folder {0} yourself.</value>
   </data>
   <data name="AlreadyRunning" xml:space="preserve">
-    <value>Rekey is already running. To start it with these options, quit it from the tray first.</value>
+    <value>Navpaky is already running. To start it with these options, quit it from the tray first.</value>
   </data>
   <data name="UninstallDataKept" xml:space="preserve">
-    <value>Rekey was installed again, so its settings and word lists were kept.</value>
+    <value>Navpaky was installed again, so its settings and word lists were kept.</value>
   </data>
   <data name="MenuWelcome" xml:space="preserve">
     <value>Getting started with {0}</value>
   </data>
   <data name="WelcomeTitle" xml:space="preserve">
-    <value>Welcome to Rekey</value>
+    <value>Welcome to Navpaky</value>
   </data>
   <data name="WelcomeDescription" xml:space="preserve">
-    <value>Rekey fixes a word you typed in the wrong keyboard layout, such as "ghbdtn" instead of "привет", and switches the layout for you.</value>
+    <value>Navpaky fixes a word you typed in the wrong keyboard layout, such as "ghbdtn" instead of "привет", and switches the layout for you.</value>
   </data>
   <data name="WelcomeUndo" xml:space="preserve">
     <value>Not what you meant? Press Ctrl+Z right after a correction, or press your hotkey, to get your typing back.</value>
@@ -439,7 +439,7 @@
     <value>Your typing stays on this computer</value>
   </data>
   <data name="WelcomePrivacy" xml:space="preserve">
-    <value>Rekey reads keystrokes only to check the word you are typing. It never sends your text anywhere and never uses the clipboard.</value>
+    <value>Navpaky reads keystrokes only to check the word you are typing. It never sends your text anywhere and never uses the clipboard.</value>
   </data>
   <data name="WelcomeTryItTitle" xml:space="preserve">
     <value>Try it</value>
@@ -451,10 +451,10 @@
     <value>Try-it field</value>
   </data>
   <data name="WelcomeTryItWorked" xml:space="preserve">
-    <value>It works: Rekey corrected the word and switched the layout.</value>
+    <value>It works: Navpaky corrected the word and switched the layout.</value>
   </data>
   <data name="WelcomeOneLayout" xml:space="preserve">
-    <value>Rekey needs at least two keyboard layouts in different languages. Add another one in Windows language settings.</value>
+    <value>Navpaky needs at least two keyboard layouts in different languages. Add another one in Windows language settings.</value>
   </data>
   <data name="WelcomeLanguageSettings" xml:space="preserve">
     <value>Open language settings</value>
@@ -466,25 +466,25 @@
     <value>Hotkey for a manual correction</value>
   </data>
   <data name="WelcomeTrayTitle" xml:space="preserve">
-    <value>Keep Rekey in sight</value>
+    <value>Keep Navpaky in sight</value>
   </data>
   <data name="WelcomeTrayTip" xml:space="preserve">
-    <value>Windows may hide the Rekey icon under the arrow in the taskbar. To keep it visible, open Settings &gt; Personalization &gt; Taskbar &gt; Other system tray icons and turn Rekey on.</value>
+    <value>Windows may hide the Navpaky icon under the arrow in the taskbar. To keep it visible, open Settings &gt; Personalization &gt; Taskbar &gt; Other system tray icons and turn Navpaky on.</value>
   </data>
   <data name="WelcomeDone" xml:space="preserve">
     <value>Done</value>
   </data>
   <data name="CorrectionTipTitle" xml:space="preserve">
-    <value>Rekey corrected a word</value>
+    <value>Navpaky corrected a word</value>
   </data>
   <data name="CorrectionTip" xml:space="preserve">
     <value>Press Ctrl+Z to undo.</value>
   </data>
   <data name="LocationTitle" xml:space="preserve">
-    <value>Rekey is not installed</value>
+    <value>Navpaky is not installed</value>
   </data>
   <data name="LocationWarning" xml:space="preserve">
-    <value>Rekey is running from a temporary folder, a ZIP file or Downloads. It stops working when this copy is removed. Install Rekey to keep it working and up to date.</value>
+    <value>Navpaky is running from a temporary folder, a ZIP file or Downloads. It stops working when this copy is removed. Install Navpaky to keep it working and up to date.</value>
   </data>
   <data name="LocationInstall" xml:space="preserve">
     <value>Install</value>
@@ -493,16 +493,16 @@
     <value>Not now</value>
   </data>
   <data name="MovedTitle" xml:space="preserve">
-    <value>Rekey's files were moved or deleted</value>
+    <value>Navpaky's files were moved or deleted</value>
   </data>
   <data name="MovedNotice" xml:space="preserve">
-    <value>Rekey keeps working until you quit it or restart the computer, but it will not start again. To keep using it, install Rekey again.</value>
+    <value>Navpaky keeps working until you quit it or restart the computer, but it will not start again. To keep using it, install Navpaky again.</value>
   </data>
   <data name="MovedClose" xml:space="preserve">
     <value>Close</value>
   </data>
   <data name="WelcomeDiagnostics" xml:space="preserve">
-    <value>Send anonymous crash reports and daily usage counts to help improve Rekey. Never your text.</value>
+    <value>Send anonymous crash reports and daily usage counts to help improve Navpaky. Never your text.</value>
   </data>
   <data name="CrashReportsEnabled" xml:space="preserve">
     <value>Send crash and freeze reports</value>
@@ -541,7 +541,7 @@
     <value>Sending…</value>
   </data>
   <data name="SignUpSent" xml:space="preserve">
-    <value>Thanks! Rekey does not keep your address on this PC.</value>
+    <value>Thanks! Navpaky does not keep your address on this PC.</value>
   </data>
   <data name="SignUpFailed" xml:space="preserve">
     <value>Could not send. Check the connection and try again.</value>

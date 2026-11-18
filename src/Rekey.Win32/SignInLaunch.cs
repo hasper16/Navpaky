@@ -19,7 +19,7 @@ namespace Rekey.Win32 {
     /// user's real keys.
     /// </summary>
     public SignInLaunch()
-        : this(Registry.CurrentUser, _windowsRoot, "Rekey") {
+        : this(Registry.CurrentUser, _windowsRoot, "Navpaky") {
     }
 
     /// <summary>

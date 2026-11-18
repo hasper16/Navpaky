@@ -13,28 +13,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TrayOn" xml:space="preserve">
-    <value>Rekey увімкнено</value>
+    <value>Navpaky увімкнено</value>
   </data>
   <data name="TrayPausedMinutes_One" xml:space="preserve">
-    <value>Rekey на паузі: залишилася {0} хвилина</value>
+    <value>Navpaky на паузі: залишилася {0} хвилина</value>
   </data>
   <data name="TrayPausedMinutes_Few" xml:space="preserve">
-    <value>Rekey на паузі: залишилося {0} хвилини</value>
+    <value>Navpaky на паузі: залишилося {0} хвилини</value>
   </data>
   <data name="TrayPausedMinutes_Many" xml:space="preserve">
-    <value>Rekey на паузі: залишилося {0} хвилин</value>
+    <value>Navpaky на паузі: залишилося {0} хвилин</value>
   </data>
   <data name="TrayPausedMinutes_Other" xml:space="preserve">
-    <value>Rekey на паузі: залишилося {0} хвилини</value>
+    <value>Navpaky на паузі: залишилося {0} хвилини</value>
   </data>
   <data name="TrayPausedUntilRestart" xml:space="preserve">
-    <value>Rekey на паузі до перезапуску</value>
+    <value>Navpaky на паузі до перезапуску</value>
   </data>
   <data name="TrayOff" xml:space="preserve">
     <value>Автовиправлення вимкнено</value>
   </data>
   <data name="TraySelfPaused" xml:space="preserve">
-    <value>Rekey призупинив себе: він двічі втратив клавіатуру. Повторна спроба через 10 хвилин.</value>
+    <value>Navpaky призупинив себе: він двічі втратив клавіатуру. Повторна спроба через 10 хвилин.</value>
   </data>
   <data name="TurnOffIn" xml:space="preserve">
     <value>Вимкнути в {0}</value>
@@ -61,7 +61,7 @@
     <value>На 3 години</value>
   </data>
   <data name="MenuPauseUntilRestart" xml:space="preserve">
-    <value>До перезапуску Rekey</value>
+    <value>До перезапуску Navpaky</value>
   </data>
   <data name="MenuResume" xml:space="preserve">
     <value>Продовжити</value>
@@ -79,7 +79,7 @@
     <value>Перевірка оновлень…</value>
   </data>
   <data name="MenuUpToDate" xml:space="preserve">
-    <value>У вас остання версія Rekey</value>
+    <value>У вас остання версія Navpaky</value>
   </data>
   <data name="MenuRestartToUpdate" xml:space="preserve">
     <value>Перезапустити для оновлення</value>
@@ -88,13 +88,13 @@
     <value>Не вдалося перевірити оновлення</value>
   </data>
   <data name="MenuAbout" xml:space="preserve">
-    <value>Про Rekey</value>
+    <value>Про Navpaky</value>
   </data>
   <data name="MenuQuit" xml:space="preserve">
     <value>Вийти</value>
   </data>
   <data name="HotkeyConflictWindows" xml:space="preserve">
-    <value>{0} перемикає розкладку клавіатури у Windows. Як гаряча клавіша вона перейде до Rekey. Використайте її все одно або виберіть іншу.</value>
+    <value>{0} перемикає розкладку клавіатури у Windows. Як гаряча клавіша вона перейде до Navpaky. Використайте її все одно або виберіть іншу.</value>
   </data>
   <data name="HotkeyConflictTaken" xml:space="preserve">
     <value>{0} вже зайнята іншою програмою. Використайте її все одно або виберіть іншу.</value>
@@ -124,7 +124,7 @@
     <value>Пробіл</value>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
-    <value>Налаштування Rekey</value>
+    <value>Налаштування Navpaky</value>
   </data>
   <data name="PageGeneral" xml:space="preserve">
     <value>Загальні</value>
@@ -148,7 +148,7 @@
     <value>Перевіряти оновлення автоматично</value>
   </data>
   <data name="LaunchAtSignIn" xml:space="preserve">
-    <value>Запускати Rekey під час входу в Windows</value>
+    <value>Запускати Navpaky під час входу в Windows</value>
   </data>
   <data name="ShowCursorIndicator" xml:space="preserve">
     <value>Показувати нову мову біля курсора</value>
@@ -214,13 +214,13 @@
     <value>Пропускати слово одразу після мого перемикання розкладки</value>
   </data>
   <data name="SkipAfterManualSwitchHint" xml:space="preserve">
-    <value>Rekey не виправляє наступне слово, якщо ви почали його протягом 2 секунд після власного перемикання розкладки.</value>
+    <value>Navpaky не виправляє наступне слово, якщо ви почали його протягом 2 секунд після власного перемикання розкладки.</value>
   </data>
   <data name="VerifiedReplacement" xml:space="preserve">
     <value>Перевіряти текст перед заміною</value>
   </data>
   <data name="VerifiedReplacementHint" xml:space="preserve">
-    <value>Rekey спершу перечитує слово, якщо програма це дозволяє.</value>
+    <value>Navpaky спершу перечитує слово, якщо програма це дозволяє.</value>
   </data>
   <data name="HotkeyIntro" xml:space="preserve">
     <value>Натисніть гарячу клавішу, щоб виправити останнє слово, виділений текст або перемкнути розкладку.</value>
@@ -241,7 +241,7 @@
     <value>Вибрати інше</value>
   </data>
   <data name="ExcludedApps" xml:space="preserve">
-    <value>Програми, де Rekey не працює</value>
+    <value>Програми, де Navpaky не працює</value>
   </data>
   <data name="AddRunningApp" xml:space="preserve">
     <value>Додати запущену програму</value>
@@ -259,10 +259,10 @@
     <value>Додати</value>
   </data>
   <data name="ProtectedWords" xml:space="preserve">
-    <value>Слова, які Rekey ніколи не виправляє</value>
+    <value>Слова, які Navpaky ніколи не виправляє</value>
   </data>
   <data name="LearnedWords" xml:space="preserve">
-    <value>Слова, які Rekey вивчив</value>
+    <value>Слова, які Navpaky вивчив</value>
   </data>
   <data name="NewWord" xml:space="preserve">
     <value>Нове слово</value>
@@ -283,10 +283,10 @@
     <value>Перепідключатися до клавіатури, якщо Windows перестає передавати натискання</value>
   </data>
   <data name="RestartAfterFreeze" xml:space="preserve">
-    <value>Перезапускати Rekey, якщо він двічі перестав відповідати</value>
+    <value>Перезапускати Navpaky, якщо він двічі перестав відповідати</value>
   </data>
   <data name="PrivacyNote" xml:space="preserve">
-    <value>Усе, що ви друкуєте, залишається в пам'яті Rekey і нікуди не надсилається. Rekey зберігає на цьому комп'ютері свої налаштування, ваші списки слів, лічильники та журнал проблем із клавіатурою; набрані слова він зберігає лише в журналі аналізу слів і лише якщо ви його ввімкнете.</value>
+    <value>Усе, що ви друкуєте, залишається в пам'яті Navpaky і нікуди не надсилається. Navpaky зберігає на цьому комп'ютері свої налаштування, ваші списки слів, лічильники та журнал проблем із клавіатурою; набрані слова він зберігає лише в журналі аналізу слів і лише якщо ви його ввімкнете.</value>
   </data>
   <data name="AboutTagline" xml:space="preserve">
     <value>Виправляє слова, набрані не в тій розкладці клавіатури.</value>
@@ -358,10 +358,10 @@
     <value>Останні 30 днів</value>
   </data>
   <data name="StatisticsTitle" xml:space="preserve">
-    <value>Статистика Rekey</value>
+    <value>Статистика Navpaky</value>
   </data>
   <data name="StatisticsNote" xml:space="preserve">
-    <value>Лише числа: Rekey ніколи не зберігає слова, що стоять за ними.</value>
+    <value>Лише числа: Navpaky ніколи не зберігає слова, що стоять за ними.</value>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Оновити</value>
@@ -373,7 +373,7 @@
     <value>Вести журнал аналізу слів для пошуку проблем</value>
   </data>
   <data name="AnalysisLogNote" xml:space="preserve">
-    <value>Журнал записує слова, які ви друкуєте, і те, як Rekey їх оцінив. Він залишається на цьому комп'ютері, відкрити його може лише ваш обліковий запис Windows, і він зберігається 7 днів. Вимкнення видаляє його.</value>
+    <value>Журнал записує слова, які ви друкуєте, і те, як Navpaky їх оцінив. Він залишається на цьому комп'ютері, відкрити його може лише ваш обліковий запис Windows, і він зберігається 7 днів. Вимкнення видаляє його.</value>
   </data>
   <data name="OpenStatistics" xml:space="preserve">
     <value>Показати статистику</value>
@@ -409,28 +409,28 @@
     <value>Не вдалося зберегти файл.</value>
   </data>
   <data name="UninstallTitle" xml:space="preserve">
-    <value>Видалення Rekey</value>
+    <value>Видалення Navpaky</value>
   </data>
   <data name="UninstallDeleteData" xml:space="preserve">
-    <value>Видалити також ваші налаштування Rekey, списки слів, статистику та журнали? Виберіть «Ні», щоб зберегти їх для наступного встановлення.</value>
+    <value>Видалити також ваші налаштування Navpaky, списки слів, статистику та журнали? Виберіть «Ні», щоб зберегти їх для наступного встановлення.</value>
   </data>
   <data name="UninstallDataNotDeleted" xml:space="preserve">
-    <value>Деякі дані Rekey не вдалося видалити, бо їх використовує інша програма. Видаліть теку {0} вручну.</value>
+    <value>Деякі дані Navpaky не вдалося видалити, бо їх використовує інша програма. Видаліть теку {0} вручну.</value>
   </data>
   <data name="AlreadyRunning" xml:space="preserve">
-    <value>Rekey уже запущено. Щоб запустити його з цими параметрами, спершу закрийте його в треї.</value>
+    <value>Navpaky уже запущено. Щоб запустити його з цими параметрами, спершу закрийте його в треї.</value>
   </data>
   <data name="UninstallDataKept" xml:space="preserve">
-    <value>Rekey встановлено знову, тому його налаштування та списки слів збережено.</value>
+    <value>Navpaky встановлено знову, тому його налаштування та списки слів збережено.</value>
   </data>
   <data name="MenuWelcome" xml:space="preserve">
     <value>Знайомство з {0}</value>
   </data>
   <data name="WelcomeTitle" xml:space="preserve">
-    <value>Ласкаво просимо до Rekey</value>
+    <value>Ласкаво просимо до Navpaky</value>
   </data>
   <data name="WelcomeDescription" xml:space="preserve">
-    <value>Rekey виправляє слово, набране не в тій розкладці, наприклад «ghbdsn» замість «привіт», і сам перемикає розкладку.</value>
+    <value>Navpaky виправляє слово, набране не в тій розкладці, наприклад «ghbdsn» замість «привіт», і сам перемикає розкладку.</value>
   </data>
   <data name="WelcomeUndo" xml:space="preserve">
     <value>Не те, що ви хотіли? Натисніть Ctrl+Z одразу після виправлення або натисніть гарячу клавішу, щоб повернути набране.</value>
@@ -439,7 +439,7 @@
     <value>Ваш текст залишається на цьому комп'ютері</value>
   </data>
   <data name="WelcomePrivacy" xml:space="preserve">
-    <value>Rekey читає натискання клавіш лише для перевірки слова, яке ви друкуєте. Він нікуди не надсилає ваш текст і не використовує буфер обміну.</value>
+    <value>Navpaky читає натискання клавіш лише для перевірки слова, яке ви друкуєте. Він нікуди не надсилає ваш текст і не використовує буфер обміну.</value>
   </data>
   <data name="WelcomeTryItTitle" xml:space="preserve">
     <value>Спробуйте</value>
@@ -451,10 +451,10 @@
     <value>Поле для перевірки</value>
   </data>
   <data name="WelcomeTryItWorked" xml:space="preserve">
-    <value>Працює: Rekey виправив слово й перемкнув розкладку.</value>
+    <value>Працює: Navpaky виправив слово й перемкнув розкладку.</value>
   </data>
   <data name="WelcomeOneLayout" xml:space="preserve">
-    <value>Rekey потрібні щонайменше дві розкладки різними мовами. Додайте ще одну в мовних параметрах Windows.</value>
+    <value>Navpaky потрібні щонайменше дві розкладки різними мовами. Додайте ще одну в мовних параметрах Windows.</value>
   </data>
   <data name="WelcomeLanguageSettings" xml:space="preserve">
     <value>Відкрити мовні параметри</value>
@@ -466,25 +466,25 @@
     <value>Гаряча клавіша для ручного виправлення</value>
   </data>
   <data name="WelcomeTrayTitle" xml:space="preserve">
-    <value>Тримайте Rekey на виду</value>
+    <value>Тримайте Navpaky на виду</value>
   </data>
   <data name="WelcomeTrayTip" xml:space="preserve">
-    <value>Windows може сховати значок Rekey під стрілкою на панелі завдань. Щоб він був видимий, відкрийте Параметри &gt; Персоналізація &gt; Панель завдань &gt; Інші піктограми в системному лотку та ввімкніть Rekey.</value>
+    <value>Windows може сховати значок Navpaky під стрілкою на панелі завдань. Щоб він був видимий, відкрийте Параметри &gt; Персоналізація &gt; Панель завдань &gt; Інші піктограми в системному лотку та ввімкніть Navpaky.</value>
   </data>
   <data name="WelcomeDone" xml:space="preserve">
     <value>Готово</value>
   </data>
   <data name="CorrectionTipTitle" xml:space="preserve">
-    <value>Rekey виправив слово</value>
+    <value>Navpaky виправив слово</value>
   </data>
   <data name="CorrectionTip" xml:space="preserve">
     <value>Натисніть Ctrl+Z, щоб скасувати.</value>
   </data>
   <data name="LocationTitle" xml:space="preserve">
-    <value>Rekey не встановлено</value>
+    <value>Navpaky не встановлено</value>
   </data>
   <data name="LocationWarning" xml:space="preserve">
-    <value>Rekey запущено з тимчасової теки, ZIP-архіву або теки «Завантаження». Він перестане працювати, коли цю копію видалять. Встановіть Rekey, щоб він працював і оновлювався.</value>
+    <value>Navpaky запущено з тимчасової теки, ZIP-архіву або теки «Завантаження». Він перестане працювати, коли цю копію видалять. Встановіть Navpaky, щоб він працював і оновлювався.</value>
   </data>
   <data name="LocationInstall" xml:space="preserve">
     <value>Встановити</value>
@@ -493,16 +493,16 @@
     <value>Не зараз</value>
   </data>
   <data name="MovedTitle" xml:space="preserve">
-    <value>Файли Rekey переміщено або видалено</value>
+    <value>Файли Navpaky переміщено або видалено</value>
   </data>
   <data name="MovedNotice" xml:space="preserve">
-    <value>Rekey працюватиме, доки ви його не закриєте або не перезавантажите комп'ютер, але знову не запуститься. Щоб і далі ним користуватися, встановіть Rekey знову.</value>
+    <value>Navpaky працюватиме, доки ви його не закриєте або не перезавантажите комп'ютер, але знову не запуститься. Щоб і далі ним користуватися, встановіть Navpaky знову.</value>
   </data>
   <data name="MovedClose" xml:space="preserve">
     <value>Закрити</value>
   </data>
   <data name="WelcomeDiagnostics" xml:space="preserve">
-    <value>Надсилати анонімні звіти про збої та щоденні лічильники використання, щоб допомогти покращити Rekey. Ніколи — ваш текст.</value>
+    <value>Надсилати анонімні звіти про збої та щоденні лічильники використання, щоб допомогти покращити Navpaky. Ніколи — ваш текст.</value>
   </data>
   <data name="CrashReportsEnabled" xml:space="preserve">
     <value>Надсилати звіти про збої та зависання</value>
@@ -541,7 +541,7 @@
     <value>Надсилання…</value>
   </data>
   <data name="SignUpSent" xml:space="preserve">
-    <value>Дякуємо! Rekey не зберігає вашу адресу на цьому комп'ютері.</value>
+    <value>Дякуємо! Navpaky не зберігає вашу адресу на цьому комп'ютері.</value>
   </data>
   <data name="SignUpFailed" xml:space="preserve">
     <value>Не вдалося надіслати. Перевірте з'єднання та спробуйте ще раз.</value>

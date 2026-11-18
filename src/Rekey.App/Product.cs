@@ -1,7 +1,6 @@
 namespace Rekey.App {
-  // The product name as the interface shows it, so a rename changes one place (the owner's
-  // rename is its own change after add-final-acceptance).
+  // The product name as the interface shows it, so a rename changes one place.
   internal static class Product {
-    public const string Name = "Rekey";
+    public const string Name = "Navpaky";
   }
 }
