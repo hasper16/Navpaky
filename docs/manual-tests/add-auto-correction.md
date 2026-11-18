@@ -29,7 +29,7 @@ Earlier runs that day failed lines of the change-4 set on this branch and on `ma
 
 ## By hand
 
-The app has no settings window before `add-tray-and-settings-ui`, so the options are changed in `%LOCALAPPDATA%\Navpaky Data\settings.json` while Navpaky is not running (Navpaky writes the file on exit). Use a Debug build of `src/Navpaky.App` and English (US) as the starting Layout. Whenever a step switches to English (US) before a new Word, wait 3 seconds before typing it: Navpaky leaves alone the Word typed right after a Layout Switch by the user. The second check tests exactly that, so there the switch comes in the middle of a Word and the typing goes on at once.
+The app has no settings window before `add-tray-and-settings-ui`, so the options are changed in `%APPDATA%\Navpaky\settings.json` while Navpaky is not running (Navpaky writes the file on exit). Use a Debug build of `src/Navpaky.App` and English (US) as the starting Layout. Whenever a step switches to English (US) before a new Word, wait 3 seconds before typing it: Navpaky leaves alone the Word typed right after a Layout Switch by the user. The second check tests exactly that, so there the switch comes in the middle of a Word and the typing goes on at once.
 
 - [x] **Default Corrections (4.2).** Start Navpaky with no settings file. In Notepad type "ghbdtn" and Space; switch back to English (US) and wait 3 seconds, then on a new line type "ghbdtn" and Enter; switch back to English (US) again and wait 3 seconds, then type "ghbdtn" and Tab.
   Expected: the first two read "привет" with the Space or the line break after it and the Layout becomes Russian each time; after Tab the text still reads "ghbdtn". The settings file then holds `"triggerKeys": "space, enter"`.

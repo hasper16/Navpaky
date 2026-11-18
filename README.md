@@ -26,7 +26,7 @@ dotnet run --project src/Navpaky.App
 analyzers (SonarAnalyzer.CSharp, StyleCop.Analyzers and .NET code style) run in every build.
 
 Navpaky shows an **R** icon in the notification area; right-click it and choose **Quit** to exit.
-Settings are stored in `%LOCALAPPDATA%\Navpaky Data\settings.json`.
+Settings are stored in `%APPDATA%\Navpaky\settings.json`.
 
 After cloning, turn on the repository's Git hooks (commit message format, secrets, formatting,
 Core tests):

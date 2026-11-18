@@ -30,7 +30,7 @@ For troubleshooting you can turn on the **word-analysis log**. It is off by defa
 
 ## Teaching Navpaky
 
-No word list covers every name, brand, slang word or abbreviation you type. Navpaky learns from you in two ways and keeps what it learns in `%LOCALAPPDATA%\Navpaky Data\words.json`, so it is still there after a restart.
+No word list covers every name, brand, slang word or abbreviation you type. Navpaky learns from you in two ways and keeps what it learns in `%APPDATA%\Navpaky\words.json`, so it is still there after a restart.
 
 ### Protected Words: words Navpaky leaves alone
 
