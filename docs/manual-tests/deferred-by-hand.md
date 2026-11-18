@@ -224,9 +224,11 @@ Written against the head of the `rename-to-navpaky` PR. Uninstall any test insta
 - [x] **Install under the new name (1.1, 1.2).** Run `navpaky-app-win-Setup.exe`.
   Expected: the installer and Settings → Apps → Installed apps say "Navpaky" (publisher Pavlo Yeremenko); the Start menu entry reads "Navpaky"; files are under `%LOCALAPPDATA%\navpaky-app`; settings appear under `%APPDATA%\Navpaky` and statistics under `%LOCALAPPDATA%\Navpaky` after the first change; the tray tooltip, About page and welcome window say Navpaky in English and in Ukrainian.
   Observed: pass on c435388 (0.4.0) and 7c187ac: Installed apps reads "Navpaky", publisher "Pavlo Yeremenko" (after de7c796); icon, Start menu, tray, both data folders, settings and word lists carried over.
-- [x] **Start at sign-in and single instance (1.1).** Turn on "Start Navpaky when I sign in to Windows", then start `Navpaky.App.exe` a second time.
-  Expected: Task Manager → Startup apps lists Navpaky; the second start exits and one tray icon remains.
-  Observed: start at sign-in pass on c435388; the owner reported no separate result for the second start.
+- [x] **Start at sign-in (1.1).** Turn on "Start Navpaky when I sign in to Windows", then sign out and in.
+  Expected: Task Manager → Startup apps lists Navpaky and Navpaky is running after sign-in.
+  Observed: pass on c435388.
+- [ ] **Single instance (1.1).** With Navpaky running, start `Navpaky.App.exe` a second time.
+  Expected: the second start exits and one tray icon remains.
 - [x] **Uninstall keeps data apart (1.1).** Uninstall and answer No to deleting data.
   Expected: `%LOCALAPPDATA%\navpaky-app` is gone and both `%APPDATA%\Navpaky` and `%LOCALAPPDATA%\Navpaky` are still there.
   Observed: pass on c435388: both data folders kept.
