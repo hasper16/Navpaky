@@ -57,7 +57,7 @@ namespace Navpaky.Core.Detection {
         NewLine = "\n",
         WriteIndented = true,
       };
-      return (JsonTypeInfo<KeyMapDocument>)options.GetTypeInfo(typeof(KeyMapDocument));
+      return options.GetTypeInfo<KeyMapDocument>();
     }
   }
 }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>$(DotNetTargetFramework)-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <NeutralLanguage>en</NeutralLanguage>
     <StartupObject>Navpaky.App.Program</StartupObject>
