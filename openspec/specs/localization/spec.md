@@ -1,12 +1,12 @@
 # localization Specification
 
 ## Purpose
-Defines the interface languages Rekey offers, how the interface language is chosen, and the rules that keep translated text complete and grammatically correct.
+Defines the interface languages Navpaky offers, how the interface language is chosen, and the rules that keep translated text complete and grammatically correct.
 
 ## Requirements
 
 ### Requirement: Interface languages
-Rekey's interface SHALL be available in English and Ukrainian, covering the tray icon tooltip and menu, all windows, notifications and uninstall prompts. The interface SHALL NOT offer Russian; Russian layout detection and correction are not affected by this requirement.
+Navpaky's interface SHALL be available in English and Ukrainian, covering the tray icon tooltip and menu, all windows, notifications and uninstall prompts. The interface SHALL NOT offer Russian; Russian layout detection and correction are not affected by this requirement.
 
 #### Scenario: Ukrainian interface
 - **WHEN** the interface language is Ukrainian
@@ -17,18 +17,18 @@ By default the interface language SHALL be Ukrainian when the Windows display la
 
 #### Scenario: Ukrainian Windows
 - **WHEN** Windows display language is Ukrainian and the user has not chosen a language
-- **THEN** Rekey's interface is Ukrainian
+- **THEN** Navpaky's interface is Ukrainian
 
 #### Scenario: Russian Windows
 - **WHEN** Windows display language is Russian and the user has not chosen a language
-- **THEN** Rekey's interface is Ukrainian
+- **THEN** Navpaky's interface is Ukrainian
 
 #### Scenario: German Windows
 - **WHEN** Windows display language is German and the user has not chosen a language
-- **THEN** Rekey's interface is English
+- **THEN** Navpaky's interface is English
 
 ### Requirement: User override without restart
-The user SHALL be able to choose the interface language in settings from System, English and Ukrainian, and the change SHALL apply to all open windows and the tray menu without restarting Rekey.
+The user SHALL be able to choose the interface language in settings from System, English and Ukrainian, and the change SHALL apply to all open windows and the tray menu without restarting Navpaky.
 
 #### Scenario: Switch to English
 - **WHEN** the interface is Ukrainian and the user selects English in settings
