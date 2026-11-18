@@ -10,7 +10,7 @@ namespace Navpaky.App.Updates {
   internal sealed class VelopackUpdates : IUpdateService {
     // The public repository's GitHub Releases over HTTPS, fixed in the app: no access token
     // ships and the user cannot point Navpaky elsewhere.
-    public const string Repository = "https://github.com/hasper16/key-switcher";
+    public const string Repository = "https://github.com/hasper16/Navpaky";
 
     private readonly NavpakyUpdateManager _manager;
     private readonly Action _exit;
