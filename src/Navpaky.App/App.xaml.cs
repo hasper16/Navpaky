@@ -59,21 +59,24 @@ namespace Navpaky.App {
     // How long a restarted Navpaky waits for the frozen one to exit before it starts anyway.
     private static readonly TimeSpan _oldProcessExitWait = TimeSpan.FromSeconds(10);
 
-    private static readonly string _dataFolder = DataFolder.Resolve(
+    private static readonly DataFolders _data = DataFolders.Resolve(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         VelopackLocator.IsCurrentSet ? VelopackLocator.Current : null);
 
-    private static readonly string _analysisFolder = Path.Join(_dataFolder, "analysis");
+    private static readonly string _localFolder = _data.Local;
 
-    private static readonly WordListsStore _wordsStore = new(_dataFolder);
+    private static readonly string _analysisFolder = Path.Join(_localFolder, "analysis");
+
+    private static readonly WordListsStore _wordsStore = new(_data.Settings);
 
     // Read before Navpaky sets its own interface language: .NET starts it from the Windows
     // display language (GetUserDefaultUILanguage), which the "system" choice follows.
     private static readonly CultureInfo _windowsLanguage = CultureInfo.CurrentUICulture;
 
-    private readonly SettingsStore _settingsStore = new(_dataFolder);
-    private readonly RestartStateStore _restartStore = new(_dataFolder);
-    private readonly StatsStore _statsStore = new(_dataFolder);
+    private readonly SettingsStore _settingsStore = new(_data.Settings);
+    private readonly RestartStateStore _restartStore = new(_localFolder);
+    private readonly StatsStore _statsStore = new(_localFolder);
     private readonly WordListsSaver _wordsSaver =
         new(_wordsStore, TimeProvider.System, ReportWordsNotSaved);
 
@@ -134,7 +137,7 @@ namespace Navpaky.App {
         return;
       }
 
-      _incidents = new QueuedIncidentLog(new IncidentLog(_dataFolder), ReportIncidentNotSaved);
+      _incidents = new QueuedIncidentLog(new IncidentLog(_localFolder), ReportIncidentNotSaved);
       ApplicationThemeManager.ApplySystemTheme();
       IconText.HideFromScreenReaders();
 
@@ -168,7 +171,7 @@ namespace Navpaky.App {
       // Efficiency Mode throttles the process; the keyboard hook must stay fast.
       trayIcon.ForceCreate(enablesEfficiencyMode: false);
       _telemetry = new TelemetryHost(
-          _dataFolder,
+          _localFolder,
           Dispatcher,
           _hub,
           () => _worker?.Statistics ?? StatsDocument.Empty,
@@ -498,7 +501,7 @@ namespace Navpaky.App {
           $"words-ended={counts.Ended} evaluated={counts.Evaluated} unconfirmed={dropped}");
       Trace.WriteLine($"Navpaky {line}");
 #if DEBUG
-      File.WriteAllText(Path.Join(_dataFolder, "word-counts.txt"), line);
+      File.WriteAllText(Path.Join(_localFolder, "word-counts.txt"), line);
 #endif
     }
 
@@ -874,7 +877,7 @@ namespace Navpaky.App {
 
       // Each log on its own, so one that cannot be read still leaves the other in the export.
       IReadOnlyList<IncidentEntry> incidents = ReadForExport(
-          () => new IncidentLog(_dataFolder).Read(), []);
+          () => new IncidentLog(_localFolder).Read(), []);
       IReadOnlyList<string> analysis = ReadForExport(
           () => AnalysisLog.ReadAll(_analysisFolder), []);
 

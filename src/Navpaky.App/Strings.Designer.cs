@@ -1453,7 +1453,8 @@ namespace Navpaky.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Some Navpaky data could not be deleted because another program is using it. Delete the folder {0} yourself..
+        ///   Looks up a localized string similar to Some Navpaky data could not be deleted because another program is using it. Delete it yourself:
+        ///{0}.
         /// </summary>
         public static string UninstallDataNotDeleted {
             get {

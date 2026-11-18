@@ -35,7 +35,11 @@ Only one Navpaky process SHALL run per Windows user session. A second launch MUS
 - **THEN** both instances run independently
 
 ### Requirement: Per-user settings storage
-The app SHALL persist settings per Windows user in a file under `%LOCALAPPDATA%\Navpaky Data`, write it atomically, and keep settings across restarts.
+The app SHALL persist settings per Windows user in a file under `%APPDATA%\Navpaky`, write it atomically, and keep settings across restarts. Settings and word lists SHALL live in `%APPDATA%\Navpaky` (the roaming profile, so they may follow the user to another PC); statistics, the word-analysis log, Incidents, restart state, telemetry records and check files SHALL live in `%LOCALAPPDATA%\Navpaky Data` (the local profile, so logs and statistics that can hold typed words never roam). Both folders SHALL lie outside the install root (design decision of rename-to-navpaky).
+
+#### Scenario: Settings and local state in separate folders
+- **WHEN** Navpaky has saved its settings, word lists and statistics
+- **THEN** `settings.json` and `words.json` are in `%APPDATA%\Navpaky` and `stats.json` is in `%LOCALAPPDATA%\Navpaky Data`
 
 #### Scenario: Settings survive restart
 - **WHEN** a setting is changed and Navpaky is restarted

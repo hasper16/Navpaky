@@ -7,7 +7,7 @@
 ## What Changes
 
 - **BREAKING** (no released users yet): the product is called Navpaky everywhere the user sees it: tray tooltip and menu, window titles, messages, notifications, the About page, the welcome window, the installer title and author (`--packTitle`, `--packAuthors`), the uninstall question, both string tables (en, uk), README and the docs.
-- **BREAKING**: identities that carry the name change: Velopack pack id `key-switcher` → `navpaky` (install folder `%LOCALAPPDATA%\navpaky`, setup `navpaky-win-Setup.exe`), data folder `%LOCALAPPDATA%\Rekey` → `%LOCALAPPDATA%\Navpaky Data` (not `Navpaky`: that would be the install root, design D1), single-instance mutex `Local\Navpaky-<SID>`, the Run-key value for start at sign-in, the diagnostics export file name, thread names, temp-folder prefixes and crash-report types.
+- **BREAKING**: identities that carry the name change: Velopack pack id `key-switcher` → `navpaky` (install folder `%LOCALAPPDATA%\navpaky`, setup `navpaky-win-Setup.exe`), data folder `%LOCALAPPDATA%\Rekey` split in two (owner decision, design D7): settings and word lists in `%APPDATA%\Navpaky` (Roaming), statistics, logs and other machine-local state in `%LOCALAPPDATA%\Navpaky Data` (not `Navpaky`: that would be the install root), single-instance mutex `Local\Navpaky-<SID>`, the Run-key value for start at sign-in, the diagnostics export file name, thread names, temp-folder prefixes and crash-report types.
 - Internal names follow (owner decision): solution `Navpaky.slnx`, projects, assemblies, namespaces, tests and tools `Rekey.*` → `Navpaky.*` (including `Navpaky.App.exe`), embedded-resource logical names, `NativeMethods.txt` locations, CI workflow paths, `.editorconfig`, `.gitattributes`, the pre-commit hook and agent docs. The icon file is renamed only; its content and fonts stay for the design overhaul.
 - Text that names the original macOS app keeps the name Rekey. Archived changes under `openspec/changes/archive/` stay as history.
 - The GitHub repository (`hasper16/key-switcher`) and the update feed URL stay; renaming the repository is an open item for the owner.
@@ -24,7 +24,7 @@ None.
 
 Every capability whose requirements name the product: the requirement text changes from Rekey to Navpaky with no change in behaviour, except the identities listed above.
 
-- `app-lifecycle`: settings folder `%LOCALAPPDATA%\Navpaky Data`; single instance and sign-in start under the new name.
+- `app-lifecycle`: settings and word lists in `%APPDATA%\Navpaky`, machine-local state in `%LOCALAPPDATA%\Navpaky Data`; single instance and sign-in start under the new name.
 - `auto-update`: installer, install folder, Installed apps entry and uninstall data folder use the new name.
 - `auto-correction`, `keyboard-capture`, `language-profiles`, `layout-management`, `localization`, `manual-correction`, `onboarding`, `statistics-and-diagnostics`, `telemetry`, `text-replacement`, `tray-and-settings`, `word-learning`, `wrong-layout-detection`: product name in requirement text.
 

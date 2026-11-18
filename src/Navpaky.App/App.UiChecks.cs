@@ -22,10 +22,10 @@ namespace Navpaky.App {
     // Publishes a whole check file in one step, so the tool never reads half of it. While the
     // tool holds the file open the move fails; the next change writes it again.
     private static void WriteCheckFile(string name, string text) {
-      string path = Path.Join(_dataFolder, name);
+      string path = Path.Join(_localFolder, name);
       string draft = path + ".tmp";
       try {
-        Directory.CreateDirectory(_dataFolder);
+        Directory.CreateDirectory(_localFolder);
         File.WriteAllText(draft, text);
         File.Move(draft, path, overwrite: true);
       } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
@@ -35,7 +35,7 @@ namespace Navpaky.App {
 
     private void StartUiCheck() {
       _checkingUi = true;
-      File.Delete(Path.Join(_dataFolder, _uiCommandFile));
+      File.Delete(Path.Join(_localFolder, _uiCommandFile));
       _commandTimer = new DispatcherTimer(
           TimeSpan.FromMilliseconds(200), DispatcherPriority.Normal, (_, _) => TakeCommand(),
           Dispatcher);
@@ -44,7 +44,7 @@ namespace Navpaky.App {
     }
 
     private void TakeCommand() {
-      string path = Path.Join(_dataFolder, _uiCommandFile);
+      string path = Path.Join(_localFolder, _uiCommandFile);
       if (!File.Exists(path)) {
         return;
       }

@@ -47,7 +47,7 @@ namespace Navpaky.DesktopChecks {
     }
 
     private static string UiStatePath() {
-      return Path.Join(SystemState.DataFolder, "check-ui.txt");
+      return SystemState.DataFile("check-ui.txt");
     }
 
     // One field of the app's check file, such as "language" or "corrections".
@@ -65,7 +65,7 @@ namespace Navpaky.DesktopChecks {
     // A command the app takes in place of a click on its tray menu.
     private static void Command(string command) {
       // Written aside and moved in, so the app never reads half a command.
-      string path = Path.Join(SystemState.DataFolder, "check-ui-command.txt");
+      string path = SystemState.DataFile("check-ui-command.txt");
       string draft = path + ".tmp";
       File.WriteAllText(draft, command);
       File.Move(draft, path, overwrite: true);
@@ -129,12 +129,12 @@ namespace Navpaky.DesktopChecks {
       _restorer.Defer("Navpaky UI command file", SystemState.KeepFile("check-ui-command.txt"));
       _restorer.Defer("test Navpaky processes", StopTestApps);
       if (firstStart) {
-        File.Delete(Path.Join(SystemState.DataFolder, "settings.json"));
+        File.Delete(SystemState.DataFile("settings.json"));
       } else {
         SystemState.UseDefaultSettings();
       }
 
-      File.Delete(Path.Join(SystemState.DataFolder, "words.json"));
+      File.Delete(SystemState.DataFile("words.json"));
       return LaunchUiApp();
     }
 

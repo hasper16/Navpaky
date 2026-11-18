@@ -26,7 +26,12 @@ namespace Navpaky.DesktopChecks {
     // The value name SignInLaunch uses for Navpaky's entries.
     private const string _signInName = "Navpaky";
 
-    public static string DataFolder { get; } = Path.Join(
+    // The app's DataFolders (design D7 of rename-to-navpaky): settings and word lists roam,
+    // everything else stays local.
+    private static readonly string _settingsFolder = Path.Join(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Navpaky");
+
+    private static readonly string _localFolder = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Navpaky Data");
 
     // Where the language list is saved before the checks change it, so a crashed run can still
@@ -89,9 +94,15 @@ namespace Navpaky.DesktopChecks {
       return point;
     }
 
+    // Where the app keeps a data file of this name.
+    public static string DataFile(string name) {
+      bool roams = name is "settings.json" or "words.json";
+      return Path.Join(roams ? _settingsFolder : _localFolder, name);
+    }
+
     // Returns how to put a Navpaky data file back as it was, present or absent.
     public static Action KeepFile(string name) {
-      string path = Path.Join(DataFolder, name);
+      string path = DataFile(name);
       byte[]? before = File.Exists(path) ? File.ReadAllBytes(path) : null;
       return () => {
         if (before is null) {
@@ -105,8 +116,8 @@ namespace Navpaky.DesktopChecks {
     // Default settings with the welcome already completed, so the welcome window does not take
     // the front from the checks' test windows.
     public static void UseDefaultSettings() {
-      Directory.CreateDirectory(DataFolder);
-      File.WriteAllText(Path.Join(DataFolder, "settings.json"), "{ \"welcomeCompleted\": true }");
+      Directory.CreateDirectory(_settingsFolder);
+      File.WriteAllText(DataFile("settings.json"), "{ \"welcomeCompleted\": true }");
     }
 
     // Returns how to put Navpaky's start-at-sign-in entries back as they were: a first start

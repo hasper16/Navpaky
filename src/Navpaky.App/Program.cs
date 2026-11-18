@@ -26,8 +26,10 @@ namespace Navpaky.App {
       // The uninstall questions follow the Windows display language, mapped as the "system"
       // choice is; settings are not read, so uninstalling never writes to the data folder.
       Strings.Culture = UiCulture.For(UiLanguage.System, CultureInfo.CurrentUICulture);
-      string data = DataFolder.Resolve(
-          Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), null);
+      DataFolders data = DataFolders.Resolve(
+          Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+          Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+          null);
       new Uninstaller(data, () => new SignInLaunch().Set(false, string.Empty), AskDeleteData)
           .Run();
     }
@@ -36,7 +38,7 @@ namespace Navpaky.App {
     // answer for 50 s, a margin below the 60 s Velopack 1.2.161 gives it (fix 2.12 of
     // add-final-acceptance). Past that the question stays open, and data goes only on Yes.
     // When the question cannot start, the data stays, as when the user declines.
-    private static void AskDeleteData(string data) {
+    private static void AskDeleteData(DataFolders data) {
       // The hook runs as <install root>\current\Navpaky.App.exe.
       string installRoot = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(
           AppContext.BaseDirectory))!;

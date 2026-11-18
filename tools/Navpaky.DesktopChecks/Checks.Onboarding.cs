@@ -68,7 +68,7 @@ namespace Navpaky.DesktopChecks {
     }
 
     private static bool WelcomeCompletedSaved() {
-      string? json = ReadState(Path.Join(SystemState.DataFolder, "settings.json"));
+      string? json = ReadState(SystemState.DataFile("settings.json"));
       if (json is null) {
         return false;
       }

@@ -25,7 +25,18 @@ See proposal.md for why. The name appears in five kinds of places:
 
 ## Decisions
 
-**D1. Spelling per kind of identity.** The display name is `Navpaky`; the Velopack pack id is lower-case `navpaky` (Velopack ids are conventionally lower-case and the old id was too), so the install root is `%LOCALAPPDATA%\navpaky`. The data folder cannot be `%LOCALAPPDATA%\Navpaky`: Windows paths are case-insensitive, so it would be the install root itself, which Velopack deletes on uninstall, and `DataFolder.Resolve` refuses that layout. The data folder is therefore `%LOCALAPPDATA%\Navpaky Data` (owner to confirm; alternative: pack id `navpaky-app` and data `%LOCALAPPDATA%\Navpaky`). A test pins that the data folder lies outside the real install root. The Ukrainian UI uses the Latin brand name `Navpaky`, like every other name in the string tables.
+**D1. Spelling per kind of identity.** The display name is `Navpaky`; the Velopack pack id is lower-case `navpaky` (Velopack ids are conventionally lower-case and the old id was too), so the install root is `%LOCALAPPDATA%\navpaky`. The Ukrainian UI uses the Latin brand name `Navpaky`, like every other name in the string tables.
+
+**D7. Two data folders (owner decision, 2026-11-18).** Data is split by whether it may follow the user:
+- `%APPDATA%\Navpaky` (Roaming): `settings.json` (including Excluded Apps) and `words.json` (Protected and Learned Words), plus their kept-aside unreadable copies. A roaming profile may carry these to another PC, which is what a user expects of preferences.
+- `%LOCALAPPDATA%\Navpaky Data` (Local): statistics, the word-analysis log folder, Incidents, restart state, word counts, telemetry's sent log and the Debug check files. These are machine facts or can hold typed words, so they must not roam.
+
+The Local folder cannot be `%LOCALAPPDATA%\Navpaky`: Windows paths are case-insensitive, so it would be the install root `%LOCALAPPDATA%\navpaky`, which Velopack deletes on uninstall. `DataFolders.Resolve` returns both folders from one place and refuses any layout where either lies inside the install root; tests pin both paths and the refusal. Alternatives considered: one folder `%LOCALAPPDATA%\Navpaky Data` (simpler; nothing roams), or pack id `navpaky-app` with data in `%LOCALAPPDATA%\Navpaky`. The owner was told the split costs more than one folder (two roots in code, the uninstall question and the desktop checks handle both) and chose it.
+
+Consequences:
+- The uninstall hook asks once when either folder exists; the question process deletes both, each only after an explicit Yes and once the old installation is gone; the new-installation check (an `Update.exe` back in the install root) keeps both. A folder it cannot delete is named in the warning.
+- The owner-only ACL (design D4 of add-statistics-and-diagnostics) stays on the word-analysis log folder, which is in the Local folder. Neither root gets an ACL of its own: `%APPDATA%` and `%LOCALAPPDATA%` already grant only the user, SYSTEM and administrators, and adding one is a behaviour change outside this rename.
+- The desktop checks set aside and restore each file in the folder it now lives in.
 
 **D2. Mechanical rename, then restore the original's references.** Replace `Rekey` → `Navpaky`, `rekey` → `navpaky`, `REKEY` → `NAVPAKY` and `key-switcher` → `navpaky` across tracked files outside the archive, rename paths with `git mv`, then put back by hand the few lines that name the macOS app (AGENTS.md, ADR 0003, `openspec/config.yaml`), the notes path `rekey-macos.md`, and every `hasper16/key-switcher` repository reference (update feed, orchestration `gh` query, release docs). Alternative considered: renaming only user-visible text. Rejected: the owner asked for internal names too, and mixed names would confuse agents and the graph.
 

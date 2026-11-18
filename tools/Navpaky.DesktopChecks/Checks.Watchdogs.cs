@@ -150,7 +150,7 @@ namespace Navpaky.DesktopChecks {
         return;
       }
 
-      string state = Path.Join(SystemState.DataFolder, "check-tray.txt");
+      string state = SystemState.DataFile("check-tray.txt");
       _restorer.Defer("Navpaky settings file", SystemState.KeepFile("settings.json"));
       _restorer.Defer("Navpaky restart state", SystemState.KeepFile("restart-state.txt"));
       _restorer.Defer("Navpaky tray check file", SystemState.KeepFile("check-tray.txt"));
@@ -213,8 +213,8 @@ namespace Navpaky.DesktopChecks {
 
       // A recent real restart or saved settings could stop the test restart; start clean.
       SystemState.UseDefaultSettings();
-      File.Delete(Path.Join(SystemState.DataFolder, "restart-state.txt"));
-      string state = Path.Join(SystemState.DataFolder, "restart-state.txt");
+      File.Delete(SystemState.DataFile("restart-state.txt"));
+      string state = SystemState.DataFile("restart-state.txt");
       DateTime stateBefore = File.Exists(state) ? File.GetLastWriteTime(state) : DateTime.MinValue;
 
       using Process first = Process.Start(app, "--check-freeze");

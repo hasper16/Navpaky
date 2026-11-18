@@ -415,7 +415,8 @@
     <value>Also delete your Navpaky settings, word lists, statistics and logs? Choose No to keep them for a later install.</value>
   </data>
   <data name="UninstallDataNotDeleted" xml:space="preserve">
-    <value>Some Navpaky data could not be deleted because another program is using it. Delete the folder {0} yourself.</value>
+    <value>Some Navpaky data could not be deleted because another program is using it. Delete it yourself:
+{0}</value>
   </data>
   <data name="AlreadyRunning" xml:space="preserve">
     <value>Navpaky is already running. To start it with these options, quit it from the tray first.</value>

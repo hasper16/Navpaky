@@ -6,8 +6,11 @@ using Xunit;
 
 namespace Navpaky.App.Tests.Updates {
   public sealed class DataQuestionTests {
-    private const string _data = @"C:\Users\Invented\AppData\Local\Navpaky";
     private const string _install = @"C:\Users\Invented\AppData\Local\navpaky";
+
+    private static readonly DataFolders _data = new(
+        @"C:\Users\Invented\AppData\Roaming\Navpaky",
+        @"C:\Users\Invented\AppData\Local\Navpaky Data");
 
     [Fact]
     public void RunsWindowsPowerShellFromSystem32() {
@@ -21,12 +24,13 @@ namespace Navpaky.App.Tests.Updates {
       Assert.True(start.CreateNoWindow);
     }
 
-    // The folder travels in the environment, so no path can change the script.
+    // The folders travel in the environment, so no path can change the script.
     [Fact]
-    public void FolderAndTextsTravelInTheEnvironment() {
+    public void FoldersAndTextsTravelInTheEnvironment() {
       ProcessStartInfo start = DataQuestion.StartInfo(_data, _install);
 
-      Assert.Equal(_data, start.Environment["NAVPAKY_DATA"]);
+      Assert.Equal(_data.Settings, start.Environment["NAVPAKY_SETTINGS"]);
+      Assert.Equal(_data.Local, start.Environment["NAVPAKY_LOCAL"]);
       Assert.Equal(_install, start.Environment["NAVPAKY_INSTALL"]);
       Assert.Equal(Strings.UninstallDataKept, start.Environment["NAVPAKY_KEPT"]);
       Assert.Equal(Strings.UninstallDeleteData, start.Environment["NAVPAKY_QUESTION"]);
@@ -36,7 +40,7 @@ namespace Navpaky.App.Tests.Updates {
     }
 
     [Fact]
-    public void ScriptAsksThenDeletesTheFolderFromTheEnvironment() {
+    public void ScriptAsksThenDeletesBothFoldersFromTheEnvironment() {
       ProcessStartInfo start = DataQuestion.StartInfo(_data, _install);
       int encoded = start.ArgumentList.IndexOf("-EncodedCommand");
       string script = Encoding.Unicode.GetString(
@@ -44,7 +48,9 @@ namespace Navpaky.App.Tests.Updates {
 
       Assert.Contains("$env:NAVPAKY_QUESTION", script, StringComparison.Ordinal);
       Assert.Contains(
-          "Remove-Item -LiteralPath $env:NAVPAKY_DATA -Recurse", script, StringComparison.Ordinal);
+          "@($env:NAVPAKY_SETTINGS, $env:NAVPAKY_LOCAL)", script, StringComparison.Ordinal);
+      Assert.Contains(
+          "Remove-Item -LiteralPath $folder -Recurse", script, StringComparison.Ordinal);
     }
 
     // Fix 2.12 of add-final-acceptance: data goes only once the old installation is gone, so a
