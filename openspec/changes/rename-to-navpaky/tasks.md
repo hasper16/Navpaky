@@ -7,7 +7,7 @@
 
 ## 2. Internal names
 
-- [ ] 2.1 `git mv` the solution, every project folder and file, the icon file and the resource designer to `Navpaky.*`; replace `Rekey`/`rekey` with `Navpaky`/`navpaky` in code, XAML, resx, csproj, slnx, `NativeMethods.txt`, `.editorconfig`, `.gitattributes`, `.githooks/pre-commit`, `.github/workflows/*`; rename `RekeyPublisher` and `RekeyUpdateManager`; point `XamlTextTests` at `Product.Name`. Verify: `dotnet build Navpaky.slnx -warnaserror` is clean and `dotnet test Navpaky.slnx` passes.
+- [x] 2.1 `git mv` the solution, every project folder and file, the icon file and the resource designer to `Navpaky.*`; replace `Rekey`/`rekey` with `Navpaky`/`navpaky` in code, XAML, resx, csproj, slnx, `NativeMethods.txt`, `.editorconfig`, `.gitattributes`, `.githooks/pre-commit`, `.github/workflows/*`; rename `RekeyPublisher` and `RekeyUpdateManager`; point `XamlTextTests` at `Product.Name`. Verify: `dotnet build Navpaky.slnx -warnaserror` is clean and `dotnet test Navpaky.slnx` passes.
 
 ## 3. Docs and agent context
 

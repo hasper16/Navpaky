@@ -38,9 +38,9 @@ sln=$(ls *.slnx *.sln 2>/dev/null | head -n 1)
 if [ -n "$sln" ] && command -v dotnet >/dev/null 2>&1; then
   dotnet format "$sln" --verify-no-changes --no-restore >/dev/null 2>&1 \
     || fail "formatting differs. Run: dotnet format $sln"
-  if [ -d tests/Rekey.Core.Tests ]; then
-    dotnet test tests/Rekey.Core.Tests --nologo -v q >/dev/null 2>&1 \
-      || fail "Rekey.Core tests fail. Run: dotnet test tests/Rekey.Core.Tests"
+  if [ -d tests/Navpaky.Core.Tests ]; then
+    dotnet test tests/Navpaky.Core.Tests --nologo -v q >/dev/null 2>&1 \
+      || fail "Navpaky.Core tests fail. Run: dotnet test tests/Navpaky.Core.Tests"
   fi
 fi
 

@@ -1,0 +1,1014 @@
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
+using Navpaky.Core;
+using Navpaky.Core.Detection;
+using Navpaky.Core.Languages;
+using Navpaky.Core.Statistics;
+using Navpaky.Core.Words;
+using Navpaky.Win32.Diagnostics;
+using Navpaky.Win32.Focus;
+using Navpaky.Win32.Keyboard;
+using Navpaky.Win32.Layouts;
+using Navpaky.Win32.Replacement;
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.UI.Input.KeyboardAndMouse;
+using Windows.Win32.UI.WindowsAndMessaging;
+using CoreSelfPauseChanged = Navpaky.Core.SelfPauseChanged;
+
+namespace Navpaky.Win32 {
+  /// <summary>
+  /// Runs the worker thread: it owns the engine, turns hook input into input events, feeds them
+  /// to the engine and executes the actions it returns.
+  /// </summary>
+  /// <remarks>
+  /// Everything the engine touches lives on this one thread, so nothing in it is shared. The
+  /// thread waits on the hook's signal and on its own message queue at once, and runs its timed
+  /// checks between waits.
+  /// </remarks>
+  public sealed class InputWorker : IDisposable, IWorkerPulse {
+    private const int _ringCapacity = 4096;
+    private const uint _switchMessage = PInvoke.WM_APP + 1;
+    private const uint _resumeMessage = PInvoke.WM_APP + 2;
+    private const uint _freezeMessage = PInvoke.WM_APP + 3;
+    private const uint _settingsMessage = PInvoke.WM_APP + 4;
+    private const uint _wordsMessage = PInvoke.WM_APP + 5;
+    private const uint _idleWaitMilliseconds = 250;
+
+    // The settings message carries these flags as they were when it was posted, so a setting
+    // turned off and on again before the worker reads it still deletes what it holds.
+    private const nuint _statisticsFlag = 1;
+    private const nuint _analysisLogFlag = 2;
+
+    // Design D6: a pending Layout Switch is checked every 25 ms.
+    private const uint _switchWaitMilliseconds = 25;
+
+    // Design D1 of add-text-replacement: a replacement starts only while the key that asked for
+    // it is this fresh, so with UI Automation's 50 ms budget it lands before the hook's 150 ms
+    // valve could have let later keys through.
+    private const long _freshMilliseconds = 50;
+
+    // Checked again just before the input is sent, after UI Automation: 50 ms below the valve.
+    private const long _landMilliseconds = 100;
+
+    // Design D5: Windows does not tell other processes about added Layouts, so poll.
+    private static readonly TimeSpan _layoutPollPeriod = TimeSpan.FromSeconds(2);
+
+    // How long quitting waits for the worker thread; see Dispose.
+    private static readonly TimeSpan _stopWait = TimeSpan.FromSeconds(2);
+
+    // Released around injected keys, which they would otherwise change: Ctrl+Backspace deletes
+    // a word, Shift+Right extends a selection.
+    private static readonly VIRTUAL_KEY[] _modifierKeys = [
+        VIRTUAL_KEY.VK_LSHIFT, VIRTUAL_KEY.VK_RSHIFT, VIRTUAL_KEY.VK_LCONTROL,
+        VIRTUAL_KEY.VK_RCONTROL, VIRTUAL_KEY.VK_LMENU, VIRTUAL_KEY.VK_RMENU,
+        VIRTUAL_KEY.VK_LWIN, VIRTUAL_KEY.VK_RWIN];
+
+    private readonly InputRing _ring = new(_ringCapacity);
+    private readonly HoldGate _gate = new();
+    private readonly AutoResetEvent _signal = new(initialState: false);
+    private readonly SlowCallbackMeter _meter;
+    private readonly InputHook _hook;
+    private readonly Action<Incident> _recordIncident;
+    private readonly TimeProvider _time;
+    private readonly RawInputTranslator _translator;
+
+    private readonly LayoutList _layouts =
+        new(SystemLayouts.ReadHandles, SystemLayouts.Read, UserLayoutOrder.Read);
+
+    private readonly Dictionary<LayoutId, KeyMap?> _keyMaps = [];
+    private readonly LayoutSwitcher _switcher;
+    private readonly ForegroundLayout _foregroundLayout;
+    private readonly HookWatchdog _hookWatchdog;
+    private readonly ModifierSync _modifierSync;
+    private readonly KeyConfirmer _keyConfirmer;
+    private readonly TypingState _typing = new();
+    private readonly WordEvaluator? _evaluate;
+    private readonly Thread _thread;
+    private readonly ManualResetEventSlim _started = new();
+
+    // Edits from the settings window, waiting for the worker thread.
+    private readonly ConcurrentQueue<WordListEdited> _wordEdits = new();
+
+    // Analysed Words waiting until no key is held back, so the file write never delays typing.
+    private readonly List<LogAnalysis> _analysesToWrite = [];
+
+    private Engine _engine = new();
+    private uint _threadId;
+    private Exception? _startError;
+    private long _heartbeat;
+    private long _lastLayoutPoll;
+    private bool _quitting;
+    private FocusTracker? _focus;
+    private TextReplacer? _replacer;
+    private UiaTextBeforeCaret? _uia;
+    private long _seenHoldTimeouts;
+
+    // The installed Layouts as of the latest poll; only the worker thread writes it.
+    private IReadOnlyList<LayoutId> _installedLayouts = [];
+
+    // The worker thread alone records into it; any thread reads its snapshot.
+    private StatsRecorder _stats = new(StatsDocument.Empty);
+    private AnalysisLogWriter? _analysisLog;
+
+    // Written by the UI thread only.
+    private bool _recordChords;
+
+    // Written by the constructor and then only by the thread that calls UseSettings; the
+    // worker reads it.
+    private Settings _latestSettings;
+
+    // What the hook's policy was last built from (design D2 of add-auto-correction).
+    private FrozenSet<ushort> _characterScanCodes = FrozenSet<ushort>.Empty;
+    private FrozenSet<ushort>? _publishedScanCodes;
+    private TriggerKeys _publishedTriggerKeys;
+
+    // The held key the worker is handling, and whether a replacement it asked for was applied.
+    private RawInput? _held;
+    private bool _heldReplaced;
+
+    // A cancelled replacement waiting to be described once the held keys went on.
+    private bool _mismatchToReport;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InputWorker" /> class.
+    /// </summary>
+    /// <param name="settings">
+    /// The user's settings: Auto Correction, the keyboard watchdog and Verified Replacement.
+    /// </param>
+    /// <param name="recordIncident">
+    /// The sink that records Incidents; it is called on the worker thread.
+    /// </param>
+    /// <param name="time">The clock; <see cref="TimeProvider.System" /> outside tests.</param>
+    public InputWorker(Settings settings, Action<Incident> recordIncident, TimeProvider time)
+        : this(settings, recordIncident, time, null) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InputWorker" /> class that evaluates Words
+    /// with the given evaluator.
+    /// </summary>
+    /// <param name="settings">
+    /// The user's settings: Auto Correction, the keyboard watchdog and Verified Replacement.
+    /// </param>
+    /// <param name="recordIncident">
+    /// The sink that records Incidents; it is called on the worker thread.
+    /// </param>
+    /// <param name="time">The clock; <see cref="TimeProvider.System" /> outside tests.</param>
+    /// <param name="evaluate">
+    /// The evaluator of Words a Trigger Key ends, called on the worker thread; with
+    /// <see langword="null" />, Words are evaluated against the Language Profiles of the
+    /// installed Layouts.
+    /// </param>
+    public InputWorker(
+        Settings settings,
+        Action<Incident> recordIncident,
+        TimeProvider time,
+        WordEvaluator? evaluate) {
+      _recordIncident = recordIncident;
+      _time = time;
+      _evaluate = evaluate;
+      _latestSettings = settings;
+      _meter = new SlowCallbackMeter(time);
+      _hook = new InputHook(_ring, _gate, _signal, _meter, time);
+      UseHotkey(settings.Hotkey);
+      bool capsLockOn = (PInvoke.GetKeyState((int)VIRTUAL_KEY.VK_CAPITAL) & 1) != 0;
+      _translator = new RawInputTranslator(capsLockOn);
+      _modifierSync = new ModifierSync(
+          _translator,
+          () => _hook.Reattachments,
+          () => _ring.Dropped,
+          () => _ring.Written,
+          IsKeyDown,
+          IsCapsLockOn);
+      _keyConfirmer = new KeyConfirmer(
+          () => _focus?.IsPasswordFocused() ?? true, () => _ring.ActionsWritten);
+      _foregroundLayout = new ForegroundLayout(_layouts);
+      _switcher = new LayoutSwitcher(_foregroundLayout, time);
+      _hookWatchdog = new HookWatchdog(new SessionInputActivity(_hook), time) {
+        Enabled = settings.KeyboardWatchdogEnabled,
+      };
+      _thread = new Thread(Run) { Name = "Navpaky worker", IsBackground = true };
+    }
+
+    /// <summary>
+    /// Occurs on the worker thread after the engine handled an input event.
+    /// </summary>
+    /// <remarks>
+    /// A <see cref="KeyDown" /> prints without its Keystroke, so the text form is safe to log.
+    /// </remarks>
+    public event Action<InputEvent>? Observed;
+
+    /// <summary>
+    /// Occurs on the worker thread when Navpaky paused itself after repeated keyboard failures,
+    /// with the time the pause ends, and when the pause ends, with <see langword="null" />.
+    /// </summary>
+    public event Action<DateTimeOffset?>? SelfPauseChanged;
+
+    /// <summary>
+    /// Occurs on the worker thread after Navpaky replaced text or cancelled a replacement, with
+    /// how it went; it carries no text.
+    /// </summary>
+    public event Action<ReplacementResult>? Replaced;
+
+    /// <summary>
+    /// Occurs on the worker thread when the text before the caret differed from the Word, with
+    /// how it differed and which control was read; it carries no text.
+    /// </summary>
+    public event Action<ReplacementTrace>? Mismatched;
+
+    /// <summary>
+    /// Occurs on the worker thread after the Protected Words or Learned Words changed, with a
+    /// snapshot of both lists to save.
+    /// </summary>
+    /// <remarks>
+    /// It carries words: never log it.
+    /// </remarks>
+    public event Action<WordListsDocument>? WordListsChanged;
+
+    /// <summary>
+    /// Occurs on the worker thread after an Undo, for the features that learn from it.
+    /// </summary>
+    /// <remarks>
+    /// It carries typed text: never log it.
+    /// </remarks>
+    public event Action<UndoPerformed>? Undone;
+
+    /// <summary>
+    /// Occurs on the worker thread when Navpaky switched the Layout, with why and to which Layout,
+    /// for the cursor indicator and the switch sound.
+    /// </summary>
+    public event Action<SwitchFeedback>? Switched;
+
+    /// <summary>
+    /// Occurs on the worker thread, while <see cref="RecordChords" /> is on, for each key pressed
+    /// with modifiers: the modifiers and the virtual-key code.
+    /// </summary>
+    /// <remarks>
+    /// The hook sees a combination another app registered as a global hotkey, which Windows
+    /// never sends to Navpaky's windows.
+    /// </remarks>
+    public event Action<KeyModifiers, ushort>? ChordPressed;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether <see cref="ChordPressed" /> reports key presses;
+    /// the Hotkey page turns it on while it records. Any thread may set it.
+    /// </summary>
+    public bool RecordChords {
+      get => Volatile.Read(ref _recordChords);
+      set => Volatile.Write(ref _recordChords, value);
+    }
+
+    /// <summary>
+    /// Gets the Protected Words and Learned Words the engine starts with; set it before
+    /// <see cref="Start" />.
+    /// </summary>
+    public WordListsDocument InitialWords { get; init; } = WordListsDocument.Empty;
+
+    /// <summary>
+    /// Gets the usage counters the worker starts with; set it before <see cref="Start" />.
+    /// </summary>
+    public StatsDocument InitialStatistics {
+      get {
+        return _stats.Current;
+      }
+
+      init {
+        _stats = new StatsRecorder(value);
+      }
+    }
+
+    /// <summary>
+    /// Gets the folder of the word-analysis log, or <see langword="null" /> to keep none; set it
+    /// before <see cref="Start" />.
+    /// </summary>
+    public string? AnalysisLogFolder { get; init; }
+
+    /// <summary>
+    /// Gets the usage counters as of the latest counted event; safe to read from any thread.
+    /// </summary>
+    public StatsDocument Statistics => _stats.Current;
+
+    /// <summary>
+    /// Gets the installed Layouts in Windows' order as of the latest poll; safe to read from any
+    /// thread.
+    /// </summary>
+    public IReadOnlyList<LayoutId> InstalledLayouts => Volatile.Read(ref _installedLayouts);
+
+    /// <summary>
+    /// Gets the number of Keystrokes in the engine's current Word; read it only on the worker
+    /// thread, as from <see cref="Observed" />.
+    /// </summary>
+    /// <remarks>
+    /// A count only, for checking by hand that a Password Field leaves the Word empty.
+    /// </remarks>
+    public int WordLength => _engine.Word.Count;
+
+    /// <summary>
+    /// Gets the character keys not confirmed outside a Password Field so far, by cause; read it
+    /// only on the worker thread, as from <see cref="Observed" />.
+    /// </summary>
+    public KeyRejects KeyRejects => _keyConfirmer.Rejects;
+
+    /// <summary>
+    /// Gets why focus last counted as moved, for diagnostics: codes and class names, never
+    /// text; read it only on the worker thread, as from <see cref="Observed" />.
+    /// </summary>
+    public string LastFocusMove => _focus?.LastMove ?? "none";
+
+    /// <summary>
+    /// Gets how many focus moves to an element that takes no text kept the Word so far (design
+    /// D7); read it only on the worker thread, as from <see cref="Observed" />.
+    /// </summary>
+    public int FocusMovesKeptWord => _focus?.SetAsideMoves ?? 0;
+
+    /// <summary>
+    /// Gets the longest Password Field check so far, in milliseconds; read it only on the
+    /// worker thread, as from <see cref="Observed" />.
+    /// </summary>
+    public double SlowestKeyCheckMilliseconds => _keyConfirmer.SlowestCheckMilliseconds;
+
+    /// <summary>
+    /// Gets the counts of the Words ended by a Trigger Key so far; read it only on the worker
+    /// thread, as from <see cref="Observed" />.
+    /// </summary>
+    public WordCounts WordCounts => _engine.WordCounts;
+
+    /// <summary>
+    /// Gets a value indicating whether Auto Correction applies to the Word being typed now, or
+    /// the reason it does not; read it only on the worker thread, as from
+    /// <see cref="Observed" />.
+    /// </summary>
+    /// <value>One of the enumeration values that specifies the answer.</value>
+    public GateResult Gate => _engine.Gate;
+
+    /// <summary>
+    /// Gets the number of input batches the worker finished; only the worker thread writes it.
+    /// </summary>
+    public long Heartbeat => Volatile.Read(ref _heartbeat);
+
+    /// <summary>
+    /// Gets the managed id of the worker thread, so a freeze report can read its stack.
+    /// </summary>
+    public int ManagedThreadId => _thread.ManagedThreadId;
+
+    /// <inheritdoc />
+    int IWorkerPulse.QueuedInput => _ring.Count;
+
+    /// <summary>
+    /// Starts the hook and worker threads and returns once both run.
+    /// </summary>
+    /// <exception cref="Win32Exception">Windows refused a low-level hook.</exception>
+    public void Start() {
+      _thread.Start();
+      _started.Wait();
+      if (_startError is not null) {
+        throw _startError;
+      }
+    }
+
+    /// <summary>
+    /// Asks the worker to switch the foreground window to a Layout and confirm the switch; safe
+    /// to call from any thread.
+    /// </summary>
+    /// <param name="target">The Layout to switch to.</param>
+    public void SwitchLayout(LayoutId target) {
+      PInvoke.PostThreadMessage(_threadId, _switchMessage, default, (nint)target.Value);
+    }
+
+    /// <summary>
+    /// Ends a self-pause and reattaches to the keyboard at once; safe to call from any thread.
+    /// </summary>
+    public void ResumeSelfPause() {
+      PInvoke.PostThreadMessage(_threadId, _resumeMessage, default, default);
+    }
+
+    /// <summary>
+    /// Replaces the settings the worker follows: Auto Correction's, the Hotkey, the keyboard
+    /// watchdog and Verified Replacement.
+    /// </summary>
+    /// <remarks>
+    /// Call it after <see cref="Start" />, always from the same thread.
+    /// </remarks>
+    /// <param name="settings">The settings now in effect.</param>
+    public void UseSettings(Settings settings) {
+      Volatile.Write(ref _latestSettings, settings);
+      PInvoke.PostThreadMessage(_threadId, _settingsMessage, FlagsOf(settings), default);
+    }
+
+    /// <summary>
+    /// Hands the engine a Protected Word or Learned Word the user added or removed in
+    /// settings; safe to call from any thread.
+    /// </summary>
+    /// <remarks>
+    /// The engine owns the word lists (design D5 of add-word-learning); the result arrives as
+    /// <see cref="WordListsChanged" />.
+    /// </remarks>
+    /// <param name="edit">The edit.</param>
+    public void EditWordList(WordListEdited edit) {
+      _wordEdits.Enqueue(edit);
+      PInvoke.PostThreadMessage(_threadId, _wordsMessage, default, default);
+    }
+
+#if DEBUG
+    /// <summary>
+    /// Blocks the worker thread for a while, to check the freeze guard; safe to call from any
+    /// thread. Debug builds only.
+    /// </summary>
+    /// <param name="length">How long the worker stays blocked.</param>
+    public void FreezeForCheck(TimeSpan length) {
+      PInvoke.PostThreadMessage(
+          _threadId, _freezeMessage, default, (nint)length.TotalMilliseconds);
+    }
+
+    /// <summary>
+    /// Makes the next keyboard hook callback wait past Windows' limit, so Windows removes the
+    /// hook; safe to call from any thread. Debug builds only.
+    /// </summary>
+    /// <param name="length">How long the callback waits.</param>
+    public void StallHookForCheck(TimeSpan length) {
+      _hook.StallNextKeyForCheck(length);
+    }
+#endif
+
+    /// <inheritdoc />
+    public void Dispose() {
+      // Bounded, so quitting Navpaky always works: the thread is a background thread and ends with
+      // the process if it is stuck.
+      bool stopped = true;
+      if (_thread.IsAlive) {
+        PInvoke.PostThreadMessage(_threadId, PInvoke.WM_QUIT, default, default);
+        stopped = _thread.Join(_stopWait);
+      }
+
+      _hook.Dispose();
+      if (stopped) {
+        _analysisLog?.Dispose();
+        _signal.Dispose();
+        _started.Dispose();
+      }
+    }
+
+    private static WPARAM FlagsOf(Settings settings) {
+      return (settings.StatisticsEnabled ? _statisticsFlag : 0)
+          | (settings.AnalysisLogEnabled ? _analysisLogFlag : 0);
+    }
+
+    // Hook timestamps count the same milliseconds since system start.
+    private static TimeSpan Now() {
+      return TimeSpan.FromMilliseconds(Environment.TickCount64);
+    }
+
+    // The worker never receives keyboard input itself, so its key state follows the system's
+    // and GetKeyState reports the session's Caps Lock (checked on Windows 11).
+    private static bool IsCapsLockOn() {
+      return (PInvoke.GetKeyState((int)VIRTUAL_KEY.VK_CAPITAL) & 1) != 0;
+    }
+
+    private static bool IsKeyDown(VIRTUAL_KEY key) {
+      return PInvoke.GetAsyncKeyState((int)key) < 0;
+    }
+
+    private static bool IsInputMethod(LayoutId layout) {
+      return layout.Value >> 28 == 0xE;
+    }
+
+    private static IReadOnlyList<VIRTUAL_KEY> HeldModifiers() {
+      return [.. _modifierKeys.Where(IsKeyDown)];
+    }
+
+    // Returns whether Windows took every input; it refuses input to a window of higher
+    // integrity.
+    private static bool SendKeys(INPUT[] inputs) {
+      return PInvoke.SendInput(inputs, Marshal.SizeOf<INPUT>()) == inputs.Length;
+    }
+
+    // A key-down that is not a KeyDown, such as an Undo request, is not typing.
+    private static (KeyKind Kind, KeyModifiers Modifiers) KindOf(InputEvent? inputEvent) {
+      return inputEvent is KeyDown key
+          ? (key.Kind, key.Modifiers)
+          : (KeyKind.Other, KeyModifiers.None);
+    }
+
+    [SuppressMessage(
+        "Reliability",
+        "S3869:SafeHandle.DangerousGetHandle should not be called",
+        Justification = "Dispose joins this thread before it disposes the event.")]
+    private void Run() {
+      _threadId = PInvoke.GetCurrentThreadId();
+      PInvoke.PeekMessage(out _, HWND.Null, 0, 0, PEEK_MESSAGE_REMOVE_TYPE.PM_NOREMOVE);
+      LoadLanguages();
+      try {
+        _hook.Start();
+      } catch (Win32Exception e) {
+        _startError = e;
+        _started.Set();
+        return;
+      }
+
+      _started.Set();
+      if (AnalysisLogFolder is { } folder) {
+        _analysisLog = new AnalysisLogWriter(new AnalysisLog(folder, _time));
+        UseAnalysisLog(Volatile.Read(ref _latestSettings).AnalysisLogEnabled);
+      }
+
+      _uia = new UiaTextBeforeCaret(() => _focus?.TypingElement);
+      _replacer = new TextReplacer(
+          _uia,
+          Volatile.Read(ref _latestSettings).VerifiedReplacement,
+          HeldModifiers,
+          SendKeys,
+          ConsoleWindows.ForegroundTarget,
+          PauseBetweenParts);
+      RefreshLayouts();
+      using var focus = new FocusTracker(
+          OnFocusChanged, () => _typing.Now(_ring.ActionsWritten));
+      _focus = focus;
+      focus.Start();
+      HANDLE[] handles = [(HANDLE)_signal.SafeWaitHandle.DangerousGetHandle()];
+      do {
+        PInvoke.MsgWaitForMultipleObjectsEx(
+            handles,
+            _switcher.IsPending ? _switchWaitMilliseconds : _idleWaitMilliseconds,
+            QUEUE_STATUS_FLAGS.QS_ALLINPUT,
+            MSG_WAIT_FOR_MULTIPLE_OBJECTS_EX_FLAGS.MWMO_INPUTAVAILABLE);
+        DrainInput();
+        Poll();
+        Volatile.Write(ref _heartbeat, _heartbeat + 1);
+      } while (!_quitting && PumpMessages());
+    }
+
+    private void LoadLanguages() {
+      LanguageSetLoad load = LanguageSet.LoadBundled(_time.GetUtcNow());
+      foreach (Incident incident in load.Incidents) {
+        _recordIncident(incident);
+      }
+
+      _engine = new Engine(
+          load.Languages,
+          Volatile.Read(ref _latestSettings),
+          _time,
+          _evaluate,
+          new WordLists(InitialWords));
+    }
+
+    private void DrainInput() {
+      bool any = false;
+
+      // Focus callbacks run while messages are dispatched, so dispatching before each read
+      // applies a focus change, such as into a Password Field, before the keys typed after it.
+      while (PumpOrQuit() && _ring.TryRead(out RawInput raw)) {
+        any = true;
+
+        // After the read, so a reinstall or drop just before it still counts for this key.
+        if (_modifierSync.CatchUp()) {
+          Send(new InputLost(TimeSpan.FromMilliseconds(raw.Tick)));
+        }
+
+        InputEvent? inputEvent = _translator.Translate(raw);
+
+        // WinEvents arrive asynchronously: a key typed into a new window can come first.
+        if (raw.Kind == RawInputKind.KeyDown) {
+          _focus?.CatchUp(TimeSpan.FromMilliseconds(raw.Tick), TypingFor(raw, inputEvent));
+        }
+
+        RecordTyping(raw, inputEvent);
+        if (RecordChords && Chords.Of(raw, inputEvent) is { } chord) {
+          ChordPressed?.Invoke(chord.Modifiers, chord.VirtualKey);
+        }
+
+        if (inputEvent is KeyDown { Kind: KeyKind.Character } keyDown) {
+          // Focus may have moved inside the window before its WinEvent arrived.
+          inputEvent = keyDown with { FocusConfirmed = _keyConfirmer.Confirm(raw) };
+        } else if (inputEvent is ManualCorrectionRequested request) {
+          string? selection = ReadSelection(out bool unreadable);
+          inputEvent = request with { Selection = selection, SelectionUnreadable = unreadable };
+        } else {
+          // Other inputs go to the engine as translated.
+        }
+
+        // Design D0 of add-manual-correction: before anything Navpaky types releases Win, so the
+        // shell never sees a lone Win press and opens Start.
+        if (raw.Holding == Holding.Hotkey && _translator.WindowsHeld) {
+          _ = SendKeys(InputBuilder.MaskWin());
+        }
+
+        bool held = raw.Holding is not (Holding.None or Holding.Swallowed);
+        _held = held ? raw : null;
+        _heldReplaced = false;
+        if (inputEvent is not null) {
+          Send(inputEvent);
+        }
+
+        if (held) {
+          FinishHeld(raw);
+        }
+
+        // Progress per input, so a pass that stays busy is not taken for a freeze.
+        Volatile.Write(ref _heartbeat, _heartbeat + 1);
+      }
+
+      ReportMismatch();
+      WriteAnalyses();
+
+      // The user may have switched Layout with the keys just read.
+      if (any) {
+        FollowForegroundLayout(userMaySwitch: true);
+      }
+    }
+
+    // Design D7: whether only typing could have moved focus by the time this key is handled.
+    private Typing TypingFor(in RawInput raw, InputEvent? inputEvent) {
+      (KeyKind kind, KeyModifiers modifiers) = KindOf(inputEvent);
+      return _typing.ForKey(
+          kind, modifiers, raw.Holding == Holding.None, raw.Actions, _ring.ActionsWritten);
+    }
+
+    private void RecordTyping(in RawInput raw, InputEvent? inputEvent) {
+      if (raw.Kind == RawInputKind.MouseDown) {
+        _typing.ClickRead(raw.Actions);
+      } else if (raw.Kind == RawInputKind.KeyDown) {
+        (KeyKind kind, KeyModifiers modifiers) = KindOf(inputEvent);
+        _typing.KeyRead(kind, modifiers, raw.Actions);
+      }
+    }
+
+    // Sends a held key on to the application once its replacement, if any, is done, and lets
+    // the hook stop holding once every held key has gone on. An applied Undo consumes its
+    // Ctrl+Z, and a combination Hotkey never reaches the application; an applied Correction
+    // makes a Ctrl+Z right after the key that asked for it an Undo.
+    private void FinishHeld(in RawInput raw) {
+      if (raw.Holding != Holding.UndoRequest && _heldReplaced) {
+        _gate.ArmUndo(raw.Sequence);
+      }
+
+      // Released even if Windows refuses the key: holding on would only block typing until
+      // the valve opens, and the key cannot be sent any other way.
+      if (raw.Holding is Holding.Held or Holding.HotkeyTap
+          || (raw.Holding == Holding.UndoRequest && !_heldReplaced)) {
+        _ = SendKeys([InputBuilder.Reinject(raw)]);
+      }
+
+      _gate.Release(raw.Sequence);
+      _held = null;
+    }
+
+    // Describing a mismatch asks the app for more, so it waits until no key is held back, and
+    // happens only when someone listens.
+    private void ReportMismatch() {
+      if (!_mismatchToReport) {
+        return;
+      }
+
+      _mismatchToReport = false;
+      if (Mismatched is not null && _replacer?.DescribeMismatch() is { } trace) {
+        Mismatched.Invoke(trace);
+      }
+    }
+
+    private void Poll() {
+      // A log file another app held open when the log was turned off.
+      _analysisLog?.RetryDeletes();
+      if (_meter.TakeIncident() is { } slow) {
+        _recordIncident(slow);
+      }
+
+      long holdTimeouts = _gate.Timeouts;
+      if (holdTimeouts != _seenHoldTimeouts) {
+        _seenHoldTimeouts = holdTimeouts;
+        _recordIncident(new Incident(_time.GetUtcNow(), IncidentType.HoldTimeout, []));
+      }
+
+      if (_switcher.Check() is { } result) {
+        if (result.Incident is { } incident) {
+          _recordIncident(incident);
+        }
+
+        if (result.Adopted is { } adopted) {
+          Send(new LayoutChanged(Now(), adopted));
+        }
+      }
+
+      if (_time.GetElapsedTime(_lastLayoutPoll) >= _layoutPollPeriod) {
+        RefreshLayouts();
+      }
+
+      // A switch by Win+Space or the language bar lands after the input that asked for it.
+      FollowForegroundLayout(userMaySwitch: true);
+
+      DateTimeOffset? pausedBefore = _hookWatchdog.SelfPausedUntil;
+
+      // Windows hides input aimed at an elevated window or the secure desktop from the hooks.
+      bool inputHidden = (_engine.Focus?.IsElevated ?? false) || InputDesktop.HidesInputNow();
+      Apply(_hookWatchdog.Check(inputHidden), pausedBefore);
+
+      // A Pause ends with the clock, not with an event.
+      PublishPolicy();
+    }
+
+    private void Apply(WatchdogOutcome outcome, DateTimeOffset? pausedBefore) {
+      foreach (Incident incident in outcome.Incidents) {
+        _recordIncident(incident);
+      }
+
+      if (outcome.Reinstall) {
+        _hook.Reinstall();
+      }
+
+      if (_hookWatchdog.SelfPausedUntil != pausedBefore) {
+        ReportSelfPause(_hookWatchdog.SelfPausedUntil);
+      }
+    }
+
+    private void ReportSelfPause(DateTimeOffset? until) {
+      Send(new CoreSelfPauseChanged(Now(), until is not null));
+      SelfPauseChanged?.Invoke(until);
+    }
+
+    // Design D2 of add-auto-correction: the hook holds the Trigger Keys the engine's gate
+    // names. Called after everything that can change the answer; a new snapshot is built only
+    // when it does.
+    private void PublishPolicy() {
+      TriggerKeys held = _engine.HeldTriggerKeys;
+      if (held == _publishedTriggerKeys
+          && ReferenceEquals(_publishedScanCodes, _characterScanCodes)) {
+        return;
+      }
+
+      _publishedTriggerKeys = held;
+      _publishedScanCodes = _characterScanCodes;
+      _gate.UsePolicy(HookPolicy.Holding(held, _characterScanCodes));
+    }
+
+    private void RefreshLayouts() {
+      _lastLayoutPoll = _time.GetTimestamp();
+      if (!_layouts.Refresh()) {
+        return;
+      }
+
+      List<KeyMap> keyMaps = [.. _layouts.Layouts.Select(KeyMapOf).OfType<KeyMap>()];
+      _translator.UseKeyMaps(keyMaps);
+      _characterScanCodes = RawInputTranslator.CharacterScanCodes(keyMaps);
+      Volatile.Write(ref _installedLayouts, [.. _layouts.Layouts]);
+      Send(new LayoutsInstalledChanged(Now(), _layouts.Layouts, keyMaps));
+      FollowForegroundLayout(userMaySwitch: false);
+    }
+
+    private KeyMap? KeyMapOf(LayoutId layout) {
+      if (!_keyMaps.TryGetValue(layout, out KeyMap? map)) {
+        try {
+          map = IsInputMethod(layout) ? null : KeyMapReader.Read(layout);
+        } catch (Win32Exception) {
+          // A Layout Windows cannot load types nothing Navpaky can read back.
+          map = null;
+        }
+
+        _keyMaps[layout] = map;
+      }
+
+      return map;
+    }
+
+    private bool PumpOrQuit() {
+      _quitting = _quitting || !PumpMessages();
+      return !_quitting;
+    }
+
+    private void OnFocusChanged(InputEvent focus) {
+      // Key-ups on the secure desktop or in an elevated window never reach the hook.
+      _modifierSync.Resync();
+      Send(focus);
+
+      // Another window may keep its own Layout: not a switch by the user.
+      FollowForegroundLayout(userMaySwitch: false);
+    }
+
+    // Design D3 of add-auto-correction: a Layout that changed under the reported window, with
+    // no switch of Navpaky's own pending, was switched by the user. When the focused window is
+    // no longer the reported one, its focus report is still on the way and explains the change.
+    private void FollowForegroundLayout(bool userMaySwitch) {
+      if (_switcher.IsPending) {
+        return;
+      }
+
+      LayoutId? current = _foregroundLayout.CurrentLayout();
+      if (current is { } layout && layout != _engine.CurrentLayout) {
+        bool byUser = userMaySwitch
+            && _engine.CurrentLayout is not null
+            && _focus?.WindowChanged() == false;
+        Send(new LayoutChanged(Now(), layout, byUser));
+      }
+    }
+
+    private void Send(InputEvent inputEvent) {
+      IReadOnlyList<EngineAction> actions = _engine.Handle(inputEvent);
+      foreach (EngineAction action in actions) {
+        Execute(action);
+      }
+
+      if (Switched is not null && SwitchFeedback.Of(inputEvent, actions) is { } feedback) {
+        Switched.Invoke(feedback);
+      }
+
+      PublishPolicy();
+      Observed?.Invoke(inputEvent);
+    }
+
+    // The hook thread alone uses each detector, so every setting gets a new one.
+    private void UseHotkey(Hotkey hotkey) {
+      _gate.UseHotkey(new HotkeyDetector(hotkey, IsKeyDown));
+    }
+
+    // Dispatches waiting messages; returns false once WM_QUIT arrives.
+    private bool PumpMessages() {
+      while (PInvoke.PeekMessage(
+          out MSG message, HWND.Null, 0, 0, PEEK_MESSAGE_REMOVE_TYPE.PM_REMOVE)) {
+        if (message.message == PInvoke.WM_QUIT) {
+          return false;
+        }
+
+        if (message.hwnd.IsNull && HandleOwnMessage(message)) {
+          continue;
+        }
+
+        PInvoke.TranslateMessage(message);
+        PInvoke.DispatchMessage(message);
+      }
+
+      return true;
+    }
+
+    private bool HandleOwnMessage(in MSG message) {
+      switch (message.message) {
+        case _switchMessage:
+          Execute(new SwitchLayout(new LayoutId((uint)message.lParam.Value)));
+          return true;
+        case _resumeMessage:
+          Apply(_hookWatchdog.Resume(), _hookWatchdog.SelfPausedUntil);
+          ReportSelfPause(null);
+          return true;
+        case _settingsMessage:
+          Settings settings = Volatile.Read(ref _latestSettings);
+          UseHotkey(settings.Hotkey);
+          _hookWatchdog.Enabled = settings.KeyboardWatchdogEnabled;
+          if (_replacer is not null) {
+            _replacer.Verify = settings.VerifiedReplacement;
+          }
+
+          Send(new SettingsChanged(Now(), settings));
+          UseDiagnostics(message.wParam);
+          return true;
+        case _wordsMessage:
+          while (_wordEdits.TryDequeue(out WordListEdited? edit)) {
+            Send(edit);
+          }
+
+          return true;
+        case _freezeMessage:
+          Thread.Sleep(TimeSpan.FromMilliseconds(message.lParam.Value));
+          return true;
+        default:
+          return false;
+      }
+    }
+
+    // Keys typed during the pause wait in the hook, then follow the whole replacement.
+    private void PauseBetweenParts(TimeSpan pause) {
+      _gate.NoteProgress(Environment.TickCount64);
+      Thread.Sleep(pause);
+      _gate.NoteProgress(Environment.TickCount64);
+    }
+
+    private void Execute(EngineAction action) {
+      switch (action) {
+        case RecordIncident record:
+          _recordIncident(record.Incident);
+          break;
+        case SwitchLayout switchLayout:
+          _switcher.Switch(switchLayout.Target);
+          break;
+        case ReplaceText replace:
+          Replace(replace);
+          break;
+        case TypeOverSelection typeOver:
+          TypeOver(typeOver);
+          break;
+        case UndoPerformed undone:
+          Undone?.Invoke(undone);
+          break;
+        case RecordStat stat:
+          _stats.Record(stat, DateOnly.FromDateTime(_time.GetLocalNow().DateTime));
+          break;
+        case LogAnalysis analysis:
+          _analysesToWrite.Add(analysis);
+          break;
+        case Navpaky.Core.WordListsChanged:
+          WordListsChanged?.Invoke(_engine.Words.Snapshot());
+          break;
+        default:
+          break;
+      }
+    }
+
+    // Spec statistics-and-diagnostics: turning statistics off deletes the counters, turning the
+    // word-analysis log off deletes the log.
+    private void UseDiagnostics(WPARAM flags) {
+      if ((flags.Value & _statisticsFlag) == 0) {
+        _stats.Clear();
+      }
+
+      UseAnalysisLog((flags.Value & _analysisLogFlag) != 0);
+    }
+
+    private void UseAnalysisLog(bool enabled) {
+      // Words analysed before the log was turned off are not written, even if it is turned on
+      // again before the queue is written.
+      if (!enabled) {
+        _analysesToWrite.Clear();
+      }
+
+      _analysisLog?.UseEnabled(enabled);
+    }
+
+    // Runs once the keys read so far have gone on, as ReportMismatch does.
+    private void WriteAnalyses() {
+      foreach (LogAnalysis analysis in _analysesToWrite) {
+        _analysisLog?.Write(analysis);
+      }
+
+      _analysesToWrite.Clear();
+    }
+
+    private void Replace(ReplaceText replace) {
+      Finish(TryReplace(replace));
+    }
+
+    private void Finish(ReplacementResult result) {
+      _heldReplaced = result is ReplacementResult.Verified or ReplacementResult.Retyped;
+      if (result == ReplacementResult.Mismatch) {
+        _recordIncident(new Incident(_time.GetUtcNow(), IncidentType.CorrectionCancelled, []));
+        _mismatchToReport = true;
+      }
+
+      Replaced?.Invoke(result);
+      Send(new ReplacementFinished(Now(), _heldReplaced));
+    }
+
+    private void TypeOver(TypeOverSelection typeOver) {
+      ReplacementResult result = _held is { } held && _replacer is not null
+          ? _replacer.TypeOver(
+              typeOver, () => Stale(held, _landMilliseconds), () => Moved(held))
+          : ReplacementResult.TooLate;
+      Finish(result);
+    }
+
+    // Design D4 of add-manual-correction: a Password Field never has its selection read; text
+    // longer than the engine converts is cut one past that length, so the engine still sees it
+    // is too long.
+    private string? ReadSelection(out bool unreadable) {
+      const int maxSelection = 501;
+      unreadable = false;
+      return _engine.Focus is { IsPasswordField: false, IsElevated: false }
+          ? _uia?.ReadSelection(maxSelection, out unreadable)
+          : null;
+    }
+
+    private ReplacementResult TryReplace(ReplaceText replace) {
+      if (_held is not { } held || _replacer is null || _engine.Focus?.App.Key is not { } app) {
+        return ReplacementResult.TooLate;
+      }
+
+      if (Stale(held, _freshMilliseconds) is { } stale) {
+        return stale;
+      }
+
+      return _replacer.Replace(
+          replace, app, () => Stale(held, _landMilliseconds), () => Moved(held));
+    }
+
+    // Why the held key can no longer be replaced before, or null if it still can: a click,
+    // which is never held, may have moved the caret, the app may have moved focus, or the
+    // valve may have let later keys through. A move is reported first, since what is cleaned
+    // up depends on where the caret went.
+    // A click or a window change while a text with spaces is typed in parts; the time does not
+    // count there, as stopping half-way would leave a half-typed Word.
+    private ReplacementResult? Moved(in RawInput held) {
+      return Stale(held, long.MaxValue);
+    }
+
+    private ReplacementResult? Stale(in RawInput held, long maxAge) {
+      if (_gate.ClickedAfter(held.Sequence)) {
+        return ReplacementResult.Interrupted;
+      }
+
+      if (_focus?.WindowChanged() ?? true) {
+        return ReplacementResult.FocusMoved;
+      }
+
+      return Environment.TickCount64 - held.Tick >= maxAge ? ReplacementResult.TooLate : null;
+    }
+  }
+}

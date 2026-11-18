@@ -1,0 +1,57 @@
+<UserControl x:Class="Navpaky.App.Views.GeneralPage"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:l="clr-namespace:Navpaky.App.Localization">
+  <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+    <StackPanel Margin="24,16" MaxWidth="640" HorizontalAlignment="Left">
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+        <Label x:Name="LanguageLabel"
+               Content="{l:Loc UiLanguageChoice}"
+               Target="{Binding ElementName=Languages}"
+               VerticalAlignment="Center"
+               Margin="0,0,12,0" />
+        <ComboBox x:Name="Languages"
+                  MinWidth="160"
+                  AutomationProperties.LabeledBy="{Binding ElementName=LanguageLabel}"
+                  ItemTemplate="{StaticResource LocalizedChoice}"
+                  ItemContainerStyle="{StaticResource LocalizedChoiceItem}"
+                  SelectedValue="{Binding UiLanguage}"
+                  SelectedValuePath="Value" />
+      </StackPanel>
+      <ui:ToggleSwitch Content="{l:Loc LaunchAtSignIn}"
+                       IsChecked="{Binding LaunchAtSignIn}"
+                       Margin="0,0,0,16" />
+      <ui:ToggleSwitch Content="{l:Loc AutoCheckForUpdates}"
+                       IsChecked="{Binding AutoCheckForUpdates}"
+                       Margin="0,0,0,16" />
+      <ui:ToggleSwitch Content="{l:Loc ShowCursorIndicator}"
+                       IsChecked="{Binding ShowCursorIndicator}" />
+      <TextBlock Text="{l:Loc ShowCursorIndicatorHint}"
+                 Style="{StaticResource HintText}"
+                 Margin="0,4,0,16" />
+      <ui:ToggleSwitch x:Name="PlaySound"
+                       Content="{l:Loc PlaySwitchSound}"
+                       IsChecked="{Binding PlaySwitchSound}"
+                       Margin="0,0,0,8" />
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+        <Label x:Name="SoundLabel"
+               Content="{l:Loc SwitchSoundChoice}"
+               Target="{Binding ElementName=Sounds}"
+               VerticalAlignment="Center"
+               Margin="0,0,12,0" />
+        <ComboBox x:Name="Sounds"
+                  MinWidth="160"
+                  AutomationProperties.LabeledBy="{Binding ElementName=SoundLabel}"
+                  ItemTemplate="{StaticResource LocalizedChoice}"
+                  ItemContainerStyle="{StaticResource LocalizedChoiceItem}"
+                  SelectedValue="{Binding SwitchSound}"
+                  SelectedValuePath="Value" />
+        <Button x:Name="Preview"
+                Content="{l:Loc PreviewSound}"
+                Margin="8,0,0,0" />
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>
