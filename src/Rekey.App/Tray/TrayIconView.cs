@@ -21,6 +21,9 @@ namespace Rekey.App.Tray {
     private readonly TrayCommands _commands;
     private (string Code, TrayState State, bool Dark, int Size)? _drawn;
 
+    // What to do once Windows shows the latest balloon.
+    private Action? _onShown;
+
     // What the menu was last built from; a refresh with the same content leaves it alone.
     private (bool AutoCorrection, bool Paused, string? Exclude, int Extra, UpdateStatus Updates,
         CultureInfo? Language)? _built;
@@ -35,6 +38,13 @@ namespace Rekey.App.Tray {
 
       // A change that came while the menu was open shows once it closes.
       _icon.ContextMenu.Closed += (_, _) => BuildMenu();
+
+      // Windows reports a balloon it showed (NIN_BALLOONSHOW); one it dropped stays silent.
+      _icon.TrayBalloonTipShown += (_, _) => {
+        Action? shown = _onShown;
+        _onShown = null;
+        shown?.Invoke();
+      };
     }
 
     // For the desktop checks: the debug items the app adds go first.
@@ -51,10 +61,11 @@ namespace Rekey.App.Tray {
           .FirstOrDefault(item => Equals(item.Header, header));
     }
 
-    // A Windows notification from the tray icon. It ignores quiet time, so in Do Not Disturb
-    // Windows keeps it in the notification centre instead of dropping it (fix 2.11).
-    public void Notify(string title, string message) {
-      _icon.ShowNotification(title, message, respectQuietTime: false);
+    // A Windows notification from the tray icon; shown runs once Windows really showed it, as
+    // in Do Not Disturb it drops the balloon, also from the notification centre (fix 2.11).
+    public void Notify(string title, string message, Action? shown = null) {
+      _onShown = shown;
+      _icon.ShowNotification(title, message);
     }
 
     public void Dispose() {

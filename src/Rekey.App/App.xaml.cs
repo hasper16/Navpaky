@@ -736,12 +736,16 @@ namespace Rekey.App {
       }
 
       if (CorrectionTip.IsDue(_hub!.Current, inTryIt)) {
-        _hub.Update(CorrectionTip.Shown);
-        _trayView?.Notify(Strings.CorrectionTipTitle, Strings.CorrectionTip);
-#if DEBUG
-        NoteTipForCheck();
-#endif
+        // Counted as shown only once Windows shows it; until then each Correction asks again.
+        _trayView?.Notify(Strings.CorrectionTipTitle, Strings.CorrectionTip, TipShown);
       }
+    }
+
+    private void TipShown() {
+      _hub!.Update(CorrectionTip.Shown);
+#if DEBUG
+      NoteTipForCheck();
+#endif
     }
 
     // One welcome window at a time: asking again brings it to the front.
