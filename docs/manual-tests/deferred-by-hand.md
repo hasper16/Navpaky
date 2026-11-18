@@ -227,3 +227,7 @@ Written against the head of the `rename-to-navpaky` PR. Uninstall any test insta
   Expected: Task Manager → Startup apps lists Navpaky; the second start exits and one tray icon remains.
 - [ ] **Uninstall keeps data apart (1.1).** Uninstall and answer No to deleting data.
   Expected: `%LOCALAPPDATA%\navpaky-app` is gone and both `%APPDATA%\Navpaky` and `%LOCALAPPDATA%\Navpaky` are still there.
+- [ ] **Uninstall deleting data (5.1).** Install, start and quit Navpaky once, uninstall, and answer Yes to deleting data within a few seconds.
+  Expected: no message says Navpaky was installed again; "removal complete" follows at once; `%APPDATA%\Navpaky`, `%LOCALAPPDATA%\Navpaky` and `%LOCALAPPDATA%\navpaky-app` are all gone.
+- [ ] **Reinstall while the question is open (5.1).** Uninstall, leave the data question open for more than a minute, run the setup again, then answer Yes.
+  Expected: a message says Navpaky was installed again and its settings and word lists were kept; both data folders are still there.

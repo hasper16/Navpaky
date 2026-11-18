@@ -8,21 +8,25 @@ namespace Navpaky.App.Updates {
   // (design R11 of add-auto-update-and-installer). Windows PowerShell ships with every supported
   // Windows and runs from System32, outside the install root Velopack deletes.
   internal static class DataQuestion {
-    // Deletes only after Yes and once Velopack has removed the old installation; an Update.exe
-    // still there after 30 s means Navpaky was installed again, which keeps the data (fix 2.12 of
-    // add-final-acceptance). Deletes both data folders, retrying while the closing Navpaky still
-    // holds a file, then names any folder left for the user to delete. Every value comes from
-    // the environment, never the script.
+    // Deletes only after Yes. An install marker that changed while the question was open means
+    // Navpaky was installed again, which keeps the data (design D8 of rename-to-navpaky; waiting
+    // for the install root to go deadlocked with the hook that waits for this answer). Deletes
+    // both data folders, retrying while the closing Navpaky still holds a file, then names any
+    // folder left for the user to delete. Every value comes from the environment, never the
+    // script.
     private const string _script = """
         Add-Type -AssemblyName PresentationFramework
+        function Read-Marker {
+          if (Test-Path -LiteralPath $env:NAVPAKY_MARKER) {
+            return [IO.File]::ReadAllText($env:NAVPAKY_MARKER)
+          }
+          return ''
+        }
+        $before = Read-Marker
         $answer = [System.Windows.MessageBox]::Show(
             $env:NAVPAKY_QUESTION, $env:NAVPAKY_TITLE, 'YesNo', 'Question', 'No')
         if ($answer -ne 'Yes') { exit }
-        $installed = Join-Path $env:NAVPAKY_INSTALL 'Update.exe'
-        for ($i = 0; $i -lt 60 -and (Test-Path -LiteralPath $installed); $i++) {
-          Start-Sleep -Milliseconds 500
-        }
-        if (Test-Path -LiteralPath $installed) {
+        if ((Read-Marker) -ne $before) {
           [void][System.Windows.MessageBox]::Show(
               $env:NAVPAKY_KEPT, $env:NAVPAKY_TITLE, 'OK', 'Information')
           exit
@@ -43,7 +47,7 @@ namespace Navpaky.App.Updates {
             ($env:NAVPAKY_NOT_DELETED -f ($left -join "`n")), $env:NAVPAKY_TITLE, 'OK', 'Warning')
         """;
 
-    public static ProcessStartInfo StartInfo(DataFolders data, string installRoot) {
+    public static ProcessStartInfo StartInfo(DataFolders data) {
       var start = new ProcessStartInfo(
           Path.Join(Environment.SystemDirectory, @"WindowsPowerShell\v1.0\powershell.exe")) {
         // Not the install folder the hook runs in, which an open handle would keep on disk.
@@ -59,7 +63,7 @@ namespace Navpaky.App.Updates {
 
       start.Environment["NAVPAKY_SETTINGS"] = data.Settings;
       start.Environment["NAVPAKY_LOCAL"] = data.Local;
-      start.Environment["NAVPAKY_INSTALL"] = installRoot;
+      start.Environment["NAVPAKY_MARKER"] = Path.Join(data.Local, InstallMarker.FileName);
       start.Environment["NAVPAKY_KEPT"] = Strings.UninstallDataKept;
       start.Environment["NAVPAKY_QUESTION"] = Strings.UninstallDeleteData;
       start.Environment["NAVPAKY_TITLE"] = Strings.UninstallTitle;

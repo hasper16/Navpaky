@@ -59,9 +59,7 @@ namespace Navpaky.App {
     // How long a restarted Navpaky waits for the frozen one to exit before it starts anyway.
     private static readonly TimeSpan _oldProcessExitWait = TimeSpan.FromSeconds(10);
 
-    private static readonly DataFolders _data = DataFolders.Resolve(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+    private static readonly DataFolders _data = DataFolders.ForCurrentUser(
         VelopackLocator.IsCurrentSet ? VelopackLocator.Current : null);
 
     private static readonly string _localFolder = _data.Local;

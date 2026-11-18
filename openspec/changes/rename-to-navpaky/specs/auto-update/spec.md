@@ -50,7 +50,7 @@ Applying an update SHALL keep settings, word lists, statistics and launch-at-sig
 - **THEN** all settings and Protected Words are unchanged
 
 ### Requirement: Clean uninstall
-Uninstalling SHALL remove the app files, the Start menu entry and the sign-in entry, and SHALL ask once whether to delete Navpaky's data (settings, word lists, statistics, logs, in both data folders); both folders are kept if the user declines and deleted only on an explicit yes. The uninstaller SHALL wait for the answer before it reports the removal as complete, for at most 50 seconds (design decision: Velopack 1.2.161 ends its uninstall hook after 60 seconds); if the wait runs out the question stays open and data is deleted only after an explicit yes. Data SHALL be deleted only once the old installation is gone, and SHALL be kept when Navpaky was installed again while the question was open.
+Uninstalling SHALL remove the app files, the Start menu entry and the sign-in entry, and SHALL ask once whether to delete Navpaky's data (settings, word lists, statistics, logs, in both data folders); both folders are kept if the user declines and deleted only on an explicit yes. The uninstaller SHALL wait for the answer before it reports the removal as complete, for at most 50 seconds (design decision: Velopack 1.2.161 ends its uninstall hook after 60 seconds); if the wait runs out the question stays open and data is deleted only after an explicit yes. Data SHALL be kept when Navpaky was installed again while the question was open; every installation records a new install marker in `%LOCALAPPDATA%\Navpaky`, and a marker that changed since the question appeared shows the reinstall. A yes given while the uninstall is still running SHALL delete the data at once (design decision of rename-to-navpaky: waiting for the install root to go deadlocked with the uninstall hook that waits for the answer).
 
 #### Scenario: Uninstall with data removal
 - **WHEN** the user uninstalls and chooses to delete data
@@ -59,6 +59,10 @@ Uninstalling SHALL remove the app files, the Start menu entry and the sign-in en
 #### Scenario: Uninstall keeping data
 - **WHEN** the user uninstalls and declines to delete data
 - **THEN** settings and word lists are still in `%APPDATA%\Navpaky`, statistics and logs in `%LOCALAPPDATA%\Navpaky`, and a later reinstall uses them
+
+#### Scenario: Delete while the uninstall is still running
+- **WHEN** the user answers the data question with delete before the uninstaller has removed the app files, and Navpaky was not installed again
+- **THEN** both data folders are deleted and no message says Navpaky was installed again
 
 #### Scenario: Question before completion
 - **WHEN** the user uninstalls Navpaky

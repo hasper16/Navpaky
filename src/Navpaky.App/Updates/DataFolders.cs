@@ -7,6 +7,13 @@ namespace Navpaky.App.Updates {
   // the roaming profile, so they may follow the user; statistics, logs and other machine state
   // in the local profile, since they can hold typed words and must not roam.
   internal sealed record DataFolders(string Settings, string Local) {
+    public static DataFolders ForCurrentUser(IVelopackLocator? locator) {
+      return Resolve(
+          Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+          Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+          locator);
+    }
+
     // Velopack deletes its whole install root on uninstall, so data inside it could not be kept
     // when the user declines deletion; a packaging mistake must not reach a user's data. The
     // pack id is navpaky-app for this reason: Windows paths ignore case, so an id of navpaky

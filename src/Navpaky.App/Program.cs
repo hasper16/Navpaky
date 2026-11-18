@@ -16,34 +16,43 @@ namespace Navpaky.App {
     // arguments and exits before any window, hook or single-instance claim exists.
     [STAThread]
     public static void Main() {
-      VelopackApp.Build().OnBeforeUninstallFastCallback(_ => Uninstall()).Run();
+      VelopackApp.Build()
+          .OnAfterInstallFastCallback(_ => MarkInstall())
+          .OnBeforeUninstallFastCallback(_ => Uninstall())
+          .Run();
       var app = new App();
       app.InitializeComponent();
       app.Run();
+    }
+
+    // Without the marker only a reinstall made while an old data question is open goes unseen,
+    // so a failed write must not fail the install.
+    private static void MarkInstall() {
+      try {
+        InstallMarker.Write(DataFolders.ForCurrentUser(null).Local);
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        Trace.WriteLine($"Navpaky could not mark its installation: {e.GetType().Name}");
+      }
     }
 
     private static void Uninstall() {
       // The uninstall questions follow the Windows display language, mapped as the "system"
       // choice is; settings are not read, so uninstalling never writes to the data folder.
       Strings.Culture = UiCulture.For(UiLanguage.System, CultureInfo.CurrentUICulture);
-      DataFolders data = DataFolders.Resolve(
-          Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-          Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-          null);
-      new Uninstaller(data, () => new SignInLaunch().Set(false, string.Empty), AskDeleteData)
-          .Run();
+      new Uninstaller(
+          DataFolders.ForCurrentUser(null),
+          () => new SignInLaunch().Set(false, string.Empty),
+          AskDeleteData).Run();
     }
 
     // Velopack shows "removal complete" once this hook returns, so the hook waits for the
     // answer for 50 s, a margin below the 60 s Velopack 1.2.161 gives it (fix 2.12 of
     // add-final-acceptance). Past that the question stays open, and data goes only on Yes.
+    // The question ends as soon as it is answered, so the uninstall goes on at once.
     // When the question cannot start, the data stays, as when the user declines.
     private static void AskDeleteData(DataFolders data) {
-      // The hook runs as <install root>\current\Navpaky.App.exe.
-      string installRoot = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(
-          AppContext.BaseDirectory))!;
       try {
-        using Process? question = Process.Start(DataQuestion.StartInfo(data, installRoot));
+        using Process? question = Process.Start(DataQuestion.StartInfo(data));
         question?.WaitForExit(_answerWait);
       } catch (Exception e) when (e is Win32Exception or FileNotFoundException) {
         Trace.WriteLine($"Navpaky could not ask about its data: {e.GetType().Name}");

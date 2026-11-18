@@ -48,6 +48,13 @@ Consequences:
 
 **D6. Win32 and threads.** No Win32 API or threading changes: the same `CreateMutex`, registry Run key and file APIs are called on the same threads with new names.
 
+**D8. A reinstall is detected by an install marker, not by the install root (owner's by-hand finding on c435388).** Since fix 2.12 of add-final-acceptance the question deleted data only once `Update.exe` had left the install root, and kept it when `Update.exe` was there after 30 s. But the uninstall hook waits up to 50 s for the question, and Velopack removes the install root only after the hook returns: a quick yes waited 30 s for a removal that could not start, then reported a reinstall and kept the data. The fix removes the wait:
+- Velopack's install hook (`OnAfterInstallFastCallback`, no UI, 30 s limit) writes a new random id to `install-id.txt` in the Local data folder.
+- The question reads that file before it asks; after yes it keeps both folders only when the id changed (Navpaky was installed again while the question was open) and otherwise deletes them at once. A missing file reads as empty, so an installation made before this build is not taken for a reinstall.
+- The hook still waits at most 50 s; after a yes or no the question ends at once, so the hook returns and Velopack removes the install root.
+- Alternatives considered: comparing `Update.exe` times (NTFS keeps the creation time of a file recreated under the same name within seconds, and a copy keeps the source's write time), or the version in `sq.version` (a reinstall of the same version looks the same).
+- A test runs the real script in Windows PowerShell with the message boxes replaced by a stub and an install root still in place: yes deletes both folders; yes after a marker change keeps them.
+
 ## Risks / Trade-offs
 
 - [A missed occurrence leaves a mixed name] → after the rename, `git grep -i rekey` outside the archive must list only the restored references to the original app; the task's verification records the command.

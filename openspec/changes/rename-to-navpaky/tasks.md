@@ -17,3 +17,7 @@
 
 - [x] 4.1 Tests first: `DataFoldersTests` pins settings in `%APPDATA%\Navpaky` and local state in `%LOCALAPPDATA%\Navpaky`, and refuses an install root holding either; `UninstallerTests` asks once when either folder exists and passes both; `DataQuestionTests` hands both folders to the question. Then replace `DataFolder` with `DataFolders` and route `SettingsStore` and `WordListsStore` to the settings folder, everything else to the local folder; the question script deletes both only on Yes. Verify: `dotnet test` on `Navpaky.App.Tests` passes.
 - [x] 4.2 Desktop checks keep and restore each file in its own folder (`SystemState.SettingsFolder`, `SystemState.LocalFolder`); docs, by-hand checks and README name the right folder per file. Verify: `dotnet build Navpaky.slnx -warnaserror` clean, `dotnet test Navpaky.slnx` passes, `git grep` finds no `%LOCALAPPDATA%\Navpaky` path for `settings.json` or `words.json`.
+
+## 5. Reinstall detection (design D8)
+
+- [x] 5.1 Tests first: running the question script with stub message boxes and an install root still holding `Update.exe`, yes deletes both folders and shows no reinstall message; yes after the install marker changed keeps both; `InstallMarker.Write` writes a new id each time. Then add `InstallMarker`, call it from `OnAfterInstallFastCallback`, and make the script compare the marker instead of waiting for `Update.exe`. Verify: `dotnet test` on `Navpaky.App.Tests` passes; the owner's yes path is re-run by hand (deferred-by-hand.md, rename-to-navpaky).
