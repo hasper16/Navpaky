@@ -1,6 +1,6 @@
 # Accuracy corpus sources
 
-Held-out text for `tools/Rekey.Accuracy`. None of it is used to generate Language Profiles.
+Held-out text for `tools/Navpaky.Accuracy`. None of it is used to generate Language Profiles.
 
 | File | Origin | Licence |
 |---|---|---|

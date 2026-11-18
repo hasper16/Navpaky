@@ -1,6 +1,6 @@
-# Rekey
+# Navpaky
 
-Rekey watches what the user types and, when a word was typed in the wrong keyboard layout, retypes it in the right one and switches the layout.
+Navpaky (Ukrainian «навпаки», "vice versa") watches what the user types and, when a word was typed in the wrong keyboard layout, retypes it in the right one and switches the layout.
 
 ## Typing
 
@@ -13,7 +13,7 @@ One physical key press recorded by key position, independent of the layout that 
 _Avoid_: key code, key event
 
 **Word**:
-The keystrokes typed since the last word boundary, still known to Rekey and still on screen.
+The keystrokes typed since the last word boundary, still known to Navpaky and still on screen.
 _Avoid_: token, buffer
 
 **Rendering**:
@@ -21,17 +21,17 @@ The text a Word produces when its keystrokes are read in a given Layout ("ghbdtn
 _Avoid_: translation, conversion
 
 **Trigger Key**:
-A key that ends a Word and makes Rekey evaluate it automatically: Space, Enter or Tab, as configured. Space, Enter and Tab end a Word even when they are not Trigger Keys, but then Rekey does not evaluate it.
+A key that ends a Word and makes Navpaky evaluate it automatically: Space, Enter or Tab, as configured. Space, Enter and Tab end a Word even when they are not Trigger Keys, but then Navpaky does not evaluate it.
 _Avoid_: delimiter, terminator
 
 **Password Field**:
-A focused text control that hides what is typed; Rekey never reads or changes text there.
+A focused text control that hides what is typed; Navpaky never reads or changes text there.
 _Avoid_: secure input
 
 ## Languages
 
 **Language**:
-A natural language Rekey can recognise (English, Russian, Ukrainian).
+A natural language Navpaky can recognise (English, Russian, Ukrainian).
 _Avoid_: locale, culture
 
 **Language Profile**:
@@ -43,11 +43,11 @@ How plausible a Rendering is as text in a Language.
 _Avoid_: confidence, probability
 
 **Ambiguous Word**:
-A Word whose Renderings are valid words in more than one Language, so Rekey waits for the next Word to show which Layout the user is typing in.
+A Word whose Renderings are valid words in more than one Language, so Navpaky waits for the next Word to show which Layout the user is typing in.
 _Avoid_: conflict word
 
 **Sensitivity**:
-How much evidence Rekey needs before correcting: Cautious, Balanced (default) or Aggressive.
+How much evidence Navpaky needs before correcting: Cautious, Balanced (default) or Aggressive.
 _Avoid_: aggressiveness, mode
 
 ## Corrections
@@ -61,7 +61,7 @@ Changing the active Layout without changing any text.
 _Avoid_: switch (alone), toggle
 
 **Auto Correction**:
-A Correction Rekey makes on its own when a Trigger Key ends a wrong-layout Word.
+A Correction Navpaky makes on its own when a Trigger Key ends a wrong-layout Word.
 _Avoid_: auto-switch
 
 **Manual Correction**:
@@ -90,11 +90,11 @@ The time after a Correction during which Ctrl+Z is treated as an Undo (5 seconds
 ## User control
 
 **Protected Word**:
-A word Rekey never auto-corrects, added by the user or learned after repeated Undos of the same Correction.
+A word Navpaky never auto-corrects, added by the user or learned after repeated Undos of the same Correction.
 _Avoid_: no-switch word, ignored word, exception
 
 **Learned Word**:
-A word Rekey accepts as valid in a Language although its Language Profile lacks it.
+A word Navpaky accepts as valid in a Language although its Language Profile lacks it.
 _Avoid_: custom word, user dictionary
 
 **Excluded App**:
@@ -108,7 +108,7 @@ _Avoid_: snooze, disable
 ## Health
 
 **Incident**:
-A recorded moment when Rekey lost or recovered its view of the keyboard, or stopped itself to stay safe.
+A recorded moment when Navpaky lost or recovered its view of the keyboard, or stopped itself to stay safe.
 _Avoid_: error, crash
 
 **Usage Digest**:

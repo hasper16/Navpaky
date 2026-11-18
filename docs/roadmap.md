@@ -28,7 +28,7 @@ Tooling changes sit outside the numbered order: they change how agents work on t
 |---|---|---|---|
 | T1 | `add-agent-dev-tooling` | agent-dev-tooling (Graphify, ponytail, curated agent-skills, security-audit review step) | — |
 
-T1 can run in parallel with changes 12–15: it touches no file under `src/`, `tests/` or `tools/Rekey.DesktopChecks/`. Its global installs reach only sessions started after them, so implementers already at work keep their tools until their change ends.
+T1 can run in parallel with changes 12–15: it touches no file under `src/`, `tests/` or `tools/Navpaky.DesktopChecks/`. Its global installs reach only sessions started after them, so implementers already at work keep their tools until their change ends.
 
 By-hand checks are not a merge gate for changes 1–14: each change appends them to `docs/manual-tests/deferred-by-hand.md`, and change 15 is the owner's single pass over that file plus the fixes for what fails (owner decision, 2026-11-14).
 

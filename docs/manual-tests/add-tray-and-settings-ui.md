@@ -1,16 +1,16 @@
 # Desktop checks: add-tray-and-settings-ui
 
-The settings hub (snapshot per change, one debounced save), the tray state and its text, the Pause presets, the exclude item, the Hotkey choice and conflict hold, the Excluded Apps and word list editors, the keycap drawing, the indicator placement, the sound rule (after a Correction, never after an Undo), the bundled sounds and the launch-at-sign-in registry rules are covered by unit tests in `Rekey.Core.Tests`, `Rekey.Win32.Tests` and `Rekey.App.Tests`. What needs the real app on a Windows desktop is checked by a tool, plus a checklist by hand. Tick a task in `tasks.md` once all of its checks pass on the commit under review.
+The settings hub (snapshot per change, one debounced save), the tray state and its text, the Pause presets, the exclude item, the Hotkey choice and conflict hold, the Excluded Apps and word list editors, the keycap drawing, the indicator placement, the sound rule (after a Correction, never after an Undo), the bundled sounds and the launch-at-sign-in registry rules are covered by unit tests in `Navpaky.Core.Tests`, `Navpaky.Win32.Tests` and `Navpaky.App.Tests`. What needs the real app on a Windows desktop is checked by a tool, plus a checklist by hand. Tick a task in `tasks.md` once all of its checks pass on the commit under review.
 
-## Automated: `tools/Rekey.DesktopChecks tray-and-settings`
+## Automated: `tools/Navpaky.DesktopChecks tray-and-settings`
 
-Needs the English (US) and Russian Layouts installed and a Debug build. Close every running Rekey and input probe, then run from the repository root:
+Needs the English (US) and Russian Layouts installed and a Debug build. Close every running Navpaky and input probe, then run from the repository root:
 
 ```bash
-dotnet build && dotnet run --project tools/Rekey.DesktopChecks -- tray-and-settings
+dotnet build && dotnet run --project tools/Navpaky.DesktopChecks -- tray-and-settings
 ```
 
-Do not touch the mouse or keyboard for about 2 minutes. The tool starts the Debug app (`src/Rekey.App/bin/Debug/net10.0-windows/Rekey.App.exe --check-ui`) with default settings, the welcome marked completed so its window stays closed (since `add-onboarding`), and no word lists (it keeps `settings.json`, `words.json` and the start-at-sign-in entries aside and puts them back at the end). In this mode the app writes what its tray, indicator and sound did to `%LOCALAPPDATA%\Rekey\check-ui.txt` and takes the commands `open-settings` and `quit` from `check-ui-command.txt` in place of clicks on its tray menu. The tool's own worker only watches Layout changes; the app corrects. The tool types the spec's Word "ghbdtn" into its test window, changes switches in the settings window through UI Automation (no mouse), and prints one ✅ or ❌ line per check, a summary, and exit code 1 when any check fails. Output carries booleans, counts and codes only, never text.
+Do not touch the mouse or keyboard for about 2 minutes. The tool starts the Debug app (`src/Navpaky.App/bin/Debug/net10.0-windows/Navpaky.App.exe --check-ui`) with default settings, the welcome marked completed so its window stays closed (since `add-onboarding`), and no word lists (it keeps `settings.json`, `words.json` and the start-at-sign-in entries aside and puts them back at the end). In this mode the app writes what its tray, indicator and sound did to `%LOCALAPPDATA%\Navpaky Data\check-ui.txt` and takes the commands `open-settings` and `quit` from `check-ui-command.txt` in place of clicks on its tray menu. The tool's own worker only watches Layout changes; the app corrects. The tool types the spec's Word "ghbdtn" into its test window, changes switches in the settings window through UI Automation (no mouse), and prints one ✅ or ❌ line per check, a summary, and exit code 1 when any check fails. Output carries booleans, counts and codes only, never text.
 
 | Task | What the tool checks |
 |---|---|

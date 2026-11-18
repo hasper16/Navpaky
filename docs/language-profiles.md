@@ -1,16 +1,16 @@
 # Language Profiles
 
-A Language Profile is the recognition data Rekey holds for one Language (see `GLOSSARY.md`). Rekey ships one profile per Language as an embedded resource of `Rekey.Core`, generated from openly licensed word lists (ADR 0003). The requirements are in the `language-profiles` spec; the decisions are in the design of the `add-language-profiles` change.
+A Language Profile is the recognition data Navpaky holds for one Language (see `GLOSSARY.md`). Navpaky ships one profile per Language as an embedded resource of `Navpaky.Core`, generated from openly licensed word lists (ADR 0003). The requirements are in the `language-profiles` spec; the decisions are in the design of the `add-language-profiles` change.
 
 ## Regenerate the profiles
 
 From the repository root:
 
 ```bash
-dotnet run --project tools/Rekey.ProfileBuilder -c Release -- data/sources src/Rekey.Core/Profiles
+dotnet run --project tools/Navpaky.ProfileBuilder -c Release -- data/sources src/Navpaky.Core/Profiles
 ```
 
-The run takes a few seconds and rewrites `src/Rekey.Core/Profiles/<code>.json` for each Language folder in `data/sources/`. The output is byte-identical for the same inputs, so on an unchanged checkout `git status` stays clean afterwards. A diff therefore always comes from a changed source, short-word list, `language.json` or generator.
+The run takes a few seconds and rewrites `src/Navpaky.Core/Profiles/<code>.json` for each Language folder in `data/sources/`. The output is byte-identical for the same inputs, so on an unchanged checkout `git status` stays clean afterwards. A diff therefore always comes from a changed source, short-word list, `language.json` or generator.
 
 The generator stops with exit code 1, before writing anything, when `data/sources/SOURCES.md` does not name a file of `data/sources/` in backticks. Record every new file there with its origin and licence first.
 
@@ -46,7 +46,7 @@ A frequency list has one `word count` pair per line, most frequent first. `short
 5. Letter pairs and triples are counted inside the kept words, weighted by word count, skipping any group with `'` or `-`. The 300 most frequent of each are stored as their share of all groups, rounded to six significant digits.
 6. `words1` and `words2` come from `short-words.txt`, sorted.
 
-Settings live in `tools/Rekey.ProfileBuilder/BuildOptions.cs`.
+Settings live in `tools/Navpaky.ProfileBuilder/BuildOptions.cs`.
 
 ## Profile format (format 1)
 

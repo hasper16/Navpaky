@@ -1,6 +1,6 @@
 # Settings window: keyboard, focus, Narrator and theme
 
-Task 3.5 of `add-tray-and-settings-ui`. Deferred to the final acceptance pass (owner decision 2026-11-14). Use a Debug build of `src/Rekey.App`, open Settings from the tray, and go through every section: General, Correction, Hotkey, Apps and words, Diagnostics and privacy, About. Record each result in the last column (pass, or what failed).
+Task 3.5 of `add-tray-and-settings-ui`. Deferred to the final acceptance pass (owner decision 2026-11-14). Use a Debug build of `src/Navpaky.App`, open Settings from the tray, and go through every section: General, Correction, Hotkey, Apps and words, Diagnostics and privacy, About. Record each result in the last column (pass, or what failed).
 
 | Item | Light mode | Dark mode |
 |---|---|---|

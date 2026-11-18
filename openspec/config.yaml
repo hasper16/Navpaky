@@ -3,7 +3,7 @@ schema: spec-driven
 context: |
   Language: English. All OpenSpec artifacts (proposal, design, specs, tasks) are written in English.
 
-  Product: Rekey for Windows — a background tray app that fixes a word typed in the wrong
+  Product: Navpaky for Windows — a background tray app that fixes a word typed in the wrong
   keyboard layout ("ghbdtn" -> "привет") and switches the layout. Windows analog of the macOS
   app Rekey 1.0.0-beta.16. Observed behavior of the original is in the owner's local notes
   .private/reverse-engineering/rekey-macos.md (git-ignored); artifacts describe that behavior
@@ -16,8 +16,8 @@ context: |
   UI Automation for in-place replacement, H.NotifyIcon.Wpf for the tray, Velopack for updates,
   xUnit for tests. WPF does not support NativeAOT: publish self-contained single-file + ReadyToRun.
 
-  Solution layout: Rekey.Core (pure logic, no Win32, fully unit-testable),
-  Rekey.Win32 (keyboard hook, layouts, input injection, UIA), Rekey.App (WPF, tray, windows).
+  Solution layout: Navpaky.Core (pure logic, no Win32, fully unit-testable),
+  Navpaky.Win32 (keyboard hook, layouts, input injection, UIA), Navpaky.App (WPF, tray, windows).
 
   MVP languages: English, Russian, Ukrainian (dictionaries and UI). Dictionary format is extensible.
 

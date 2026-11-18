@@ -1,13 +1,13 @@
 # Detection accuracy
 
-How well the wrong-layout Decision works on held-out text, measured by `tools/Rekey.Accuracy` (design D7 of `add-language-scorer`). The spec `wrong-layout-detection` requires, under Balanced Sensitivity, at most 0.5% false corrections and at least 95% corrections.
+How well the wrong-layout Decision works on held-out text, measured by `tools/Navpaky.Accuracy` (design D7 of `add-language-scorer`). The spec `wrong-layout-detection` requires, under Balanced Sensitivity, at most 0.5% false corrections and at least 95% corrections.
 
 ## Run it
 
 From the repository root:
 
 ```bash
-dotnet run --project tools/Rekey.Accuracy -c Release -- data/accuracy tests/fixtures/keymaps
+dotnet run --project tools/Navpaky.Accuracy -c Release -- data/accuracy tests/fixtures/keymaps
 ```
 
 Add `--sample <n>` to read only the first `n` sentences per Language, and `--check` to exit with code 1 when Balanced breaks the spec limits (CI runs both). The counts are deterministic; the latency figures depend on the machine.

@@ -11,4 +11,4 @@
 
 ## 3. Docs and agent context
 
-- [ ] 3.1 Rename the product in `README.md` (with the gloss "Vice-Versa"), `AGENTS.md`, `GLOSSARY.md`, `openspec/config.yaml`, `docs/**` and `data/**/SOURCES.md`; keep every reference to the original macOS app, the notes path `rekey-macos.md` and `hasper16/key-switcher`. Add a by-hand item to `docs/manual-tests/deferred-by-hand.md`: uninstall old test installs, then install and check the install folder, data folder and Installed apps entry. Verify: `git grep -n -i rekey -- . ':!openspec/changes/archive'` lists only references to the original app and the notes path.
+- [x] 3.1 Rename the product in `README.md` (with the gloss "Vice-Versa"), `AGENTS.md`, `GLOSSARY.md`, `openspec/config.yaml`, `docs/**` and `data/**/SOURCES.md`; keep every reference to the original macOS app, the notes path `rekey-macos.md` and `hasper16/key-switcher`. Add a by-hand item to `docs/manual-tests/deferred-by-hand.md`: uninstall old test installs, then install and check the install folder, data folder and Installed apps entry. Verify: `git grep -n -i rekey -- . ':!openspec/changes/archive'` lists only references to the original app and the notes path.
