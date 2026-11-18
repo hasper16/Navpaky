@@ -4,24 +4,27 @@ using Rekey.Core;
 using Xunit;
 
 namespace Rekey.App.Tests.Feedback {
-  // Re-check of fix 2.7 (add-final-acceptance): the silence that keeps monitor audio awake is
-  // built from a shipped sound's format, and each sound's length tells when silence resumes.
+  // Re-check of fix 2.7 (add-final-acceptance): the shipped sounds are read into samples for
+  // the one open output stream, and each sound's length tells when silence follows.
   public sealed class WaveFileTests {
     [Fact]
     public void ChimeLastsItsSamples() {
-      Assert.Equal(350, WaveFile.Length(Read(SwitchSound.Chime)).TotalMilliseconds, 0);
-    }
-
-    [Fact]
-    public void SilenceHasTheFormatAndLengthAskedFor() {
       byte[] chime = Read(SwitchSound.Chime);
 
-      byte[] silence = WaveFile.Silence(chime, TimeSpan.FromSeconds(1));
+      Assert.Equal(44100, WaveFile.SampleRate(chime));
+      Assert.Equal(15434, WaveFile.Samples(chime).Length);
+      Assert.Equal(350, WaveFile.Length(chime).TotalMilliseconds, 0);
+    }
 
-      Assert.Equal(1000, WaveFile.Length(silence).TotalMilliseconds, 0);
-      Assert.Equal(chime[8..36], silence[8..36]);
-      Assert.Equal(silence.Length - 8, BitConverter.ToInt32(silence, 4));
-      Assert.All(silence[44..], b => Assert.Equal(0, b));
+    [Theory]
+    [InlineData(SwitchSound.KeyClick)]
+    [InlineData(SwitchSound.SoftTick)]
+    [InlineData(SwitchSound.Chime)]
+    public void EverySoundHasTheSameRateAndIsNotSilent(SwitchSound sound) {
+      byte[] wave = Read(sound);
+
+      Assert.Equal(44100, WaveFile.SampleRate(wave));
+      Assert.Contains(WaveFile.Samples(wave), sample => sample != 0);
     }
 
     private static byte[] Read(SwitchSound sound) {

@@ -90,6 +90,14 @@ FOLDERID_Downloads
 CoTaskMemFree
 GetKeyNameText
 MapVirtualKey
-PlaySound
 SHCreateItemFromParsingName
 IShellItem
+waveOutOpen
+waveOutPrepareHeader
+waveOutUnprepareHeader
+waveOutWrite
+waveOutReset
+waveOutClose
+WAVE_MAPPER
+WHDR_DONE
+WAVE_FORMAT_PCM

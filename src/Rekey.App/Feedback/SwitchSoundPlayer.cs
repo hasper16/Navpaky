@@ -5,28 +5,27 @@ using Rekey.Win32;
 
 namespace Rekey.App.Feedback {
   // Plays the switch sounds Rekey ships (design D6), loaded once so a Correction never waits
-  // for the disk. The sounds are Rekey's own (ADR 0003). Silence keeps monitor audio awake
-  // while the user types (SoundScheduler). Used on the UI thread only.
-  internal sealed class SwitchSoundPlayer {
-    private readonly Dictionary<SwitchSound, (WaveSound Sound, TimeSpan Length)> _players = [];
-    private readonly WaveSound? _silence;
+  // for the disk. The sounds are Rekey's own (ADR 0003). They go into one output stream that
+  // silence keeps open while the user types (SoundScheduler), so monitor audio never sees a
+  // new stream start for a sound. Used on the UI thread only.
+  internal sealed class SwitchSoundPlayer : IDisposable {
+    private const int _sampleRate = 44100;
+
+    private readonly Dictionary<SwitchSound, (short[] Samples, TimeSpan Length)> _sounds = [];
+    private readonly SoundOutput _output = new(_sampleRate);
     private readonly SoundScheduler _scheduler;
 
     public SwitchSoundPlayer() {
       foreach (SwitchSound sound in Enum.GetValues<SwitchSound>()) {
-        if (Read(sound) is { } wave) {
-          _players[sound] = (new WaveSound(wave), WaveFile.Length(wave));
+        if (Read(sound) is { } wave && WaveFile.SampleRate(wave) == _sampleRate) {
+          _sounds[sound] = (WaveFile.Samples(wave), WaveFile.Length(wave));
         }
       }
 
-      if (Read(SwitchSound.Chime) is { } template) {
-        _silence = new WaveSound(WaveFile.Silence(template, TimeSpan.FromSeconds(1)));
-      }
-
       _scheduler = new SoundScheduler(
-          () => _silence?.PlayLooping(),
-          WaveSound.StopAll,
-          (sound, _) => _players[sound].Sound.Play(),
+          _output.Open,
+          _output.Close,
+          (sound, _) => _output.Play(_sounds[sound].Samples),
           Later);
     }
 
@@ -44,15 +43,19 @@ namespace Rekey.App.Feedback {
     }
 
     public void Play(SwitchSound sound) {
-      if (_players.TryGetValue(sound, out (WaveSound Sound, TimeSpan Length) player)) {
+      if (_sounds.TryGetValue(sound, out (short[] Samples, TimeSpan Length) loaded)) {
         Played++;
-        _scheduler.Play(sound, player.Length);
+        _scheduler.Play(sound, loaded.Length);
       }
     }
 
     // The user is typing, so a Correction and its sound may come soon.
     public void KeepAwake() {
       _scheduler.KeepAwake();
+    }
+
+    public void Dispose() {
+      _output.Dispose();
     }
 
     private static byte[]? Read(SwitchSound sound) {
