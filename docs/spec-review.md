@@ -12,7 +12,7 @@ Review of the 14 OpenSpec changes in `openspec/changes/` against: coverage of th
 | 4 | Consistency | language-scorer | `Sensitivity` setting was never added to `Settings` by any change. | Task 2.2 adds it (Balanced default); proposal lists it. |
 | 5 | Consistency | text-replacement | `VerifiedReplacement` setting added in tasks but missing from proposal Impact. | Added to proposal. |
 | 6 | Consistency | telemetry | Proposal listed a `LastSentReports` setting no task creates; design stores sent payloads in `sent.jsonl`. | Proposal now names the `sent.jsonl` file instead. |
-| 7 | Consistency | auto-update, bootstrap, onboarding | User data was planned inside the Velopack install root, which Velopack deletes on uninstall (Velopack docs, "Uninstalling"), so "data is kept if the user declines" could not hold; a migration task moved data that was never released. | Install root `%LOCALAPPDATA%\key-switcher` (pack id `key-switcher`); user data stays in `%LOCALAPPDATA%\Rekey` from bootstrap on. Migration task replaced by a path-resolver test; added scenario "Uninstall keeping data". |
+| 7 | Consistency | auto-update, bootstrap, onboarding | User data was planned inside the Velopack install root, which Velopack deletes on uninstall (Velopack docs, "Uninstalling"), so "data is kept if the user declines" could not hold; a migration task moved data that was never released. | Install root `%LOCALAPPDATA%\navpaky-app` (pack id `navpaky`); user data stays in `%LOCALAPPDATA%\Navpaky` from bootstrap on. Migration task replaced by a path-resolver test; added scenario "Uninstall keeping data". |
 | 8 | Consistency | onboarding, roadmap | Onboarding's Install option and installed-location check need the Velopack install root, but onboarding came before the installer. | Roadmap reordered: 10 statistics, 11 auto-update, 12 onboarding, 13 telemetry. |
 | 9 | Consistency | ui-localization | Proposal had no "Depends on" line. | Added (9–13 as in roadmap). |
 | 10 | Consistency | tray, statistics | "Depends on all engine changes" did not match the roadmap. | Named the exact changes. |
@@ -38,7 +38,7 @@ Review of the 14 OpenSpec changes in `openspec/changes/` against: coverage of th
 
 - Trigger Key defaults (Space + Enter on, Tab off) agree in auto-correction spec/design and the settings mock-up.
 - Undo Window is 5 s everywhere; Undo after an Enter-triggered Correction is disabled in text-replacement and manual-correction.
-- Excluded Apps vs Manual Correction: the Hotkey still works in Excluded Apps; Rekey's own process is never excluded (onboarding D1).
+- Excluded Apps vs Manual Correction: the Hotkey still works in Excluded Apps; Navpaky's own process is never excluded (onboarding D1).
 - Clipboard: Corrections and Undo never touch it; the only write is the explicit diagnostics Copy.
 - Every settings field is introduced by exactly one change.
 - Specs contain no class names or library choices; those stay in design.md.
@@ -57,7 +57,7 @@ Review of the 14 OpenSpec changes in `openspec/changes/` against: coverage of th
 | Original's Space-based Hotkey options | Decompile and port (rows 25–26). |
 | Watchdog toggles | Add them (row 2). |
 | Punctuation inside a Word | Accepted as designed. |
-| Install folder | `%LOCALAPPDATA%\key-switcher` ("key-switcher" is the correct spelling). |
+| Install folder | `%LOCALAPPDATA%\navpaky-app` ("navpaky-app" is the correct spelling). |
 | Release host | GitHub Releases of this repository (auto-update design D3, D4). |
 | Source code | Public, licence GPL-3.0-or-later (`LICENSE`). CC BY-SA 4.0 data is one-way compatible with GPLv3, so generated Language Profiles can ship inside the app. |
 | Reverse-engineering notes | Kept outside the repository; specs describe the original's behavior in our own words only. |

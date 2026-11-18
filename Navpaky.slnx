@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Navpaky.App/Navpaky.App.csproj" />
+    <Project Path="src/Navpaky.Core/Navpaky.Core.csproj" />
+    <Project Path="src/Navpaky.Win32/Navpaky.Win32.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Navpaky.Accuracy.Tests/Navpaky.Accuracy.Tests.csproj" />
+    <Project Path="tests/Navpaky.App.Tests/Navpaky.App.Tests.csproj" />
+    <Project Path="tests/Navpaky.Core.Tests/Navpaky.Core.Tests.csproj" />
+    <Project Path="tests/Navpaky.ProfileBuilder.Tests/Navpaky.ProfileBuilder.Tests.csproj" />
+    <Project Path="tests/Navpaky.DesktopChecks.Tests/Navpaky.DesktopChecks.Tests.csproj" />
+    <Project Path="tests/Navpaky.Win32.Tests/Navpaky.Win32.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Navpaky.Accuracy/Navpaky.Accuracy.csproj" />
+    <Project Path="tools/Navpaky.DesktopChecks/Navpaky.DesktopChecks.csproj" />
+    <Project Path="tools/Navpaky.InputProbe/Navpaky.InputProbe.csproj" />
+    <Project Path="tools/Navpaky.KeyMapCapture/Navpaky.KeyMapCapture.csproj" />
+    <Project Path="tools/Navpaky.ProfileBuilder/Navpaky.ProfileBuilder.csproj" />
+  </Folder>
+</Solution>

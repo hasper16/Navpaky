@@ -1,0 +1,44 @@
+# Spec Delta
+
+## MODIFIED Requirements
+
+### Requirement: Installed Layouts are known and kept current
+Navpaky SHALL know the list of Layouts installed for the user and SHALL update it within 5 seconds (design decision) when the user adds or removes a Layout.
+
+#### Scenario: Layout added
+- **WHEN** the user adds the Ukrainian Layout in Windows Settings while Navpaky runs
+- **THEN** within 5 seconds Navpaky includes Ukrainian in its Layout list
+
+### Requirement: Active Layout of the foreground window
+Navpaky SHALL treat the Layout of the foreground window's input thread as the current Layout and SHALL update it when the user switches Layout or focus moves.
+
+#### Scenario: User switches with the system shortcut
+- **WHEN** the user presses the Windows Layout Switch shortcut
+- **THEN** Navpaky's current Layout becomes the newly selected Layout
+
+#### Scenario: Per-window layouts
+- **WHEN** Windows is set to keep a separate Layout per app window and the user moves focus to a window using Russian
+- **THEN** Navpaky's current Layout becomes Russian
+
+### Requirement: Key-to-character map per Layout
+For every installed Layout, Navpaky SHALL know which character each printable key produces with and without Shift. The printable keys are the 47 keys of a standard ANSI keyboard plus the ISO key between Left Shift and Z (scan code 0x56), which ISO keyboards have and many European Layouts use for characters such as "<" and ">".
+
+#### Scenario: Russian map
+- **WHEN** Navpaky builds the map for the Russian Layout
+- **THEN** the key that gives "f" in English (US) gives "а", and with Shift gives "А"
+
+#### Scenario: ISO key
+- **WHEN** Navpaky builds the map for the United Kingdom Layout
+- **THEN** the ISO key gives "\", and with Shift gives "|"
+
+### Requirement: Verified Layout Switch
+When Navpaky switches the Layout of the foreground window, it SHALL confirm that the switch took effect within 500 ms (design decision). If it did not, Navpaky SHALL adopt the Layout actually active and record an Incident.
+
+#### Scenario: Switch succeeds
+- **WHEN** Navpaky switches the foreground window from English (US) to Russian
+- **THEN** within 500 ms the window's Layout is Russian and Navpaky's current Layout is Russian
+
+#### Scenario: Switch does not land
+- **WHEN** Navpaky requests a Layout Switch and the window's Layout is unchanged after 500 ms
+- **THEN** Navpaky's current Layout is set to the window's real Layout
+- **AND** an Incident records the failed switch

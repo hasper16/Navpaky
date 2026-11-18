@@ -1,6 +1,6 @@
 # Language Profile sources
 
-Every file in this folder, where it came from, and its licence. `tools/Rekey.ProfileBuilder` refuses to run while a file here is missing from this record (see `docs/language-profiles.md`).
+Every file in this folder, where it came from, and its licence. `tools/Navpaky.ProfileBuilder` refuses to run while a file here is missing from this record (see `docs/language-profiles.md`).
 
 ## Word-frequency lists
 
@@ -25,7 +25,7 @@ From [wikipedia-word-frequency](https://github.com/IlyaSemenov/wikipedia-word-fr
 
 ## Hand-written files
 
-Written for Rekey and licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), so that each generated profile carries a single licence.
+Written for Navpaky and licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), so that each generated profile carries a single licence.
 
 | File | Content |
 |---|---|
@@ -38,4 +38,4 @@ Written for Rekey and licensed under [CC BY-SA 4.0](https://creativecommons.org/
 
 ## Generated profiles
 
-`src/Rekey.Core/Profiles/{en,ru,uk}.json` are adaptations of the files above and are licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Attribution: English and Russian word frequencies from FrequencyWords by Hermit Dave (OpenSubtitles 2018); Ukrainian word frequencies from wikipedia-word-frequency by Ilya Semenov (Ukrainian Wikipedia contributors). CC BY-SA 4.0 is one-way compatible with GPLv3, so the profiles ship inside the GPL-3.0-or-later app as separate data files.
+`src/Navpaky.Core/Profiles/{en,ru,uk}.json` are adaptations of the files above and are licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Attribution: English and Russian word frequencies from FrequencyWords by Hermit Dave (OpenSubtitles 2018); Ukrainian word frequencies from wikipedia-word-frequency by Ilya Semenov (Ukrainian Wikipedia contributors). CC BY-SA 4.0 is one-way compatible with GPLv3, so the profiles ship inside the GPL-3.0-or-later app as separate data files.

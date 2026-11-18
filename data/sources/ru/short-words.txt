@@ -1,4 +1,4 @@
-# Russian one- and two-letter words, curated for Rekey (CC BY-SA 4.0, see ../SOURCES.md).
+# Russian one- and two-letter words, curated for Navpaky (CC BY-SA 4.0, see ../SOURCES.md).
 # Abbreviations and subtitle noise are left out on purpose.
 а
 б

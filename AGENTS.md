@@ -1,4 +1,4 @@
-# Rekey for Windows
+# Navpaky for Windows
 
 Tray app that fixes a word typed in the wrong keyboard layout ("ghbdtn" → "привет") and switches the layout. Windows analog of the macOS app Rekey. C# / .NET 10, WPF.
 
@@ -19,7 +19,7 @@ Tray app that fixes a word typed in the wrong keyboard layout ("ghbdtn" → "п�
 ## Code
 
 - Load the `ub-mode` skill before writing code and follow it on every edit: failing test first, smallest change, then refactor.
-- `Rekey.Core` is pure .NET; Windows types live in `Rekey.Win32` and `Rekey.App`. The engine takes events and returns actions; adapters execute them (ADR 0002).
+- `Navpaky.Core` is pure .NET; Windows types live in `Navpaky.Win32` and `Navpaky.App`. The engine takes events and returns actions; adapters execute them (ADR 0002).
 - The keyboard hook callback copies the event into the queue and returns. Allocation, locks, logging and I/O run on the worker thread.
 - Every variable shared between threads has exactly one writer.
 - Win32 calls go through CsWin32 (`NativeMethods.txt`).
@@ -32,7 +32,7 @@ Tray app that fixes a word typed in the wrong keyboard layout ("ghbdtn" → "п�
 
 ## Privacy guardrails
 
-Rekey sees every keystroke. Typed text exists only in the engine's memory:
+Navpaky sees every keystroke. Typed text exists only in the engine's memory:
 
 - Logs, exceptions, Incidents, telemetry, diagnostics and test output carry counters, types and codes. Words, Renderings and window titles appear only in the opt-in word-analysis log (spec `statistics-and-diagnostics`).
 - Corrections and Undo work through key injection; the clipboard is untouched.

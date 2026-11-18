@@ -1,6 +1,6 @@
 name: Release
 
-# Builds, signs, packs and publishes Rekey to GitHub Releases (design D4 of
+# Builds, signs, packs and publishes Navpaky to GitHub Releases (design D4 of
 # add-auto-update-and-installer; docs/release.md). Pull requests never run this workflow, and
 # the signing secret lives in the `release` environment, which only pushed `v*` tags enter; a
 # manual run is a dry run even when it targets a tag.
@@ -69,14 +69,14 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.value }}
         run: >
-          dotnet publish src/Rekey.App -c Release -r win-x64 --self-contained
+          dotnet publish src/Navpaky.App -c Release -r win-x64 --self-contained
           -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
           -p:PublishReadyToRun=true -p:Version=$env:VERSION -o publish
 
       - name: Install vpk
         run: dotnet tool install vpk --version ${{ env.VPK_VERSION }} --tool-path .tools
 
-      # A tag never publishes unsigned code: Rekey refuses updates its publisher did not sign.
+      # A tag never publishes unsigned code: Navpaky refuses updates its publisher did not sign.
       - name: Pack
         shell: pwsh
         env:
@@ -85,9 +85,9 @@ jobs:
           SIGN_PARAMS: ${{ github.event_name == 'push' && secrets.VPK_SIGN_PARAMS || '' }}
         run: |
           $pack = @(
-            'pack', '--packId', 'key-switcher', '--packVersion', $env:VERSION,
-            '--packDir', 'publish', '--mainExe', 'Rekey.App.exe', '--packTitle', 'Rekey',
-            '--packAuthors', 'Rekey', '--icon', 'src/Rekey.App/Rekey.ico',
+            'pack', '--packId', 'navpaky-app', '--packVersion', $env:VERSION,
+            '--packDir', 'publish', '--mainExe', 'Navpaky.App.exe', '--packTitle', 'Navpaky',
+            '--packAuthors', 'Pavlo Yeremenko', '--icon', 'src/Navpaky.App/Navpaky.ico',
             '--runtime', 'win-x64',
             '--delta', 'None', '--exclude', '\.(pdb|xml)$', '--outputDir', 'releases')
           # A dry run never signs, even if a secret of that name exists outside the environment.
@@ -117,7 +117,7 @@ jobs:
         run: |
           $upload = @(
             'upload', 'github', '--repoUrl', "https://github.com/$env:REPOSITORY",
-            '--token', $env:GITHUB_TOKEN, '--publish', '--releaseName', "Rekey $env:VERSION",
+            '--token', $env:GITHUB_TOKEN, '--publish', '--releaseName', "Navpaky $env:VERSION",
             '--tag', "v$env:VERSION", '--outputDir', 'releases')
           if ($env:VERSION.Contains('-')) {
             $upload += '--pre'

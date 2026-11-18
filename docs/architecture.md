@@ -1,15 +1,15 @@
 # Architecture
 
-How Rekey sees typing and Layouts at run time. Decisions behind it: ADR 0002 (the engine returns actions) and the design of change `add-keyboard-capture-and-layouts`.
+How Navpaky sees typing and Layouts at run time. Decisions behind it: ADR 0002 (the engine returns actions) and the design of change `add-keyboard-capture-and-layouts`.
 
 ## Threads
 
 | Thread | Owner | Runs | Writes (sole writer) |
 |---|---|---|---|
-| UI | `Rekey.App.App` | WPF, tray icon, settings | settings snapshot, tray state |
-| Hook (`Rekey hook`, above normal) | `InputHook` | `WH_KEYBOARD_LL` and `WH_MOUSE_LL` callbacks, a `GetMessage` loop | ring tail, last-input tick, slow-callback count |
-| Worker (`Rekey worker`) | `InputWorker` | the `Engine`, input translation, WinEvent focus hooks, Layout list and switching, hook watchdog | ring head, heartbeat, everything the engine holds |
-| Freeze guard (`Rekey freeze guard`) | `FreezeGuard` | checks the worker every 500 ms | its own freeze state |
+| UI | `Navpaky.App.App` | WPF, tray icon, settings | settings snapshot, tray state |
+| Hook (`Navpaky hook`, above normal) | `InputHook` | `WH_KEYBOARD_LL` and `WH_MOUSE_LL` callbacks, a `GetMessage` loop | ring tail, last-input tick, slow-callback count |
+| Worker (`Navpaky worker`) | `InputWorker` | the `Engine`, input translation, WinEvent focus hooks, Layout list and switching, hook watchdog | ring head, heartbeat, everything the engine holds |
+| Freeze guard (`Navpaky freeze guard`) | `FreezeGuard` | checks the worker every 500 ms | its own freeze state |
 
 Every value shared between threads has one writer. The hook callbacks copy, signal and return: no allocation, no locks, no logging. Other threads talk to the worker by posting thread messages (`SwitchLayout`, `ResumeSelfPause`, `FreezeForCheck`).
 
@@ -44,7 +44,7 @@ Every `IncidentType` value, the component that records it, and the design name.
 | `HookReinstalled` | `HookWatchdog` | `hook-reinstalled` | the session saw input the hooks missed for over 1.5 s |
 | `SelfPaused` | `HookWatchdog` | self-pause | two hook failures within 10 minutes |
 | `InputFrozen` | `FreezeWatchdog` | freeze | the worker stalled over 5 s with input waiting, without a restart |
-| `FreezeRestart` | `FreezeWatchdog` | `freeze-restart` | a second freeze within an hour restarted Rekey |
+| `FreezeRestart` | `FreezeWatchdog` | `freeze-restart` | a second freeze within an hour restarted Navpaky |
 
 Incidents carry enum details only, so typed text cannot reach them. Every Incident is traced and appended to `incidents.jsonl` (the last 500) by one background writer (`QueuedIncidentLog`), so recording never blocks the thread that reports it.
 

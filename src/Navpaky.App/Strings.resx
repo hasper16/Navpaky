@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="TrayOn" xml:space="preserve">
+    <value>Navpaky is on</value>
+  </data>
+  <data name="TrayPausedMinutes_One" xml:space="preserve">
+    <value>Navpaky is paused: {0} minute left</value>
+  </data>
+  <data name="TrayPausedMinutes_Few" xml:space="preserve">
+    <value>Navpaky is paused: {0} minutes left</value>
+  </data>
+  <data name="TrayPausedMinutes_Many" xml:space="preserve">
+    <value>Navpaky is paused: {0} minutes left</value>
+  </data>
+  <data name="TrayPausedMinutes_Other" xml:space="preserve">
+    <value>Navpaky is paused: {0} minutes left</value>
+  </data>
+  <data name="TrayPausedUntilRestart" xml:space="preserve">
+    <value>Navpaky is paused until it restarts</value>
+  </data>
+  <data name="TrayOff" xml:space="preserve">
+    <value>Auto Correction is off</value>
+  </data>
+  <data name="TraySelfPaused" xml:space="preserve">
+    <value>Navpaky paused itself: it lost the keyboard twice. It retries in 10 minutes.</value>
+  </data>
+  <data name="TurnOffIn" xml:space="preserve">
+    <value>Turn off in {0}</value>
+  </data>
+  <data name="TurnOnIn" xml:space="preserve">
+    <value>Turn on in {0}</value>
+  </data>
+  <data name="MenuAutoCorrection" xml:space="preserve">
+    <value>Auto Correction</value>
+  </data>
+  <data name="MenuPause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="MenuPause15" xml:space="preserve">
+    <value>For 15 minutes</value>
+  </data>
+  <data name="MenuPause30" xml:space="preserve">
+    <value>For 30 minutes</value>
+  </data>
+  <data name="MenuPause60" xml:space="preserve">
+    <value>For 1 hour</value>
+  </data>
+  <data name="MenuPause180" xml:space="preserve">
+    <value>For 3 hours</value>
+  </data>
+  <data name="MenuPauseUntilRestart" xml:space="preserve">
+    <value>Until Navpaky restarts</value>
+  </data>
+  <data name="MenuResume" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="MenuStatistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="MenuCheckForUpdates" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="MenuCheckingForUpdates" xml:space="preserve">
+    <value>Checking for updates…</value>
+  </data>
+  <data name="MenuUpToDate" xml:space="preserve">
+    <value>Navpaky is up to date</value>
+  </data>
+  <data name="MenuRestartToUpdate" xml:space="preserve">
+    <value>Restart to update</value>
+  </data>
+  <data name="MenuUpdateCheckFailed" xml:space="preserve">
+    <value>Could not check for updates</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>About Navpaky</value>
+  </data>
+  <data name="MenuQuit" xml:space="preserve">
+    <value>Quit</value>
+  </data>
+  <data name="HotkeyConflictWindows" xml:space="preserve">
+    <value>{0} switches the keyboard layout in Windows. As the Hotkey, Navpaky will take it over. Use it anyway or pick another.</value>
+  </data>
+  <data name="HotkeyConflictTaken" xml:space="preserve">
+    <value>{0} is already used by another app. Use it anyway or pick another.</value>
+  </data>
+  <data name="HotkeyDoubleShift" xml:space="preserve">
+    <value>Double Shift</value>
+  </data>
+  <data name="HotkeyDoubleCtrl" xml:space="preserve">
+    <value>Double Ctrl</value>
+  </data>
+  <data name="HotkeyDoubleAlt" xml:space="preserve">
+    <value>Double Alt</value>
+  </data>
+  <data name="KeyCtrl" xml:space="preserve">
+    <value>Ctrl</value>
+  </data>
+  <data name="KeyShift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="KeyAlt" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="KeyWin" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="KeySpace" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Navpaky settings</value>
+  </data>
+  <data name="PageGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="PageCorrection" xml:space="preserve">
+    <value>Correction</value>
+  </data>
+  <data name="PageHotkey" xml:space="preserve">
+    <value>Hotkey</value>
+  </data>
+  <data name="PageAppsAndWords" xml:space="preserve">
+    <value>Apps and words</value>
+  </data>
+  <data name="PageDiagnostics" xml:space="preserve">
+    <value>Diagnostics and privacy</value>
+  </data>
+  <data name="PageAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AutoCheckForUpdates" xml:space="preserve">
+    <value>Check for updates automatically</value>
+  </data>
+  <data name="LaunchAtSignIn" xml:space="preserve">
+    <value>Start Navpaky when I sign in to Windows</value>
+  </data>
+  <data name="ShowCursorIndicator" xml:space="preserve">
+    <value>Show the new language next to the cursor</value>
+  </data>
+  <data name="ShowCursorIndicatorHint" xml:space="preserve">
+    <value>A small key appears for a moment after Navpaky switches the layout.</value>
+  </data>
+  <data name="PlaySwitchSound" xml:space="preserve">
+    <value>Play a sound after a correction</value>
+  </data>
+  <data name="SwitchSoundChoice" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="SoundKeyClick" xml:space="preserve">
+    <value>Key click</value>
+  </data>
+  <data name="SoundSoftTick" xml:space="preserve">
+    <value>Soft tick</value>
+  </data>
+  <data name="SoundChime" xml:space="preserve">
+    <value>Chime</value>
+  </data>
+  <data name="PreviewSound" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="AutoCorrection" xml:space="preserve">
+    <value>Correct wrong-layout words automatically</value>
+  </data>
+  <data name="Sensitivity" xml:space="preserve">
+    <value>Sensitivity</value>
+  </data>
+  <data name="SensitivityBalanced" xml:space="preserve">
+    <value>Balanced</value>
+  </data>
+  <data name="SensitivityBalancedHint" xml:space="preserve">
+    <value>Corrects words that are clearly typed in the wrong layout.</value>
+  </data>
+  <data name="SensitivityCautious" xml:space="preserve">
+    <value>Cautious</value>
+  </data>
+  <data name="SensitivityCautiousHint" xml:space="preserve">
+    <value>Corrects only when it is very sure; fewer surprises, more misses.</value>
+  </data>
+  <data name="SensitivityAggressive" xml:space="preserve">
+    <value>Aggressive</value>
+  </data>
+  <data name="SensitivityAggressiveHint" xml:space="preserve">
+    <value>Corrects more words, including short ones; may correct by mistake.</value>
+  </data>
+  <data name="CorrectWhenIPress" xml:space="preserve">
+    <value>Correct when I press</value>
+  </data>
+  <data name="TriggerSpace" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="TriggerEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="TriggerTab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="SkipAfterManualSwitch" xml:space="preserve">
+    <value>Skip the word I start right after switching layout myself</value>
+  </data>
+  <data name="SkipAfterManualSwitchHint" xml:space="preserve">
+    <value>Navpaky leaves the next word alone when you start it within 2 seconds of your own layout switch.</value>
+  </data>
+  <data name="VerifiedReplacement" xml:space="preserve">
+    <value>Check text before replacing</value>
+  </data>
+  <data name="VerifiedReplacementHint" xml:space="preserve">
+    <value>Navpaky reads the word back first where the app allows it.</value>
+  </data>
+  <data name="HotkeyIntro" xml:space="preserve">
+    <value>Press the Hotkey to fix the last word, the selected text, or switch the layout.</value>
+  </data>
+  <data name="HotkeyCustom" xml:space="preserve">
+    <value>My own combination</value>
+  </data>
+  <data name="HotkeyRecord" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="HotkeyRecording" xml:space="preserve">
+    <value>Press the combination…</value>
+  </data>
+  <data name="HotkeyUseAnyway" xml:space="preserve">
+    <value>Use it anyway</value>
+  </data>
+  <data name="HotkeyPickAnother" xml:space="preserve">
+    <value>Pick another</value>
+  </data>
+  <data name="ExcludedApps" xml:space="preserve">
+    <value>Apps where Navpaky stays off</value>
+  </data>
+  <data name="AddRunningApp" xml:space="preserve">
+    <value>Add a running app</value>
+  </data>
+  <data name="BrowseForApp" xml:space="preserve">
+    <value>Choose a program…</value>
+  </data>
+  <data name="ProgramFilter" xml:space="preserve">
+    <value>Programs</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="ProtectedWords" xml:space="preserve">
+    <value>Words Navpaky never corrects</value>
+  </data>
+  <data name="LearnedWords" xml:space="preserve">
+    <value>Words Navpaky has learned</value>
+  </data>
+  <data name="NewWord" xml:space="preserve">
+    <value>New word</value>
+  </data>
+  <data name="WordLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageRussian" xml:space="preserve">
+    <value>Russian</value>
+  </data>
+  <data name="LanguageUkrainian" xml:space="preserve">
+    <value>Ukrainian</value>
+  </data>
+  <data name="KeyboardWatchdog" xml:space="preserve">
+    <value>Reconnect to the keyboard when Windows stops sending keys</value>
+  </data>
+  <data name="RestartAfterFreeze" xml:space="preserve">
+    <value>Restart Navpaky if it stops responding twice</value>
+  </data>
+  <data name="PrivacyNote" xml:space="preserve">
+    <value>What you type stays in Navpaky's memory and is never sent anywhere. Navpaky stores its settings, your word lists, counts and a log of keyboard problems on this PC; it saves typed words only in the word-analysis log, and only if you turn it on.</value>
+  </data>
+  <data name="AboutTagline" xml:space="preserve">
+    <value>Fixes words typed in the wrong keyboard layout.</value>
+  </data>
+  <data name="AboutVersion" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="RemoveItem" xml:space="preserve">
+    <value>Remove {0}</value>
+  </data>
+  <data name="WindowMinimize" xml:space="preserve">
+    <value>Minimize</value>
+  </data>
+  <data name="WindowMaximize" xml:space="preserve">
+    <value>Maximize</value>
+  </data>
+  <data name="WindowClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="StatWordsAnalysed" xml:space="preserve">
+    <value>Words analysed</value>
+  </data>
+  <data name="StatCorrections" xml:space="preserve">
+    <value>Corrections</value>
+  </data>
+  <data name="StatAutoCorrections" xml:space="preserve">
+    <value>Automatic corrections</value>
+  </data>
+  <data name="StatManualCorrections" xml:space="preserve">
+    <value>Manual corrections</value>
+  </data>
+  <data name="StatUndos" xml:space="preserve">
+    <value>Undos</value>
+  </data>
+  <data name="StatUndoShare" xml:space="preserve">
+    <value>Corrections undone</value>
+  </data>
+  <data name="StatCorrectDecisions" xml:space="preserve">
+    <value>Words corrected</value>
+  </data>
+  <data name="StatDeferDecisions" xml:space="preserve">
+    <value>Words that waited for the next word</value>
+  </data>
+  <data name="StatKeepDecisions" xml:space="preserve">
+    <value>Words kept</value>
+  </data>
+  <data name="StatProtectedWordDecisions" xml:space="preserve">
+    <value>Protected words kept</value>
+  </data>
+  <data name="StatMinDuration" xml:space="preserve">
+    <value>Fastest correction</value>
+  </data>
+  <data name="StatMedianDuration" xml:space="preserve">
+    <value>Typical correction (median)</value>
+  </data>
+  <data name="StatMaxDuration" xml:space="preserve">
+    <value>Slowest correction</value>
+  </data>
+  <data name="StatAverageDuration" xml:space="preserve">
+    <value>Average correction</value>
+  </data>
+  <data name="StatMilliseconds" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="StatToday" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="StatMonth" xml:space="preserve">
+    <value>Last 30 days</value>
+  </data>
+  <data name="StatisticsTitle" xml:space="preserve">
+    <value>Navpaky statistics</value>
+  </data>
+  <data name="StatisticsNote" xml:space="preserve">
+    <value>Counts only: Navpaky never stores the words behind these numbers.</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="StatisticsEnabled" xml:space="preserve">
+    <value>Keep statistics (counts only, never words)</value>
+  </data>
+  <data name="AnalysisLogEnabled" xml:space="preserve">
+    <value>Keep a word-analysis log for troubleshooting</value>
+  </data>
+  <data name="AnalysisLogNote" xml:space="preserve">
+    <value>The log records the words you type and how Navpaky judged them. It stays on this PC, only your Windows account can open it, and it keeps 7 days. Turning it off deletes it.</value>
+  </data>
+  <data name="OpenStatistics" xml:space="preserve">
+    <value>Show statistics</value>
+  </data>
+  <data name="OpenExport" xml:space="preserve">
+    <value>Export diagnostics…</value>
+  </data>
+  <data name="ExportTitle" xml:space="preserve">
+    <value>Export diagnostics</value>
+  </data>
+  <data name="ExportNote" xml:space="preserve">
+    <value>This is exactly the text that will be saved or copied. It holds no typed words unless you include the word-analysis log.</value>
+  </data>
+  <data name="ExportIncludeLog" xml:space="preserve">
+    <value>Include word-analysis log (contains the words you typed)</value>
+  </data>
+  <data name="ExportSave" xml:space="preserve">
+    <value>Save to file…</value>
+  </data>
+  <data name="ExportCopy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="ExportSaved" xml:space="preserve">
+    <value>Saved.</value>
+  </data>
+  <data name="ExportCopied" xml:space="preserve">
+    <value>Copied to the clipboard.</value>
+  </data>
+  <data name="ExportCopyFailed" xml:space="preserve">
+    <value>Could not copy: another app is using the clipboard. Try again.</value>
+  </data>
+  <data name="ExportFailed" xml:space="preserve">
+    <value>Could not save the file.</value>
+  </data>
+  <data name="UninstallTitle" xml:space="preserve">
+    <value>Uninstall Navpaky</value>
+  </data>
+  <data name="UninstallDeleteData" xml:space="preserve">
+    <value>Also delete your Navpaky settings, word lists, statistics and logs? Choose No to keep them for a later install.</value>
+  </data>
+  <data name="UninstallDataNotDeleted" xml:space="preserve">
+    <value>Some Navpaky data could not be deleted because another program is using it. Delete it yourself:
+{0}</value>
+  </data>
+  <data name="AlreadyRunning" xml:space="preserve">
+    <value>Navpaky is already running. To start it with these options, quit it from the tray first.</value>
+  </data>
+  <data name="UninstallDataKept" xml:space="preserve">
+    <value>Navpaky was installed again, so its settings and word lists were kept.</value>
+  </data>
+  <data name="MenuWelcome" xml:space="preserve">
+    <value>Getting started with {0}</value>
+  </data>
+  <data name="WelcomeTitle" xml:space="preserve">
+    <value>Welcome to Navpaky</value>
+  </data>
+  <data name="WelcomeDescription" xml:space="preserve">
+    <value>Navpaky fixes a word you typed in the wrong keyboard layout, such as "ghbdtn" instead of "привет", and switches the layout for you.</value>
+  </data>
+  <data name="WelcomeUndo" xml:space="preserve">
+    <value>Not what you meant? Press Ctrl+Z right after a correction, or press your hotkey, to get your typing back.</value>
+  </data>
+  <data name="WelcomePrivacyTitle" xml:space="preserve">
+    <value>Your typing stays on this computer</value>
+  </data>
+  <data name="WelcomePrivacy" xml:space="preserve">
+    <value>Navpaky reads keystrokes only to check the word you are typing. It never sends your text anywhere and never uses the clipboard.</value>
+  </data>
+  <data name="WelcomeTryItTitle" xml:space="preserve">
+    <value>Try it</value>
+  </data>
+  <data name="WelcomeTryIt" xml:space="preserve">
+    <value>Type a word in the wrong layout, then press Space. For example, with English (US) on, type ghbdtn for the Russian "привет". Your languages: {0}.</value>
+  </data>
+  <data name="WelcomeTryItField" xml:space="preserve">
+    <value>Try-it field</value>
+  </data>
+  <data name="WelcomeTryItWorked" xml:space="preserve">
+    <value>It works: Navpaky corrected the word and switched the layout.</value>
+  </data>
+  <data name="WelcomeOneLayout" xml:space="preserve">
+    <value>Navpaky needs at least two keyboard layouts in different languages. Add another one in Windows language settings.</value>
+  </data>
+  <data name="WelcomeLanguageSettings" xml:space="preserve">
+    <value>Open language settings</value>
+  </data>
+  <data name="WelcomeChoicesTitle" xml:space="preserve">
+    <value>Your choices</value>
+  </data>
+  <data name="WelcomeHotkeyTitle" xml:space="preserve">
+    <value>Hotkey for a manual correction</value>
+  </data>
+  <data name="WelcomeTrayTitle" xml:space="preserve">
+    <value>Keep Navpaky in sight</value>
+  </data>
+  <data name="WelcomeTrayTip" xml:space="preserve">
+    <value>Windows may hide the Navpaky icon under the arrow in the taskbar. To keep it visible, open Settings &gt; Personalization &gt; Taskbar &gt; Other system tray icons and turn Navpaky on.</value>
+  </data>
+  <data name="WelcomeDone" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="CorrectionTipTitle" xml:space="preserve">
+    <value>Navpaky corrected a word</value>
+  </data>
+  <data name="CorrectionTip" xml:space="preserve">
+    <value>Press Ctrl+Z to undo.</value>
+  </data>
+  <data name="LocationTitle" xml:space="preserve">
+    <value>Navpaky is not installed</value>
+  </data>
+  <data name="LocationWarning" xml:space="preserve">
+    <value>Navpaky is running from a temporary folder, a ZIP file or Downloads. It stops working when this copy is removed. Install Navpaky to keep it working and up to date.</value>
+  </data>
+  <data name="LocationInstall" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="LocationNotNow" xml:space="preserve">
+    <value>Not now</value>
+  </data>
+  <data name="MovedTitle" xml:space="preserve">
+    <value>Navpaky's files were moved or deleted</value>
+  </data>
+  <data name="MovedNotice" xml:space="preserve">
+    <value>Navpaky keeps working until you quit it or restart the computer, but it will not start again. To keep using it, install Navpaky again.</value>
+  </data>
+  <data name="MovedClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="WelcomeDiagnostics" xml:space="preserve">
+    <value>Send anonymous crash reports and daily usage counts to help improve Navpaky. Never your text.</value>
+  </data>
+  <data name="CrashReportsEnabled" xml:space="preserve">
+    <value>Send crash and freeze reports</value>
+  </data>
+  <data name="UsageDigestEnabled" xml:space="preserve">
+    <value>Send daily usage counts</value>
+  </data>
+  <data name="TelemetryNote" xml:space="preserve">
+    <value>Reports carry error types, counts, versions and on/off settings. They never contain what you type, window titles, your user name or file paths. Turning a switch off deletes what has not been sent yet.</value>
+  </data>
+  <data name="ShowWhatWasSent" xml:space="preserve">
+    <value>Show what was sent</value>
+  </data>
+  <data name="NothingSentYet" xml:space="preserve">
+    <value>Nothing has been sent yet.</value>
+  </data>
+  <data name="SignUpTitle" xml:space="preserve">
+    <value>Stay in touch</value>
+  </data>
+  <data name="SignUpEmail" xml:space="preserve">
+    <value>Email address</value>
+  </data>
+  <data name="SignUpNewVersions" xml:space="preserve">
+    <value>Tell me about new versions</value>
+  </data>
+  <data name="SignUpReportedProblems" xml:space="preserve">
+    <value>Tell me about problems I reported</value>
+  </data>
+  <data name="SignUpSubmit" xml:space="preserve">
+    <value>Sign up</value>
+  </data>
+  <data name="SignUpInvalid" xml:space="preserve">
+    <value>Enter an email address and tick at least one option.</value>
+  </data>
+  <data name="SignUpSending" xml:space="preserve">
+    <value>Sending…</value>
+  </data>
+  <data name="SignUpSent" xml:space="preserve">
+    <value>Thanks! Navpaky does not keep your address on this PC.</value>
+  </data>
+  <data name="SignUpFailed" xml:space="preserve">
+    <value>Could not send. Check the connection and try again.</value>
+  </data>
+  <data name="UiLanguageChoice" xml:space="preserve">
+    <value>Interface language</value>
+  </data>
+  <data name="UiLanguageSystem" xml:space="preserve">
+    <value>Same as Windows</value>
+  </data>
+  <data name="UiLanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="UiLanguageUkrainian" xml:space="preserve">
+    <value>Українська</value>
+  </data>
+</root>
