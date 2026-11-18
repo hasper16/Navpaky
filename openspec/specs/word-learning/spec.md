@@ -1,12 +1,12 @@
 # word-learning Specification
 
 ## Purpose
-Lets Rekey adapt to the individual user: words the user wants left alone become Protected Words, and words the user confirms become Learned Words that Rekey recognises in their Language.
+Lets Navpaky adapt to the individual user: words the user wants left alone become Protected Words, and words the user confirms become Learned Words that Navpaky recognises in their Language.
 
 ## Requirements
 
 ### Requirement: Protected Words are never auto-corrected
-Rekey SHALL NOT auto-correct a Word whose Rendering in the current Layout matches a Protected Word, ignoring case. A deferred run containing a Protected Word SHALL NOT be corrected.
+Navpaky SHALL NOT auto-correct a Word whose Rendering in the current Layout matches a Protected Word, ignoring case. A deferred run containing a Protected Word SHALL NOT be corrected.
 
 #### Scenario: Protected brand name
 - **WHEN** "ntcn" is a Protected Word and the user types "ntcn" followed by Space in English (US)
@@ -24,7 +24,7 @@ The Hotkey SHALL correct a Protected Word when the user asks for it explicitly.
 - **THEN** the Word is corrected
 
 ### Requirement: Protection learned from repeated Undos
-When the user undoes a Correction, Rekey SHALL add the Word to the Protected Words, as the original does after one Undo. Words shorter than 3 letters SHALL NOT be protected automatically (the original skips short words; the length is a design decision).
+When the user undoes a Correction, Navpaky SHALL add the Word to the Protected Words, as the original does after one Undo. Words shorter than 3 letters SHALL NOT be protected automatically (the original skips short words; the length is a design decision).
 
 #### Scenario: Undo protects the Word
 - **WHEN** the user undoes the Correction of "ntcn"
@@ -36,7 +36,7 @@ When the user undoes a Correction, Rekey SHALL add the Word to the Protected Wor
 - **THEN** "yt" does not become a Protected Word
 
 ### Requirement: Learned Words from Manual Correction
-When the user manually corrects a Word whose new Rendering is not a word of the target Language, Rekey SHALL add that Rendering as a Learned Word of that Language. A Learned Word SHALL count as a common word of its Language in later Decisions.
+When the user manually corrects a Word whose new Rendering is not a word of the target Language, Navpaky SHALL add that Rendering as a Learned Word of that Language. A Learned Word SHALL count as a common word of its Language in later Decisions.
 
 #### Scenario: New slang word
 - **WHEN** the user manually corrects "rhby;" to "кринж" and "кринж" is not in the Russian Language Profile
@@ -44,7 +44,7 @@ When the user manually corrects a Word whose new Rendering is not a word of the 
 - **AND** the next time "rhby;" is typed in English (US), Auto Correction corrects it to "кринж"
 
 ### Requirement: Undoing a learned correction removes the Learned Word
-When the user undoes a Correction whose target Rendering is a Learned Word, Rekey SHALL remove that Learned Word.
+When the user undoes a Correction whose target Rendering is a Learned Word, Navpaky SHALL remove that Learned Word.
 
 #### Scenario: Learned by mistake
 - **WHEN** "кринж" is a Learned Word and the user undoes a Correction to "кринж"
@@ -61,5 +61,5 @@ The user SHALL be able to view, add and remove Protected Words and Learned Words
 Protected Words and Learned Words SHALL persist across restarts. Each list SHALL hold up to 10,000 entries (design decision); when full, the least recently used automatic entry is dropped first and user-added entries are never dropped.
 
 #### Scenario: Restart
-- **WHEN** Rekey restarts
+- **WHEN** Navpaky restarts
 - **THEN** all Protected Words and Learned Words are still present

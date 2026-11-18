@@ -1,7 +1,7 @@
 # tray-and-settings Specification
 
 ## Purpose
-Defines how users see what Rekey is doing and control it: the tray icon and menu, the settings window, the cursor indicator, the switch sound, and launch at sign-in.
+Defines how users see what Navpaky is doing and control it: the tray icon and menu, the settings window, the cursor indicator, the switch sound, and launch at sign-in.
 
 ## Requirements
 
@@ -25,7 +25,7 @@ Clicking the tray icon SHALL open a menu with: Auto Correction on/off, Pause (15
 - **AND** the same item reads "Turn on in Telegram" next time
 
 ### Requirement: Settings window
-The settings window SHALL offer every user setting of Rekey grouped into General, Correction, Hotkey, Apps and words, Diagnostics and privacy, and About. Changes SHALL take effect immediately without a Save button.
+The settings window SHALL offer every user setting of Navpaky grouped into General, Correction, Hotkey, Apps and words, Diagnostics and privacy, and About. Changes SHALL take effect immediately without a Save button.
 
 #### Scenario: Change Sensitivity
 - **WHEN** the user selects Cautious in the Correction section
@@ -44,7 +44,7 @@ The Apps and words section SHALL let the user add Excluded Apps from running app
 
 #### Scenario: Program chosen through a launcher stub
 - **WHEN** the user chooses `C:\Windows\notepad.exe` and Windows 11 runs Notepad from its Store package folder
-- **THEN** Rekey does not correct Words typed in Notepad
+- **THEN** Navpaky does not correct Words typed in Notepad
 
 ### Requirement: Hotkey picker with conflict warning
 The Hotkey section SHALL let the user choose a Hotkey option or record a custom combination, and SHALL show the conflict warning from Manual Correction before applying a conflicting combination.
@@ -58,7 +58,7 @@ The Hotkey section SHALL let the user choose a Hotkey option or record a custom 
 - **THEN** the conflict warning is shown before the Hotkey changes
 
 ### Requirement: Cursor indicator
-When enabled (default on, design decision), after each Correction or Layout Switch made by Rekey the app SHALL show a small badge with the new Language code next to the text caret for about one second (design decision), without taking focus. When the caret position is unknown, the badge SHALL appear next to the mouse pointer.
+When enabled (default on, design decision), after each Correction or Layout Switch made by Navpaky the app SHALL show a small badge with the new Language code next to the text caret for about one second (design decision), without taking focus. When the caret position is unknown, the badge SHALL appear next to the mouse pointer.
 
 #### Scenario: After a Correction
 - **WHEN** a Correction switches to Russian
@@ -66,21 +66,21 @@ When enabled (default on, design decision), after each Correction or Layout Swit
 - **AND** typing continues in the same window without interruption
 
 ### Requirement: Switch sound
-When enabled (default off, design decision), Rekey SHALL play the chosen sound after each Correction and not after an Undo. The user SHALL be able to choose among at least three sounds (design decision) and preview them.
+When enabled (default off, design decision), Navpaky SHALL play the chosen sound after each Correction and not after an Undo. The user SHALL be able to choose among at least three sounds (design decision) and preview them.
 
 #### Scenario: Sound on
 - **WHEN** the switch sound is on and a Correction happens
 - **THEN** the chosen sound plays once
 
 ### Requirement: Launch at sign-in
-The user SHALL be able to turn launch at sign-in on or off. When on, Rekey SHALL start automatically after the user signs in to Windows.
+The user SHALL be able to turn launch at sign-in on or off. When on, Navpaky SHALL start automatically after the user signs in to Windows.
 
 #### Scenario: Sign in
 - **WHEN** launch at sign-in is on and the user signs in
-- **THEN** Rekey is running and its tray icon is visible
+- **THEN** Navpaky is running and its tray icon is visible
 
 #### Scenario: Removed in Task Manager
-- **WHEN** the user disables Rekey under Startup apps in Task Manager
+- **WHEN** the user disables Navpaky under Startup apps in Task Manager
 - **THEN** the settings window shows launch at sign-in as off
 
 ### Requirement: Accessible and theme-aware UI

@@ -221,13 +221,17 @@ Written against the head of PR #41. The interface has English and Ukrainian only
 
 Written against the head of the `rename-to-navpaky` PR. Uninstall any test install of the old Rekey (`%LOCALAPPDATA%\key-switcher`) first and turn off its "Rekey" entry under Task Manager → Startup apps if one is left. Build packages as `docs/release.md` describes ("Local test build").
 
-- [ ] **Install under the new name (1.1, 1.2).** Run `navpaky-app-win-Setup.exe`.
+- [x] **Install under the new name (1.1, 1.2).** Run `navpaky-app-win-Setup.exe`.
   Expected: the installer and Settings → Apps → Installed apps say "Navpaky" (publisher Pavlo Yeremenko); the Start menu entry reads "Navpaky"; files are under `%LOCALAPPDATA%\navpaky-app`; settings appear under `%APPDATA%\Navpaky` and statistics under `%LOCALAPPDATA%\Navpaky` after the first change; the tray tooltip, About page and welcome window say Navpaky in English and in Ukrainian.
-- [ ] **Start at sign-in and single instance (1.1).** Turn on "Start Navpaky when I sign in to Windows", then start `Navpaky.App.exe` a second time.
+  Observed: pass on c435388 (0.4.0) and 7c187ac: Installed apps reads "Navpaky", publisher "Pavlo Yeremenko" (after de7c796); icon, Start menu, tray, both data folders, settings and word lists carried over.
+- [x] **Start at sign-in and single instance (1.1).** Turn on "Start Navpaky when I sign in to Windows", then start `Navpaky.App.exe` a second time.
   Expected: Task Manager → Startup apps lists Navpaky; the second start exits and one tray icon remains.
-- [ ] **Uninstall keeps data apart (1.1).** Uninstall and answer No to deleting data.
+  Observed: start at sign-in pass on c435388; the owner reported no separate result for the second start.
+- [x] **Uninstall keeps data apart (1.1).** Uninstall and answer No to deleting data.
   Expected: `%LOCALAPPDATA%\navpaky-app` is gone and both `%APPDATA%\Navpaky` and `%LOCALAPPDATA%\Navpaky` are still there.
-- [ ] **Uninstall deleting data (5.1).** Install, start and quit Navpaky once, uninstall, and answer Yes to deleting data within a few seconds.
+  Observed: pass on c435388: both data folders kept.
+- [x] **Uninstall deleting data (5.1).** Install, start and quit Navpaky once, uninstall, and answer Yes to deleting data within a few seconds.
   Expected: no message says Navpaky was installed again; "removal complete" follows at once; `%APPDATA%\Navpaky`, `%LOCALAPPDATA%\Navpaky` and `%LOCALAPPDATA%\navpaky-app` are all gone.
+  Observed: failed on c435388 (reported as a reinstall, data kept; fixed in 7c187ac, design D8); pass on 7c187ac: both data folders and the install root deleted.
 - [ ] **Reinstall while the question is open (5.1).** Uninstall, leave the data question open for more than a minute, run the setup again, then answer Yes.
   Expected: a message says Navpaky was installed again and its settings and word lists were kept; both data folders are still there.
