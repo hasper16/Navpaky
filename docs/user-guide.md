@@ -20,11 +20,11 @@ Settings opens from the tray menu; choosing it again brings the open window forw
 
 ## Statistics and diagnostics
 
-Navpaky counts, per day and for the last 30 days, the words it analysed, its automatic and manual corrections, your undos (and what share of corrections they are), how each word was judged (corrected, left to wait for the next word, kept, kept as a Protected Word) and how long corrections took. Choose Statistics in the tray menu to see them. The counts never contain words; they are kept in `%LOCALAPPDATA%\Navpaky Data\stats.json`, and turning statistics off in Settings → Diagnostics and privacy deletes them.
+Navpaky counts, per day and for the last 30 days, the words it analysed, its automatic and manual corrections, your undos (and what share of corrections they are), how each word was judged (corrected, left to wait for the next word, kept, kept as a Protected Word) and how long corrections took. Choose Statistics in the tray menu to see them. The counts never contain words; they are kept in `%LOCALAPPDATA%\Navpaky\stats.json`, and turning statistics off in Settings → Diagnostics and privacy deletes them.
 
 Navpaky also keeps a log of the last 500 moments when it lost or regained the keyboard or stopped itself to stay safe (`incidents.jsonl`): times and codes only, never text or window titles.
 
-For troubleshooting you can turn on the **word-analysis log**. It is off by default because it records the words you type, how they read in your other layouts and what Navpaky decided. It stays on this PC in `%LOCALAPPDATA%\Navpaky Data\analysis`, only your Windows account can open it, each day older than 7 days is deleted, and turning the log off deletes it at once. Navpaky never sends it anywhere.
+For troubleshooting you can turn on the **word-analysis log**. It is off by default because it records the words you type, how they read in your other layouts and what Navpaky decided. It stays on this PC in `%LOCALAPPDATA%\Navpaky\analysis`, only your Windows account can open it, each day older than 7 days is deleted, and turning the log off deletes it at once. Navpaky never sends it anywhere.
 
 **Export diagnostics…** shows the exact text Navpaky would export: its version, Windows version, layouts, settings, statistics and incidents, with your profile folder, user name and computer name replaced by placeholders. It contains no typed words, Protected Words, Learned Words or window titles unless you tick "Include word-analysis log". Save it to a file (the Desktop is suggested) or copy it; this button is the only time Navpaky writes to the clipboard.
 

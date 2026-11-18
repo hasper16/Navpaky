@@ -11,7 +11,7 @@ The installer SHALL install Navpaky for the current Windows user without adminis
 
 #### Scenario: Installed under the product name
 - **WHEN** the installer finishes
-- **THEN** the app files are under `%LOCALAPPDATA%\navpaky`, the Start menu and Installed apps entries read "Navpaky", settings are kept under `%APPDATA%\Navpaky` and machine-local state under `%LOCALAPPDATA%\Navpaky Data`
+- **THEN** the app files are under `%LOCALAPPDATA%\navpaky-app`, the Start menu and Installed apps entries read "Navpaky", settings are kept under `%APPDATA%\Navpaky` and machine-local state under `%LOCALAPPDATA%\Navpaky`
 
 ### Requirement: Automatic update checks
 When automatic checks are on (default), Navpaky SHALL check for updates at start and every 24 hours (design decision). The tray menu item "Check for updates" SHALL check immediately and report the result.
@@ -54,11 +54,11 @@ Uninstalling SHALL remove the app files, the Start menu entry and the sign-in en
 
 #### Scenario: Uninstall with data removal
 - **WHEN** the user uninstalls and chooses to delete data
-- **THEN** neither `%APPDATA%\Navpaky` nor `%LOCALAPPDATA%\Navpaky Data` exists and Navpaky no longer starts at sign-in
+- **THEN** neither `%APPDATA%\Navpaky` nor `%LOCALAPPDATA%\Navpaky` exists and Navpaky no longer starts at sign-in
 
 #### Scenario: Uninstall keeping data
 - **WHEN** the user uninstalls and declines to delete data
-- **THEN** settings and word lists are still in `%APPDATA%\Navpaky`, statistics and logs in `%LOCALAPPDATA%\Navpaky Data`, and a later reinstall uses them
+- **THEN** settings and word lists are still in `%APPDATA%\Navpaky`, statistics and logs in `%LOCALAPPDATA%\Navpaky`, and a later reinstall uses them
 
 #### Scenario: Question before completion
 - **WHEN** the user uninstalls Navpaky
@@ -66,4 +66,4 @@ Uninstalling SHALL remove the app files, the Start menu entry and the sign-in en
 
 #### Scenario: Reinstalled while the question is open
 - **WHEN** the user installs Navpaky again while the data question of an earlier uninstall is still open, then answers that question with delete
-- **THEN** `%APPDATA%\Navpaky` and `%LOCALAPPDATA%\Navpaky Data` are kept for the new installation and a message says why
+- **THEN** `%APPDATA%\Navpaky` and `%LOCALAPPDATA%\Navpaky` are kept for the new installation and a message says why

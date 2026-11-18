@@ -85,7 +85,7 @@ Written against the head of the `add-tray-and-settings-ui` PR. The automated `tr
 
 ## add-statistics-and-diagnostics
 
-Written against the head of the `add-statistics-and-diagnostics` PR. Unit tests cover the counters, the Incident log, the word-analysis log (including its ACL) and the export text; these steps cover what needs eyes. Use a Debug build of `src/Navpaky.App` with English (US) and Russian installed. Data lives in `%LOCALAPPDATA%\Navpaky Data`.
+Written against the head of the `add-statistics-and-diagnostics` PR. Unit tests cover the counters, the Incident log, the word-analysis log (including its ACL) and the export text; these steps cover what needs eyes. Use a Debug build of `src/Navpaky.App` with English (US) and Russian installed. Data lives in `%LOCALAPPDATA%\Navpaky`.
 
 - [x] **Statistics window with seeded data (4.1).** Quit Navpaky and save this as `stats.json` (change both dates to today and yesterday): `{"version":1,"days":[{"day":"2026-11-15","counts":{"wordsAnalysed":30,"autoCorrections":4,"undos":1,"keepDecisions":26,"correctDecisions":4},"durations":null},{"day":"2026-11-16","counts":{"wordsAnalysed":10,"manualCorrections":1},"durations":null}]}`. Start Navpaky and choose Statistics in the tray menu. Then type "ghbdtn" + Space in Notepad and press Refresh.
   Expected: Today shows 10 Words analysed and 1 correction; Last 30 days shows 40 Words analysed, 5 corrections, 1 undo and 20 % undone; durations show "—" until the new correction, then a few milliseconds; choosing Statistics again brings the same window forward; the window follows the Windows theme and a screen reader reads each row's name.
@@ -111,31 +111,31 @@ Written against the head of the `add-statistics-and-diagnostics` PR. Unit tests 
 
 Written against the head of the `add-auto-update-and-installer` PR. Unit tests cover the data folder, the version gate, the update scheduler, the tray item text and the update manager against a fake feed; these steps need an installer and a person. Build packages as `docs/release.md` describes ("Local test build"); use a standard (non-administrator) Windows account and a machine without an earlier Navpaky install. The update steps need a Debug build packed twice (for example 0.1.0 and 0.2.0) into one local feed folder and signed with the test certificate from `docs/release.md`, started with `--update-feed <folder> --update-pin "<test subject>" <test CA thumbprint>`.
 
-- [x] **Per-user install (2.1).** Run `navpaky-win-Setup.exe`.
-  Expected: no UAC prompt; Navpaky starts with its tray icon; "Navpaky" appears in the Start menu and in Settings → Apps → Installed apps; files are under `%LOCALAPPDATA%\navpaky`, settings and word lists under `%APPDATA%\Navpaky`, other data under `%LOCALAPPDATA%\Navpaky Data`.
-  Observed: Notes (task 2.12, 2.11): the welcome window scrolls with the wheel only over its scroll bar; the exe and the Installed apps entry have no icon; the publisher reads "navpaky".
-- [x] **Update from a local feed (2.2).** Install 0.1.0 (Debug), quit it, start `%LOCALAPPDATA%\navpaky\current\Navpaky.App.exe --update-feed <folder> --update-pin "<test subject>" <test CA thumbprint>` with 0.2.0 in the folder, open the tray menu; choose "Restart to update". The restarted Navpaky uses GitHub Releases again, so quit it, start it once more with the same `--update-feed` and `--update-pin` arguments, and choose the item again with no newer version.
+- [x] **Per-user install (2.1).** Run `navpaky-app-win-Setup.exe`.
+  Expected: no UAC prompt; Navpaky starts with its tray icon; "Navpaky" appears in the Start menu and in Settings → Apps → Installed apps; files are under `%LOCALAPPDATA%\navpaky-app`, settings and word lists under `%APPDATA%\Navpaky`, other data under `%LOCALAPPDATA%\Navpaky`.
+  Observed: Notes (task 2.12, 2.11): the welcome window scrolls with the wheel only over its scroll bar; the exe and the Installed apps entry have no icon; the publisher reads "navpaky-app".
+- [x] **Update from a local feed (2.2).** Install 0.1.0 (Debug), quit it, start `%LOCALAPPDATA%\navpaky-app\current\Navpaky.App.exe --update-feed <folder> --update-pin "<test subject>" <test CA thumbprint>` with 0.2.0 in the folder, open the tray menu; choose "Restart to update". The restarted Navpaky uses GitHub Releases again, so quit it, start it once more with the same `--update-feed` and `--update-pin` arguments, and choose the item again with no newer version.
   Expected: the item reads "Checking for updates…", then "Restart to update"; Navpaky restarts as 0.2.0 (About page); the next check says "Navpaky is up to date"; with "Check for updates automatically" off, no check runs at start.
   Observed: The first try said "up to date": the installer-started Navpaky was still running, so the second launch with --update-feed exited without notice (task 2.13). Not checked: no check at start with automatic checks off.
 - [x] **Update keeps user data (2.3).** Before the update above, change a few settings, add a Protected Word, turn on "Start Navpaky when I sign in to Windows" and type a few Words for statistics.
   Expected: after the restart into 0.2.0 the settings, the Protected Word and the statistics are unchanged, and Navpaky still starts at the next sign-in.
   Observed:
 - [x] **Tampered and unsigned packages (3.2).** In the local feed, replace the 0.2.0 `.nupkg` with a copy that has one byte changed (keep `releases.win.json`), and choose "Check for updates". Then restore a 0.2.0 package packed without signing (checksums updated by `vpk pack`) and check again.
-  Expected: both times the item reads "Could not check for updates", 0.1.0 keeps running, `%LOCALAPPDATA%\navpaky\packages` holds no 0.2.0 package, and `%LOCALAPPDATA%\Navpaky Data\incidents.jsonl` gains `UpdateChecksumFailed`, then `UpdateSignatureFailed` with `SignatureVerdict.NotSigned`.
+  Expected: both times the item reads "Could not check for updates", 0.1.0 keeps running, `%LOCALAPPDATA%\navpaky-app\packages` holds no 0.2.0 package, and `%LOCALAPPDATA%\Navpaky\incidents.jsonl` gains `UpdateChecksumFailed`, then `UpdateSignatureFailed` with `SignatureVerdict.NotSigned`.
   Observed: Note (task 2.8): the tray item reads "Turn off in Windows Terminal Host" (process description) instead of the app name.
 - [x] **Uninstall, keeping data (4.1).** With Navpaky installed and "Start Navpaky when I sign in to Windows" on, uninstall it from Installed apps, wait a minute before answering the question that appears, and answer No.
-  Expected: Navpaky closes; `%LOCALAPPDATA%\navpaky`, the Start menu entry and the Run entry (Task Manager → Startup apps) are gone; `%APPDATA%\Navpaky` and `%LOCALAPPDATA%\Navpaky Data` are still there; installing again picks up the old settings and word lists.
+  Expected: Navpaky closes; `%LOCALAPPDATA%\navpaky-app`, the Start menu entry and the Run entry (Task Manager → Startup apps) are gone; `%APPDATA%\Navpaky` and `%LOCALAPPDATA%\Navpaky` are still there; installing again picks up the old settings and word lists.
   Observed: After reinstalling, "Start Navpaky when I sign in" is off although it was on: uninstall removes the Run entry. Owner decision: restore it through an install-time question, in its own change.
 - [x] **Uninstall, deleting data (4.1).** Uninstall again and answer Yes.
-  Expected: neither `%APPDATA%\Navpaky` nor `%LOCALAPPDATA%\Navpaky Data` exists and Navpaky does not start at the next sign-in.
+  Expected: neither `%APPDATA%\Navpaky` nor `%LOCALAPPDATA%\Navpaky` exists and Navpaky does not start at the next sign-in.
   Observed:
 - [x] **Uninstall with a locked data file (4.1).** Install again, open `%APPDATA%\Navpaky\settings.json` in a program that locks it (for example Excel, or PowerShell `[IO.File]::Open($path, 'Open', 'Read', 'None')`), uninstall and answer Yes.
   Expected: after a few seconds a warning names the folder to delete by hand; once the lock is released the folder can be deleted.
   Observed:
-- [x] **Open item: reinstall while the uninstall question is open.** The data question deletes `%LOCALAPPDATA%\Navpaky Data` on Yes without checking whether Navpaky was installed again while it was open, so a new installation's data could be lost. Evaluate an installation marker check before deletion (CodeRabbit finding on PR #32, deferred by orchestrator decision).
+- [x] **Open item: reinstall while the uninstall question is open.** The data question deletes `%LOCALAPPDATA%\Navpaky` on Yes without checking whether Navpaky was installed again while it was open, so a new installation's data could be lost. Evaluate an installation marker check before deletion (CodeRabbit finding on PR #32, deferred by orchestrator decision).
   Observed: Decision (owner): check the installation marker before deleting data (task 2.12).
 - [x] **Release environment and dry run (4.2).** Owner: create the `release` environment limited to `v*` tags with the `VPK_SIGN_PARAMS` secret (`docs/release.md`, One-time setup). After the change is on `main`, run Release by hand with version `0.0.1`.
-  Expected: the run passes, its Pack log says no signing parameters were provided, it creates no release, and the artifact holds `navpaky-win-Setup.exe` and the `.nupkg`.
+  Expected: the run passes, its Pack log says no signing parameters were provided, it creates no release, and the artifact holds `navpaky-app-win-Setup.exe` and the `.nupkg`.
   Observed: Run on main: green, no release, artifact with Setup and .nupkg. Finding (task 2.12): Pack warns "No architecture specified with --runtime, defaulting to x86" while publish uses win-x64.
 - [x] **Local signed test build (4.3).** Follow `docs/release.md` → Local test build on a clean checkout without help.
   Expected: two signed packages in one feed folder, which the update steps above use; note any step that needed guessing.
@@ -165,7 +165,7 @@ Written against the head of the `add-onboarding` PR. Unit tests cover when the w
   Expected: Navpaky is listed and enabled; the welcome does not open at the next start.
   Observed:
 - [x] **Run from inside a ZIP (3.1).** Zip the Release publish folder, open the ZIP in Explorer and double-click `Navpaky.App.exe` inside it (choose Run if Explorer asks). Choose Install.
-  Expected: a "Navpaky is not installed" message says this copy stops working when removed and offers Install and Not now; Install opens the latest release page in the browser (no setup in the ZIP). Repeat with `navpaky-win-Setup.exe` placed next to `Navpaky.App.exe` in the ZIP: Install starts that setup.
+  Expected: a "Navpaky is not installed" message says this copy stops working when removed and offers Install and Not now; Install opens the latest release page in the browser (no setup in the ZIP). Repeat with `navpaky-app-win-Setup.exe` placed next to `Navpaky.App.exe` in the ZIP: Install starts that setup.
   Observed: Finding (task 2.14): the ZIP held a plain multi-file publish; Explorer extracts only the exe, which fails at once (Navpaky.App.dll missing), so no warning can show. Release builds publish a single file; the step now does the same. Re-run on 0.3.1 (2c31514; this path unchanged since) with a single-file publish: pass, the "not installed" message with Install and Not now.
 - [x] **Run from Downloads and from the installed location (3.1).** Copy the publish folder to your Downloads folder and start it there; then install Navpaky with its setup and start the installed one.
   Expected: the Downloads copy shows the warning; the installed Navpaky shows none.
@@ -221,9 +221,9 @@ Written against the head of PR #41. The interface has English and Ukrainian only
 
 Written against the head of the `rename-to-navpaky` PR. Uninstall any test install of the old Rekey (`%LOCALAPPDATA%\key-switcher`) first and turn off its "Rekey" entry under Task Manager → Startup apps if one is left. Build packages as `docs/release.md` describes ("Local test build").
 
-- [ ] **Install under the new name (1.1, 1.2).** Run `navpaky-win-Setup.exe`.
-  Expected: the installer and Settings → Apps → Installed apps say "Navpaky" (publisher Navpaky); the Start menu entry reads "Navpaky"; files are under `%LOCALAPPDATA%\navpaky`; settings appear under `%APPDATA%\Navpaky` and statistics under `%LOCALAPPDATA%\Navpaky Data` after the first change; the tray tooltip, About page and welcome window say Navpaky in English and in Ukrainian.
+- [ ] **Install under the new name (1.1, 1.2).** Run `navpaky-app-win-Setup.exe`.
+  Expected: the installer and Settings → Apps → Installed apps say "Navpaky" (publisher Navpaky); the Start menu entry reads "Navpaky"; files are under `%LOCALAPPDATA%\navpaky-app`; settings appear under `%APPDATA%\Navpaky` and statistics under `%LOCALAPPDATA%\Navpaky` after the first change; the tray tooltip, About page and welcome window say Navpaky in English and in Ukrainian.
 - [ ] **Start at sign-in and single instance (1.1).** Turn on "Start Navpaky when I sign in to Windows", then start `Navpaky.App.exe` a second time.
   Expected: Task Manager → Startup apps lists Navpaky; the second start exits and one tray icon remains.
 - [ ] **Uninstall keeps data apart (1.1).** Uninstall and answer No to deleting data.
-  Expected: `%LOCALAPPDATA%\navpaky` is gone and both `%APPDATA%\Navpaky` and `%LOCALAPPDATA%\Navpaky Data` are still there.
+  Expected: `%LOCALAPPDATA%\navpaky-app` is gone and both `%APPDATA%\Navpaky` and `%LOCALAPPDATA%\Navpaky` are still there.

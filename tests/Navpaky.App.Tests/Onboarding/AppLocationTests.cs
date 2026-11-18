@@ -6,7 +6,7 @@ namespace Navpaky.App.Tests.Onboarding {
     private const string _local = @"C:\Users\Invented\AppData\Local";
 
     private static readonly LocationFolders _folders = new(
-        InstallRoot: @$"{_local}\navpaky",
+        InstallRoot: @$"{_local}\navpaky-app",
         Temporary: [@$"{_local}\Temp\", @"D:\Scratch"],
         Downloads: @"C:\Users\Invented\Downloads");
 
@@ -43,7 +43,7 @@ namespace Navpaky.App.Tests.Onboarding {
 
     [Fact]
     public void InstallRootIsInstalled() {
-      string exe = @$"{_local}\navpaky\current\Navpaky.App.exe";
+      string exe = @$"{_local}\navpaky-app\current\Navpaky.App.exe";
 
       Assert.Equal(LocationKind.Installed, AppLocation.Classify(exe, _folders, debugBuild: false));
     }
@@ -62,7 +62,7 @@ namespace Navpaky.App.Tests.Onboarding {
 
       Assert.Equal(
           LocationKind.Other,
-          AppLocation.Classify(@$"{_local}\navpaky\current\Navpaky.App.exe", portable, false));
+          AppLocation.Classify(@$"{_local}\navpaky-app\current\Navpaky.App.exe", portable, false));
     }
 
     [Fact]

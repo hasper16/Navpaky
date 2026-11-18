@@ -32,7 +32,7 @@ namespace Navpaky.DesktopChecks {
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Navpaky");
 
     private static readonly string _localFolder = Path.Join(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Navpaky Data");
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Navpaky");
 
     // Where the language list is saved before the checks change it, so a crashed run can still
     // be undone with the restore-languages command.

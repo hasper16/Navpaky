@@ -6,11 +6,11 @@ using Xunit;
 
 namespace Navpaky.App.Tests.Updates {
   public sealed class DataQuestionTests {
-    private const string _install = @"C:\Users\Invented\AppData\Local\navpaky";
+    private const string _install = @"C:\Users\Invented\AppData\Local\navpaky-app";
 
     private static readonly DataFolders _data = new(
         @"C:\Users\Invented\AppData\Roaming\Navpaky",
-        @"C:\Users\Invented\AppData\Local\Navpaky Data");
+        @"C:\Users\Invented\AppData\Local\Navpaky");
 
     [Fact]
     public void RunsWindowsPowerShellFromSystem32() {

@@ -7,7 +7,7 @@ namespace Navpaky.Core.Tests {
 
     public SettingsStoreTests() {
       // A fresh user has no Navpaky folder yet, so the store must create it.
-      _folder = Path.Combine(_root.FullName, "Navpaky");
+      _folder = Path.Join(_root.FullName, "Navpaky");
     }
 
     public void Dispose() {

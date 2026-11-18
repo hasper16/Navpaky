@@ -18,7 +18,7 @@ namespace Navpaky.App.Tests.Updates {
       Directory.CreateDirectory(Path.Join(_root, "packages"));
       Directory.CreateDirectory(Path.Join(_root, "current"));
       Locator = new TestVelopackLocator(
-          "navpaky", runningVersion, Path.Join(_root, "packages"),
+          "navpaky-app", runningVersion, Path.Join(_root, "packages"),
           Path.Join(_root, "current"), _root, Path.Join(_root, "Update.exe"), "win",
           NullVelopackLogger.Instance, null, Path.Join(_root, "current", "Navpaky.App.exe"));
     }
@@ -35,9 +35,9 @@ namespace Navpaky.App.Tests.Updates {
       }
 
       byte[] bytes = File.ReadAllBytes(package);
-      string name = $"navpaky-{version}-full.nupkg";
+      string name = $"navpaky-app-{version}-full.nupkg";
       _assets.Add(new VelopackAsset {
-        PackageId = "navpaky",
+        PackageId = "navpaky-app",
         Version = SemanticVersion.Parse(version),
         Type = VelopackAssetType.Full,
         FileName = name,

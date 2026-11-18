@@ -10,7 +10,8 @@ namespace Navpaky.App.Tests.Updates {
     private int _signInOff;
 
     public UninstallerTests() {
-      _data = new DataFolders(Path.Join(_root, "Navpaky"), Path.Join(_root, "Navpaky Data"));
+      _data = new DataFolders(
+          Path.Join(_root, "Roaming", "Navpaky"), Path.Join(_root, "Local", "Navpaky"));
       Directory.CreateDirectory(_data.Settings);
       Directory.CreateDirectory(_data.Local);
     }

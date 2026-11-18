@@ -23,7 +23,7 @@ namespace Navpaky.App.Tests.Updates {
       UpdateStatus status = await Updates().CheckAndDownloadAsync();
 
       Assert.Equal(UpdateStatus.ReadyToRestart, status);
-      Assert.True(File.Exists(Path.Join(_feed.PackagesDir, "navpaky-1.3.0-full.nupkg")));
+      Assert.True(File.Exists(Path.Join(_feed.PackagesDir, "navpaky-app-1.3.0-full.nupkg")));
       Assert.Empty(_incidents);
     }
 

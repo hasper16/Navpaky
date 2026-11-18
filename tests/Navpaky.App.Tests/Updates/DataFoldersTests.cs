@@ -12,10 +12,10 @@ namespace Navpaky.App.Tests.Updates {
     [Fact]
     public void SettingsRoamAndLocalStateStaysOutsideTheInstallRoot() {
       DataFolders data = DataFolders.Resolve(
-          _appData, _localAppData, Installed(@$"{_localAppData}\navpaky"));
+          _appData, _localAppData, Installed(@$"{_localAppData}\navpaky-app"));
 
       Assert.Equal(@$"{_appData}\Navpaky", data.Settings);
-      Assert.Equal(@$"{_localAppData}\Navpaky Data", data.Local);
+      Assert.Equal(@$"{_localAppData}\Navpaky", data.Local);
     }
 
     [Fact]
@@ -23,12 +23,12 @@ namespace Navpaky.App.Tests.Updates {
       DataFolders data = DataFolders.Resolve(_appData, _localAppData, null);
 
       Assert.Equal(@$"{_appData}\Navpaky", data.Settings);
-      Assert.Equal(@$"{_localAppData}\Navpaky Data", data.Local);
+      Assert.Equal(@$"{_localAppData}\Navpaky", data.Local);
     }
 
     [Theory]
-    [InlineData(@"C:\Users\Invented\AppData\Local\Navpaky Data")]
-    [InlineData(@"C:\Users\Invented\AppData\Local\navpaky data\")]
+    [InlineData(@"C:\Users\Invented\AppData\Local\Navpaky")]
+    [InlineData(@"C:\Users\Invented\AppData\Local\navpaky\")]
     [InlineData(@"C:\Users\Invented\AppData\Local")]
     [InlineData(@"C:\Users\Invented\AppData\Roaming\Navpaky")]
     [InlineData(@"C:\Users\Invented\AppData")]
@@ -40,14 +40,14 @@ namespace Navpaky.App.Tests.Updates {
     [Fact]
     public void RootSharingOnlyANamePrefixIsAccepted() {
       DataFolders data = DataFolders.Resolve(
-          _appData, _localAppData, Installed(@$"{_localAppData}\Navpaky Data2"));
+          _appData, _localAppData, Installed(@$"{_localAppData}\Navpaky2"));
 
-      Assert.Equal(@$"{_localAppData}\Navpaky Data", data.Local);
+      Assert.Equal(@$"{_localAppData}\Navpaky", data.Local);
     }
 
     private static TestVelopackLocator Installed(string root) {
       return new TestVelopackLocator(
-          "navpaky", "1.0.0", Path.Join(root, "packages"), Path.Join(root, "current"),
+          "navpaky-app", "1.0.0", Path.Join(root, "packages"), Path.Join(root, "current"),
           root, Path.Join(root, "Update.exe"), "win", NullVelopackLogger.Instance, null,
           Path.Join(root, "current", "Navpaky.App.exe"));
     }

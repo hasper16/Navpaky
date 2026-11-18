@@ -85,7 +85,7 @@ jobs:
           SIGN_PARAMS: ${{ github.event_name == 'push' && secrets.VPK_SIGN_PARAMS || '' }}
         run: |
           $pack = @(
-            'pack', '--packId', 'navpaky', '--packVersion', $env:VERSION,
+            'pack', '--packId', 'navpaky-app', '--packVersion', $env:VERSION,
             '--packDir', 'publish', '--mainExe', 'Navpaky.App.exe', '--packTitle', 'Navpaky',
             '--packAuthors', 'Navpaky', '--icon', 'src/Navpaky.App/Navpaky.ico',
             '--runtime', 'win-x64',

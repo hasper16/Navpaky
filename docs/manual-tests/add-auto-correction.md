@@ -39,7 +39,7 @@ The app has no settings window before `add-tray-and-settings-ui`, so the options
   Expected: Windows Terminal keeps "ghbdtn "; Notepad shows "привет ".
 - [x] **Pause across a restart (4.2).** Quit Navpaky. In the settings file set `"pausedUntil"` to a UTC time three minutes ahead, such as `"2026-11-13T10:15:00+00:00"`, and empty `"excludedApps"`. Start Navpaky, switch Notepad to English (US) and wait 3 seconds, type "ghbdtn" and Space in Notepad, quit Navpaky after about a minute, start it again and type the Word again; then wait until the time has passed and type it once more.
   Expected: the first two times the text stays "ghbdtn " (the Pause survived the restart); after the time has passed it becomes "привет " without anything else being done.
-- [x] **Words lost to unconfirmed keys in real typing (4.2, design D8).** Use the Debug build for a normal working session, then quit Navpaky from the tray and open `%LOCALAPPDATA%\Navpaky Data\word-counts.txt`.
+- [x] **Words lost to unconfirmed keys in real typing (4.2, design D8).** Use the Debug build for a normal working session, then quit Navpaky from the tray and open `%LOCALAPPDATA%\Navpaky\word-counts.txt`.
   Expected: one line of three counters, `words-ended`, `evaluated` and `unconfirmed`; report them. The share of `unconfirmed` in `words-ended` is how many Words got no evaluation because a key could not be confirmed outside a Password Field.
 
 By hand, last run: all five items passed at 1aad82d on 2026-11-14 on the owner's desktop (product code unchanged since 7e86ff8). The counters file read `words-ended=1 evaluated=1 unconfirmed=0`: a very short session, not a working day, so it shows only that the file is written. The measurement of record for design D8 is the typing-speed run above.
