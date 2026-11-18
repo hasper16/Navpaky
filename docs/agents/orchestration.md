@@ -14,9 +14,10 @@ Loop, for each change in roadmap order:
 2. **Wait** for the implementer's report. The app wakes the orchestrator when the session ends a turn; do not poll.
 3. **Check readiness** of the PR the implementer reports (all must hold):
    - every required check passes: `gh pr checks <N> --required`;
+   - CodeRabbit has reviewed the PR. It does not review this repository on its own (fewer than 10 stars), so a PR without a CodeRabbit review gets the comment `@coderabbitai review` (`gh pr comment <N> --body "@coderabbitai review"`); wait for its review, and post the comment again when it reports a rate limit. A PR is merged only after CodeRabbit has reviewed it and every thread is resolved;
    - every review thread is resolved, and no reviewer's latest review is `CHANGES_REQUESTED` (check each reviewer, not only the PR-wide `reviewDecision`):
      ```bash
-     gh api graphql --paginate -F n=<N> -f query='query($n:Int!,$endCursor:String){repository(owner:"hasper16",name:"key-switcher"){pullRequest(number:$n){mergeable headRefOid latestReviews(first:100){totalCount nodes{author{login} state}} reviewThreads(first:100,after:$endCursor){totalCount pageInfo{hasNextPage endCursor} nodes{isResolved path comments(first:1){nodes{author{login} body}}}}}}}'
+     gh api graphql --paginate -F n=<N> -f query='query($n:Int!,$endCursor:String){repository(owner:"hasper16",name:"Navpaky"){pullRequest(number:$n){mergeable headRefOid latestReviews(first:100){totalCount nodes{author{login} state}} reviewThreads(first:100,after:$endCursor){totalCount pageInfo{hasNextPage endCursor} nodes{isResolved path comments(first:1){nodes{author{login} body}}}}}}}'
      ```
      `--paginate` follows `reviewThreads` pages; if `latestReviews.totalCount` exceeds 100, page it the same way before deciding.
    - the PR is mergeable (no conflicts, branch up to date with `main`);
@@ -41,7 +42,7 @@ Escalate to the user (and pause the loop) when: a desktop-check run needs the de
 - Use the curated agent-skills where they fit: `doubt-driven-development` for the keyboard hook, input injection and the updater; `security-and-hardening` while writing update, telemetry and diagnostics code; `ci-cd-and-automation` for workflows. Where a skill overlaps an existing one, `AGENTS.md` names the winner.
 - Before reporting `ready`, run `/ponytail-review branch`; fix each must-fix finding or say in the PR description why it stays.
 - Before reporting `ready`, when the diff is sensitive, run the security review below after your last code commit and record it in the PR body.
-- Push your branch and open a PR against `main`; turn on Auto-fix for it so CI failures and review comments wake you.
+- Push your branch and open a PR against `main`; turn on Auto-fix for it so CI failures and review comments wake you. When the PR is not a draft (on opening, or once you mark it ready), comment `@coderabbitai review` on it: CodeRabbit does not review this repository on its own.
 - Resolve **every** review thread (CodeRabbit and humans): fix the code, or reply with the reason it stays as is; then mark the thread resolved. Keep the branch up to date with `main`.
 - Checks that a tool can run at a Windows desktop go into `tools/Navpaky.DesktopChecks` and are described in `docs/manual-tests/<change>.md`; they gate the merge (orchestrator step 4).
 - Checks that need a person (UI look and feel, sign-out, UAC, real apps, a physical keyboard): append them as a checklist to `docs/manual-tests/deferred-by-hand.md`, under a section named after your change, instead of waiting for the owner. The owner runs them all in the last roadmap change, `add-final-acceptance`.

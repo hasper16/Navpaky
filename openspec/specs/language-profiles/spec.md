@@ -1,7 +1,7 @@
 # language-profiles Specification
 
 ## Purpose
-Defines the recognition data Rekey holds for each Language, how that data is loaded and normalised, and which Languages are active given the user's installed Layouts.
+Defines the recognition data Navpaky holds for each Language, how that data is loaded and normalised, and which Languages are active given the user's installed Layouts.
 
 ## Requirements
 
@@ -9,7 +9,7 @@ Defines the recognition data Rekey holds for each Language, how that data is loa
 The app SHALL ship a Language Profile for English, Russian and Ukrainian and load them at start-up without network access.
 
 #### Scenario: Start offline
-- **WHEN** Rekey starts on a machine with no network connection
+- **WHEN** Navpaky starts on a machine with no network connection
 - **THEN** the English, Russian and Ukrainian Language Profiles are loaded
 
 ### Requirement: Language Profile content
@@ -31,15 +31,15 @@ A Language SHALL be active only while at least one of its Layouts is installed f
 - **THEN** English and Russian are active and Ukrainian is inactive
 
 #### Scenario: Layout added while running
-- **WHEN** the user installs a Ukrainian Layout while Rekey is running
-- **THEN** Ukrainian becomes active without restarting Rekey
+- **WHEN** the user installs a Ukrainian Layout while Navpaky is running
+- **THEN** Ukrainian becomes active without restarting Navpaky
 
 ### Requirement: Layouts without a Language Profile are left alone
 A Layout not listed by any Language Profile SHALL NOT be a source or target of a Correction.
 
 #### Scenario: Unsupported layout
 - **WHEN** the active Layout is German and German has no Language Profile
-- **THEN** Rekey makes no Correction from or to the German Layout
+- **THEN** Navpaky makes no Correction from or to the German Layout
 
 ### Requirement: Normalised word lookup
 Word lookup SHALL ignore letter case, SHALL treat Russian "ё" as "е", and SHALL treat the apostrophe variants `'`, `’` and `ʼ` as the same character.
@@ -58,7 +58,7 @@ If a Language Profile cannot be read or fails validation, the app MUST record an
 #### Scenario: Corrupt profile
 - **WHEN** the user has English, Russian and Ukrainian Layouts installed
 - **AND** the Ukrainian Language Profile is corrupt
-- **THEN** Rekey starts with English and Russian active
+- **THEN** Navpaky starts with English and Russian active
 - **AND** an Incident names the Ukrainian Language Profile
 
 ### Requirement: Reproducible profile generation

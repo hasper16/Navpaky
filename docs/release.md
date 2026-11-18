@@ -1,6 +1,6 @@
 # Releasing Navpaky
 
-Navpaky ships as a per-user Velopack installer on the GitHub Releases of `hasper16/key-switcher`. Installed copies check that feed, download a newer full package, and apply it only when every executable in it carries a valid Authenticode signature from the pinned Navpaky publisher (spec `auto-update`, design of `add-auto-update-and-installer`).
+Navpaky ships as a per-user Velopack installer on the GitHub Releases of `hasper16/Navpaky`. Installed copies check that feed, download a newer full package, and apply it only when every executable in it carries a valid Authenticode signature from the pinned Navpaky publisher (spec `auto-update`, design of `add-auto-update-and-installer`).
 
 ## One-time setup
 
