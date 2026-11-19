@@ -9,7 +9,7 @@ The owner approved an interactive prototype on 2026-11-19 (DESIGN.md, EXPERIENCE
 
 ## What Changes
 
-- New app mark: two 3D keycaps S and і (the same physical key) joined by two arrows that run in opposite directions;
+- New app mark: two 3D keycaps Q and Й (the same physical key) joined by two arrows that run in opposite directions;
   one multi-size `.ico` for the executable, windows, About and Welcome.
 - Tray icon drawn as the 3D keycap from the icon set; active is red-black on a light taskbar and
   sapphire-gold on a dark one.

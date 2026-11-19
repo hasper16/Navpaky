@@ -6,7 +6,7 @@
 
 ## 2. Assets (design D2, D4, D8)
 
-- [ ] 2.1 Import the app mark masters, small-size SVGs and the build script into `docs/design/icons/` with `Navpaky.*` names; the script draws the bottom arrow as the top one rotated 180°; it writes `src/Navpaky.App/Navpaky.ico` and `Assets/mark-64.png`, `mark-128.png`. Verify: `uv run docs/design/icons/tools/build_icons.py` reproduces the committed files byte for byte.
+- [x] 2.1 Put the app mark masters (`navpaky.svg`, `navpaky-16/24/32.svg`: Q ⇄ Й drawn as shapes, arrows opposite) in `docs/design/icons/app/` with `docs/design/icons/tools/build_icons.py`, which writes `src/Navpaky.App/Navpaky.ico` (16–256 px) and `Assets/mark-64.png`, `mark-128.png`; About and Welcome show the mark. Verify: running the script twice gives the same `.ico` (same MD5); `BrandMarkTests` loads the 128 px mark.
 - [ ] 2.2 `tools/build_sounds.py` generates the nine new WAVs plus `navpaky-up.wav`, `navpaky-down.wav` (44.1 kHz, 16-bit mono, fixed seed). Verify: running it twice gives identical files; a test in `Navpaky.App.Tests` opens every `SwitchSound` resource and checks the format.
 - [ ] 2.3 Add Grunt Grotesk Light and Bold as resources under `src/Navpaky.App/Fonts/` with `OFL.txt` copied to the output. Verify: a test loads the `HeadingText` font family and finds a Grunt Grotesk typeface; `OFL.txt` exists in the build output.
 

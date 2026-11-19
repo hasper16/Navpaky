@@ -45,6 +45,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\*.png" LogicalName="Navpaky.Assets.%(Filename).png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="Navpaky.App.Tests" />
   </ItemGroup>
 

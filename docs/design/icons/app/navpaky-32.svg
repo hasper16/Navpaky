@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <clipPath id="vbL32"><polygon points="0,0 17,0 14.6,32 0,32"/></clipPath>
+    <clipPath id="vbR32"><polygon points="17,0 32,0 32,32 14.6,32"/></clipPath>
+  </defs>
+  <g clip-path="url(#vbL32)">
+    <rect x="1.0" y="1.0" width="30.0" height="30.0" rx="6.8" fill="#14171D" stroke="#7A8290" stroke-width="1.5"/>
+    <rect x="3.0" y="2.2" width="26.0" height="22.6" rx="4.8" fill="#464B54" stroke="#727986" stroke-width="1.0"/>
+  </g>
+  <g clip-path="url(#vbR32)">
+    <rect x="1.0" y="1.0" width="30.0" height="30.0" rx="6.8" fill="#0F2347" stroke="#FACC15" stroke-width="1.8"/>
+    <rect x="3.0" y="2.2" width="26.0" height="22.6" rx="4.8" fill="#2B548A" stroke="#6E9AD1" stroke-width="1.0"/>
+  </g>
+  <line x1="16.8" y1="2.2" x2="14.8" y2="24.8" stroke="#7DD3FC" stroke-width="1.8"/>
+  <g transform="translate(-13.45 0)"><ellipse cx="22.6" cy="13.8" rx="4.4" ry="5.1" fill="none" stroke="#EAEEF4" stroke-width="2.6"/>
+  <line x1="24.5" y1="17.2" x2="27.6" y2="20.0" stroke="#EAEEF4" stroke-width="2.6" stroke-linecap="round"/></g>
+  <path d="M 19.40 10.80 V 21.20 L 25.80 10.80 V 21.20" fill="none" stroke="#FFFBEB" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M 20.55 6.29 Q 22.60 9.54 24.65 6.29" fill="none" stroke="#FFFBEB" stroke-width="1.95" stroke-linecap="round"/>
+</svg>

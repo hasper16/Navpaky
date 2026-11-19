@@ -756,10 +756,9 @@ namespace Navpaky.App {
         ReadLaunchAtSignIn();
         var welcome = new WelcomeViewModel(_hub!, _worker?.InstalledLayouts ?? []);
         var hotkey = new HotkeyViewModel(_hub!, CheckHotkey);
-        bool dark = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
         _welcome = welcome;
         _welcomeWindow = new WelcomeWindow(
-            welcome, new HotkeyPage(hotkey, _chords), dark, OpenLanguageSettings);
+            welcome, new HotkeyPage(hotkey, _chords), OpenLanguageSettings);
         _welcomeWindow.Closed += (_, _) => {
           welcome.Close();
           _telemetry?.OnWelcomeClosed(welcome.Progress);
@@ -812,7 +811,6 @@ namespace Navpaky.App {
       var settings = new SettingsViewModel(_hub!);
       var hotkey = new HotkeyViewModel(_hub!, CheckHotkey);
       var apps = new ExcludedAppsViewModel(_hub!, AppNames.OfKey);
-      bool dark = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
       SettingsSection[] sections = [
           new("PageGeneral", SymbolRegular.Settings24,
               new GeneralPage(settings, sound => _sounds!.Play(sound))),
@@ -828,7 +826,7 @@ namespace Navpaky.App {
                   _telemetry.ReadSent,
                   OpenStatistics,
                   OpenExport)),
-          new("PageAbout", SymbolRegular.Info24, new AboutPage(dark)),
+          new("PageAbout", SymbolRegular.Info24, new AboutPage()),
       ];
       var window = new SettingsWindow(sections);
       window.Closed += (_, _) => {

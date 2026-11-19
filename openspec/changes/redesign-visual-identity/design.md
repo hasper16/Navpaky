@@ -28,12 +28,14 @@ state and taskbar theme, taken from the icon set; active-light is recoloured red
 face, black skirt, red lip). No PNG templates ship: one source for every DPI. UI thread.
 *Alternative:* ship the 32 PNG templates; rejected, as it doubles the source of truth.
 
-### D2. App mark from the icon set, arrows fixed
-`docs/design/icons/` receives the app mark SVG masters, the small-size SVGs and the build script
-from the icon set, with old `Rekey.*` names mapped to `Navpaky.*`. The script draws the bottom
-arrow as the top arrow rotated 180°, so the arrows point opposite ways, and writes
-`src/Navpaky.App/Navpaky.ico` (16–256 px) and `src/Navpaky.App/Assets/mark-64.png`,
-`mark-128.png`. Generated files are committed; the script is run by hand (`uv run`), not in CI.
+### D2. App mark from the icon set, letters that share a key
+`docs/design/icons/app/` holds the mark masters derived from the icon set: Q on the graphite
+keycap and Й on the sapphire-gold keycap (one physical key), drawn as shapes, with the bottom
+arrow the top arrow rotated 180°. `docs/design/icons/tools/build_icons.py` (resvg, Pillow)
+renders `src/Navpaky.App/Navpaky.ico` (16–256 px, PNG frames, each from the closest master) and
+`Assets/mark-64.png`, `mark-128.png`, embedded like the sounds. Generated files are committed;
+the script is run by hand (`uv run`), not in CI. The rest of the icon set (setup, store, tray
+PNG templates) is not imported.
 
 ### D3. Theme palette through WPF UI accents
 On start and on every theme change (`SystemThemeWatcher` already runs per window, App applies

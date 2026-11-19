@@ -4,11 +4,11 @@ using Navpaky.App.Tray;
 using Navpaky.App.ViewModels;
 
 namespace Navpaky.App.Views {
-  // About: the keycap mark (design D1) and the version.
+  // About: the Navpaky mark and the version.
   internal sealed partial class AboutPage {
-    public AboutPage(bool dark) {
+    public AboutPage() {
       InitializeComponent();
-      Mark.Source = Keycap.Render("EN", TrayState.Active, dark, 64);
+      Mark.Source = BrandMark.Large();
       string version = Assembly.GetExecutingAssembly()
           .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
           ?? "0";

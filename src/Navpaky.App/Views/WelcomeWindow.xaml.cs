@@ -18,12 +18,12 @@ namespace Navpaky.App.Views {
     private nint _handle;
 
     public WelcomeWindow(
-        WelcomeViewModel model, HotkeyPage hotkey, bool dark, Action openLanguageSettings) {
+        WelcomeViewModel model, HotkeyPage hotkey, Action openLanguageSettings) {
       _model = model;
       SystemThemeWatcher.Watch(this);
       InitializeComponent();
       DataContext = model;
-      Mark.Source = Keycap.Render("EN", TrayState.Active, dark, 64);
+      Mark.Source = BrandMark.Large();
       Hotkey.Content = hotkey;
       OuterWheelScroll.Attach(Scroller);
       Localizer.Follow(this, ShowLayouts);

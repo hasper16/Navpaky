@@ -16,7 +16,7 @@ All Navpaky windows and panels SHALL use the brand palette of the current app th
 - **THEN** the installed files include the Open Font License text next to the font files
 
 ### Requirement: App mark
-The executable, its windows, the About section and the welcome window SHALL show the Navpaky mark: two keycaps, Latin S and Ukrainian і, which share one physical key (owner decision), joined by two arrows that point in opposite directions. Sizes of 32 px and below SHALL show the keycaps without arrows. The mark SHALL be the same in both themes.
+The executable, its windows, the About section and the welcome window SHALL show the Navpaky mark: two keycaps, Latin Q and Й, which share one physical key (owner decision), joined by two arrows that point in opposite directions. Sizes of 32 px and below SHALL show the keycaps without arrows. The mark SHALL be the same in both themes.
 
 #### Scenario: Executable icon
 - **WHEN** the user looks at Navpaky in File Explorer or the Start menu
