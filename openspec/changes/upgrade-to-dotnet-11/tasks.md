@@ -20,4 +20,4 @@
 
 ## 5. Verification
 
-- [ ] 5.1 All tests green on CI under .NET 11, including the accuracy check and the decision-speed test, and `docs/manual-tests/upgrade-to-dotnet-11.md` lists the three desktop sets and the Velopack update over 0.4.2 as an unticked checklist for the orchestrator. Verify: CI `build` job green on the PR head.
+- [x] 5.1 All tests green on CI under .NET 11, including the accuracy check and the decision-speed test, and `docs/manual-tests/upgrade-to-dotnet-11.md` lists the three desktop sets and the Velopack update over 0.4.2 as an unticked checklist for the orchestrator. Verify: CI `build` job green on the PR head.
