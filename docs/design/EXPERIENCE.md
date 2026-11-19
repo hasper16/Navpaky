@@ -21,6 +21,7 @@ UI languages English and Ukrainian.
 
 - **Tray icon**: state and current Language.
 - **Quick panel** (left click): current Layout (click switches it), Auto Correction on/off,
+  on/off in the app the user typed in before (Excluded App),
   Sensitivity, Pause (15 min, 30 min, 1 h, 3 h, until Navpaky restarts), today's statistics
   strip (opens Statistics), switch sound on/off, cursor indicator on/off, Settings…,
   First steps, Quit, and a hint naming the Hotkey.

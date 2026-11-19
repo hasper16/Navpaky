@@ -30,12 +30,17 @@ A left click on the tray icon SHALL open the quick panel next to the tray; a rig
 - **THEN** the quick panel opens next to the tray and closes again
 
 ### Requirement: Quick panel controls
-The quick panel SHALL show the current Language and state and SHALL offer: switching the Layout by clicking the Language key, Auto Correction on/off, Sensitivity, Pause with the tray menu's presets (the active preset resumes when clicked again), switch sound on/off, cursor indicator on/off, Settings, First steps, Quit, and a hint naming the current Hotkey.
+The quick panel SHALL show the current Language and state and SHALL offer: switching the Layout by clicking the Language key, Auto Correction on/off, turning Navpaky off or on in the app the user typed in before opening the panel (owner decision), Sensitivity, Pause with the tray menu's presets (the active preset resumes when clicked again), switch sound on/off, cursor indicator on/off, Settings, First steps, Quit, and a hint naming the current Hotkey.
 
 #### Scenario: Switch Layout from the panel
 - **WHEN** English (US) is active and the user clicks the Language key in the quick panel
 - **THEN** the panel closes, the window the user typed in before gets focus back with the next installed Layout
 - **AND** the tray icon shows the new Language
+
+#### Scenario: Turn off in the current app
+- **WHEN** the user was typing in Telegram, opens the quick panel and turns Navpaky off for Telegram
+- **THEN** Telegram becomes an Excluded App
+- **AND** the panel shows the switch for Telegram as off
 
 #### Scenario: Pause from the panel
 - **WHEN** the user clicks 30 min in the quick panel

@@ -60,7 +60,8 @@ Clicking the Language key closes the panel, gives focus back to the recorded win
 (`SetForegroundWindow`, allowed because our process is in the foreground) and asks the input
 worker to switch to the next installed Layout (`InputWorker.SwitchLayout`, posted to the worker
 thread). A `QuickPanelViewModel` binds to the existing `TrayViewModel`, `SettingsHub` and
-statistics store; the share kept is `(Corrections − Undos) / Corrections`, hidden at zero
+statistics store; the current-app switch reuses `TrayViewModel`'s exclude item for the recorded
+foreground app; the share kept is `(Corrections − Undos) / Corrections`, hidden at zero
 Corrections. All on the UI thread except the switch, which the worker runs.
 
 ### D6. One-page settings
