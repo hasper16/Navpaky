@@ -13,4 +13,4 @@ Navpaky SHALL measure the times of Keystrokes, clicks, focus changes and the ses
 
 #### Scenario: Focus change after wake
 - **WHEN** the PC wakes from sleep and focus moves to another window just before a Keystroke
-- **THEN** Navpaky orders the focus change and the Keystroke by their real times, as it does before any sleep
+- **THEN** Navpaky handles them as it does before any sleep: a focus change Windows reported before the Keystroke counts at its own time, and a Keystroke whose focus change is reported later is not kept, since its focus is uncertain
