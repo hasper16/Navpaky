@@ -107,7 +107,8 @@ window closes itself and is never reused. UI thread.
 
 ### D11. Strings
 New keys in `Strings.resx` and `Strings.uk.resx`; `MenuWelcome` becomes "First steps" /
-"Перші кроки" without a product placeholder. Texts are ours.
+"Перші кроки" without a product placeholder. Texts are ours. The First steps item carries a magic-wand icon (WPF UI `Wand24`) in the tray menu and
+the quick panel (owner decision).
 
 ## Risks / Trade-offs
 
