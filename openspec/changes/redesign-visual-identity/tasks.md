@@ -1,0 +1,46 @@
+# Tasks
+
+## 1. Data shapes (design D7, D8)
+
+- [ ] 1.1 Test first: `SettingsTests` reads a settings file without `cursorIndicatorStyle` as `Pill`, round-trips `tag` and `underline`, and reads a file without `switchSound` as `Navpaky` while `chime` stays `Chime`. Then add `CursorIndicatorStyle` and the nine new `SwitchSound` members after the existing ones, default `Navpaky`. Verify: `dotnet test tests/Navpaky.Core.Tests`.
+
+## 2. Assets (design D2, D4, D8)
+
+- [ ] 2.1 Import the app mark masters, small-size SVGs and the build script into `docs/design/icons/` with `Navpaky.*` names; the script draws the bottom arrow as the top one rotated 180°; it writes `src/Navpaky.App/Navpaky.ico` and `Assets/mark-64.png`, `mark-128.png`. Verify: `uv run docs/design/icons/tools/build_icons.py` reproduces the committed files byte for byte.
+- [ ] 2.2 `tools/build_sounds.py` generates the nine new WAVs plus `navpaky-up.wav`, `navpaky-down.wav` (44.1 kHz, 16-bit mono, fixed seed). Verify: running it twice gives identical files; a test in `Navpaky.App.Tests` opens every `SwitchSound` resource and checks the format.
+- [ ] 2.3 Add Grunt Grotesk Light and Bold as resources under `src/Navpaky.App/Fonts/` with `OFL.txt` copied to the output. Verify: a test loads the `HeadingText` font family and finds a Grunt Grotesk typeface; `OFL.txt` exists in the build output.
+
+## 3. Theme and keycap (design D1, D3)
+
+- [ ] 3.1 Test first: `KeycapTests` renders each state on light and dark taskbars at 16, 20, 24, 32 px and checks the lip and face colours at fixed pixels (red lip light, gold lip dark). Then draw the 3D keycap in `Keycap`. Verify: `dotnet test tests/Navpaky.App.Tests`; by-hand look deferred to `deferred-by-hand.md`.
+- [ ] 3.2 App applies the theme accent (red light, blue dark) and `BrandSecondaryBrush` on start and on theme change; `HeadingText` style. Verify: a test applies each theme and reads the accent resource; by-hand look deferred.
+
+## 4. Sounds (design D8)
+
+- [ ] 4.1 Test first: `SwitchSoundPlayer` picks `navpaky-up` for a non-English Language and `navpaky-down` for English. Then extend `Play(sound, towardEnglish)` and its callers; General lists the twelve sounds with preview. Verify: `dotnet test tests/Navpaky.App.Tests`.
+
+## 5. Cursor indicator (design D7)
+
+- [ ] 5.1 Test first: the indicator builds a pill, tag or underline visual for the chosen style. Then replace the bitmap badge; add the style choice with previews to General. Verify: `dotnet test tests/Navpaky.App.Tests`; the desktop set for the indicator still passes; look deferred.
+
+## 6. Settings page (design D6)
+
+- [ ] 6.1 Test first: `SectionInView` returns the section at the top, the last section at the end, and the first section at offset 0. Then stack the pages in one scroll view with section headings and cards, wire the list both ways. Verify: `dotnet test tests/Navpaky.App.Tests`; keyboard-only pass deferred.
+
+## 7. Quick panel (design D5)
+
+- [ ] 7.1 Test first: `QuickPanelViewModel` exposes state text, toggles Auto Correction, applies and resumes a Pause preset, computes the kept share (hidden at zero Corrections) and hides the strip when statistics are off. Verify: `dotnet test tests/Navpaky.App.Tests`.
+- [ ] 7.2 `QuickPanel` window: left click opens, right click keeps the menu, closes on Esc and deactivation, Language key hands focus back and switches the Layout. Verify: a desktop check opens the panel by left click and closes it with Esc; Layout switch from the panel deferred to `deferred-by-hand.md`.
+
+## 8. Welcome and tray menu (design D9, D11)
+
+- [ ] 8.1 Test first: `WelcomeViewModel` steps 0→1→2, `Back` returns, `IsLast` on step 2, closing at any step completes. Then show one step at a time; rename the menu item to First steps / Перші кроки. Verify: `dotnet test tests/Navpaky.App.Tests`.
+
+## 9. Launch splash (design D10)
+
+- [ ] 9.1 Test first: `SplashScript` lists the typing frames for "Navpaky", then the greeting for the UI language, the pill and the fade, about 3 s in total; with animations off it is one static frame. Then `LaunchSplash` window shown from `OnStartup` after the tray icon. Verify: `dotnet test tests/Navpaky.App.Tests`; a desktop check confirms the foreground window keeps focus while the splash shows.
+
+## 10. Docs and verification
+
+- [ ] 10.1 `docs/roadmap.md` lists the change; `docs/manual-tests/deferred-by-hand.md` gains the `redesign-visual-identity` checklist (look of tray, panel, settings, welcome, splash, indicator styles, sounds in both themes); `docs/manual-tests/redesign-visual-identity.md` names the desktop sets. Verify: files present.
+- [ ] 10.2 All tests green on CI. Verify: CI `build` job green on the PR head.
