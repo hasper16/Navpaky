@@ -2,7 +2,7 @@
 
 ## 1. Data shapes (design D7, D8)
 
-- [ ] 1.1 Test first: `SettingsTests` reads a settings file without `cursorIndicatorStyle` as `Pill`, round-trips `tag` and `underline`, and reads a file without `switchSound` as `Navpaky` while `chime` stays `Chime`. Then add `CursorIndicatorStyle` and the nine new `SwitchSound` members after the existing ones, default `Navpaky`. Verify: `dotnet test tests/Navpaky.Core.Tests`.
+- [x] 1.1 Test first: `SettingsTests` reads a settings file without `cursorIndicatorStyle` as `Pill`, round-trips `tag` and `underline`, and reads a file without `switchSound` as `Navpaky` while `chime` stays `Chime`. Then add `CursorIndicatorStyle` and the nine new `SwitchSound` members after the existing ones, default `Navpaky`. Verify: `dotnet test tests/Navpaky.Core.Tests`.
 
 ## 2. Assets (design D2, D4, D8)
 
