@@ -15,9 +15,12 @@ namespace Navpaky.DesktopChecks {
     private static readonly TimeSpan _watchdogWait = TimeSpan.FromSeconds(4);
 #endif
 
+    // The app builds for the same target framework as this tool, so its folder has our name.
     private static string AppPath() {
+      string framework = Path.GetFileName(
+          Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory));
       return Path.Join(
-          RepositoryRoot(), "src", _appName, "bin", "Debug", "net10.0-windows", $"{_appName}.exe");
+          RepositoryRoot(), "src", _appName, "bin", "Debug", framework, $"{_appName}.exe");
     }
 
 #if DEBUG

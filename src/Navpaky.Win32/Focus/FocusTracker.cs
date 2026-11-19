@@ -64,7 +64,7 @@ namespace Navpaky.Win32.Focus {
       // Without both hooks a move into a Password Field could go unseen, so focus stays unknown
       // and the engine keeps no Keystrokes.
       _blind = _foregroundHook.IsInvalid || _focusHook.IsInvalid;
-      ReportCurrent(TimeSpan.FromMilliseconds(Environment.TickCount64));
+      ReportCurrent(TimeSpan.FromMilliseconds(InputClock.Now));
     }
 
     /// <inheritdoc />
@@ -110,11 +110,10 @@ namespace Navpaky.Win32.Focus {
       }
     }
 
-    // WinEvents carry 32-bit GetTickCount time; widen it by its distance from the 64-bit now, so
-    // it compares with the hook's key times even when the worker reads it late.
+    // Widened to 64 bits, so it compares with the hook's key times even when the worker reads it
+    // late.
     private static TimeSpan EventTime(uint time) {
-      long now = Environment.TickCount64;
-      return TimeSpan.FromMilliseconds(now - unchecked((uint)now - time));
+      return TimeSpan.FromMilliseconds(InputClock.Widen(time));
     }
 
     private UnhookWinEventSafeHandle Hook(uint winEvent) {

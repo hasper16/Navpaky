@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>$(DotNetTargetFramework)-windows</TargetFramework>
     <OutputType>Exe</OutputType>
     <UseWindowsForms>true</UseWindowsForms>
     <!-- Brings the managed UI Automation client used to find the test page's boxes. -->

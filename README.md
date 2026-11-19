@@ -2,7 +2,7 @@
 
 Navpaky (Ukrainian «навпаки», "vice versa") fixes a word typed in the wrong keyboard layout
 (`ghbdtn` becomes `привет`) and switches the layout for you. It runs in the background as a tray
-app. It is a Windows analog of the macOS app Rekey, written from scratch in C# / .NET 10 and WPF.
+app. It is a Windows analog of the macOS app Rekey, written from scratch in C# / .NET 11 and WPF.
 
 > **Status:** early development. The app starts in the notification area, keeps one instance per
 > user session and stores its settings, but it does not correct text yet. The plan is in
@@ -11,7 +11,7 @@ app. It is a Windows analog of the macOS app Rekey, written from scratch in C# /
 ## Prerequisites
 
 - Windows 10 or 11
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0): 10.0.403 or a later 10.0
+- [.NET 11 SDK](https://dotnet.microsoft.com/download/dotnet/11.0): 11.0.100 or a later 11.0
   feature band (pinned in `global.json`)
 
 ## Build, test, run

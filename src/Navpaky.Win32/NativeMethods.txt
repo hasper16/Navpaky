@@ -22,6 +22,8 @@ GetKeyboardLayoutList
 GetLastInputInfo
 GetMonitorInfo
 GetSystemMetrics
+GetTickCount
+GetTickCount64
 GetMessage
 GetModuleHandle
 GetTokenInformation

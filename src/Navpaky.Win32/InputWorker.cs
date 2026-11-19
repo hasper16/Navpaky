@@ -459,7 +459,7 @@ namespace Navpaky.Win32 {
 
     // Hook timestamps count the same milliseconds since system start.
     private static TimeSpan Now() {
-      return TimeSpan.FromMilliseconds(Environment.TickCount64);
+      return TimeSpan.FromMilliseconds(InputClock.Now);
     }
 
     // The worker never receives keyboard input itself, so its key state follows the system's
@@ -877,9 +877,9 @@ namespace Navpaky.Win32 {
 
     // Keys typed during the pause wait in the hook, then follow the whole replacement.
     private void PauseBetweenParts(TimeSpan pause) {
-      _gate.NoteProgress(Environment.TickCount64);
+      _gate.NoteProgress(InputClock.Now);
       Thread.Sleep(pause);
-      _gate.NoteProgress(Environment.TickCount64);
+      _gate.NoteProgress(InputClock.Now);
     }
 
     private void Execute(EngineAction action) {
@@ -1008,7 +1008,7 @@ namespace Navpaky.Win32 {
         return ReplacementResult.FocusMoved;
       }
 
-      return Environment.TickCount64 - held.Tick >= maxAge ? ReplacementResult.TooLate : null;
+      return InputClock.Now - held.Tick >= maxAge ? ReplacementResult.TooLate : null;
     }
   }
 }

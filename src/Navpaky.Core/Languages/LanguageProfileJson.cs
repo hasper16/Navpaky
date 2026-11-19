@@ -48,8 +48,7 @@ namespace Navpaky.Core.Languages {
         NewLine = "\n",
         WriteIndented = true,
       };
-      return (JsonTypeInfo<LanguageProfileDocument>)options.GetTypeInfo(
-          typeof(LanguageProfileDocument));
+      return options.GetTypeInfo<LanguageProfileDocument>();
     }
   }
 }

@@ -381,7 +381,7 @@ namespace Navpaky.App {
       WordListsDocument? words = _wordsStore.Load();
       _words = new WordsViewModel(
           edit => _worker?.EditWordList(edit),
-          () => TimeSpan.FromMilliseconds(Environment.TickCount64));
+          () => TimeSpan.FromMilliseconds(InputClock.Now));
       _words.Show(words ?? WordListsDocument.Empty);
       _worker = new InputWorker(settings, RecordIncident, TimeProvider.System) {
         InitialWords = words ?? WordListsDocument.Empty,

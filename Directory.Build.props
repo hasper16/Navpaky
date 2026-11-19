@@ -1,6 +1,8 @@
 <Project>
 
   <PropertyGroup>
+    <!-- Every project targets this .NET; Windows projects add -windows (ADR 0005). -->
+    <DotNetTargetFramework>net11.0</DotNetTargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>

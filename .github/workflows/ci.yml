@@ -33,3 +33,20 @@ jobs:
       # Spec limits on a sample of the held-out corpus (docs/accuracy.md).
       - name: Accuracy
         run: dotnet run --project tools/Navpaky.Accuracy -c Release --no-build -- data/accuracy tests/fixtures/keymaps --sample 500 --check
+
+      # The Release workflow's single-file publish must start: on .NET 11 WPF's mixed-mode
+      # assemblies crashed it at start only in that form (upgrade-to-dotnet-11, design D6).
+      # Keep the flags in step with release.yml.
+      - name: Published app starts
+        shell: pwsh
+        run: |
+          dotnet publish src/Navpaky.App -c Release -r win-x64 --self-contained `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:PublishReadyToRun=true -o smoke
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $app = Start-Process smoke/Navpaky.App.exe -PassThru
+          if ($app.WaitForExit(30000)) {
+            throw "Navpaky exited at start with code $($app.ExitCode)."
+          }
+          $app.Kill()
+          $app.WaitForExit()
