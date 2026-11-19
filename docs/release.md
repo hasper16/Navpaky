@@ -26,7 +26,7 @@ Pull-request workflows never see the secret: `release.yml` has no `pull_request`
    git tag v0.2.0
    git push origin v0.2.0
    ```
-3. `release.yml` builds, tests, publishes a self-contained single-file `win-x64` build, signs and packs it with `vpk pack`, and uploads it with `vpk upload github --publish`. A version with a suffix (`v0.2.0-beta.1`) becomes a pre-release, which installed copies ignore.
+3. `release.yml` builds, tests, publishes a self-contained single-file `win-x64` build, signs and packs it with `vpk pack`, and uploads it with `vpk upload github --publish`. The single-file build extracts its assemblies to `%TEMP%\.net\Navpaky.App\` at first start, because WPF's mixed-mode assemblies cannot load from inside the bundle (`Navpaky.App.csproj`, dotnet/wpf#11842). A version with a suffix (`v0.2.0-beta.1`) becomes a pre-release, which installed copies ignore.
 4. Check the release has `navpaky-app-win-Setup.exe`, `navpaky-app-<version>-full.nupkg` and `releases.win.json`.
 
 The run fails instead of publishing when `VPK_SIGN_PARAMS` is missing.

@@ -13,6 +13,15 @@
     <SentryNative>false</SentryNative>
   </PropertyGroup>
 
+  <!-- WPF 11's DirectWriteForwarder and System.Printing are mixed-mode (C++/CLI) assemblies,
+       which cannot load from inside a single-file bundle, so a single-file publish extracts
+       every assembly to disk at first start (dotnet/wpf#11842; upgrade-to-dotnet-11, design D6).
+       NETSDK1244 advises against this mode; following it brings the crash back. -->
+  <PropertyGroup Condition="'$(PublishSingleFile)' == 'true'">
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <NoWarn>$(NoWarn);NETSDK1244</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="H.NotifyIcon.Wpf" />

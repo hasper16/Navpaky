@@ -55,6 +55,7 @@ Source: the .NET 11 breaking-change index (learn.microsoft.com/dotnet/core/compa
 | Restore no longer picks a higher version from the global packages folder | None: central package management pins exact versions. |
 | VSTest drops Newtonsoft.Json | None: tests run on Microsoft.Testing.Platform (`global.json`). |
 | `runtimeconfig.dev.json` overrides `runtimeconfig.json` | None: the package ships no `.dev.json`. |
+| WPF 11 makes `DirectWriteForwarder` and `System.Printing` mixed-mode (dotnet/wpf#11575; not in the index) | The single-file Release build crashes at start; fixed by D6. |
 | Others (Unix-only, NativeAOT, MAUI, containers, tar/zip, tensors, CBOR, WMI) | Not used. |
 
 ### D5. Packages on .NET 11
@@ -75,11 +76,22 @@ No package targets `net11.0` yet; each ships assets .NET 11 can consume:
 
 Restore, build and tests on the CI runner (SDK 11.0.100) are the proof; the desktop sets and the update over 0.4.2 check WPF, the tray, Velopack and Sentry at run time.
 
+### D6. Single-file publish extracts every assembly
+
+WPF 11 builds `DirectWriteForwarder.dll` and `System.Printing.dll` as mixed-mode (C++/CLI, IJW) assemblies instead of pure IL (dotnet/wpf#11575). A mixed-mode assembly loads only from a file on disk, and the single-file bundler still treats both as managed assemblies it keeps in memory, so a self-contained single-file WPF app on .NET 11.0.0 dies in `Application`'s type initializer with `BadImageFormatException` for `DirectWriteForwarder.dll`, with or without ReadyToRun (dotnet/wpf#11842, open; reproduced with the 0.4.3 test pack from 57feed8). `IncludeNativeLibrariesForSelfExtract` does not help: it extracts only native libraries.
+
+`Navpaky.App.csproj` sets `IncludeAllContentForSelfExtract` whenever `PublishSingleFile` is on, so every single-file publish (`release.yml`, `docs/release.md`, the manual checklist) gets it from one place: the bundle extracts all assemblies to `%TEMP%\.net\Navpaky.App\<hash>` at first start and loads them from disk. NETSDK1244 warns that this mode is legacy; following the warning brings the crash back, so the project suppresses it next to the setting. `AppContext.BaseDirectory` becomes the extraction folder; Navpaky reads its own location only through `Environment.ProcessPath`, and Velopack's runtime locates the install from the process path, so neither moves.
+
+Alternatives: keep the two assemblies and `ijwhost.dll` out of the bundle (`ExcludeFromSingleFile`); rejected because the install is then four files, and a copy started from inside a ZIP, which Explorer extracts as the exe alone, crashes again. A multi-file publish; rejected for the same reason. Revisit when dotnet/wpf#11842 ships a fix.
+
+CI guards it: the `Published app starts` step publishes with the Release workflow's flags, starts the executable and fails when it exits within 30 seconds.
+
 ## Risks / Trade-offs
 
 - [The breaking-change index is incomplete] → CI build and every test run on .NET 11; the desktop sets re-run before merge; the by-hand sleep check is deferred to final acceptance.
 - [Packages compiled for net10.0 run on net11.0] → forward compatibility is the .NET rule; the desktop sets exercise each package's runtime path.
 - [Install size grows with the .NET 11 runtime] → the update check records the new size against 186 MB.
+- [The first start extracts about 200 MB to `%TEMP%` and is slower; cleaning `%TEMP%` makes the next start extract again] → accepted until dotnet/wpf#11842 is fixed; the extraction folder belongs to the same user, so it opens no new trust boundary.
 - [STS ends with .NET 10] → ADR 0005 plans the move to .NET 12 LTS.
 - [The owner's machine has only SDK 10.0.404] → `global.json` has asked for 11.0.100 since PR #27; README now names the .NET 11 SDK, which the desktop runs need.
 
