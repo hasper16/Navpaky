@@ -100,7 +100,8 @@ Window 10 px, card 8 px, control 6 px, chips and the cursor pill fully round.
 
 ## Components
 
-- **App mark.** Two 3D keycaps, Ukrainian і and Latin S (one physical key, owner decision), in a dark squircle, joined by two
+- **App mark.** Two 3D keycaps, Latin S on the left and Ukrainian і on the right (one physical key, owner
+  decision), drawn as shapes like the icon set, in a dark squircle, joined by two
   arrows that run in opposite directions (top to the right, bottom to the left). Sizes up to
   32 px drop the arrows. One mark for both themes (sapphire and gold).
 - **Tray keycap.** The 3D keycap from the icon set (rim, skirt, top face, front lip) with the
