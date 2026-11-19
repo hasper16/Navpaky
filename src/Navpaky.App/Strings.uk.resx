@@ -559,4 +559,31 @@
   <data name="UiLanguageUkrainian" xml:space="preserve">
     <value>Українська</value>
   </data>
+  <data name="SoundBandura" xml:space="preserve">
+    <value>Бандура</value>
+  </data>
+  <data name="SoundWoodenSpoons" xml:space="preserve">
+    <value>Дерев'яні ложки</value>
+  </data>
+  <data name="SoundDrop" xml:space="preserve">
+    <value>Крапля</value>
+  </data>
+  <data name="SoundGlass" xml:space="preserve">
+    <value>Скло</value>
+  </data>
+  <data name="SoundCymbals" xml:space="preserve">
+    <value>Цимбали</value>
+  </data>
+  <data name="SoundSopilka" xml:space="preserve">
+    <value>Сопілка</value>
+  </data>
+  <data name="SoundJawHarp" xml:space="preserve">
+    <value>Дримба</value>
+  </data>
+  <data name="SoundFrameDrum" xml:space="preserve">
+    <value>Бубон</value>
+  </data>
+  <data name="SoundNavpaky" xml:space="preserve">
+    <value>Навпаки (вгору до вашої мови, униз до англійської)</value>
+  </data>
 </root>

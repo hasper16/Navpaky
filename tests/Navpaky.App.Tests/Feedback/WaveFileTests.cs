@@ -17,9 +17,7 @@ namespace Navpaky.App.Tests.Feedback {
     }
 
     [Theory]
-    [InlineData(SwitchSound.KeyClick)]
-    [InlineData(SwitchSound.SoftTick)]
-    [InlineData(SwitchSound.Chime)]
+    [MemberData(nameof(SwitchSoundPlayerTests.Sounds), MemberType = typeof(SwitchSoundPlayerTests))]
     public void EverySoundHasTheSameRateAndIsNotSilent(SwitchSound sound) {
       byte[] wave = Read(sound);
 
@@ -28,7 +26,7 @@ namespace Navpaky.App.Tests.Feedback {
     }
 
     private static byte[] Read(SwitchSound sound) {
-      using Stream wave = SwitchSoundPlayer.Open(sound)!;
+      using Stream wave = SwitchSoundPlayer.Open(SwitchSoundPlayer.Clip(sound, false))!;
       using var bytes = new MemoryStream();
       wave.CopyTo(bytes);
       return bytes.ToArray();

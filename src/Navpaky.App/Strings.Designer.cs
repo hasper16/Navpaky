@@ -1066,11 +1066,65 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bandura.
+        /// </summary>
+        public static string SoundBandura {
+            get {
+                return ResourceManager.GetString("SoundBandura", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Chime.
         /// </summary>
         public static string SoundChime {
             get {
                 return ResourceManager.GetString("SoundChime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cymbals.
+        /// </summary>
+        public static string SoundCymbals {
+            get {
+                return ResourceManager.GetString("SoundCymbals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drop.
+        /// </summary>
+        public static string SoundDrop {
+            get {
+                return ResourceManager.GetString("SoundDrop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Frame drum.
+        /// </summary>
+        public static string SoundFrameDrum {
+            get {
+                return ResourceManager.GetString("SoundFrameDrum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Glass.
+        /// </summary>
+        public static string SoundGlass {
+            get {
+                return ResourceManager.GetString("SoundGlass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jaw harp.
+        /// </summary>
+        public static string SoundJawHarp {
+            get {
+                return ResourceManager.GetString("SoundJawHarp", resourceCulture);
             }
         }
         
@@ -1084,11 +1138,38 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Navpaky (rises to your language, falls to English).
+        /// </summary>
+        public static string SoundNavpaky {
+            get {
+                return ResourceManager.GetString("SoundNavpaky", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Soft tick.
         /// </summary>
         public static string SoundSoftTick {
             get {
                 return ResourceManager.GetString("SoundSoftTick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sopilka.
+        /// </summary>
+        public static string SoundSopilka {
+            get {
+                return ResourceManager.GetString("SoundSopilka", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wooden spoons.
+        /// </summary>
+        public static string SoundWoodenSpoons {
+            get {
+                return ResourceManager.GetString("SoundWoodenSpoons", resourceCulture);
             }
         }
         

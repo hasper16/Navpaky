@@ -7,7 +7,7 @@
 ## 2. Assets (design D2, D4, D8)
 
 - [x] 2.1 Put the app mark masters (`navpaky.svg`, `navpaky-16/24/32.svg`: Q ⇄ Й drawn as shapes, arrows opposite) in `docs/design/icons/app/` with `docs/design/icons/tools/build_icons.py`, which writes `src/Navpaky.App/Navpaky.ico` (16–256 px) and `Assets/mark-64.png`, `mark-128.png`; About and Welcome show the mark. Verify: running the script twice gives the same `.ico` (same MD5); `BrandMarkTests` loads the 128 px mark.
-- [ ] 2.2 `tools/build_sounds.py` generates the nine new WAVs plus `navpaky-up.wav`, `navpaky-down.wav` (44.1 kHz, 16-bit mono, fixed seed). Verify: running it twice gives identical files; a test in `Navpaky.App.Tests` opens every `SwitchSound` resource and checks the format.
+- [x] 2.2 `tools/build_sounds.py` generates the nine new WAVs plus `navpaky-up.wav`, `navpaky-down.wav` (44.1 kHz, 16-bit mono, fixed seed). Verify: running it twice gives identical files (MD5); `WaveFileTests` and `SwitchSoundPlayerTests` open every `SwitchSound` clip and check the format.
 - [x] 2.3 Add Inter Regular and SemiBold and Grunt Grotesk Bold as resources under `src/Navpaky.App/Fonts/`; Inter replaces WPF UI's `ContentControlThemeFontFamily`, `HeadingText` uses Grunt Grotesk; both OFL texts are copied to the output. Verify: `BrandFontsTests` loads Inter and Grunt Grotesk from the resources; `Fonts/OFL-*.txt` exist in the build output.
 
 ## 3. Theme and keycap (design D1, D3)
@@ -17,7 +17,7 @@
 
 ## 4. Sounds (design D8)
 
-- [ ] 4.1 Test first: `SwitchSoundPlayer` picks `navpaky-up` for a non-English Language and `navpaky-down` for English. Then extend `Play(sound, towardEnglish)` and its callers; General lists the twelve sounds with preview. Verify: `dotnet test tests/Navpaky.App.Tests`.
+- [x] 4.1 Test first: `SwitchSoundPlayer` picks `navpaky-up` for a non-English Language and `navpaky-down` for English. Then add `Clip(sound, towardEnglish)` and `Play(sound, towardEnglish)` and update callers; General lists the twelve sounds with preview. Verify: `dotnet test tests/Navpaky.App.Tests`.
 
 ## 5. Cursor indicator (design D7)
 

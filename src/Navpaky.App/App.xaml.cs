@@ -699,7 +699,9 @@ namespace Navpaky.App {
       }
 
       if (response.Sound) {
-        _sounds!.Play(_hub.Current.SwitchSound);
+        _sounds!.Play(
+            _hub.Current.SwitchSound,
+            string.Equals(feedback.Target.LanguageCode, "EN", StringComparison.OrdinalIgnoreCase));
       }
 
       if (feedback.Cause == SwitchCause.Correction) {
@@ -813,7 +815,7 @@ namespace Navpaky.App {
       var apps = new ExcludedAppsViewModel(_hub!, AppNames.OfKey);
       SettingsSection[] sections = [
           new("PageGeneral", SymbolRegular.Settings24,
-              new GeneralPage(settings, sound => _sounds!.Play(sound))),
+              new GeneralPage(settings, sound => _sounds!.Play(sound, towardEnglish: false))),
           new("PageCorrection", SymbolRegular.TextGrammarCheckmark24,
               new CorrectionPage(settings)),
           new("PageHotkey", SymbolRegular.Keyboard24, new HotkeyPage(hotkey, _chords)),

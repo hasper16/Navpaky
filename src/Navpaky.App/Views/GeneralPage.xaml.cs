@@ -18,6 +18,15 @@ namespace Navpaky.App.Views {
         new(SwitchSound.KeyClick, "SoundKeyClick"),
         new(SwitchSound.SoftTick, "SoundSoftTick"),
         new(SwitchSound.Chime, "SoundChime"),
+        new(SwitchSound.Bandura, "SoundBandura"),
+        new(SwitchSound.WoodenSpoons, "SoundWoodenSpoons"),
+        new(SwitchSound.Drop, "SoundDrop"),
+        new(SwitchSound.Glass, "SoundGlass"),
+        new(SwitchSound.Cymbals, "SoundCymbals"),
+        new(SwitchSound.Sopilka, "SoundSopilka"),
+        new(SwitchSound.JawHarp, "SoundJawHarp"),
+        new(SwitchSound.FrameDrum, "SoundFrameDrum"),
+        new(SwitchSound.Navpaky, "SoundNavpaky"),
       };
 
       Preview.Click += (_, _) => preview(model.SwitchSound);
