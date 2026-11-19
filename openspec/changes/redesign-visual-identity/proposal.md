@@ -14,7 +14,7 @@ The owner approved an interactive prototype on 2026-11-19 (DESIGN.md, EXPERIENCE
 - Tray icon drawn as the 3D keycap from the icon set; active is red-black on a light taskbar and
   sapphire-gold on a dark one.
 - Palette follows the app theme: red and black in light, blue and yellow in dark. Headings use
-  Grunt Grotesk (OFL, shipped with its licence); body text stays Segoe UI Variable.
+  Grunt Grotesk Bold and text uses Inter (both OFL, shipped with their licences).
 - **Quick panel**: left click on the tray icon opens a panel with the current Layout (click
   switches it), Auto Correction, Sensitivity, Pause, today's statistics strip, switch sound and
   cursor indicator toggles, Settings, First steps and Quit. Right click opens the menu.
@@ -48,5 +48,5 @@ None.
 - `src/Navpaky.Core`: `SwitchSound` gains values; `Settings` gains `CursorIndicatorStyle`;
   telemetry setting states unchanged in shape.
 - New assets: `docs/design/icons/` (sources and build script), `tools/build_sounds.py`,
-  `src/Navpaky.App/Fonts/` with the OFL text.
+  `src/Navpaky.App/Fonts/` with the OFL texts.
 - Depends on: all product changes 1–15 and P1 (current main).

@@ -31,11 +31,12 @@ colors:
 typography:
   heading:
     family: "Grunt Grotesk"
-    weights: [700, 300]
+    weights: [700]
     fallback: "Segoe UI Variable Display"
   body:
-    family: "Segoe UI Variable Text"
-    fallback: "Segoe UI"
+    family: "Inter"
+    weights: [400, 600]
+    fallback: "Segoe UI Variable Text"
   legend:
     family: "Segoe UI Variable Display"
     weight: 600
@@ -76,13 +77,13 @@ least 4.5:1 contrast on its surface in both themes.
 ## Typography
 
 - Headings (window titles inside the content, section headers, the welcome greeting, the
-  quick-panel language name): Grunt Grotesk Bold; Light for secondary display lines. Both
-  styles are free under the SIL Open Font License; the font files ship with the app together
-  with the licence text.
-- Everything else: Segoe UI Variable, the system face.
+  quick-panel language name): Grunt Grotesk Bold, free under the SIL Open Font License.
+- Everything else: Inter (owner decision), also under the OFL. Both ship with the app together
+  with their licence texts; Segoe UI Variable is the fallback.
 - The tray legend and cursor indicator use Segoe UI Variable Display SemiBold so 16 px stays
   crisp.
-- ZAKON and NAMU were evaluated and dropped (owner decision).
+- ZAKON, NAMU, Grunt Grotesk Light as body text and Segoe UI were compared in the prototype;
+  the owner chose Inter.
 
 ## Layout & Spacing
 

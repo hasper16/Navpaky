@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Brand palette and fonts
-All Navpaky windows and panels SHALL use the brand palette of the current app theme: red and black accents in the light theme, blue and yellow (sapphire and gold) in the dark theme (owner decision). Headings SHALL use Grunt Grotesk, shipped with the app together with its SIL Open Font License text; other text SHALL use the Windows system font. When the brand font cannot be loaded, headings SHALL fall back to the system font.
+All Navpaky windows and panels SHALL use the brand palette of the current app theme: red and black accents in the light theme, blue and yellow (sapphire and gold) in the dark theme (owner decision). Headings SHALL use Grunt Grotesk Bold and other text SHALL use Inter (owner decision), both shipped with the app together with their SIL Open Font License texts. When a brand font cannot be loaded, the text SHALL fall back to the Windows system font.
 
 #### Scenario: Light theme accent
 - **WHEN** Windows apps use the light theme and the user opens Settings
@@ -13,7 +13,7 @@ All Navpaky windows and panels SHALL use the brand palette of the current app th
 
 #### Scenario: Licence shipped
 - **WHEN** Navpaky is installed
-- **THEN** the installed files include the Open Font License text next to the font files
+- **THEN** the installed files include the Open Font License texts of Inter and Grunt Grotesk
 
 ### Requirement: App mark
 The executable, its windows, the About section and the welcome window SHALL show the Navpaky mark: two keycaps, Latin Q and Й, which share one physical key (owner decision), joined by two arrows that point in opposite directions. Sizes of 32 px and below SHALL show the keycaps without arrows. The mark SHALL be the same in both themes.

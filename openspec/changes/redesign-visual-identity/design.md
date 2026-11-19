@@ -43,11 +43,13 @@ the system theme), App calls `ApplicationAccentColorManager.Apply(accent, theme)
 `#C8102E` for light and blue `#4C86F0` for dark. A second brush `BrandSecondaryBrush`
 (black / gold) is set in application resources for lips and the indicator dot. UI thread.
 
-### D4. Brand font as a WPF resource
-`GruntGrotesk-Bold.otf` and `-Light.otf` go to `src/Navpaky.App/Fonts/` as `Resource`, used by a
-`HeadingText` style through `pack://application:,,,/Fonts/#Grunt Grotesk`, with Segoe UI
-Variable Display as fallback in the same `FontFamily` list. `OFL.txt` is copied to the output
-folder. The font is not used below 14 px.
+### D4. Brand fonts as WPF resources
+`Inter-Regular.ttf`, `Inter-SemiBold.ttf` (Inter 4.1, rsms/inter) and `GruntGrotesk-Bold.otf` go to
+`src/Navpaky.App/Fonts/` as `Resource`. Inter replaces WPF UI's `ContentControlThemeFontFamily`
+key in `Resources.xaml`, so every WPF UI control and window takes it from one place; the
+`HeadingText` style uses `HeadingFontFamily` (Grunt Grotesk). Each `FontFamily` lists Segoe UI
+Variable as the fallback. `Fonts/OFL-Inter.txt` and `Fonts/OFL-GruntGrotesk.txt` are copied to
+the output folder. Grunt Grotesk is not used below 14 px.
 
 ### D5. Quick panel window
 `Tray/QuickPanel` is a borderless, topmost, `ShowInTaskbar=false` WPF UI window, placed above

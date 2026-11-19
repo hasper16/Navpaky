@@ -8,7 +8,7 @@
 
 - [x] 2.1 Put the app mark masters (`navpaky.svg`, `navpaky-16/24/32.svg`: Q ⇄ Й drawn as shapes, arrows opposite) in `docs/design/icons/app/` with `docs/design/icons/tools/build_icons.py`, which writes `src/Navpaky.App/Navpaky.ico` (16–256 px) and `Assets/mark-64.png`, `mark-128.png`; About and Welcome show the mark. Verify: running the script twice gives the same `.ico` (same MD5); `BrandMarkTests` loads the 128 px mark.
 - [ ] 2.2 `tools/build_sounds.py` generates the nine new WAVs plus `navpaky-up.wav`, `navpaky-down.wav` (44.1 kHz, 16-bit mono, fixed seed). Verify: running it twice gives identical files; a test in `Navpaky.App.Tests` opens every `SwitchSound` resource and checks the format.
-- [ ] 2.3 Add Grunt Grotesk Light and Bold as resources under `src/Navpaky.App/Fonts/` with `OFL.txt` copied to the output. Verify: a test loads the `HeadingText` font family and finds a Grunt Grotesk typeface; `OFL.txt` exists in the build output.
+- [x] 2.3 Add Inter Regular and SemiBold and Grunt Grotesk Bold as resources under `src/Navpaky.App/Fonts/`; Inter replaces WPF UI's `ContentControlThemeFontFamily`, `HeadingText` uses Grunt Grotesk; both OFL texts are copied to the output. Verify: `BrandFontsTests` loads Inter and Grunt Grotesk from the resources; `Fonts/OFL-*.txt` exist in the build output.
 
 ## 3. Theme and keycap (design D1, D3)
 

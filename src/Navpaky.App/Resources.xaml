@@ -11,6 +11,17 @@
     <ui:ControlsDictionary />
   </ResourceDictionary.MergedDictionaries>
 
+  <!-- Brand fonts (design D4): Inter for every control through WPF UI's own key, Grunt Grotesk
+       for headings; the system face stands in when a font cannot load. -->
+  <FontFamily x:Key="ContentControlThemeFontFamily">pack://application:,,,/Navpaky.App;component/Fonts/#Inter, Segoe UI Variable Text, Segoe UI</FontFamily>
+  <FontFamily x:Key="HeadingFontFamily">pack://application:,,,/Navpaky.App;component/Fonts/#Grunt Grotesk, Segoe UI Variable Display, Segoe UI</FontFamily>
+  <Style x:Key="HeadingText" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource HeadingFontFamily}" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="20" />
+    <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+  </Style>
+
   <!-- Its icon and menu are built at run time from the tray view-model
        (Tray/TrayIconView). -->
   <tb:TaskbarIcon x:Key="TrayIcon" ToolTipText="Navpaky" />
