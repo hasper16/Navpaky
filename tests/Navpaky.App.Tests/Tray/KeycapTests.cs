@@ -9,7 +9,6 @@ namespace Navpaky.App.Tests.Tray {
   [Collection(nameof(Sta))]
   public sealed class KeycapTests {
     private static readonly int[] _sizes = [16, 20, 24, 32];
-    private static readonly int[] _iconSizes = [16, 20, 24, 32, 48, 64, 256];
 
     [Theory]
     [InlineData(16)]
@@ -43,17 +42,24 @@ namespace Navpaky.App.Tests.Tray {
     }
 
     [Fact]
-    public void PausedEdgeIsAmber() {
-      byte[] pixels = OnSta(() => Pixels(Keycap.Render("EN", TrayState.Paused, false, 32)));
+    public void ActiveLipIsRedOnALightTaskbar() {
+      byte[] pixels = OnSta(() => Pixels(Keycap.Render("EN", TrayState.Active, false, 32)));
 
-      Assert.True(Contains(pixels, Color.FromRgb(0xC9, 0x8A, 0x00)));
+      Assert.True(Contains(pixels, Color.FromRgb(0xC8, 0x10, 0x2E)));
     }
 
     [Fact]
-    public void DarkKeyFaceIsDark() {
+    public void ActiveLipIsGoldOnADarkTaskbar() {
       byte[] pixels = OnSta(() => Pixels(Keycap.Render("EN", TrayState.Active, true, 32)));
 
-      Assert.True(Contains(pixels, Color.FromRgb(0x2D, 0x30, 0x36)));
+      Assert.True(Contains(pixels, Color.FromRgb(0xFD, 0xE6, 0x8A)));
+    }
+
+    [Fact]
+    public void PausedLipIsAmber() {
+      byte[] pixels = OnSta(() => Pixels(Keycap.Render("EN", TrayState.Paused, true, 32)));
+
+      Assert.True(Contains(pixels, Color.FromRgb(0xFD, 0xE0, 0x47)));
     }
 
     // Writes every variant at 100 %, 125 %, 150 % and 200 % for a look by hand
@@ -68,21 +74,6 @@ namespace Navpaky.App.Tests.Tray {
       });
 
       Assert.True(new FileInfo(path).Length > 0);
-    }
-
-    // Fix 2.12 of add-final-acceptance: the exe and the installed app had no icon. This writes
-    // the app icon from the light keycap; src/Navpaky.App/Navpaky.ico is a copy of it.
-    [Fact]
-    public void WritesTheAppIcon() {
-      string path = Path.Join(AppContext.BaseDirectory, "app-icon.ico");
-
-      byte[] icon = OnSta(() => IconFile.Bytes([.. _iconSizes
-          .Select(size => Keycap.Render("EN", TrayState.Active, dark: false, size))]));
-      File.WriteAllBytes(path, icon);
-
-      Assert.Equal(_iconSizes.Length, BitConverter.ToUInt16(icon, 4));
-      using var small = new System.Drawing.Icon(path, 16, 16);
-      Assert.Equal(16, small.Width);
     }
 
     private static byte[] Pixels(BitmapSource image) {

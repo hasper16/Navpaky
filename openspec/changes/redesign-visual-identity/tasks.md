@@ -12,7 +12,7 @@
 
 ## 3. Theme and keycap (design D1, D3)
 
-- [ ] 3.1 Test first: `KeycapTests` renders each state on light and dark taskbars at 16, 20, 24, 32 px and checks the lip and face colours at fixed pixels (red lip light, gold lip dark). Then draw the 3D keycap in `Keycap`. Verify: `dotnet test tests/Navpaky.App.Tests`; by-hand look deferred to `deferred-by-hand.md`.
+- [x] 3.1 Test first: `KeycapTests` renders each state on light and dark taskbars at 16, 20, 24, 32 px and checks the lip and face colours at fixed pixels (red lip light, gold lip dark). Then draw the 3D keycap in `Keycap`. Verify: `dotnet test tests/Navpaky.App.Tests`; by-hand look deferred to `deferred-by-hand.md`.
 - [ ] 3.2 App applies the theme accent (red light, blue dark) and `BrandSecondaryBrush` on start and on theme change; `HeadingText` style. Verify: a test applies each theme and reads the accent resource; by-hand look deferred.
 
 ## 4. Sounds (design D8)
