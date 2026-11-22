@@ -15,6 +15,7 @@ namespace Navpaky.App.Views {
   // Navpaky's hook sees it like any other app's, so a Correction there proves the whole pipeline.
   internal sealed partial class WelcomeWindow {
     private readonly WelcomeViewModel _model;
+    private readonly HotkeyViewModel _hotkey;
     private readonly DispatcherTimer _demo = new() { Interval = TimeSpan.FromSeconds(1.6) };
 
     // Written on the UI thread only, read on the worker thread when a Switch happens.
@@ -22,8 +23,9 @@ namespace Navpaky.App.Views {
     private nint _handle;
 
     public WelcomeWindow(
-        WelcomeViewModel model, HotkeyPage hotkey, Action openLanguageSettings) {
+        WelcomeViewModel model, HotkeyViewModel hotkey, Action openLanguageSettings) {
       _model = model;
+      _hotkey = hotkey;
       SystemThemeWatcher.Watch(this);
       InitializeComponent();
       DataContext = model;
@@ -35,7 +37,10 @@ namespace Navpaky.App.Views {
       // Key names are the same in every language.
       UndoPlus.Text = "+";
       UndoKey.Text = "Z";
-      Hotkey.Content = hotkey;
+      HotkeyShift.Click += (_, _) => hotkey.Choose(Core.Hotkey.DoubleShift);
+      HotkeyCtrl.Click += (_, _) => hotkey.Choose(Core.Hotkey.DoubleCtrl);
+      hotkey.PropertyChanged += OnHotkeyChanged;
+      ShowHotkey();
       OuterWheelScroll.Attach(Scroller);
       Localizer.Follow(this, ShowLayouts);
       model.PropertyChanged += OnModelChanged;
@@ -51,6 +56,7 @@ namespace Navpaky.App.Views {
       Next.Click += (_, _) => model.Next();
       Back.Click += (_, _) => model.Back();
       Localizer.Follow(this, ShowStep);
+      Localizer.Follow(this, ShowHotkeyKeys);
       Loaded += (_, _) => {
         TitleBarButtons.Name(TitleBar);
         Next.Focus();
@@ -66,6 +72,7 @@ namespace Navpaky.App.Views {
     protected override void OnClosed(EventArgs e) {
       _demo.Stop();
       _model.PropertyChanged -= OnModelChanged;
+      _hotkey.PropertyChanged -= OnHotkeyChanged;
       base.OnClosed(e);
     }
 
@@ -79,6 +86,21 @@ namespace Navpaky.App.Views {
           TryIt.Focus();
         }
       }
+    }
+
+    private void OnHotkeyChanged(object? sender, PropertyChangedEventArgs e) {
+      ShowHotkey();
+    }
+
+    // Neither chip is lit when another Hotkey was chosen in Settings.
+    private void ShowHotkey() {
+      HotkeyShift.IsChecked = _hotkey.Current == Core.Hotkey.DoubleShift;
+      HotkeyCtrl.IsChecked = _hotkey.Current == Core.Hotkey.DoubleCtrl;
+    }
+
+    private void ShowHotkeyKeys() {
+      HotkeyChip.Show(HotkeyShift, Core.Hotkey.DoubleShift);
+      HotkeyChip.Show(HotkeyCtrl, Core.Hotkey.DoubleCtrl);
     }
 
     private void ShowLayouts() {

@@ -310,6 +310,15 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom….
+        /// </summary>
+        public static string HotkeyCustomShort {
+            get {
+                return ResourceManager.GetString("HotkeyCustomShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Double Alt.
         /// </summary>
         public static string HotkeyDoubleAlt {
@@ -369,6 +378,15 @@ namespace Navpaky.App {
         public static string HotkeyRecording {
             get {
                 return ResourceManager.GetString("HotkeyRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ×2.
+        /// </summary>
+        public static string HotkeyTwice {
+            get {
+                return ResourceManager.GetString("HotkeyTwice", resourceCulture);
             }
         }
         
@@ -1841,15 +1859,6 @@ namespace Navpaky.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Send anonymous crash reports and daily usage counts to help improve Navpaky. Never your text..
-        /// </summary>
-        public static string WelcomeDiagnostics {
-            get {
-                return ResourceManager.GetString("WelcomeDiagnostics", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Done.
         /// </summary>
         public static string WelcomeDone {
@@ -1868,11 +1877,11 @@ namespace Navpaky.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hotkey for a manual correction.
+        ///   Looks up a localized string similar to Fix the last word by hand.
         /// </summary>
-        public static string WelcomeHotkeyTitle {
+        public static string WelcomeHotkeyHint {
             get {
-                return ResourceManager.GetString("WelcomeHotkeyTitle", resourceCulture);
+                return ResourceManager.GetString("WelcomeHotkeyHint", resourceCulture);
             }
         }
         
@@ -1909,15 +1918,6 @@ namespace Navpaky.App {
         public static string WelcomePrivacyField {
             get {
                 return ResourceManager.GetString("WelcomePrivacyField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to What you type stays on this computer..
-        /// </summary>
-        public static string WelcomePrivacyShort {
-            get {
-                return ResourceManager.GetString("WelcomePrivacyShort", resourceCulture);
             }
         }
         

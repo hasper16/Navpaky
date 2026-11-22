@@ -54,14 +54,15 @@ Shared pieces in `Resources.xaml`: `SettingRow` (label and hint left, control ri
 | Diagnostics export, About | (no export row) Tagline and version in secondary shades | Label repeated the button; plain text | Button alone; secondary shades |
 
 Still different on purpose (spec or platform):
-- Welcome step 1 keeps a one-line privacy statement (onboarding spec: step 1 states that typed text never leaves the computer); the prototype has it on step 2 only.
-- Welcome step 3 keeps the Auto Correction and launch-at-sign-in switches and all Hotkey options (onboarding spec "Main choices up front"); the prototype shows the Hotkey pills, the tray tip and crash reports only.
 - The Hotkey choice lists the build's presets (Ctrl+Space, Win+Space, custom), more than the prototype's three.
 - WPF has no letter spacing for the uppercase captions, and the window caption buttons are WPF UI's.
 - The right-click tray menu stays the standard WPF UI menu (the prototype shows only its items).
 - Hotkey options are text pills ("Двічі Shift"), not keycaps with "×2"; the desktop checks and the user guide name them by text.
 - Apps and words keeps the build's add-word field and language choice instead of the prototype's word chips.
 - Statistics has no prototype screen; it uses the brand surfaces.
+
+### D8. Welcome as in the prototype (owner decision on the second pass)
+Step 1 shows what Navpaky does, the example and Undo; the privacy line lives on step 2 under the try-it field. Step 3 is one card: Hotkey with two keycap chips (Shift ×2, Ctrl ×2, chosen through `HotkeyViewModel` like Settings; neither is lit when another Hotkey is set), the tray tip, and a "send crash reports" switch. The switch sets only `DiagnosticsConsent.CrashReports`: the label names crash reports, so it must not also agree to Usage Digests and the setup signal; those are turned on in Settings. Launch at sign-in stays on after the first start without a switch. The `onboarding` desktop checks walk steps by the try-it field and Done and read no step-3 control, so they are unchanged.
 
 ## Risks / Trade-offs
 

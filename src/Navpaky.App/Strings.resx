@@ -448,9 +448,6 @@
   <data name="WelcomeChoicesTitle" xml:space="preserve">
     <value>Your choices</value>
   </data>
-  <data name="WelcomeHotkeyTitle" xml:space="preserve">
-    <value>Hotkey for a manual correction</value>
-  </data>
   <data name="WelcomeTrayTitle" xml:space="preserve">
     <value>Pin the icon to the tray</value>
   </data>
@@ -486,9 +483,6 @@
   </data>
   <data name="MovedClose" xml:space="preserve">
     <value>Close</value>
-  </data>
-  <data name="WelcomeDiagnostics" xml:space="preserve">
-    <value>Send anonymous crash reports and daily usage counts to help improve Navpaky. Never your text.</value>
   </data>
   <data name="CrashReportsEnabled" xml:space="preserve">
     <value>Send crash and freeze reports</value>
@@ -652,9 +646,6 @@
   <data name="WelcomeUndoAfter" xml:space="preserve">
     <value>and the word comes back.</value>
   </data>
-  <data name="WelcomePrivacyShort" xml:space="preserve">
-    <value>What you type stays on this computer.</value>
-  </data>
   <data name="WelcomePrivacyField" xml:space="preserve">
     <value>What you type here goes nowhere.</value>
   </data>
@@ -684,5 +675,14 @@
   </data>
   <data name="QuickSettings" xml:space="preserve">
     <value>Settings…</value>
+  </data>
+  <data name="WelcomeHotkeyHint" xml:space="preserve">
+    <value>Fix the last word by hand</value>
+  </data>
+  <data name="HotkeyCustomShort" xml:space="preserve">
+    <value>Custom…</value>
+  </data>
+  <data name="HotkeyTwice" xml:space="preserve">
+    <value>×2</value>
   </data>
 </root>

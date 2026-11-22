@@ -448,9 +448,6 @@
   <data name="WelcomeChoicesTitle" xml:space="preserve">
     <value>Ваш вибір</value>
   </data>
-  <data name="WelcomeHotkeyTitle" xml:space="preserve">
-    <value>Гаряча клавіша для ручного виправлення</value>
-  </data>
   <data name="WelcomeTrayTitle" xml:space="preserve">
     <value>Закріпити значок у треї</value>
   </data>
@@ -486,9 +483,6 @@
   </data>
   <data name="MovedClose" xml:space="preserve">
     <value>Закрити</value>
-  </data>
-  <data name="WelcomeDiagnostics" xml:space="preserve">
-    <value>Надсилати анонімні звіти про збої та щоденні лічильники використання, щоб допомогти покращити Navpaky. Ніколи — ваш текст.</value>
   </data>
   <data name="CrashReportsEnabled" xml:space="preserve">
     <value>Надсилати звіти про збої</value>
@@ -652,9 +646,6 @@
   <data name="WelcomeUndoAfter" xml:space="preserve">
     <value>, і слово повернеться.</value>
   </data>
-  <data name="WelcomePrivacyShort" xml:space="preserve">
-    <value>Набране не залишає цей комп'ютер.</value>
-  </data>
   <data name="WelcomePrivacyField" xml:space="preserve">
     <value>Набране тут нікуди не надсилається.</value>
   </data>
@@ -684,5 +675,14 @@
   </data>
   <data name="QuickSettings" xml:space="preserve">
     <value>Налаштування…</value>
+  </data>
+  <data name="WelcomeHotkeyHint" xml:space="preserve">
+    <value>Виправити останнє слово вручну</value>
+  </data>
+  <data name="HotkeyCustomShort" xml:space="preserve">
+    <value>Власна…</value>
+  </data>
+  <data name="HotkeyTwice" xml:space="preserve">
+    <value>×2</value>
   </data>
 </root>

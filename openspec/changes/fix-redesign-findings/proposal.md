@@ -11,6 +11,7 @@ The owner's visual check of the 0.4.4 test pack (main 2ea8778) found that the re
 - **Quick panel**: the Language key switches the Layout of the window the user typed in and keeps the panel open; the panel header and the tray show the new Language. While the panel is in front, the tray keeps showing the app's Language, not the panel's.
 - Ship `OFL-Inter.txt` and `OFL-GruntGrotesk.txt` in a `Fonts` folder next to `Navpaky.App.exe`; About names no fonts.
 - Sound names in the picker are names only ("Navpaky" / "Навпаки").
+- **Welcome** follows prototype v24 exactly (owner decision): step 1 drops the privacy line (step 2 keeps its own); step 3 offers the Hotkey (Shift or Ctrl twice), the tray tip and crash reports only.
 
 ## Capabilities
 
@@ -20,6 +21,8 @@ None.
 
 ### Modified Capabilities
 
+- `onboarding`: Welcome window on first run (privacy statement on step 2), Main choices up front (the prototype's last step).
+- `telemetry`: Nothing is sent without consent (the welcome window asks about crash reports only).
 - `tray-and-settings`: Quick panel controls (Language key keeps the panel open), Brand palette and fonts (fonts on every window, licence files), Accessible and theme-aware UI (follows a theme change while running).
 
 ## Impact

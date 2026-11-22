@@ -25,6 +25,8 @@
 - [x] 4.3 Shared row, card and pill styles and the prototype's surfaces per theme; Settings pages, the Settings window chrome and sidebar, the quick panel and the Welcome window rebuilt to the prototype; Ukrainian texts from the prototype. Verify: `dotnet test` (Core, Win32, App, DesktopChecks) passes; offscreen renders of Settings, Welcome (three steps) and the quick panel in light and dark were compared with prototype v24 during the work; the look is in `docs/manual-tests/fix-redesign-findings.md`.
 - [x] 4.4 Second pass over every prototype screen in light and dark (quick panel, tray menu and keycaps, all Settings sections, Welcome steps 1-3, About, splash, indicator, Statistics): window surfaces kept after theme changes, sidebar background, pill radius, white on accent, one-line statistics, tray menu order, Welcome tray tip, export row. Test first: white on the accent in the dark theme. Verify: `dotnet test tests/Navpaky.App.Tests` passes; renders compared with prototype v24; remaining differences listed in design D7.
 
+- [x] 4.5 Test first: the Welcome view model's switch agrees to crash reports only; step 1 has no privacy line; step 3 has the Shift/Ctrl twice chips and one switch, crash reports. Then rebuild step 1 and step 3 as the prototype (design D8) with keycap chips shared with the Hotkey page. Verify: `dotnet test tests/Navpaky.App.Tests` passes.
+
 ## 5. Verification
 
 - [x] 5.1 A published single-file build passes `--check-fonts`; CI runs it. Verify: the CI step passes on the PR head.

@@ -16,15 +16,6 @@
   <!-- The compact three-step welcome of the approved prototype (fix-redesign-findings). -->
   <Window.Resources>
     <BooleanToVisibilityConverter x:Key="Shown" />
-    <Style x:Key="Keycap" TargetType="Border">
-      <Setter Property="BorderBrush" Value="{DynamicResource BrandLine}" />
-      <Setter Property="BorderThickness" Value="1,1,1,3" />
-      <Setter Property="CornerRadius" Value="5" />
-      <Setter Property="Background" Value="{DynamicResource BrandSurface}" />
-      <Setter Property="Padding" Value="7,1" />
-      <Setter Property="Margin" Value="4,0" />
-      <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
     <Style x:Key="StepBar" TargetType="Border">
       <Setter Property="Height" Value="4" />
       <Setter Property="CornerRadius" Value="2" />
@@ -100,22 +91,17 @@
             <TextBlock Text="{l:Loc WelcomeUndoBefore}"
                        VerticalAlignment="Center"
                        FontSize="13" />
-            <Border Style="{StaticResource Keycap}">
+            <Border Style="{StaticResource Keycap}" Margin="4,0">
               <TextBlock Text="{l:Loc KeyCtrl}" FontWeight="SemiBold" FontSize="12" />
             </Border>
             <TextBlock x:Name="UndoPlus" VerticalAlignment="Center" FontSize="13" />
-            <Border Style="{StaticResource Keycap}">
+            <Border Style="{StaticResource Keycap}" Margin="4,0">
               <TextBlock x:Name="UndoKey" FontWeight="SemiBold" FontSize="12" />
             </Border>
             <TextBlock Text="{l:Loc WelcomeUndoAfter}"
                        VerticalAlignment="Center"
                        FontSize="13" />
           </WrapPanel>
-          <TextBlock Text="{l:Loc WelcomePrivacyShort}"
-                     TextWrapping="Wrap"
-                     FontSize="12.5"
-                     Foreground="{DynamicResource BrandTextTertiary}"
-                     Focusable="True" />
         </StackPanel>
 
         <!-- Step 2: try it. -->
@@ -173,28 +159,26 @@
                      FontWeight="SemiBold"
                      Margin="0,0,0,8"
                      Focusable="True" />
+          <!-- The prototype's last step (owner decision): the Hotkey, the tray tip, crash reports. -->
           <Border Style="{StaticResource SettingsCard}">
             <StackPanel>
-              <v:SettingRow Label="{l:Loc AutoCorrection}">
-                <ui:ToggleSwitch IsChecked="{Binding AutoCorrectionEnabled}"
-                                 AutomationProperties.Name="{l:Loc AutoCorrection}" />
-              </v:SettingRow>
-              <v:SettingRow Label="{l:Loc LaunchAtSignIn}">
-                <ui:ToggleSwitch IsChecked="{Binding LaunchAtSignIn}"
-                                 AutomationProperties.Name="{l:Loc LaunchAtSignIn}" />
+              <v:SettingRow Label="{l:Loc PageHotkey}" Hint="{l:Loc WelcomeHotkeyHint}">
+                <StackPanel Orientation="Horizontal">
+                  <RadioButton x:Name="HotkeyShift"
+                               GroupName="WelcomeHotkey"
+                               Style="{StaticResource PillRadio}" />
+                  <RadioButton x:Name="HotkeyCtrl"
+                               GroupName="WelcomeHotkey"
+                               Style="{StaticResource PillRadio}" />
+                </StackPanel>
               </v:SettingRow>
               <v:SettingRow Label="{l:Loc WelcomeTrayTitle}" Hint="{l:Loc WelcomeTrayTip}" />
-              <v:SettingRow Label="{l:Loc WelcomeDiagnostics}">
-                <ui:ToggleSwitch IsChecked="{Binding DiagnosticsAgreed}"
-                                 AutomationProperties.Name="{l:Loc WelcomeDiagnostics}" />
+              <v:SettingRow Label="{l:Loc CrashReportsEnabled}">
+                <ui:ToggleSwitch IsChecked="{Binding CrashReportsAgreed}"
+                                 AutomationProperties.Name="{l:Loc CrashReportsEnabled}" />
               </v:SettingRow>
             </StackPanel>
           </Border>
-          <TextBlock Text="{l:Loc WelcomeHotkeyTitle}"
-                     Style="{StaticResource CardCaption}"
-                     Margin="2,6,0,6" />
-          <!-- The Hotkey page itself, so the choice works the same as in Settings. -->
-          <ContentControl x:Name="Hotkey" Focusable="False" />
         </StackPanel>
       </Grid>
     </ScrollViewer>
