@@ -69,16 +69,6 @@ namespace Navpaky.Win32 {
     }
 
     /// <summary>
-    /// Gives the focus back to a window the user worked in; Windows allows it while Navpaky's
-    /// own window is in front.
-    /// </summary>
-    /// <param name="window">The window's handle.</param>
-    /// <returns><see langword="true" /> when the window came to the front.</returns>
-    public static bool Activate(nint window) {
-      return window != 0 && PInvoke.SetForegroundWindow((HWND)window);
-    }
-
-    /// <summary>
     /// Makes a window an overlay that never takes focus, lets clicks through and stays out of
     /// the taskbar and Alt+Tab (design D5 of add-tray-and-settings-ui).
     /// </summary>

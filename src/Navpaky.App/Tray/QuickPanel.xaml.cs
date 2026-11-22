@@ -6,29 +6,20 @@ using Navpaky.Core.Detection;
 using Navpaky.Win32;
 
 namespace Navpaky.App.Tray {
-  // The quick panel above the tray (design D5 of redesign-visual-identity). It remembers the
-  // window the user typed in, so the Layout key can hand the focus back and switch that
-  // window's Layout. It closes on Esc and when it loses the focus.
+  // The quick panel above the tray (design D5 of redesign-visual-identity). Its Layout key
+  // switches the Layout of the app the user typed in and the panel stays open (design D4 of
+  // fix-redesign-findings). It closes on Esc and when it loses the focus.
   internal sealed partial class QuickPanel {
     private readonly QuickPanelViewModel _model;
-    private readonly nint _typedIn;
     private bool _closing;
 
-    // typedIn is the app window the user worked in before clicking the tray: the click itself
-    // puts the taskbar in front.
-    public QuickPanel(QuickPanelViewModel model, QuickPanelActions actions, nint typedIn) {
+    public QuickPanel(QuickPanelViewModel model, QuickPanelActions actions) {
       _model = model;
-      _typedIn = typedIn;
       InitializeComponent();
       DataContext = model;
-      LayoutKey.Click += (_, _) => {
-        CloseNow();
 
-        // A closed or unknown window: switching now would change another app's Layout.
-        if (ScreenFacts.Activate(_typedIn)) {
-          actions.SwitchLayout();
-        }
-      };
+      // The panel stays open; the app's Layout and the Language shown change in place.
+      LayoutKey.Click += (_, _) => actions.SwitchLayout();
 
       // One-way bindings with a click each, so a click on the active choice keeps it shown.
       SensCautious.Click += (_, _) => model.ChooseSensitivity(Sensitivity.Cautious);

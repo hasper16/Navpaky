@@ -10,7 +10,7 @@
 
 ## 3. Quick panel Language key (design D4)
 
-- [ ] 3.1 The Language key keeps the panel open; the worker switches the remembered window's Layout and reports it; the tray and panel show it; the tray ignores Layout changes while a Navpaky window is in front. Verify: build and `dotnet test` (Core, Win32, App); the switch in a background app is deferred to `docs/manual-tests/fix-redesign-findings.md`.
+- [x] 3.1 The Language key keeps the panel open; the worker switches the remembered window's Layout and reports it; the tray and panel show it; the tray ignores Layout changes while a Navpaky window is in front. Verify: build and `dotnet test` (Core, Win32, App); the switch in a background app is deferred to `docs/manual-tests/fix-redesign-findings.md`.
 
 ## 4. Licences (design D5)
 

@@ -115,6 +115,11 @@ namespace Navpaky.App.ViewModels {
         ? (int)Math.Round(Math.Max(0, 1 - undone) * 100)
         : null;
 
+    // Shows a change made outside the panel, such as the app's new Layout.
+    public void Refresh() {
+      Changed();
+    }
+
     public void ChooseSensitivity(Sensitivity sensitivity) {
       _hub.Update(settings => settings with { Sensitivity = sensitivity });
       Changed();
