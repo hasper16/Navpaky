@@ -99,6 +99,13 @@ namespace Navpaky.App.Tests.ViewModels {
       Assert.Equal(installed[next], QuickPanelViewModel.NextLayout(installed, installed[current]));
     }
 
+    [Fact]
+    public void LanguageNameIsTheLanguagesOwnName() {
+      _tray.LanguageCode = "UK";
+
+      Assert.Equal("Українська", Panel().LanguageName);
+    }
+
     private QuickPanelViewModel Panel() {
       return new QuickPanelViewModel(_hub, _tray, () => _stats, () => _today);
     }

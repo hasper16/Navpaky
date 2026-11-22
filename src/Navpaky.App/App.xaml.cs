@@ -19,6 +19,7 @@ using Navpaky.App.ViewModels;
 using Navpaky.App.Views;
 using Navpaky.Core;
 using Navpaky.Core.Diagnostics;
+using Navpaky.Core.Languages;
 using Navpaky.Core.Statistics;
 using Navpaky.Core.Words;
 using Navpaky.Win32;
@@ -87,6 +88,9 @@ namespace Navpaky.App {
     private SettingsHub? _hub;
     private TrayViewModel? _tray;
     private TrayIconView? _trayView;
+
+    // The Layout the tray shows; written on the UI thread only.
+    private LayoutId? _currentLayout;
     private ForegroundApps? _foregroundApps;
     private DispatcherTimer? _trayTimer;
     private DispatcherTimer? _statsTimer;
@@ -160,7 +164,13 @@ namespace Navpaky.App {
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
       var trayIcon = (TaskbarIcon)FindResource("TrayIcon");
       var commands = new TrayCommands(
-          OpenSettings, OpenStatistics, OnUpdatesItem, OpenWelcome, OpenAbout, () => Shutdown());
+          OpenSettings,
+          OpenStatistics,
+          OnUpdatesItem,
+          OpenWelcome,
+          OpenAbout,
+          () => Shutdown(),
+          OpenQuickPanel);
       _trayView = new TrayIconView(trayIcon, _tray, commands);
 #if DEBUG
       AddDebugMenuItems(_trayView);
@@ -690,6 +700,7 @@ namespace Navpaky.App {
       if (inputEvent is LayoutChanged changed) {
         string code = changed.Layout.LanguageCode;
         Dispatcher.BeginInvoke(() => {
+          _currentLayout = changed.Layout;
           _tray!.LanguageCode = code;
           RefreshTray();
         });
@@ -850,6 +861,24 @@ namespace Navpaky.App {
     }
 
     // One statistics window at a time: asking again brings it to the front.
+    private void OpenQuickPanel() {
+      var model = new QuickPanelViewModel(
+          _hub!,
+          _tray!,
+          () => _worker?.Statistics ?? StatsDocument.Empty,
+          () => DateOnly.FromDateTime(DateTime.Now));
+      var actions = new QuickPanelActions(
+          SwitchToNextLayout, OpenSettings, OpenWelcome, OpenStatistics, Shutdown, RefreshTray);
+      new QuickPanel(model, actions).ShowAtPointer();
+    }
+
+    private void SwitchToNextLayout() {
+      if (_worker is { } worker
+          && QuickPanelViewModel.NextLayout(worker.InstalledLayouts, _currentLayout) is { } next) {
+        worker.SwitchLayout(next);
+      }
+    }
+
     private void OpenStatistics() {
       if (_statisticsWindow is null) {
         var model = new StatisticsViewModel(

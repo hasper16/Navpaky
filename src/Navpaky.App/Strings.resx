@@ -610,4 +610,40 @@
   <data name="SplashGreeting" xml:space="preserve">
     <value>Hello</value>
   </data>
+  <data name="QuickCurrentApp" xml:space="preserve">
+    <value>In {0}</value>
+  </data>
+  <data name="QuickCurrentAppTitle" xml:space="preserve">
+    <value>Current app</value>
+  </data>
+  <data name="QuickPause15" xml:space="preserve">
+    <value>15 min</value>
+  </data>
+  <data name="QuickPause30" xml:space="preserve">
+    <value>30 min</value>
+  </data>
+  <data name="QuickPause60" xml:space="preserve">
+    <value>1 h</value>
+  </data>
+  <data name="QuickPause180" xml:space="preserve">
+    <value>3 h</value>
+  </data>
+  <data name="QuickCorrectedToday" xml:space="preserve">
+    <value>corrected today</value>
+  </data>
+  <data name="QuickUndoneToday" xml:space="preserve">
+    <value>undone</value>
+  </data>
+  <data name="QuickKept" xml:space="preserve">
+    <value>kept</value>
+  </data>
+  <data name="QuickHotkeyHint" xml:space="preserve">
+    <value>{0}: fix the last word</value>
+  </data>
+  <data name="QuickSwitchLayout" xml:space="preserve">
+    <value>Switch layout</value>
+  </data>
+  <data name="QuickPanelTitle" xml:space="preserve">
+    <value>Navpaky quick panel</value>
+  </data>
 </root>

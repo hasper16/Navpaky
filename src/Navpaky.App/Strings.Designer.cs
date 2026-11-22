@@ -868,6 +868,114 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to corrected today.
+        /// </summary>
+        public static string QuickCorrectedToday {
+            get {
+                return ResourceManager.GetString("QuickCorrectedToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In {0}.
+        /// </summary>
+        public static string QuickCurrentApp {
+            get {
+                return ResourceManager.GetString("QuickCurrentApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current app.
+        /// </summary>
+        public static string QuickCurrentAppTitle {
+            get {
+                return ResourceManager.GetString("QuickCurrentAppTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: fix the last word.
+        /// </summary>
+        public static string QuickHotkeyHint {
+            get {
+                return ResourceManager.GetString("QuickHotkeyHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to kept.
+        /// </summary>
+        public static string QuickKept {
+            get {
+                return ResourceManager.GetString("QuickKept", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Navpaky quick panel.
+        /// </summary>
+        public static string QuickPanelTitle {
+            get {
+                return ResourceManager.GetString("QuickPanelTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 15 min.
+        /// </summary>
+        public static string QuickPause15 {
+            get {
+                return ResourceManager.GetString("QuickPause15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 3 h.
+        /// </summary>
+        public static string QuickPause180 {
+            get {
+                return ResourceManager.GetString("QuickPause180", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 30 min.
+        /// </summary>
+        public static string QuickPause30 {
+            get {
+                return ResourceManager.GetString("QuickPause30", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 h.
+        /// </summary>
+        public static string QuickPause60 {
+            get {
+                return ResourceManager.GetString("QuickPause60", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch layout.
+        /// </summary>
+        public static string QuickSwitchLayout {
+            get {
+                return ResourceManager.GetString("QuickSwitchLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to undone.
+        /// </summary>
+        public static string QuickUndoneToday {
+            get {
+                return ResourceManager.GetString("QuickUndoneToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Refresh.
         /// </summary>
         public static string Refresh {

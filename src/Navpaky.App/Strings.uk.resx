@@ -610,4 +610,40 @@
   <data name="SplashGreeting" xml:space="preserve">
     <value>Привіт</value>
   </data>
+  <data name="QuickCurrentApp" xml:space="preserve">
+    <value>У {0}</value>
+  </data>
+  <data name="QuickCurrentAppTitle" xml:space="preserve">
+    <value>Поточна програма</value>
+  </data>
+  <data name="QuickPause15" xml:space="preserve">
+    <value>15 хв</value>
+  </data>
+  <data name="QuickPause30" xml:space="preserve">
+    <value>30 хв</value>
+  </data>
+  <data name="QuickPause60" xml:space="preserve">
+    <value>1 год</value>
+  </data>
+  <data name="QuickPause180" xml:space="preserve">
+    <value>3 год</value>
+  </data>
+  <data name="QuickCorrectedToday" xml:space="preserve">
+    <value>виправлено сьогодні</value>
+  </data>
+  <data name="QuickUndoneToday" xml:space="preserve">
+    <value>скасовано</value>
+  </data>
+  <data name="QuickKept" xml:space="preserve">
+    <value>влучних</value>
+  </data>
+  <data name="QuickHotkeyHint" xml:space="preserve">
+    <value>{0}: виправити останнє слово</value>
+  </data>
+  <data name="QuickSwitchLayout" xml:space="preserve">
+    <value>Перемкнути розкладку</value>
+  </data>
+  <data name="QuickPanelTitle" xml:space="preserve">
+    <value>Швидка панель Navpaky</value>
+  </data>
 </root>

@@ -34,7 +34,10 @@ namespace Navpaky.App.Tray {
       _icon = icon;
       _model = model;
       _commands = commands;
-      _icon.MenuActivation = PopupActivationMode.LeftOrRightClick;
+
+      // A left click opens the quick panel, a right click the menu (redesign-visual-identity).
+      _icon.MenuActivation = PopupActivationMode.RightClick;
+      _icon.TrayLeftMouseUp += (_, _) => _commands.OpenQuickPanel();
       _icon.ContextMenu = new ContextMenu();
       Localizer.BindLanguage(_icon.ContextMenu);
 

@@ -1,3 +1,4 @@
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Navpaky.Core;
 using Navpaky.Core.Detection;
@@ -28,6 +29,30 @@ namespace Navpaky.App.ViewModels {
 
     public string? LanguageCode => _tray.LanguageCode;
 
+    // The language as its speakers write it, such as "Українська", or the code when unknown.
+    public string LanguageName {
+      get {
+        try {
+          string name = CultureInfo.GetCultureInfo(LanguageCode ?? string.Empty).NativeName;
+          return name.Length == 0
+              ? LanguageCode ?? string.Empty
+              : char.ToUpper(name[0], CultureInfo.CurrentCulture) + name[1..];
+        } catch (CultureNotFoundException) {
+          return LanguageCode ?? string.Empty;
+        }
+      }
+    }
+
+    public string CurrentAppText => CurrentAppName is { } name
+        ? UiText.Format(Strings.QuickCurrentApp, name)
+        : string.Empty;
+
+    public string HotkeyHint => UiText.Format(Strings.QuickHotkeyHint, HotkeyText);
+
+    public string KeptText => KeptPercent is { } kept
+        ? kept.ToString("0", CultureInfo.CurrentCulture) + " %"
+        : "—";
+
     public bool AutoCorrection {
       get {
         return _hub.Current.AutoCorrectionEnabled;
@@ -42,6 +67,8 @@ namespace Navpaky.App.ViewModels {
     }
 
     public string? CurrentAppName => _tray.CurrentApp?.Name;
+
+    public bool HasCurrentApp => _tray.CurrentApp is not null;
 
     public bool CurrentAppEnabled {
       get {
