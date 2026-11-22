@@ -20,8 +20,16 @@ namespace Navpaky.App.Views {
     // Set while the page checks the radio button of the current Hotkey itself.
     private bool _showing;
 
-    public HotkeyPage(HotkeyViewModel model, ChordRecorder? chords = null) {
+    public HotkeyPage(HotkeyViewModel model, ChordRecorder? chords = null, bool inCard = true) {
       InitializeComponent();
+
+      // The welcome window shows the same choices inside its own card row.
+      if (!inCard) {
+        Card.Style = null;
+        Body.Margin = new Thickness(0);
+        Intro.Visibility = Visibility.Collapsed;
+      }
+
       _model = model;
       _chords = chords;
       foreach (Hotkey preset in HotkeyViewModel.Presets) {

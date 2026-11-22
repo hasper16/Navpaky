@@ -66,6 +66,9 @@ Step 1 shows what Navpaky does, the example and Undo; the privacy line lives on 
 ### D9. Hotkey keycaps and word chips (owner decision on the second pass)
 `HotkeyChip` draws each Hotkey option as keycaps: a double tap as one key and "×2", a combination as keys joined by "+"; the custom option reads "Custom…". Each option keeps its name in words ("Double Shift") as its automation name, so screen readers, the desktop checks and the user guide do not depend on the drawing. No desktop check selects a Hotkey option through the UI. Apps and words follows the prototype: the app list's buttons sit on the label row, apps are rows with "Remove", and Protected Words and Learned Words are chips with a remove button each; "Add" on each row opens the field that adds a word (Learned Words with its Language), which the word-learning spec requires.
 
+### D10. Owner findings on 0.4.9
+The welcome window's Hotkey row hosts the Settings Hotkey page without its card (`HotkeyPage(..., inCard: false)`), so it offers every preset and the custom recorder, drawn and named the same way. Every tray menu item and the quick panel's Settings, First steps and Quit carry a Fluent System Icon (WPF UI `SymbolIcon`, the family of the Settings sections and the wand): Auto Correction a grammar check, Pause and its presets a pause, timers and a repeat, Resume a play, the app item the app list, Settings a gear, Statistics a bar chart, updates a download arrow, First steps the wand, About an info sign, Quit a power sign. The icons take the text colour. The quick panel footer sizes its columns to the labels so the icons do not cut "Settings…" off.
+
 ## Risks / Trade-offs
 
 - `SystemEvents` keeps a hidden window; it is released on exit.

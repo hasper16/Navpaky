@@ -4,8 +4,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:l="clr-namespace:Navpaky.App.Localization">
   <!-- A card, as in the approved prototype (fix-redesign-findings); the choices are keycap pills. -->
-  <Border Style="{StaticResource SettingsCard}">
-    <StackPanel Margin="16,12">
+  <Border x:Name="Card" Style="{StaticResource SettingsCard}">
+    <StackPanel x:Name="Body" Margin="16,12">
       <TextBlock x:Name="Intro"
                  Text="{l:Loc HotkeyIntro}"
                  TextWrapping="Wrap"

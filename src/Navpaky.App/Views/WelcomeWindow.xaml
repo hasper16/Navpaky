@@ -159,19 +159,22 @@
                      FontWeight="SemiBold"
                      Margin="0,0,0,8"
                      Focusable="True" />
-          <!-- The prototype's last step (owner decision): the Hotkey, the tray tip, crash reports. -->
+          <!-- The prototype's last step (owner decision): the Hotkey with every option of Settings,
+               the tray tip, crash reports. -->
           <Border Style="{StaticResource SettingsCard}">
             <StackPanel>
-              <v:SettingRow Label="{l:Loc PageHotkey}" Hint="{l:Loc WelcomeHotkeyHint}">
-                <StackPanel Orientation="Horizontal">
-                  <RadioButton x:Name="HotkeyShift"
-                               GroupName="WelcomeHotkey"
-                               Style="{StaticResource PillRadio}" />
-                  <RadioButton x:Name="HotkeyCtrl"
-                               GroupName="WelcomeHotkey"
-                               Style="{StaticResource PillRadio}" />
+              <!-- The Hotkey page's own options, so the choice works as in Settings. -->
+              <Border BorderThickness="0,0,0,1"
+                      BorderBrush="{DynamicResource BrandLine}"
+                      Padding="16,12">
+                <StackPanel>
+                  <TextBlock x:Name="HotkeyLabel" Text="{l:Loc PageHotkey}" />
+                  <TextBlock Text="{l:Loc WelcomeHotkeyHint}"
+                             FontSize="12.5"
+                             Foreground="{DynamicResource BrandTextTertiary}" />
+                  <ContentControl x:Name="Hotkey" Focusable="False" Margin="0,10,0,0" />
                 </StackPanel>
-              </v:SettingRow>
+              </Border>
               <v:SettingRow Label="{l:Loc WelcomeTrayTitle}" Hint="{l:Loc WelcomeTrayTip}" />
               <v:SettingRow Label="{l:Loc CrashReportsEnabled}">
                 <ui:ToggleSwitch IsChecked="{Binding CrashReportsAgreed}"

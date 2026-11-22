@@ -15,20 +15,18 @@ namespace Navpaky.App.Views {
   // Navpaky's hook sees it like any other app's, so a Correction there proves the whole pipeline.
   internal sealed partial class WelcomeWindow {
     private readonly WelcomeViewModel _model;
-    private readonly HotkeyViewModel _hotkey;
     private readonly DispatcherTimer _demo = new() { Interval = TimeSpan.FromSeconds(1.6) };
 
     // Written on the UI thread only, read on the worker thread when a Switch happens.
     private volatile bool _tryItFocused;
     private nint _handle;
 
-    // Set while the window checks the chip of the current Hotkey itself.
-    private bool _showingHotkey;
-
     public WelcomeWindow(
-        WelcomeViewModel model, HotkeyViewModel hotkey, Action openLanguageSettings) {
+        WelcomeViewModel model,
+        HotkeyViewModel hotkey,
+        ChordRecorder? chords,
+        Action openLanguageSettings) {
       _model = model;
-      _hotkey = hotkey;
       SystemThemeWatcher.Watch(this);
       InitializeComponent();
       DataContext = model;
@@ -41,11 +39,7 @@ namespace Navpaky.App.Views {
       UndoPlus.Text = "+";
       UndoKey.Text = "Z";
 
-      // Checked, not Click: a screen reader selects a radio button without clicking it.
-      HotkeyShift.Checked += (_, _) => ChooseHotkey(Core.Hotkey.DoubleShift);
-      HotkeyCtrl.Checked += (_, _) => ChooseHotkey(Core.Hotkey.DoubleCtrl);
-      hotkey.PropertyChanged += OnHotkeyChanged;
-      ShowHotkey();
+      Hotkey.Content = new HotkeyPage(hotkey, chords, inCard: false);
       OuterWheelScroll.Attach(Scroller);
       Localizer.Follow(this, ShowLayouts);
       model.PropertyChanged += OnModelChanged;
@@ -61,7 +55,6 @@ namespace Navpaky.App.Views {
       Next.Click += (_, _) => model.Next();
       Back.Click += (_, _) => model.Back();
       Localizer.Follow(this, ShowStep);
-      Localizer.Follow(this, ShowHotkeyKeys);
       Loaded += (_, _) => {
         TitleBarButtons.Name(TitleBar);
         Next.Focus();
@@ -77,7 +70,6 @@ namespace Navpaky.App.Views {
     protected override void OnClosed(EventArgs e) {
       _demo.Stop();
       _model.PropertyChanged -= OnModelChanged;
-      _hotkey.PropertyChanged -= OnHotkeyChanged;
       base.OnClosed(e);
     }
 
@@ -91,29 +83,6 @@ namespace Navpaky.App.Views {
           TryIt.Focus();
         }
       }
-    }
-
-    private void OnHotkeyChanged(object? sender, PropertyChangedEventArgs e) {
-      ShowHotkey();
-    }
-
-    private void ChooseHotkey(Core.Hotkey hotkey) {
-      if (!_showingHotkey) {
-        _hotkey.Choose(hotkey);
-      }
-    }
-
-    // Neither chip is lit when another Hotkey was chosen in Settings.
-    private void ShowHotkey() {
-      _showingHotkey = true;
-      HotkeyShift.IsChecked = _hotkey.Current == Core.Hotkey.DoubleShift;
-      HotkeyCtrl.IsChecked = _hotkey.Current == Core.Hotkey.DoubleCtrl;
-      _showingHotkey = false;
-    }
-
-    private void ShowHotkeyKeys() {
-      HotkeyChip.Show(HotkeyShift, Core.Hotkey.DoubleShift);
-      HotkeyChip.Show(HotkeyCtrl, Core.Hotkey.DoubleCtrl);
     }
 
     private void ShowLayouts() {

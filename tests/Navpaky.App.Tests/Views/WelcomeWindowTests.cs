@@ -38,7 +38,7 @@ namespace Navpaky.App.Tests.Views {
             "CrashReportsEnabled", Navpaky.App.Localization.Localizer.Instance.Culture);
         Sta.EnsureApplication();
         Open((window, hub) => {
-          ((ToggleButton)window.FindName("HotkeyCtrl")).IsChecked = true;
+          Option(window, Hotkey.DoubleCtrl).IsChecked = true;
           chosen = hub.Current.Hotkey;
           switches.AddRange(Find<ToggleButton>((DependencyObject)window.FindName("Step2"))
               .Where(toggle => toggle is not RadioButton)
@@ -58,14 +58,40 @@ namespace Navpaky.App.Tests.Views {
       Sta.Run(() => {
         Sta.EnsureApplication();
         Open((window, hub) => {
-          var ctrl = (RadioButton)window.FindName("HotkeyCtrl");
-          ISelectionItemProvider selection = new RadioButtonAutomationPeer(ctrl);
+          ISelectionItemProvider selection =
+              new RadioButtonAutomationPeer(Option(window, Hotkey.WinSpace));
           selection.Select();
           chosen = hub.Current.Hotkey;
         });
       });
 
-      Assert.Equal(Hotkey.DoubleCtrl, chosen);
+      Assert.Equal(Hotkey.WinSpace, chosen);
+    }
+
+    // Owner finding on 0.4.9: the welcome window offers every option Settings offers.
+    [Fact]
+    public void LastStepOffersEveryHotkeyOfSettings() {
+      List<string> names = [];
+      Sta.Run(() => {
+        Sta.EnsureApplication();
+        Open((window, _) => names.AddRange(Options(window).Select(
+            option => System.Windows.Automation.AutomationProperties.GetName(option))));
+      });
+
+      Assert.Equal(HotkeyViewModel.Presets.Count + 1, names.Count);
+      Assert.Equal(
+          HotkeyViewModel.Presets.Select(HotkeyViewModel.Describe),
+          names.Take(HotkeyViewModel.Presets.Count));
+    }
+
+    private static IEnumerable<RadioButton> Options(WelcomeWindow window) {
+      return Find<RadioButton>((DependencyObject)window.FindName("Step2"));
+    }
+
+    private static RadioButton Option(WelcomeWindow window, Hotkey hotkey) {
+      string name = HotkeyViewModel.Describe(hotkey);
+      return Options(window).Single(
+          option => System.Windows.Automation.AutomationProperties.GetName(option) == name);
     }
 
     private static string Privacy(string language) {
@@ -77,7 +103,7 @@ namespace Navpaky.App.Tests.Views {
       using var hub = new SettingsHub(new Settings(), _ => { }, new ManualClock());
       using var model = new WelcomeViewModel(hub, []);
       using var hotkey = new HotkeyViewModel(hub, _ => HotkeyConflict.None);
-      var window = new WelcomeWindow(model, hotkey, () => { });
+      var window = new WelcomeWindow(model, hotkey, chords: null, () => { });
       try {
         check(window, hub);
       } finally {

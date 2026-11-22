@@ -795,7 +795,7 @@ namespace Navpaky.App {
         var hotkey = new HotkeyViewModel(_hub!, CheckHotkey);
         _welcome = welcome;
         _welcomeWindow = new WelcomeWindow(
-            welcome, hotkey, OpenLanguageSettings);
+            welcome, hotkey, _chords, OpenLanguageSettings);
         _welcomeWindow.Closed += (_, _) => {
           welcome.Close();
           _telemetry?.OnWelcomeClosed(welcome.Progress);

@@ -31,6 +31,8 @@
 
 - [x] 4.7 Test first: Protected and Learned Words lay out as chips, and each row's Add opens its field. Then rebuild Apps and words as the prototype (design D9) with its Ukrainian button texts. Verify: `dotnet test tests/Navpaky.App.Tests` passes; a render was compared with prototype v24.
 
+- [x] 4.8 Test first: the welcome window's last step offers every Settings Hotkey option by automation name; every tray menu item (also when paused, with the Pause submenu) and the quick panel's Settings, First steps and Quit show an icon. Then implement design D10. Verify: `dotnet test tests/Navpaky.App.Tests` passes; renders of the welcome step, the menu and the panel checked in light and dark.
+
 ## 5. Verification
 
 - [x] 5.1 A published single-file build passes `--check-fonts`; CI runs it. Verify: the CI step passes on the PR head.

@@ -16,12 +16,12 @@ On the first start for a Windows user, Navpaky SHALL open a welcome window that 
 - **THEN** the window shows step 3 of 3 with a Done button
 
 ### Requirement: Main choices up front
-The welcome window's last step SHALL let the user choose the Hotkey between pressing Shift twice and pressing Ctrl twice, SHALL show how to keep the tray icon visible, and SHALL offer crash reports, as in the approved prototype (owner decision). Launch at sign-in SHALL be on after the first start (design decision); Auto Correction, launch at sign-in and the other Hotkeys are set in Settings.
+The welcome window's last step SHALL let the user choose the Hotkey from the same options as Settings, drawn the same way (owner decision), SHALL show how to keep the tray icon visible, and SHALL offer crash reports, as in the approved prototype (owner decision). Launch at sign-in SHALL be on after the first start (design decision); Auto Correction, launch at sign-in and the other Hotkeys are set in Settings.
 
 #### Scenario: Launch at sign-in default
 - **WHEN** the user closes the welcome window opened at the first start without changing anything
 - **THEN** launch at sign-in is on
 
 #### Scenario: Hotkey from the welcome window
-- **WHEN** the user picks Ctrl twice on the last step
-- **THEN** the Hotkey is pressing Ctrl twice, as if chosen in Settings
+- **WHEN** the user picks Ctrl twice, or any other option Settings offers, on the last step
+- **THEN** the Hotkey is that option, as if chosen in Settings

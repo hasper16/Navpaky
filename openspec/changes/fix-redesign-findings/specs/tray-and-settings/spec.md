@@ -35,7 +35,7 @@ All windows SHALL follow the Windows light/dark theme, also when the theme chang
 - **THEN** every control can be reached and changed, and focus is always visible
 
 ### Requirement: Quick panel controls
-The quick panel SHALL show the Language of the app the user typed in before opening the panel and the state, and SHALL offer: switching that app's Layout by clicking the Language key while the panel stays open (owner decision), Auto Correction on/off, turning Navpaky off or on in that app (owner decision), Sensitivity, Pause with the tray menu's presets (the active preset resumes when clicked again), switch sound on/off, cursor indicator on/off, Settings, First steps, Quit, and a hint naming the current Hotkey. While the panel is in front, the tray icon SHALL keep showing the app's Language.
+The quick panel SHALL show the Language of the app the user typed in before opening the panel and the state, and SHALL offer: switching that app's Layout by clicking the Language key while the panel stays open (owner decision), Auto Correction on/off, turning Navpaky off or on in that app (owner decision), Sensitivity, Pause with the tray menu's presets (the active preset resumes when clicked again), switch sound on/off, cursor indicator on/off, Settings, First steps, Quit, and a hint naming the current Hotkey. Settings, First steps and Quit SHALL each carry the same icon as in the tray menu (owner decision). While the panel is in front, the tray icon SHALL keep showing the app's Language.
 
 #### Scenario: Switch Layout from the panel
 - **WHEN** the user typed in Notepad with English (US), opens the quick panel and clicks the Language key
@@ -50,3 +50,20 @@ The quick panel SHALL show the Language of the app the user typed in before open
 #### Scenario: Pause from the panel
 - **WHEN** the user clicks 30 min in the quick panel
 - **THEN** Auto Correction pauses for 30 minutes and the panel's state line says so
+
+### Requirement: Tray menu
+A right click on the tray icon SHALL open a menu with: Auto Correction on/off, Pause (15 minutes, 30 minutes, 1 hour, 3 hours, until restart; presets are a design decision) or Resume, an item to exclude or include the current app by name, Settings, Statistics, Check for updates, First steps, About, and Quit. Every item SHALL carry a monochrome icon from the icon set the Settings sections use, in the text colour (owner decision).
+
+#### Scenario: Exclude current app from the tray
+- **WHEN** the user is typing in Telegram and selects "Turn off in Telegram" from the tray menu
+- **THEN** Telegram becomes an Excluded App
+- **AND** the same item reads "Turn on in Telegram" next time
+
+#### Scenario: Right click
+- **WHEN** the user right-clicks the tray icon
+- **THEN** the tray menu opens and the quick panel does not
+
+#### Scenario: Icons on every item
+- **WHEN** the user right-clicks the tray icon
+- **THEN** every item of the menu and of its Pause submenu shows an icon
+
