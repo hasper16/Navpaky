@@ -12,8 +12,7 @@
                  ResizeMode="CanMinimize"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
-                 WindowBackdropType="None"
-                 Background="{DynamicResource BrandWindowBackground}">
+                 WindowBackdropType="None">
   <!-- The compact three-step welcome of the approved prototype (fix-redesign-findings). -->
   <Window.Resources>
     <BooleanToVisibilityConverter x:Key="Shown" />
@@ -33,7 +32,8 @@
       <Setter Property="Background" Value="{DynamicResource BrandLine}" />
     </Style>
   </Window.Resources>
-  <Grid>
+  <!-- WPF UI resets Window.Background on each theme change, so the root carries the surface. -->
+  <Grid Background="{DynamicResource BrandWindowBackground}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
@@ -42,6 +42,10 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <ui:TitleBar x:Name="TitleBar" Grid.Row="0" Title="Navpaky" ShowMaximize="False" />
+    <Border Grid.Row="0"
+            BorderBrush="{DynamicResource BrandLine}"
+            BorderThickness="0,0,0,1"
+            IsHitTestVisible="False" />
     <DockPanel Grid.Row="1" Margin="24,8,24,14">
       <Image x:Name="Mark"
              DockPanel.Dock="Left"

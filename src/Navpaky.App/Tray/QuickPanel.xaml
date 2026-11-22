@@ -210,26 +210,26 @@
                                FontSize="16"
                                VerticalAlignment="Center"
                                Foreground="{DynamicResource BrandTextTertiary}" />
-                <UniformGrid Columns="3">
+                <StackPanel Orientation="Horizontal">
                   <StackPanel>
                     <TextBlock Text="{Binding CorrectionsToday}" FontSize="20" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <TextBlock Text="{l:Loc QuickCorrectedToday}" FontSize="12" TextWrapping="Wrap" Margin="0,0,6,0"
+                    <TextBlock Text="{l:Loc QuickCorrectedToday}" FontSize="12" Margin="0,0,16,0"
                                Foreground="{DynamicResource BrandTextTertiary}" />
                   </StackPanel>
                   <StackPanel>
                     <TextBlock Text="{Binding UndosToday}" FontSize="20" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <TextBlock Text="{l:Loc QuickUndoneToday}" FontSize="12" TextWrapping="Wrap" Margin="0,0,6,0"
+                    <TextBlock Text="{l:Loc QuickUndoneToday}" FontSize="12" Margin="0,0,16,0"
                                Foreground="{DynamicResource BrandTextTertiary}" />
                   </StackPanel>
                   <StackPanel>
                     <TextBlock Text="{Binding KeptText}" FontSize="20" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <TextBlock Text="{l:Loc QuickKept}" FontSize="12" TextWrapping="Wrap" Margin="0,0,6,0"
+                    <TextBlock Text="{l:Loc QuickKept}" FontSize="12" Margin="0,0,16,0"
                                Foreground="{DynamicResource BrandTextTertiary}" />
                   </StackPanel>
-                </UniformGrid>
+                </StackPanel>
               </DockPanel>
             </Border>
             <ControlTemplate.Triggers>

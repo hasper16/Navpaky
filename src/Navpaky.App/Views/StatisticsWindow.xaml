@@ -11,9 +11,9 @@
                  ResizeMode="CanMinimize"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
-                 WindowBackdropType="None"
-                 Background="{DynamicResource BrandWindowBackground}">
-  <Grid Grid.IsSharedSizeScope="True">
+                 WindowBackdropType="None">
+  <!-- WPF UI resets Window.Background on each theme change, so the root carries the surface. -->
+  <Grid Grid.IsSharedSizeScope="True" Background="{DynamicResource BrandWindowBackground}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />

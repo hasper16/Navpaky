@@ -452,10 +452,10 @@
     <value>Hotkey for a manual correction</value>
   </data>
   <data name="WelcomeTrayTitle" xml:space="preserve">
-    <value>Keep Navpaky in sight</value>
+    <value>Pin the icon to the tray</value>
   </data>
   <data name="WelcomeTrayTip" xml:space="preserve">
-    <value>Windows may hide the Navpaky icon under the arrow in the taskbar. To keep it visible, open Settings &gt; Personalization &gt; Taskbar &gt; Other system tray icons and turn Navpaky on.</value>
+    <value>Windows may hide it under «^». Drag the icon onto the taskbar.</value>
   </data>
   <data name="WelcomeDone" xml:space="preserve">
     <value>Done</value>

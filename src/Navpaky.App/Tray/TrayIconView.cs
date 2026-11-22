@@ -123,14 +123,14 @@ namespace Navpaky.App.Tray {
       items.Add(new Separator());
       items.Add(Item(Strings.MenuSettings, _commands.OpenSettings));
       items.Add(Item(Strings.MenuStatistics, _commands.OpenStatistics));
-      MenuItem updates = Item(_model.UpdateItemText, _commands.Updates);
-      updates.IsEnabled = _model.UpdateItemEnabled;
-      items.Add(updates);
       MenuItem firstSteps = Item(Strings.MenuWelcome, _commands.OpenWelcome);
       firstSteps.Icon = new SymbolIcon { Symbol = SymbolRegular.Wand24 };
       items.Add(firstSteps);
-      items.Add(Item(Strings.MenuAbout, _commands.OpenAbout));
       items.Add(new Separator());
+      MenuItem updates = Item(_model.UpdateItemText, _commands.Updates);
+      updates.IsEnabled = _model.UpdateItemEnabled;
+      items.Add(updates);
+      items.Add(Item(Strings.MenuAbout, _commands.OpenAbout));
       items.Add(Item(Strings.MenuQuit, _commands.Quit));
     }
 

@@ -22,9 +22,12 @@
           <ui:ToggleSwitch IsChecked="{Binding AnalysisLogEnabled}"
                            AutomationProperties.Name="{l:Loc AnalysisLogEnabled}" />
         </v:SettingRow>
-        <v:SettingRow Label="{l:Loc OpenExport}">
-          <ui:Button x:Name="ExportButton" Content="{l:Loc OpenExport}" />
-        </v:SettingRow>
+        <!-- The button names itself; a label beside it would repeat it. -->
+        <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource BrandLine}" Padding="16,12">
+          <ui:Button x:Name="ExportButton"
+                     HorizontalAlignment="Left"
+                     Content="{l:Loc OpenExport}" />
+        </Border>
         <TextBlock Text="{l:Loc PrivacyNote}"
                    TextWrapping="Wrap"
                    Margin="16,12"

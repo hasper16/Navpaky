@@ -14,8 +14,14 @@
              AutomationProperties.Name="Navpaky" />
       <StackPanel VerticalAlignment="Center">
         <TextBlock Text="Navpaky" Style="{StaticResource HeadingText}" FontSize="22" />
-        <TextBlock Text="{l:Loc AboutTagline}" Margin="0,2,0,0" Focusable="True" />
-        <TextBlock x:Name="Version" Style="{StaticResource HintText}" Focusable="True" />
+        <TextBlock Text="{l:Loc AboutTagline}"
+                   Margin="0,2,0,0"
+                   Foreground="{DynamicResource BrandTextSecondary}"
+                   Focusable="True" />
+        <TextBlock x:Name="Version"
+                   Style="{StaticResource HintText}"
+                   Foreground="{DynamicResource BrandTextTertiary}"
+                   Focusable="True" />
       </StackPanel>
     </DockPanel>
   </Border>

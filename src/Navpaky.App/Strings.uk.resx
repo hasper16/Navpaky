@@ -452,10 +452,10 @@
     <value>Гаряча клавіша для ручного виправлення</value>
   </data>
   <data name="WelcomeTrayTitle" xml:space="preserve">
-    <value>Тримайте Navpaky на виду</value>
+    <value>Закріпити значок у треї</value>
   </data>
   <data name="WelcomeTrayTip" xml:space="preserve">
-    <value>Windows може сховати значок Navpaky під стрілкою на панелі завдань. Щоб він був видимий, відкрийте Параметри &gt; Персоналізація &gt; Панель завдань &gt; Інші піктограми в системному лотку та ввімкніть Navpaky.</value>
+    <value>Windows може сховати його під «^». Перетягніть значок на панель.</value>
   </data>
   <data name="WelcomeDone" xml:space="preserve">
     <value>Готово</value>

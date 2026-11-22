@@ -12,9 +12,9 @@
                  MinHeight="420"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
-                 WindowBackdropType="None"
-                 Background="{DynamicResource BrandWindowBackground}">
-  <Grid>
+                 WindowBackdropType="None">
+  <!-- WPF UI resets Window.Background on each theme change, so the root carries the surface. -->
+  <Grid Background="{DynamicResource BrandWindowBackground}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
@@ -28,16 +28,25 @@
                  Grid.Row="0"
                  Grid.ColumnSpan="2"
                  Title="{l:Loc SettingsTitle}" />
+    <Border Grid.Row="0"
+            Grid.ColumnSpan="2"
+            BorderBrush="{DynamicResource BrandLine}"
+            BorderThickness="0,0,0,1"
+            IsHitTestVisible="False" />
     <!-- A ListBox rather than WPF UI's NavigationView: its items expose selection to screen
          readers and follow the arrow keys (design D3). -->
+    <!-- WPF UI's ListBox template draws neither its background nor its border. -->
+    <Border Grid.Row="1"
+            Grid.Column="0"
+            Background="{DynamicResource BrandSurface}"
+            BorderBrush="{DynamicResource BrandLine}"
+            BorderThickness="0,0,1,0" />
     <ListBox x:Name="Sections"
              Grid.Row="1"
              Grid.Column="0"
              Margin="0"
              Padding="8,12"
-             Background="{DynamicResource BrandSurface}"
-             BorderBrush="{DynamicResource BrandLine}"
-             BorderThickness="0,0,1,0"
+             Background="Transparent"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
              AutomationProperties.Name="{l:Loc SettingsTitle}">
       <ListBox.ItemTemplate>

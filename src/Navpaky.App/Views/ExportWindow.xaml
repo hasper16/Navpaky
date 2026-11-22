@@ -11,9 +11,9 @@
                  MinHeight="360"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
-                 WindowBackdropType="None"
-                 Background="{DynamicResource BrandWindowBackground}">
-  <Grid>
+                 WindowBackdropType="None">
+  <!-- WPF UI resets Window.Background on each theme change, so the root carries the surface. -->
+  <Grid Background="{DynamicResource BrandWindowBackground}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />

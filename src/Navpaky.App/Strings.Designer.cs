@@ -1949,7 +1949,7 @@ namespace Navpaky.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows may hide the Navpaky icon under the arrow in the taskbar. To keep it visible, open Settings &gt; Personalization &gt; Taskbar &gt; Other system tray icons and turn Navpaky on..
+        ///   Looks up a localized string similar to Windows may hide it under «^». Drag the icon onto the taskbar..
         /// </summary>
         public static string WelcomeTrayTip {
             get {
@@ -1958,7 +1958,7 @@ namespace Navpaky.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Keep Navpaky in sight.
+        ///   Looks up a localized string similar to Pin the icon to the tray.
         /// </summary>
         public static string WelcomeTrayTitle {
             get {

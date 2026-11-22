@@ -45,6 +45,13 @@ Shared pieces in `Resources.xaml`: `SettingRow` (label and hint left, control ri
 | Quick panel | Accent UK key with a gold/black lip; "● Працює"; uppercase captions; app icon; pills with the chosen one filled; "Смілива"; stats with a chevron; short labels; plain footer buttons | Pale square; "Navpaky увімкнено"; boxed buttons; long labels | As the prototype |
 | Welcome | Compact; "Navpaky" title bar with mark; Grunt heading "Вітаємо в Navpaky" and "Пишіть, ми виправимо."; three-part progress bar; live example "ghbdsn → привіт" with a key; Ctrl + Z as keys | Tall window, long text, no heading or progress bar | As the prototype |
 | Statistics, Export | Brand surfaces | Mica | Brand surfaces |
+| Window surfaces (second pass) | Navy / white page, lighter sidebar with a divider, line under the title bar | WPF UI reset the window background to its grey on every theme change; the sidebar list drew no background | Surfaces on each window's root and a border behind the sidebar; title-bar line |
+| Pills and chips | Rounded ends, secondary text until chosen | `CornerRadius` 999 drew ovals | Radius of half the height, 13 px text |
+| On-accent text and switch knobs | White in both themes | Black in dark | White in both themes |
+| Quick panel statistics | One line per figure | Labels wrapped | One line per figure |
+| Tray menu | … Statistics, First steps, separator, Check for updates, About, Quit | Updates before First steps, separator before Quit | As the prototype |
+| Welcome tray tip | "Закріпити значок у треї", drag the icon onto the taskbar | Long Settings path | As the prototype |
+| Diagnostics export, About | (no export row) Tagline and version in secondary shades | Label repeated the button; plain text | Button alone; secondary shades |
 
 Still different on purpose (spec or platform):
 - Welcome step 1 keeps a one-line privacy statement (onboarding spec: step 1 states that typed text never leaves the computer); the prototype has it on step 2 only.
@@ -52,6 +59,9 @@ Still different on purpose (spec or platform):
 - The Hotkey choice lists the build's presets (Ctrl+Space, Win+Space, custom), more than the prototype's three.
 - WPF has no letter spacing for the uppercase captions, and the window caption buttons are WPF UI's.
 - The right-click tray menu stays the standard WPF UI menu (the prototype shows only its items).
+- Hotkey options are text pills ("Двічі Shift"), not keycaps with "×2"; the desktop checks and the user guide name them by text.
+- Apps and words keeps the build's add-word field and language choice instead of the prototype's word chips.
+- Statistics has no prototype screen; it uses the brand surfaces.
 
 ## Risks / Trade-offs
 

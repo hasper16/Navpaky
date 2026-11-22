@@ -9,6 +9,13 @@ namespace Navpaky.App.Views {
   // uses. The shades are fixed (design D2 of fix-redesign-findings): WPF UI's own derivation
   // turns the blue pale in the dark theme.
   internal static class BrandTheme {
+    // Brushes WPF UI paints on the accent; the prototype keeps them white in both themes.
+    private static readonly string[] _onAccent = [
+        "TextOnAccentFillColorPrimaryBrush", "AccentButtonForeground",
+        "AccentButtonForegroundPointerOver", "AccentButtonForegroundPressed",
+        "ToggleSwitchKnobFillOn", "ToggleSwitchKnobFillOnPointerOver",
+        "ToggleSwitchKnobFillOnPressed"];
+
     private static readonly Color[] _light = [
         Rgb(0xC8102E), Rgb(0xB00E28), Rgb(0x8F0B20), Rgb(0x6E0818)];
 
@@ -34,6 +41,9 @@ namespace Navpaky.App.Views {
       Color[] shades = dark ? _dark : _light;
       ApplicationAccentColorManager.Apply(shades[0], shades[1], shades[2], shades[3]);
       Set("BrandSecondaryBrush", Secondary(dark));
+      foreach (string key in _onAccent) {
+        Set(key, Colors.White);
+      }
 
       // The prototype's surfaces: navy in dark, white and blue-grey in light.
       Set("BrandWindowBackground", dark ? Argb(0xFF131B2F) : Argb(0xFFFFFFFF));

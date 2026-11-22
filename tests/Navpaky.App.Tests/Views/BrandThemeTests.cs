@@ -42,6 +42,22 @@ namespace Navpaky.App.Tests.Views {
       Assert.Equal(primary, applied);
     }
 
+    // The prototype puts white on the accent in both themes; WPF UI's dark theme uses black.
+    [Theory]
+    [InlineData("ToggleSwitchKnobFillOn")]
+    [InlineData("AccentButtonForeground")]
+    public void TextOnTheAccentIsWhiteInTheDarkTheme(string key) {
+      string? applied = null;
+      Sta.Run(() => {
+        Sta.EnsureApplication();
+        ApplicationThemeManager.Apply(ApplicationTheme.Dark);
+        BrandTheme.Apply(ApplicationTheme.Dark);
+        applied = Hex(((SolidColorBrush)UiApplication.Current.Resources[key]).Color);
+      });
+
+      Assert.Equal("#FFFFFFFF", applied);
+    }
+
     [Fact]
     public void RefreshFollowsAThemeChangedWhileRunning() {
       ApplicationTheme after = ApplicationTheme.Unknown;
