@@ -29,7 +29,7 @@
   <SolidColorBrush x:Key="BrandSurface" Color="#F5F7FB" />
   <SolidColorBrush x:Key="BrandLine" Color="#1F12283A" />
   <SolidColorBrush x:Key="BrandTextSecondary" Color="#4A5468" />
-  <SolidColorBrush x:Key="BrandTextTertiary" Color="#7A8498" />
+  <SolidColorBrush x:Key="BrandTextTertiary" Color="#5F6B80" />
 
   <Style x:Key="SettingsCard" TargetType="Border">
     <Setter Property="Background" Value="{DynamicResource BrandSurface}" />

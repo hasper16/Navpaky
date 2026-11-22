@@ -139,19 +139,19 @@
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
             </DockPanel>
-            <StackPanel x:Name="ProtectedEditor"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right"
+            <WrapPanel x:Name="ProtectedEditor"
+                       HorizontalAlignment="Right"
                         Margin="0,8,0,0"
                         Visibility="Collapsed">
               <TextBox x:Name="NewProtected"
                        MinWidth="200"
+                       Margin="0,0,0,4"
                        AutomationProperties.Name="{l:Loc NewWord}" />
               <ui:Button x:Name="AddProtected"
                          Content="{l:Loc Add}"
                          Appearance="Primary"
-                         Margin="8,0,0,0" />
-            </StackPanel>
+                         Margin="8,0,0,4" />
+            </WrapPanel>
           </StackPanel>
         </Border>
         <Border Style="{StaticResource WordRow}" BorderThickness="0">
@@ -204,17 +204,17 @@
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
             </DockPanel>
-            <StackPanel x:Name="LearnedEditor"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right"
+            <WrapPanel x:Name="LearnedEditor"
+                       HorizontalAlignment="Right"
                         Margin="0,8,0,0"
                         Visibility="Collapsed">
               <TextBox x:Name="NewLearned"
                        MinWidth="200"
+                       Margin="0,0,0,4"
                        AutomationProperties.Name="{l:Loc NewWord}" />
               <ComboBox x:Name="LearnedLanguage"
                         MinWidth="120"
-                        Margin="8,0,0,0"
+                        Margin="8,0,0,4"
                         AutomationProperties.Name="{l:Loc WordLanguage}"
                         ItemTemplate="{StaticResource LocalizedChoice}"
                         ItemContainerStyle="{StaticResource LocalizedChoiceItem}"
@@ -222,8 +222,8 @@
               <ui:Button x:Name="AddLearned"
                          Content="{l:Loc Add}"
                          Appearance="Primary"
-                         Margin="8,0,0,0" />
-            </StackPanel>
+                         Margin="8,0,0,4" />
+            </WrapPanel>
           </StackPanel>
         </Border>
       </StackPanel>

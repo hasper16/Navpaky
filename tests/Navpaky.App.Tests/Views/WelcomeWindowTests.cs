@@ -1,4 +1,6 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Navpaky.App.Onboarding;
@@ -36,8 +38,7 @@ namespace Navpaky.App.Tests.Views {
             "CrashReportsEnabled", Navpaky.App.Localization.Localizer.Instance.Culture);
         Sta.EnsureApplication();
         Open((window, hub) => {
-          var ctrl = (ToggleButton)window.FindName("HotkeyCtrl");
-          ctrl.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+          ((ToggleButton)window.FindName("HotkeyCtrl")).IsChecked = true;
           chosen = hub.Current.Hotkey;
           switches.AddRange(Find<ToggleButton>((DependencyObject)window.FindName("Step2"))
               .Where(toggle => toggle is not RadioButton)
@@ -48,6 +49,23 @@ namespace Navpaky.App.Tests.Views {
 
       Assert.Equal(Hotkey.DoubleCtrl, chosen);
       Assert.Equal([crashReports!], switches);
+    }
+
+    // A screen reader selects a radio button without a click.
+    [Fact]
+    public void ScreenReaderSelectionChoosesTheHotkey() {
+      Hotkey chosen = Hotkey.DoubleShift;
+      Sta.Run(() => {
+        Sta.EnsureApplication();
+        Open((window, hub) => {
+          var ctrl = (RadioButton)window.FindName("HotkeyCtrl");
+          ISelectionItemProvider selection = new RadioButtonAutomationPeer(ctrl);
+          selection.Select();
+          chosen = hub.Current.Hotkey;
+        });
+      });
+
+      Assert.Equal(Hotkey.DoubleCtrl, chosen);
     }
 
     private static string Privacy(string language) {

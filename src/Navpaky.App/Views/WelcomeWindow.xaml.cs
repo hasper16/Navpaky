@@ -22,6 +22,9 @@ namespace Navpaky.App.Views {
     private volatile bool _tryItFocused;
     private nint _handle;
 
+    // Set while the window checks the chip of the current Hotkey itself.
+    private bool _showingHotkey;
+
     public WelcomeWindow(
         WelcomeViewModel model, HotkeyViewModel hotkey, Action openLanguageSettings) {
       _model = model;
@@ -37,8 +40,10 @@ namespace Navpaky.App.Views {
       // Key names are the same in every language.
       UndoPlus.Text = "+";
       UndoKey.Text = "Z";
-      HotkeyShift.Click += (_, _) => hotkey.Choose(Core.Hotkey.DoubleShift);
-      HotkeyCtrl.Click += (_, _) => hotkey.Choose(Core.Hotkey.DoubleCtrl);
+
+      // Checked, not Click: a screen reader selects a radio button without clicking it.
+      HotkeyShift.Checked += (_, _) => ChooseHotkey(Core.Hotkey.DoubleShift);
+      HotkeyCtrl.Checked += (_, _) => ChooseHotkey(Core.Hotkey.DoubleCtrl);
       hotkey.PropertyChanged += OnHotkeyChanged;
       ShowHotkey();
       OuterWheelScroll.Attach(Scroller);
@@ -92,10 +97,18 @@ namespace Navpaky.App.Views {
       ShowHotkey();
     }
 
+    private void ChooseHotkey(Core.Hotkey hotkey) {
+      if (!_showingHotkey) {
+        _hotkey.Choose(hotkey);
+      }
+    }
+
     // Neither chip is lit when another Hotkey was chosen in Settings.
     private void ShowHotkey() {
+      _showingHotkey = true;
       HotkeyShift.IsChecked = _hotkey.Current == Core.Hotkey.DoubleShift;
       HotkeyCtrl.IsChecked = _hotkey.Current == Core.Hotkey.DoubleCtrl;
+      _showingHotkey = false;
     }
 
     private void ShowHotkeyKeys() {
