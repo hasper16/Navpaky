@@ -61,14 +61,14 @@ namespace Navpaky.DesktopChecks {
     private static bool PressDone(AutomationElement window) {
       // Done shows on the last of the three steps (redesign-visual-identity): step 2 has the
       // try-it field, step 3 the Done button. A step that does not come stops the walk.
-      if (Named(window, "Done", ControlType.Button) is null
-          && Named(window, _tryItName, ControlType.Edit) is null
-          && !PressNext(window, () => Named(window, _tryItName, ControlType.Edit) is not null)) {
+      if (!Shown(window, "Done", ControlType.Button)
+          && !Shown(window, _tryItName, ControlType.Edit)
+          && !PressNext(window, () => Shown(window, _tryItName, ControlType.Edit))) {
         return false;
       }
 
-      if (Named(window, "Done", ControlType.Button) is null
-          && !PressNext(window, () => Named(window, "Done", ControlType.Button) is not null)) {
+      if (!Shown(window, "Done", ControlType.Button)
+          && !PressNext(window, () => Shown(window, "Done", ControlType.Button))) {
         return false;
       }
 
@@ -78,6 +78,11 @@ namespace Navpaky.DesktopChecks {
 
       ((InvokePattern)done.GetCurrentPattern(InvokePattern.Pattern)).Invoke();
       return WelcomeGone();
+    }
+
+    // An element of the step on screen; UI Automation may still list a hidden step's elements.
+    private static bool Shown(AutomationElement window, string name, ControlType type) {
+      return Named(window, name, type) is { Current.IsOffscreen: false };
     }
 
     // Presses Next and waits until the next step shows what arrived says it should.
@@ -124,9 +129,8 @@ namespace Navpaky.DesktopChecks {
 
     private void CheckTryIt() {
       // The try-it field is on step 2 of 3 (redesign-visual-identity).
-      if (WelcomeWindow(_uiWait) is { } shown
-          && Named(shown, _tryItName, ControlType.Edit) is null) {
-        PressNext(shown, () => Named(shown, _tryItName, ControlType.Edit) is not null);
+      if (WelcomeWindow(_uiWait) is { } shown && !Shown(shown, _tryItName, ControlType.Edit)) {
+        PressNext(shown, () => Shown(shown, _tryItName, ControlType.Edit));
       }
 
       if (WelcomeWindow(_uiWait) is not { } window
