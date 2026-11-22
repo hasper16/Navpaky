@@ -137,6 +137,7 @@ namespace Navpaky.App {
 
       _incidents = new QueuedIncidentLog(new IncidentLog(_localFolder), ReportIncidentNotSaved);
       ApplicationThemeManager.ApplySystemTheme();
+      BrandTheme.Follow();
       IconText.HideFromScreenReaders();
 
       // Windows holds the truth about starting at sign-in: Task Manager can change it.
