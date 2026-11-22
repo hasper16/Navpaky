@@ -19,7 +19,6 @@ using Navpaky.App.ViewModels;
 using Navpaky.App.Views;
 using Navpaky.Core;
 using Navpaky.Core.Diagnostics;
-using Navpaky.Core.Languages;
 using Navpaky.Core.Statistics;
 using Navpaky.Core.Words;
 using Navpaky.Win32;
@@ -88,9 +87,6 @@ namespace Navpaky.App {
     private SettingsHub? _hub;
     private TrayViewModel? _tray;
     private TrayIconView? _trayView;
-
-    // The Layout of the app the user works in; written on the UI thread only.
-    private LayoutId? _currentLayout;
 
     // The last app window the user worked in, never the taskbar; written on the UI thread only.
     private nint _typedInWindow;
@@ -705,14 +701,7 @@ namespace Navpaky.App {
 
       if (inputEvent is LayoutChanged changed) {
         string code = changed.Layout.LanguageCode;
-
-        // The quick panel has a Layout of its own; the next Layout follows the app's.
-        bool inApp = ForegroundApps.AppOf(ForegroundApps.CurrentWindow()) is not null;
         Dispatcher.BeginInvoke(() => {
-          if (inApp) {
-            _currentLayout = changed.Layout;
-          }
-
           _tray!.LanguageCode = code;
           RefreshTray();
         });
@@ -884,11 +873,9 @@ namespace Navpaky.App {
       new QuickPanel(model, actions, _typedInWindow).ShowAtPointer();
     }
 
+    // The worker reads the Layout of the app the panel gave the focus back to.
     private void SwitchToNextLayout() {
-      if (_worker is { } worker
-          && QuickPanelViewModel.NextLayout(worker.InstalledLayouts, _currentLayout) is { } next) {
-        worker.SwitchLayout(next);
-      }
+      _worker?.SwitchToNextLayout();
     }
 
     private void OpenStatistics() {

@@ -1,7 +1,6 @@
 using Navpaky.App.ViewModels;
 using Navpaky.Core;
 using Navpaky.Core.Detection;
-using Navpaky.Core.Languages;
 using Navpaky.Core.Statistics;
 using Navpaky.Core.Tests;
 using Xunit;
@@ -11,10 +10,6 @@ namespace Navpaky.App.Tests.ViewModels {
     private static readonly DateOnly _today = new(2026, 11, 22);
     private static readonly CurrentApp _telegram =
         new(new AppId(@"C:\Apps\Telegram\Telegram.exe"), "Telegram");
-
-    private static readonly LayoutId _english = new(0x00000409);
-    private static readonly LayoutId _ukrainian = new(0x00000422);
-    private static readonly LayoutId _russian = new(0x00000419);
 
     private readonly ManualClock _clock = new();
     private readonly SettingsHub _hub;
@@ -111,15 +106,6 @@ namespace Navpaky.App.Tests.ViewModels {
       _hub.Update(settings => settings with { StatisticsEnabled = false });
 
       Assert.False(Panel().ShowStatistics);
-    }
-
-    [Theory]
-    [InlineData(0, 1)]
-    [InlineData(2, 0)]
-    public void NextLayoutFollowsTheInstalledOrder(int current, int next) {
-      LayoutId[] installed = [_english, _ukrainian, _russian];
-
-      Assert.Equal(installed[next], QuickPanelViewModel.NextLayout(installed, installed[current]));
     }
 
     [Fact]

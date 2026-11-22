@@ -59,9 +59,17 @@ namespace Navpaky.DesktopChecks {
     }
 
     private static bool PressDone(AutomationElement window) {
-      // Done shows on the last of the three steps (redesign-visual-identity).
-      for (int step = 0; step < 2 && Named(window, "Done", ControlType.Button) is null; step++) {
-        PressNext(window, () => Named(window, "Done", ControlType.Button) is not null);
+      // Done shows on the last of the three steps (redesign-visual-identity): step 2 has the
+      // try-it field, step 3 the Done button. A step that does not come stops the walk.
+      if (Named(window, "Done", ControlType.Button) is null
+          && Named(window, _tryItName, ControlType.Edit) is null
+          && !PressNext(window, () => Named(window, _tryItName, ControlType.Edit) is not null)) {
+        return false;
+      }
+
+      if (Named(window, "Done", ControlType.Button) is null
+          && !PressNext(window, () => Named(window, "Done", ControlType.Button) is not null)) {
+        return false;
       }
 
       if (Named(window, "Done", ControlType.Button) is not { } done) {
@@ -73,11 +81,13 @@ namespace Navpaky.DesktopChecks {
     }
 
     // Presses Next and waits until the next step shows what arrived says it should.
-    private static void PressNext(AutomationElement window, Func<bool> arrived) {
-      if (Named(window, "Next", ControlType.Button) is { } next) {
-        ((InvokePattern)next.GetCurrentPattern(InvokePattern.Pattern)).Invoke();
-        EventLog.WaitFor(arrived, _uiWait);
+    private static bool PressNext(AutomationElement window, Func<bool> arrived) {
+      if (Named(window, "Next", ControlType.Button) is not { } next) {
+        return false;
       }
+
+      ((InvokePattern)next.GetCurrentPattern(InvokePattern.Pattern)).Invoke();
+      return EventLog.WaitFor(arrived, _uiWait);
     }
 
     private static bool WelcomeCompletedSaved() {

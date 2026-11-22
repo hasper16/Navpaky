@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="logo-title logo-desc">
   <title id="logo-title">Navpaky App Icon</title>
-  <desc id="logo-desc">Two 3D keyboard keycaps side by side inside a dark squircle: a glowing golden-rimmed cobalt-blue keycap with Ukrainian letter Ї on the left, and a dark graphite keycap with Latin letter Q on the right, connected by top and bottom luminous curved swap arrows.</desc>
+  <desc id="logo-desc">Two 3D keyboard keycaps side by side inside a dark squircle: a dark graphite keycap with Latin letter Q on the left and a gold-rimmed cobalt-blue keycap with Ukrainian letter Й on the right, the same physical key, joined by a top arrow pointing right and a bottom arrow pointing left.</desc>
   <defs>
     <filter id="plateShadow" x="-12%" y="-10%" width="124%" height="126%">
       <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#05070B" flood-opacity="0.45"/>

@@ -2,7 +2,6 @@ using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Navpaky.Core;
 using Navpaky.Core.Detection;
-using Navpaky.Core.Languages;
 using Navpaky.Core.Statistics;
 
 namespace Navpaky.App.ViewModels {
@@ -115,16 +114,6 @@ namespace Navpaky.App.ViewModels {
     public int? KeptPercent => _today.UndoShare is { } undone
         ? (int)Math.Round(Math.Max(0, 1 - undone) * 100)
         : null;
-
-    // The Layout after the current one in the installed order, wrapping round.
-    public static LayoutId? NextLayout(IReadOnlyList<LayoutId> installed, LayoutId? current) {
-      if (installed.Count == 0) {
-        return null;
-      }
-
-      int index = current is { } layout ? installed.ToList().IndexOf(layout) : -1;
-      return installed[(index + 1) % installed.Count];
-    }
 
     public void ChooseSensitivity(Sensitivity sensitivity) {
       _hub.Update(settings => settings with { Sensitivity = sensitivity });
