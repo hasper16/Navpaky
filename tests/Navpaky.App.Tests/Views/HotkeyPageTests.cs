@@ -15,14 +15,7 @@ namespace Navpaky.App.Tests.Views {
   public sealed class HotkeyPageTests {
     // The page takes its card and pill styles from Resources.xaml.
     public HotkeyPageTests() {
-      Sta.Run(() => {
-        if (Application.Current is null) {
-          var host = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-          host.Resources.MergedDictionaries.Add(new ResourceDictionary {
-            Source = new Uri("pack://application:,,,/Navpaky.App;component/Resources.xaml"),
-          });
-        }
-      });
+      Sta.Run(Sta.EnsureApplication);
     }
 
     [Fact]

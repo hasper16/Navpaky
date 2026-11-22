@@ -28,6 +28,7 @@ namespace Navpaky.App.Tests.Views {
     public void AboutHasNoFontLicenceLine() {
       List<string> texts = [];
       Sta.Run(() => {
+        Sta.EnsureApplication();
         var about = new AboutPage();
         Collect(about, texts);
       });

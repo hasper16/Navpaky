@@ -1,4 +1,5 @@
 using System.Runtime.ExceptionServices;
+using System.Windows;
 using System.Windows.Threading;
 using Xunit;
 
@@ -24,6 +25,17 @@ namespace Navpaky.App.Tests {
         }
       });
       failure?.Throw();
+    }
+
+    // Views take styles and templates from Resources.xaml. A plain Application holds them: the
+    // real App would start Navpaky once the dispatcher runs. Call it from inside Run.
+    public static void EnsureApplication() {
+      if (Application.Current is null) {
+        var host = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+        host.Resources.MergedDictionaries.Add(new ResourceDictionary {
+          Source = new Uri("pack://application:,,,/Navpaky.App;component/Resources.xaml"),
+        });
+      }
     }
 
     private static Dispatcher StartUiThread() {

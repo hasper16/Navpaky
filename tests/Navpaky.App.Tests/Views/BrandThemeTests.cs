@@ -16,13 +16,7 @@ namespace Navpaky.App.Tests.Views {
       string? appliedAccent = null;
       string? appliedSecond = null;
       Sta.Run(() => {
-        if (Application.Current is null) {
-          var host = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-          host.Resources.MergedDictionaries.Add(new ResourceDictionary {
-            Source = new Uri("pack://application:,,,/Navpaky.App;component/Resources.xaml"),
-          });
-        }
-
+        Sta.EnsureApplication();
         BrandTheme.Apply(theme);
         appliedAccent = ((Color)UiApplication.Current.Resources["SystemAccentColor"])
             .ToString(CultureInfo.InvariantCulture);
@@ -40,7 +34,7 @@ namespace Navpaky.App.Tests.Views {
     public void PrimaryAccentKeepsTheBrandShade(ApplicationTheme theme, string primary) {
       string? applied = null;
       Sta.Run(() => {
-        EnsureApplication();
+        Sta.EnsureApplication();
         BrandTheme.Apply(theme);
         applied = Hex(UiApplication.Current.Resources["SystemAccentColorPrimary"]);
       });
@@ -53,7 +47,7 @@ namespace Navpaky.App.Tests.Views {
       ApplicationTheme after = ApplicationTheme.Unknown;
       string? primary = null;
       Sta.Run(() => {
-        EnsureApplication();
+        Sta.EnsureApplication();
         ApplicationThemeManager.Apply(ApplicationTheme.Dark);
         ThemeFollower.Refresh(ApplicationTheme.Light);
         after = ApplicationThemeManager.GetAppTheme();
@@ -72,15 +66,6 @@ namespace Navpaky.App.Tests.Views {
     public void ThemeFollowsTheAppsModeSetting(
         bool highContrast, int? appsUseLightTheme, ApplicationTheme expected) {
       Assert.Equal(expected, ThemeFollower.ThemeFor(highContrast, appsUseLightTheme));
-    }
-
-    private static void EnsureApplication() {
-      if (Application.Current is null) {
-        var host = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-        host.Resources.MergedDictionaries.Add(new ResourceDictionary {
-          Source = new Uri("pack://application:,,,/Navpaky.App;component/Resources.xaml"),
-        });
-      }
     }
 
     private static string Hex(object value) {
