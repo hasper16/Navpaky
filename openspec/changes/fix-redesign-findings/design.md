@@ -57,12 +57,14 @@ Still different on purpose (spec or platform):
 - The Hotkey choice lists the build's presets (Ctrl+Space, Win+Space, custom), more than the prototype's three.
 - WPF has no letter spacing for the uppercase captions, and the window caption buttons are WPF UI's.
 - The right-click tray menu stays the standard WPF UI menu (the prototype shows only its items).
-- Hotkey options are text pills ("Двічі Shift"), not keycaps with "×2"; the desktop checks and the user guide name them by text.
 - Apps and words keeps the build's add-word field and language choice instead of the prototype's word chips.
 - Statistics has no prototype screen; it uses the brand surfaces.
 
 ### D8. Welcome as in the prototype (owner decision on the second pass)
 Step 1 shows what Navpaky does, the example and Undo; the privacy line lives on step 2 under the try-it field. Step 3 is one card: Hotkey with two keycap chips (Shift ×2, Ctrl ×2, chosen through `HotkeyViewModel` like Settings; neither is lit when another Hotkey is set), the tray tip, and a "send crash reports" switch. The switch sets only `DiagnosticsConsent.CrashReports`: the label names crash reports, so it must not also agree to Usage Digests and the setup signal; those are turned on in Settings. Launch at sign-in stays on after the first start without a switch. The `onboarding` desktop checks walk steps by the try-it field and Done and read no step-3 control, so they are unchanged.
+
+### D9. Hotkey keycaps and word chips (owner decision on the second pass)
+`HotkeyChip` draws each Hotkey option as keycaps: a double tap as one key and "×2", a combination as keys joined by "+"; the custom option reads "Custom…". Each option keeps its name in words ("Double Shift") as its automation name, so screen readers, the desktop checks and the user guide do not depend on the drawing. No desktop check selects a Hotkey option through the UI. Apps and words follows the prototype: the app list's buttons sit on the label row, apps are rows with "Remove", and Protected Words and Learned Words are chips with a remove button each; "Add" on each row opens the field that adds a word (Learned Words with its Language), which the word-learning spec requires.
 
 ## Risks / Trade-offs
 

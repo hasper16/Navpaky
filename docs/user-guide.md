@@ -14,7 +14,7 @@ Settings opens from the tray menu; choosing it again brings the open window forw
 
 - **General**: start Navpaky when you sign in to Windows (Task Manager → Startup apps can turn this off too, and Settings shows it), the cursor badge, and the correction sound with a choice of three sounds you can play.
 - **Correction**: automatic correction, Sensitivity (Balanced, Cautious, Aggressive), the keys that end a word and trigger a correction (Space, Enter, Tab), leaving a word alone after you switch the layout yourself, and checking the text before replacing it.
-- **Hotkey**: Double Shift, Double Ctrl, Double Alt, Ctrl+Space, Win+Space, or your own combination. When a combination is already Windows' layout shortcut or used by another app, Navpaky says so and keeps the old Hotkey until you choose "Use it anyway" or pick another.
+- **Hotkey**: Shift ×2, Ctrl ×2, Alt ×2 (a double tap), Ctrl+Space, Win+Space, or your own combination ("Custom…"). Screen readers read the options as "Double Shift", "Double Ctrl" and so on. When a combination is already Windows' layout shortcut or used by another app, Navpaky says so and keeps the old Hotkey until you choose "Use it anyway" or pick another.
 - **Apps and words**: apps where Navpaky stays off (pick a running app or choose a program), and the Protected and Learned Words described below.
 - **Diagnostics and privacy**: reconnecting to the keyboard when Windows stops sending keys, restarting Navpaky when it stops responding twice, keeping statistics, the word-analysis log, and the buttons that show statistics and export diagnostics.
 

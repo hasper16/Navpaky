@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Navpaky.App.ViewModels;
@@ -16,6 +17,27 @@ namespace Navpaky.App.Tests.Views {
     // The page takes its card and pill styles from Resources.xaml.
     public HotkeyPageTests() {
       Sta.Run(Sta.EnsureApplication);
+    }
+
+    // Owner decision (fix-redesign-findings): the options are keycaps, as in prototype v24, and
+    // keep their names in words for screen readers, the desktop checks and the user guide.
+    [Fact]
+    public void OptionsAreKeycapsNamedInWords() {
+      List<(object Content, string Name)> options = [];
+      Sta.Run(() => {
+        using var hub = new SettingsHub(new Settings(), _ => { }, new ManualClock());
+        using var model = new HotkeyViewModel(hub, _ => HotkeyConflict.None);
+        var page = new HotkeyPage(model);
+        options.AddRange(((Panel)page.FindName("Options")).Children.OfType<RadioButton>()
+            .Select(option => (option.Content, AutomationProperties.GetName(option))));
+      });
+
+      Assert.Equal(HotkeyViewModel.Presets.Count + 1, options.Count);
+      Assert.All(options.Take(HotkeyViewModel.Presets.Count), option => {
+        Assert.IsType<StackPanel>(option.Content);
+        Assert.NotEmpty(option.Name);
+      });
+      Assert.Equal(Strings.HotkeyDoubleShift, options[0].Name);
     }
 
     [Fact]

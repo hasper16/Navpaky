@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Navpaky.App.Localization;
@@ -7,7 +8,8 @@ using Navpaky.App.ViewModels;
 using Navpaky.Core;
 
 namespace Navpaky.App.Views {
-  // Hotkey: the presets, a recorder for a custom combination, and the conflict warning.
+  // Hotkey: the presets as keycaps (prototype v24), a recorder for a custom combination, and
+  // the conflict warning.
   internal sealed partial class HotkeyPage {
     private readonly HotkeyViewModel _model;
     private readonly Dictionary<RadioButton, Hotkey> _presets = [];
@@ -38,7 +40,8 @@ namespace Navpaky.App.Views {
         Style = (Style)FindResource("PillRadio"),
         Margin = new Thickness(0, 0, 6, 6),
       };
-      _custom.SetBinding(ContentProperty, LocExtension.Binding("HotkeyCustom"));
+      _custom.SetBinding(ContentProperty, LocExtension.Binding("HotkeyCustomShort"));
+      _custom.SetBinding(AutomationProperties.NameProperty, LocExtension.Binding("HotkeyCustom"));
       _custom.Checked += (_, _) => {
         if (!_showing) {
           StartRecording();
@@ -61,7 +64,7 @@ namespace Navpaky.App.Views {
       UseAnyway.Click += (_, _) => _model.ConfirmPending();
       PickAnother.Click += (_, _) => _model.CancelPending();
       _model.PropertyChanged += OnModelChanged;
-      ShowCurrent();
+      ShowTexts();
       Localizer.Follow(this, ShowTexts);
     }
 
@@ -155,7 +158,7 @@ namespace Navpaky.App.Views {
     // Hotkey names are built from UI strings, so they follow the interface language.
     private void ShowTexts() {
       foreach ((RadioButton option, Hotkey preset) in _presets) {
-        option.Content = HotkeyViewModel.Describe(preset);
+        HotkeyChip.Show(option, preset);
       }
 
       ShowCurrent();

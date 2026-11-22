@@ -27,6 +27,8 @@
 
 - [x] 4.5 Test first: the Welcome view model's switch agrees to crash reports only; step 1 has no privacy line; step 3 has the Shift/Ctrl twice chips and one switch, crash reports. Then rebuild step 1 and step 3 as the prototype (design D8) with keycap chips shared with the Hotkey page. Verify: `dotnet test tests/Navpaky.App.Tests` passes.
 
+- [x] 4.6 Test first: every Hotkey preset shows keycaps and keeps its name in words for automation. Then draw the options with `HotkeyChip` (design D9) and update the user guide. Verify: `dotnet test tests/Navpaky.App.Tests` passes.
+
 ## 5. Verification
 
 - [x] 5.1 A published single-file build passes `--check-fonts`; CI runs it. Verify: the CI step passes on the PR head.
