@@ -7,15 +7,19 @@ Defines the first-run experience: explaining what Navpaky does and how it treats
 ## Requirements
 
 ### Requirement: Welcome window on first run
-On the first start for a Windows user, Navpaky SHALL open a welcome window that explains in plain words what Navpaky does, states that typed text never leaves the computer, and shows how to undo a Correction.
+On the first start for a Windows user, Navpaky SHALL open a welcome window that leads through three steps with Back, Next and Done: what Navpaky does (with a before/after example, the statement that typed text never leaves the computer, and how to undo a Correction), try it, and your choices. Closing the window at any step SHALL count as completing it.
 
 #### Scenario: First start
 - **WHEN** Navpaky starts for the first time for this user
-- **THEN** the welcome window opens
+- **THEN** the welcome window opens at step 1 of 3
 
 #### Scenario: Later starts
 - **WHEN** the user completed or closed the welcome window before and Navpaky starts again
 - **THEN** no welcome window opens
+
+#### Scenario: Step through
+- **WHEN** the user presses Next twice
+- **THEN** the window shows step 3 of 3 with a Done button
 
 ### Requirement: Try it
 The welcome window SHALL contain a text field where the user can type a word in the wrong Layout and see Navpaky correct it, with a short instruction naming their installed Layouts.
@@ -37,11 +41,11 @@ The welcome window SHALL let the user set Auto Correction on or off, choose the 
 - **THEN** launch at sign-in is on
 
 ### Requirement: Reopen from tray
-The user SHALL be able to reopen the welcome window from the tray menu at any time, through an item whose name does not read like the Settings item (owner review of the Ukrainian interface in add-final-acceptance).
+The user SHALL be able to reopen the welcome window from the tray menu and the quick panel at any time, through an item named "First steps" ("Перші кроки" in Ukrainian; owner decision), which does not read like the Settings item.
 
 #### Scenario: Reopen
-- **WHEN** the user selects "Getting started with Navpaky" in the tray menu
-- **THEN** the welcome window opens with current settings
+- **WHEN** the user selects "First steps" in the tray menu
+- **THEN** the welcome window opens at step 1 with current settings
 
 ### Requirement: Warn about temporary locations
 When Navpaky runs from a temporary folder, a ZIP preview, or the Downloads folder rather than its installed location, it SHALL warn that it will stop working when that copy is removed and SHALL offer to install it properly.
