@@ -47,7 +47,8 @@ namespace Navpaky.App.ViewModels {
         ? UiText.Format(Strings.QuickCurrentApp, name)
         : string.Empty;
 
-    public string HotkeyHint => UiText.Format(Strings.QuickHotkeyHint, HotkeyText);
+    public string HotkeyHint =>
+        UiText.Format(Strings.QuickHotkeyHint, HotkeyViewModel.Describe(_hub.Current.Hotkey));
 
     public string KeptText => KeptPercent is { } kept
         ? kept.ToString("0", CultureInfo.CurrentCulture) + " %"
@@ -83,10 +84,7 @@ namespace Navpaky.App.ViewModels {
       }
     }
 
-    public Sensitivity Sensitivity {
-      get => _hub.Current.Sensitivity;
-      set => _hub.Update(settings => settings with { Sensitivity = value });
-    }
+    public Sensitivity Sensitivity => _hub.Current.Sensitivity;
 
     public PausePreset? ActivePause {
       get {
@@ -121,16 +119,19 @@ namespace Navpaky.App.ViewModels {
         ? (int)Math.Round(Math.Max(0, 1 - undone) * 100)
         : null;
 
-    public string HotkeyText => HotkeyViewModel.Describe(_hub.Current.Hotkey);
-
     // The Layout after the current one in the installed order, wrapping round.
     public static LayoutId? NextLayout(IReadOnlyList<LayoutId> installed, LayoutId? current) {
       if (installed.Count == 0) {
         return null;
       }
 
-      int index = current is { } layout ? IndexOf(installed, layout) : -1;
+      int index = current is { } layout ? installed.ToList().IndexOf(layout) : -1;
       return installed[(index + 1) % installed.Count];
+    }
+
+    public void ChooseSensitivity(Sensitivity sensitivity) {
+      _hub.Update(settings => settings with { Sensitivity = sensitivity });
+      Changed();
     }
 
     public void ChoosePause(PausePreset preset) {
@@ -143,16 +144,6 @@ namespace Navpaky.App.ViewModels {
       }
 
       Changed();
-    }
-
-    private static int IndexOf(IReadOnlyList<LayoutId> installed, LayoutId layout) {
-      for (int i = 0; i < installed.Count; i++) {
-        if (installed[i] == layout) {
-          return i;
-        }
-      }
-
-      return -1;
     }
 
     private void Changed() {

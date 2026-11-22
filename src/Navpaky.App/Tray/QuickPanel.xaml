@@ -75,15 +75,18 @@
         <StackPanel>
           <TextBlock Text="{l:Loc Sensitivity}" Style="{StaticResource HintText}" Margin="2,0,0,4" />
           <UniformGrid Columns="3">
-            <ToggleButton Style="{StaticResource Segment}"
+            <ToggleButton x:Name="SensCautious"
+                          Style="{StaticResource Segment}"
                           Content="{l:Loc SensitivityCautious}"
-                          IsChecked="{Binding Sensitivity, Converter={StaticResource Is}, ConverterParameter={x:Static det:Sensitivity.Cautious}}" />
-            <ToggleButton Style="{StaticResource Segment}"
+                          IsChecked="{Binding Sensitivity, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static det:Sensitivity.Cautious}}" />
+            <ToggleButton x:Name="SensBalanced"
+                          Style="{StaticResource Segment}"
                           Content="{l:Loc SensitivityBalanced}"
-                          IsChecked="{Binding Sensitivity, Converter={StaticResource Is}, ConverterParameter={x:Static det:Sensitivity.Balanced}}" />
-            <ToggleButton Style="{StaticResource Segment}"
+                          IsChecked="{Binding Sensitivity, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static det:Sensitivity.Balanced}}" />
+            <ToggleButton x:Name="SensAggressive"
+                          Style="{StaticResource Segment}"
                           Content="{l:Loc SensitivityAggressive}"
-                          IsChecked="{Binding Sensitivity, Converter={StaticResource Is}, ConverterParameter={x:Static det:Sensitivity.Aggressive}}" />
+                          IsChecked="{Binding Sensitivity, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static det:Sensitivity.Aggressive}}" />
           </UniformGrid>
           <TextBlock Text="{l:Loc MenuPause}" Style="{StaticResource HintText}" Margin="2,10,0,4" />
           <UniformGrid Columns="4">

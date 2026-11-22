@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Navpaky.App.ViewModels;
+using Navpaky.Core.Detection;
 using Navpaky.Win32;
 
 namespace Navpaky.App.Tray {
@@ -25,6 +26,11 @@ namespace Navpaky.App.Tray {
         ScreenFacts.Activate(_typedIn);
         actions.SwitchLayout();
       };
+
+      // One-way bindings with a click each, so a click on the active choice keeps it shown.
+      SensCautious.Click += (_, _) => model.ChooseSensitivity(Sensitivity.Cautious);
+      SensBalanced.Click += (_, _) => model.ChooseSensitivity(Sensitivity.Balanced);
+      SensAggressive.Click += (_, _) => model.ChooseSensitivity(Sensitivity.Aggressive);
       Pause15.Click += (_, _) => Pause(PausePreset.FifteenMinutes, actions);
       Pause30.Click += (_, _) => Pause(PausePreset.ThirtyMinutes, actions);
       Pause60.Click += (_, _) => Pause(PausePreset.OneHour, actions);

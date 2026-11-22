@@ -1,5 +1,6 @@
 using Navpaky.App.ViewModels;
 using Navpaky.Core;
+using Navpaky.Core.Detection;
 using Navpaky.Core.Languages;
 using Navpaky.Core.Statistics;
 using Navpaky.Core.Tests;
@@ -50,6 +51,17 @@ namespace Navpaky.App.Tests.ViewModels {
       panel.ChoosePause(PausePreset.ThirtyMinutes);
       Assert.Equal(TrayState.Active, panel.State);
       Assert.Null(panel.ActivePause);
+    }
+
+    [Fact]
+    public void ChoosingTheActiveSensitivityKeepsIt() {
+      QuickPanelViewModel panel = Panel();
+
+      panel.ChooseSensitivity(Sensitivity.Balanced);
+      panel.ChooseSensitivity(Sensitivity.Cautious);
+
+      Assert.Equal(Sensitivity.Cautious, _hub.Current.Sensitivity);
+      Assert.Equal(Sensitivity.Cautious, panel.Sensitivity);
     }
 
     [Fact]
