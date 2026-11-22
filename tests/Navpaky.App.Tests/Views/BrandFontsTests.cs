@@ -20,11 +20,10 @@ namespace Navpaky.App.Tests.Views {
           Source = new Uri("pack://application:,,,/Navpaky.App;component/Resources.xaml"),
         };
         var font = (FontFamily)resources[key];
-        foreach (Typeface face in font.GetTypefaces()) {
-          if (face.TryGetGlyphTypeface(out GlyphTypeface glyphs)) {
-            names.Add(glyphs.Win32FamilyNames[CultureInfo.GetCultureInfo("en-US")]);
-          }
-        }
+        names.AddRange(font.GetTypefaces()
+            .Select(face => face.TryGetGlyphTypeface(out GlyphTypeface glyphs) ? glyphs : null)
+            .OfType<GlyphTypeface>()
+            .Select(glyphs => glyphs.Win32FamilyNames[CultureInfo.GetCultureInfo("en-US")]));
       });
 
       Assert.Contains(names, name => name.StartsWith(family, StringComparison.Ordinal));
