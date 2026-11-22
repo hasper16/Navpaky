@@ -6,7 +6,7 @@ Defines how Navpaky runs as a per-user background process on Windows: start-up w
 ## Requirements
 
 ### Requirement: Background start without a main window
-The app SHALL start without opening a main window or a taskbar button and SHALL show a notification-area (tray) icon while running. The launch splash is not a main window; the welcome window opens on the first start only (onboarding).
+The app SHALL start without opening a main window or a taskbar button and SHALL show a notification-area (tray) icon while running. The launch splash is not a main window; the welcome window opens automatically on the first start only, and the user can reopen it from the tray menu or the quick panel (onboarding).
 
 #### Scenario: Normal start
 - **WHEN** the user launches Navpaky after the first start
@@ -68,11 +68,15 @@ On Quit, Windows logoff, or shutdown, the app SHALL release every system hook an
 - **THEN** pending settings are written to disk before the process exits
 
 ### Requirement: Launch splash
-On every start, including the start at sign-in (owner decision), Navpaky SHALL show a splash centred on the primary screen for about three seconds (design decision): a small card where a caret types "Navpaky" marked as wrong, the word turns into the greeting in the UI language ("Привіт" for Ukrainian, "Hello" for English) marked as corrected, a pill with the Language code appears in the card's corner, and the card fades out.
+On every start that becomes the running instance, including the start at sign-in (owner decision), Navpaky SHALL show a splash; a second launch that hands over to the running instance and exits shows none. The splash is centred on the primary screen for about three seconds (design decision): a small card where a caret types "Navpaky" marked as wrong, the word turns into the greeting in the UI language ("Привіт" for Ukrainian, "Hello" for English) marked as corrected, a pill with the Language code appears in the card's corner, and the card fades out.
 
 #### Scenario: Ukrainian interface
 - **WHEN** the UI language is Ukrainian and Navpaky starts
 - **THEN** the splash types "Navpaky", which turns into "Привіт" with a "UK" pill, and fades out after about three seconds
+
+#### Scenario: Second launch
+- **WHEN** Navpaky is running and the user starts it again
+- **THEN** the second process exits as the single-instance requirement says and shows no splash
 
 ### Requirement: Launch splash stays out of the way
 The splash SHALL NOT take focus, SHALL let clicks pass through, SHALL have no taskbar button and SHALL NOT delay the tray icon or Auto Correction. When Windows animations are turned off, it SHALL show the greeting without motion and then disappear.
