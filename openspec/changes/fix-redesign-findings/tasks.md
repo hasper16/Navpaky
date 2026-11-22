@@ -2,7 +2,7 @@
 
 ## 1. Fonts (design D3)
 
-- [ ] 1.1 Test first: a `TextBlock` in a `Window` uses Inter after `BrandFonts.Apply()`; `BrandFonts.Check()` finds both fonts. Then add `BrandFonts`, call it at start, and add `--check-fonts`. Verify: `dotnet test tests/Navpaky.App.Tests`.
+- [x] 1.1 Test first: a `TextBlock` in a shown `Window` uses Inter after `BrandFonts.Apply()`; `BrandFonts.Check()` finds both fonts. Then add `BrandFonts` (sets Inter on each window, menu and tooltip as it appears: a default value does not flow to children), call it at start, drop the unused WPF UI font key, and add `--check-fonts` (also run in CI's published-app step). Verify: `dotnet test tests/Navpaky.App.Tests`.
 
 ## 2. Theme and accent (design D1, D2)
 

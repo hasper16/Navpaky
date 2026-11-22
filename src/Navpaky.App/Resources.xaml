@@ -11,9 +11,8 @@
     <ui:ControlsDictionary />
   </ResourceDictionary.MergedDictionaries>
 
-  <!-- Brand fonts (design D4): Inter for every control through WPF UI's own key, Grunt Grotesk
-       for headings; the system face stands in when a font cannot load. -->
-  <FontFamily x:Key="ContentControlThemeFontFamily">pack://application:,,,/Navpaky.App;component/Fonts/#Inter, Segoe UI Variable Text, Segoe UI</FontFamily>
+  <!-- Grunt Grotesk for headings; Inter for other text is set on every window (BrandFonts). The
+       system face stands in when a font cannot load. -->
   <FontFamily x:Key="HeadingFontFamily">pack://application:,,,/Navpaky.App;component/Fonts/#Grunt Grotesk, Segoe UI Variable Display, Segoe UI</FontFamily>
   <Style x:Key="HeadingText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource HeadingFontFamily}" />

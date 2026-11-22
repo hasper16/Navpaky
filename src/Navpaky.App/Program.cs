@@ -10,19 +10,27 @@ using Velopack;
 
 namespace Navpaky.App {
   internal static class Program {
+    // Runs only the font check on this build and exits with 0 when both brand fonts load (CI).
+    private const string _checkFonts = "--check-fonts";
+
     private static readonly TimeSpan _answerWait = TimeSpan.FromSeconds(50);
 
     // Velopack runs first: during install, update and uninstall it calls Navpaky with its own
     // arguments and exits before any window, hook or single-instance claim exists.
     [STAThread]
-    public static void Main() {
+    public static int Main(string[] args) {
+      if (args.Contains(_checkFonts)) {
+        _ = new System.Windows.Application();
+        return Views.BrandFonts.Check() ? 0 : 1;
+      }
+
       VelopackApp.Build()
           .OnAfterInstallFastCallback(_ => MarkInstall())
           .OnBeforeUninstallFastCallback(_ => Uninstall())
           .Run();
       var app = new App();
       app.InitializeComponent();
-      app.Run();
+      return app.Run();
     }
 
     // Without the marker only a reinstall made while an old data question is open goes unseen,
