@@ -38,7 +38,7 @@
 
 ## 9. Launch splash (design D10)
 
-- [ ] 9.1 Test first: `SplashScript` lists the typing frames for "Navpaky", then the greeting for the UI language, the pill and the fade, about 3 s in total; with animations off it is one static frame. Then `LaunchSplash` window shown from `OnStartup` after the tray icon. Verify: `dotnet test tests/Navpaky.App.Tests`; a desktop check confirms the foreground window keeps focus while the splash shows.
+- [x] 9.1 Test first: `SplashScript` types "Navpaky" letter by letter as wrong, then the greeting in the UI language with the pill, settles and is gone after about 3 s; with animations off it is the greeting, then gone. Then `LaunchSplash` (click-through, no activation, not the main window) plays it from `OnStartup` after input starts. Verify: `dotnet test tests/Navpaky.App.Tests` (`SplashScriptTests`); the look and "typing keeps focus during the splash" are deferred to `deferred-by-hand.md`.
 
 ## 10. Docs and verification
 

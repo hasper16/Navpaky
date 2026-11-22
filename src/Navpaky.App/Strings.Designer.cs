@@ -1210,6 +1210,15 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hello.
+        /// </summary>
+        public static string SplashGreeting {
+            get {
+                return ResourceManager.GetString("SplashGreeting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automatic corrections.
         /// </summary>
         public static string StatAutoCorrections {

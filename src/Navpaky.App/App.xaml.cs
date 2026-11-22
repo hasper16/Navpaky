@@ -178,6 +178,11 @@ namespace Navpaky.App {
       _telemetry.Start();
       StartInput(_hub.Current);
       _hub.Changed += OnSettingsChanged;
+      LaunchSplash.Show(
+          Strings.SplashGreeting,
+          (Strings.Culture ?? CultureInfo.CurrentUICulture).TwoLetterISOLanguageName
+              .ToUpperInvariant(),
+          ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark);
 
       // After the subscription, so the first start's launch at sign-in reaches Windows.
       _hub.Update(WelcomeViewModel.FirstStartDefaults);

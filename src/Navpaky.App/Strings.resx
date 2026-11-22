@@ -607,4 +607,7 @@
   <data name="MenuWelcome" xml:space="preserve">
     <value>First steps</value>
   </data>
+  <data name="SplashGreeting" xml:space="preserve">
+    <value>Hello</value>
+  </data>
 </root>
