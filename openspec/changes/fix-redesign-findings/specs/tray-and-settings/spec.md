@@ -1,7 +1,7 @@
 ## MODIFIED Requirements
 
 ### Requirement: Brand palette and fonts
-All Navpaky windows, menus and panels SHALL use the brand palette of the current app theme: red and black accents in the light theme, blue and yellow (sapphire and gold) in the dark theme (owner decision), in saturated shades in both themes. Headings SHALL use Grunt Grotesk Bold and all other text SHALL use Inter (owner decision). Both fonts SHALL ship with their SIL Open Font License texts as files in a `Fonts` folder next to the app's executable, and About SHALL name both fonts and their licence. When a brand font cannot be loaded, the text SHALL fall back to the Windows system font.
+All Navpaky windows, menus and panels SHALL use the brand palette of the current app theme: red and black accents in the light theme, blue and yellow (sapphire and gold) in the dark theme (owner decision), in saturated shades in both themes. Headings SHALL use Grunt Grotesk Bold and all other text SHALL use Inter (owner decision). Both fonts SHALL ship with their SIL Open Font License texts as files in a `Fonts` folder next to the app's executable (owner decision: About carries no licence line). When a brand font cannot be loaded, the text SHALL fall back to the Windows system font.
 
 #### Scenario: Light theme accent
 - **WHEN** Windows apps use the light theme and the user opens Settings
@@ -18,7 +18,6 @@ All Navpaky windows, menus and panels SHALL use the brand palette of the current
 #### Scenario: Licence shipped
 - **WHEN** Navpaky is installed
 - **THEN** `OFL-Inter.txt` and `OFL-GruntGrotesk.txt` are files in the `Fonts` folder next to the installed `Navpaky.App.exe`
-- **AND** About names Inter and Grunt Grotesk and the SIL Open Font License
 
 ### Requirement: Accessible and theme-aware UI
 All windows SHALL follow the Windows light/dark theme, also when the theme changes while Navpaky runs with no window open, SHALL be fully usable with the keyboard alone, and SHALL expose names to screen readers for every control.

@@ -7,4 +7,5 @@ The owner's re-check of the fixes for the findings from the 0.4.4 test pack. Ins
 - [ ] **Fonts (finding 3).** Text in the quick panel, Settings, the welcome window and the tray menu is Inter; headings (the Settings section titles, the panel's language name) are Grunt Grotesk.
 - [ ] **Language key keeps the panel open (finding 4).** Type in Notepad with English (US), open the quick panel, click the Language key: the panel stays open, its key and the tray show the next Language; close the panel and type in Notepad: it uses that Layout. Repeat with Telegram or a browser. Note any app (a console, a Store app) where the Layout does not change.
 - [ ] **Tray while the panel is open.** With the panel open, the tray icon shows the app's Language, not the panel's own.
-- [ ] **Licences.** The install folder (`%LOCALAPPDATA%\navpaky-app\current\Fonts`) holds `OFL-Inter.txt` and `OFL-GruntGrotesk.txt`; About names Inter, Grunt Grotesk and the SIL Open Font License.
+- [ ] **Licences.** The install folder (`%LOCALAPPDATA%\navpaky-app\current\Fonts`) holds `OFL-Inter.txt` and `OFL-GruntGrotesk.txt`; About has no font-licence line.
+- [ ] **Sound names.** The sound picker in General lists the names only; the default reads "Навпаки" ("Navpaky" in English).

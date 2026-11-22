@@ -580,9 +580,6 @@
   <data name="SoundFrameDrum" xml:space="preserve">
     <value>Бубон</value>
   </data>
-  <data name="SoundNavpaky" xml:space="preserve">
-    <value>Навпаки (вгору до вашої мови, униз до англійської)</value>
-  </data>
   <data name="CursorIndicatorStyleChoice" xml:space="preserve">
     <value>Вигляд мітки</value>
   </data>
@@ -646,7 +643,7 @@
   <data name="QuickPanelTitle" xml:space="preserve">
     <value>Швидка панель Navpaky</value>
   </data>
-  <data name="AboutFonts" xml:space="preserve">
-    <value>Шрифти: Inter і Grunt Grotesk, за ліцензією SIL Open Font License 1.1; тексти ліцензій лежать у теці Fonts поруч із Navpaky.App.exe.</value>
+  <data name="SoundNavpaky" xml:space="preserve">
+    <value>Навпаки</value>
   </data>
 </root>

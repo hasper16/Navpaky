@@ -22,8 +22,11 @@ Findings of the owner's check of the 0.4.4 pack, traced in WPF UI 4.3.0's source
 ### D4. Language key keeps the panel open
 `InputWorker.SwitchWindowToNextLayout(window)` posts a message; on the worker thread it reads the Layout of the window's thread (`GetKeyboardLayout`), picks `LayoutCycle.Next`, posts `WM_INPUTLANGCHANGEREQUEST` to that window (as `ForegroundLayout` does for the focus target) and raises `WindowLayoutRequested(LayoutId)`. The app shows that Language in the tray and the open panel. While a Navpaky window is in front, `LayoutChanged` from the foreground poll no longer updates the tray, so it keeps the app's Language. Risk: an app that ignores a posted request while in the background keeps its Layout; the next foreground poll shows the real one when the user returns. By-hand check.
 
-### D5. Licence files and About
-The two `OFL-*.txt` items get `ExcludeFromSingleFile="true"`, so the publish folder and the install carry them next to the exe. About gains one line naming Inter and Grunt Grotesk under the SIL Open Font License 1.1, with the file names.
+### D5. Licence files
+The two `OFL-*.txt` items get `ExcludeFromSingleFile="true"`, so the publish folder and the install carry them in `Fonts` next to the exe; that ships the licence with the fonts as the OFL asks. About names no fonts (owner decision after the 0.4.5 check).
+
+### D6. Sound names
+A sound's name in the picker is the name alone; the Navpaky sound reads "Navpaky" / "Навпаки" without an explanation (owner decision after the 0.4.5 check).
 
 ## Risks / Trade-offs
 

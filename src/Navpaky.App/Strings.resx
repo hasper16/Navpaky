@@ -580,9 +580,6 @@
   <data name="SoundFrameDrum" xml:space="preserve">
     <value>Frame drum</value>
   </data>
-  <data name="SoundNavpaky" xml:space="preserve">
-    <value>Navpaky (rises to your language, falls to English)</value>
-  </data>
   <data name="CursorIndicatorStyleChoice" xml:space="preserve">
     <value>Mark style</value>
   </data>
@@ -646,7 +643,7 @@
   <data name="QuickPanelTitle" xml:space="preserve">
     <value>Navpaky quick panel</value>
   </data>
-  <data name="AboutFonts" xml:space="preserve">
-    <value>Fonts: Inter and Grunt Grotesk, under the SIL Open Font License 1.1; the licence texts are in the Fonts folder next to Navpaky.App.exe.</value>
+  <data name="SoundNavpaky" xml:space="preserve">
+    <value>Navpaky</value>
   </data>
 </root>

@@ -13,9 +13,5 @@
     <TextBlock Text="Navpaky" FontSize="28" FontWeight="SemiBold" />
     <TextBlock Text="{l:Loc AboutTagline}" Margin="0,4,0,8" Focusable="True" />
     <TextBlock x:Name="Version" Style="{StaticResource HintText}" Focusable="True" />
-    <TextBlock Text="{l:Loc AboutFonts}"
-               Style="{StaticResource HintText}"
-               Margin="0,8,0,0"
-               Focusable="True" />
   </StackPanel>
 </UserControl>

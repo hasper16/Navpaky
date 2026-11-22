@@ -9,7 +9,8 @@ The owner's visual check of the 0.4.4 test pack (main 2ea8778) found that the re
 - Follow the Windows light/dark setting while Navpaky runs, also with no window open; apply the brand accent with fixed shades so the dark theme keeps a saturated blue.
 - Make Inter the font of every Navpaky window, menu and tooltip (Grunt Grotesk stays for headings), and check the fonts in the published single-file build in CI (`--check-fonts`).
 - **Quick panel**: the Language key switches the Layout of the window the user typed in and keeps the panel open; the panel header and the tray show the new Language. While the panel is in front, the tray keeps showing the app's Language, not the panel's.
-- Ship `OFL-Inter.txt` and `OFL-GruntGrotesk.txt` as files next to `Navpaky.App.exe` and name both fonts and their licence in About.
+- Ship `OFL-Inter.txt` and `OFL-GruntGrotesk.txt` in a `Fonts` folder next to `Navpaky.App.exe`; About names no fonts.
+- Sound names in the picker are names only ("Navpaky" / "Навпаки").
 
 ## Capabilities
 
@@ -19,7 +20,7 @@ None.
 
 ### Modified Capabilities
 
-- `tray-and-settings`: Quick panel controls (Language key keeps the panel open), Brand palette and fonts (fonts on every window, licence files and About), Accessible and theme-aware UI (follows a theme change while running).
+- `tray-and-settings`: Quick panel controls (Language key keeps the panel open), Brand palette and fonts (fonts on every window, licence files), Accessible and theme-aware UI (follows a theme change while running).
 
 ## Impact
 

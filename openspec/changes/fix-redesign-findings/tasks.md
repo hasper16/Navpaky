@@ -14,7 +14,11 @@
 
 ## 4. Licences (design D5)
 
-- [x] 4.1 `OFL-*.txt` are excluded from the single-file bundle; About names both fonts and the licence; the quick panel widens to 400 for Inter's wider text. Verify: a single-file publish has `Fonts\OFL-Inter.txt` and `Fonts\OFL-GruntGrotesk.txt` next to the exe; `SettingsAutomationTests` pass.
+- [x] 4.1 `OFL-*.txt` are excluded from the single-file bundle; the quick panel widens to 400 for Inter's wider text. Verify: a single-file publish has `Fonts\OFL-Inter.txt` and `Fonts\OFL-GruntGrotesk.txt` next to the exe; `SettingsAutomationTests` pass.
+
+## 4b. Owner's check of 0.4.5 (design D5, D6)
+
+- [x] 4.2 Test first: every sound name in en and uk has no explanation in brackets, and About shows no font-licence line. Then rename the Navpaky sound to "Navpaky" / "Навпаки" and drop the About line. Verify: `OwnerTextsTests` pass.
 
 ## 5. Verification
 
