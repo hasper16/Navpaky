@@ -23,6 +23,9 @@ namespace Navpaky.App.ViewModels {
 
     public string? LanguageCode { get; set; }
 
+    // The Pause preset the user chose in the quick panel, kept while the panel is closed.
+    public PausePreset? ChosenPause { get; set; }
+
     // Set by the view from the update scheduler.
     public UpdateStatus Updates { get; set; }
 

@@ -89,7 +89,7 @@ namespace Navpaky.App {
     private TrayViewModel? _tray;
     private TrayIconView? _trayView;
 
-    // The Layout the tray shows; written on the UI thread only.
+    // The Layout of the app the user works in; written on the UI thread only.
     private LayoutId? _currentLayout;
 
     // The last app window the user worked in, never the taskbar; written on the UI thread only.
@@ -606,9 +606,10 @@ namespace Navpaky.App {
 #endif
     private void StartTrayFollowers() {
       _foregroundApps = new ForegroundApps();
-      _foregroundApps.Changed += app => {
-        // The window of the app just in front; the quick panel gives the focus back to it.
-        _typedInWindow = ForegroundApps.CurrentWindow();
+      _foregroundApps.Changed += (app, window) => {
+        // The app's window as ForegroundApps checked it; the quick panel gives the focus back
+        // to it. Read again later, the foreground could already be the taskbar.
+        _typedInWindow = window;
         _tray!.CurrentApp = new CurrentApp(app, AppNames.Of(app));
         RefreshTray();
       };
@@ -704,8 +705,14 @@ namespace Navpaky.App {
 
       if (inputEvent is LayoutChanged changed) {
         string code = changed.Layout.LanguageCode;
+
+        // The quick panel has a Layout of its own; the next Layout follows the app's.
+        bool inApp = ForegroundApps.AppOf(ForegroundApps.CurrentWindow()) is not null;
         Dispatcher.BeginInvoke(() => {
-          _currentLayout = changed.Layout;
+          if (inApp) {
+            _currentLayout = changed.Layout;
+          }
+
           _tray!.LanguageCode = code;
           RefreshTray();
         });

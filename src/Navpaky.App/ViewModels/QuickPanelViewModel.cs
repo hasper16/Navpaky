@@ -13,9 +13,6 @@ namespace Navpaky.App.ViewModels {
     private readonly TrayViewModel _tray;
     private readonly StatsTotals _today;
 
-    // The preset the user chose here, to show it as active and resume on a second click.
-    private PausePreset? _chosenPause;
-
     public QuickPanelViewModel(
         SettingsHub hub, TrayViewModel tray, Func<StatsDocument> stats, Func<DateOnly> today) {
       _hub = hub;
@@ -94,7 +91,7 @@ namespace Navpaky.App.ViewModels {
 
         return _hub.Current.PausedUntil == Settings.UntilRestart
             ? PausePreset.UntilRestart
-            : _chosenPause;
+            : _tray.ChosenPause;
       }
     }
 
@@ -136,10 +133,10 @@ namespace Navpaky.App.ViewModels {
 
     public void ChoosePause(PausePreset preset) {
       if (ActivePause == preset) {
-        _chosenPause = null;
+        _tray.ChosenPause = null;
         _tray.Resume();
       } else {
-        _chosenPause = preset;
+        _tray.ChosenPause = preset;
         _tray.Pause(preset);
       }
 

@@ -153,9 +153,9 @@ Written against the head of the `add-onboarding` PR. Unit tests cover when the w
   Expected: the field shows "привет ", the Layout is Russian and the green confirmation appears; no "Navpaky corrected a word" notification follows.
   Observed:
 - [x] **Tray item (2.4).** Complete the welcome, then open the tray menu with a click on the Navpaky icon.
-  Expected: the menu lists "Welcome and setup" above "About Navpaky"; choosing it opens the welcome window with the current settings, and choosing it again while open brings the same window to the front.
+  Expected: the menu lists "First steps" (before redesign-visual-identity: "Welcome and setup") above "About Navpaky"; choosing it opens the welcome window with the current settings, and choosing it again while open brings the same window to the front.
   Observed:
-- [x] **One Layout installed (2.3).** Remove every Layout but English (US) (keep a note to add Russian back), then open "Welcome and setup" from the tray. Choose "Open language settings". Add Russian back.
+- [x] **One Layout installed (2.3).** Remove every Layout but English (US) (keep a note to add Russian back), then open "First steps" ("Welcome and setup" before redesign-visual-identity) from the tray. Choose "Open language settings". Add Russian back.
   Expected: an amber notice says Navpaky needs at least two Layouts; the button opens Settings → Time & language → Language & region; once Russian is back the notice disappears without reopening the window.
   Observed:
 - [x] **One-time notification (2.5).** Complete the welcome, then in Notepad type "ghbdtn" and Space; type "ghbdtn" and Space again; quit and start Navpaky and correct once more.

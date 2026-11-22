@@ -30,6 +30,16 @@ namespace Navpaky.App.Views {
         }
       };
       Scroller.ScrollChanged += (_, _) => FollowScroll();
+
+      // A click on the section already selected raises no SelectionChanged.
+      Sections.AddHandler(
+          UIElement.MouseLeftButtonUpEvent,
+          new System.Windows.Input.MouseButtonEventHandler((_, _) => {
+            if (Sections.SelectedIndex >= 0) {
+              ScrollTo(Sections.SelectedIndex);
+            }
+          }),
+          handledEventsToo: true);
       Sections.SelectedIndex = 0;
       Loaded += (_, _) => TitleBarButtons.Name(TitleBar);
     }

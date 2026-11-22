@@ -23,8 +23,11 @@ namespace Navpaky.App.Tray {
       DataContext = model;
       LayoutKey.Click += (_, _) => {
         CloseNow();
-        ScreenFacts.Activate(_typedIn);
-        actions.SwitchLayout();
+
+        // A closed or unknown window: switching now would change another app's Layout.
+        if (ScreenFacts.Activate(_typedIn)) {
+          actions.SwitchLayout();
+        }
       };
 
       // One-way bindings with a click each, so a click on the active choice keeps it shown.
@@ -57,7 +60,10 @@ namespace Navpaky.App.Tray {
       (int left, int top, int right, int bottom) = ScreenFacts.WorkAreaAt(x, y);
       double width = ActualWidth * scale;
       double height = ActualHeight * scale;
-      double atX = Math.Clamp(x - (width / 2), left, right - width);
+
+      // Centred on the pointer, kept inside the work area; a work area narrower than the panel
+      // gets it at its left edge.
+      double atX = Math.Max(left, Math.Min(x - (width / 2), right - width));
 
       // A taskbar at the top puts the panel under it; otherwise the panel sits above the tray.
       double atY = y <= top ? top : bottom - height;

@@ -65,6 +65,17 @@ namespace Navpaky.App.Tests.ViewModels {
     }
 
     [Fact]
+    public void AReopenedPanelShowsAndResumesThePause() {
+      Panel().ChoosePause(PausePreset.ThirtyMinutes);
+
+      QuickPanelViewModel reopened = Panel();
+      Assert.Equal(PausePreset.ThirtyMinutes, reopened.ActivePause);
+      reopened.ChoosePause(PausePreset.ThirtyMinutes);
+
+      Assert.Equal(TrayState.Active, reopened.State);
+    }
+
+    [Fact]
     public void TheCurrentAppCanBeTurnedOff() {
       _tray.CurrentApp = _telegram;
       QuickPanelViewModel panel = Panel();

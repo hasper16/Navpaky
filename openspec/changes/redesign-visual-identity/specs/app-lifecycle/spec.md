@@ -21,9 +21,9 @@ The splash SHALL NOT take focus, SHALL let clicks pass through, SHALL have no ta
 ## MODIFIED Requirements
 
 ### Requirement: Background start without a main window
-The app SHALL start without opening a main window or a taskbar button and SHALL show a notification-area (tray) icon while running. The launch splash is not a main window.
+The app SHALL start without opening a main window or a taskbar button and SHALL show a notification-area (tray) icon while running. The launch splash is not a main window; the welcome window opens on the first start only (onboarding).
 
 #### Scenario: Normal start
-- **WHEN** the user launches Navpaky
+- **WHEN** the user launches Navpaky after the first start
 - **THEN** a Navpaky icon appears in the notification area
 - **AND** no window other than the launch splash and no taskbar button are shown

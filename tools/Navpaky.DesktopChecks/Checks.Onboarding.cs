@@ -61,7 +61,7 @@ namespace Navpaky.DesktopChecks {
     private static bool PressDone(AutomationElement window) {
       // Done shows on the last of the three steps (redesign-visual-identity).
       for (int step = 0; step < 2 && Named(window, "Done", ControlType.Button) is null; step++) {
-        PressNext(window);
+        PressNext(window, () => Named(window, "Done", ControlType.Button) is not null);
       }
 
       if (Named(window, "Done", ControlType.Button) is not { } done) {
@@ -72,10 +72,11 @@ namespace Navpaky.DesktopChecks {
       return WelcomeGone();
     }
 
-    private static void PressNext(AutomationElement window) {
+    // Presses Next and waits until the next step shows what arrived says it should.
+    private static void PressNext(AutomationElement window, Func<bool> arrived) {
       if (Named(window, "Next", ControlType.Button) is { } next) {
         ((InvokePattern)next.GetCurrentPattern(InvokePattern.Pattern)).Invoke();
-        Thread.Sleep(200);
+        EventLog.WaitFor(arrived, _uiWait);
       }
     }
 
@@ -115,7 +116,7 @@ namespace Navpaky.DesktopChecks {
       // The try-it field is on step 2 of 3 (redesign-visual-identity).
       if (WelcomeWindow(_uiWait) is { } shown
           && Named(shown, _tryItName, ControlType.Edit) is null) {
-        PressNext(shown);
+        PressNext(shown, () => Named(shown, _tryItName, ControlType.Edit) is not null);
       }
 
       if (WelcomeWindow(_uiWait) is not { } window

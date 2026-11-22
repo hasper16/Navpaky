@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -26,7 +27,7 @@ namespace Navpaky.App.Feedback {
     private readonly FrameworkElement _pill;
     private readonly IReadOnlyList<SplashFrame> _frames;
     private readonly DispatcherTimer _timer = new();
-    private readonly DateTime _started = DateTime.UtcNow;
+    private readonly Stopwatch _elapsed = Stopwatch.StartNew();
     private readonly Brush _text;
     private int _next;
 
@@ -124,7 +125,7 @@ namespace Navpaky.App.Feedback {
     // Shows every frame that is due and waits for the next one.
     private void Play() {
       _timer.Stop();
-      TimeSpan now = DateTime.UtcNow - _started;
+      TimeSpan now = _elapsed.Elapsed;
       while (_next < _frames.Count && _frames[_next].At <= now) {
         Show(_frames[_next++]);
       }
