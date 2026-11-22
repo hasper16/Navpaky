@@ -586,4 +586,16 @@
   <data name="SoundNavpaky" xml:space="preserve">
     <value>Навпаки (вгору до вашої мови, униз до англійської)</value>
   </data>
+  <data name="CursorIndicatorStyleChoice" xml:space="preserve">
+    <value>Вигляд мітки</value>
+  </data>
+  <data name="IndicatorStylePill" xml:space="preserve">
+    <value>Пігулка</value>
+  </data>
+  <data name="IndicatorStyleTag" xml:space="preserve">
+    <value>Мітка</value>
+  </data>
+  <data name="IndicatorStyleUnderline" xml:space="preserve">
+    <value>Підкреслення</value>
+  </data>
 </root>

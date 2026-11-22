@@ -21,7 +21,7 @@
 
 ## 5. Cursor indicator (design D7)
 
-- [ ] 5.1 Test first: the indicator builds a pill, tag or underline visual for the chosen style. Then replace the bitmap badge; add the style choice with previews to General. Verify: `dotnet test tests/Navpaky.App.Tests`; the desktop set for the indicator still passes; look deferred.
+- [x] 5.1 Test first: `IndicatorMark` builds a pill (accent dot), tag (accent fill) or underline (no background) for the chosen style; `SettingsViewModel` stores the style. Then the indicator shows the mark instead of the bitmap badge and General offers the three styles with previews. Verify: `dotnet test tests/Navpaky.App.Tests` (`IndicatorMarkTests`, `SettingsViewModelTests`, `SettingsAutomationTests`); the indicator desktop set runs on the orchestrator's gate; look deferred.
 
 ## 6. Settings page (design D6)
 

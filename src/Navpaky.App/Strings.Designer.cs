@@ -184,6 +184,15 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mark style.
+        /// </summary>
+        public static string CursorIndicatorStyleChoice {
+            get {
+                return ResourceManager.GetString("CursorIndicatorStyleChoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apps where Navpaky stays off.
         /// </summary>
         public static string ExcludedApps {
@@ -369,6 +378,33 @@ namespace Navpaky.App {
         public static string HotkeyUseAnyway {
             get {
                 return ResourceManager.GetString("HotkeyUseAnyway", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pill.
+        /// </summary>
+        public static string IndicatorStylePill {
+            get {
+                return ResourceManager.GetString("IndicatorStylePill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tag.
+        /// </summary>
+        public static string IndicatorStyleTag {
+            get {
+                return ResourceManager.GetString("IndicatorStyleTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Underline.
+        /// </summary>
+        public static string IndicatorStyleUnderline {
+            get {
+                return ResourceManager.GetString("IndicatorStyleUnderline", resourceCulture);
             }
         }
         

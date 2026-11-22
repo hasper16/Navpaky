@@ -53,6 +53,11 @@ namespace Navpaky.App.ViewModels {
       set => _hub.Update(settings => settings with { ShowCursorIndicator = value });
     }
 
+    public CursorIndicatorStyle CursorIndicatorStyle {
+      get => _hub.Current.CursorIndicatorStyle;
+      set => _hub.Update(settings => settings with { CursorIndicatorStyle = value });
+    }
+
     public bool PlaySwitchSound {
       get => _hub.Current.PlaySwitchSound;
       set => _hub.Update(settings => settings with { PlaySwitchSound = value });

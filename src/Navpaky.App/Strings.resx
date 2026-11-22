@@ -586,4 +586,16 @@
   <data name="SoundNavpaky" xml:space="preserve">
     <value>Navpaky (rises to your language, falls to English)</value>
   </data>
+  <data name="CursorIndicatorStyleChoice" xml:space="preserve">
+    <value>Mark style</value>
+  </data>
+  <data name="IndicatorStylePill" xml:space="preserve">
+    <value>Pill</value>
+  </data>
+  <data name="IndicatorStyleTag" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="IndicatorStyleUnderline" xml:space="preserve">
+    <value>Underline</value>
+  </data>
 </root>

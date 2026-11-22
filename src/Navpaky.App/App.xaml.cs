@@ -696,7 +696,8 @@ namespace Navpaky.App {
       if (response.Indicator) {
         _indicator!.Show(
             feedback.Target.LanguageCode,
-            ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark);
+            ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark,
+            _hub.Current.CursorIndicatorStyle);
       }
 
       if (response.Sound) {
@@ -816,7 +817,10 @@ namespace Navpaky.App {
       var apps = new ExcludedAppsViewModel(_hub!, AppNames.OfKey);
       SettingsSection[] sections = [
           new("PageGeneral", SymbolRegular.Settings24,
-              new GeneralPage(settings, sound => _sounds!.Play(sound, towardEnglish: false))),
+              new GeneralPage(
+                  settings,
+                  sound => _sounds!.Play(sound, towardEnglish: false),
+                  ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark)),
           new("PageCorrection", SymbolRegular.TextGrammarCheckmark24,
               new CorrectionPage(settings)),
           new("PageHotkey", SymbolRegular.Keyboard24, new HotkeyPage(hotkey, _chords)),

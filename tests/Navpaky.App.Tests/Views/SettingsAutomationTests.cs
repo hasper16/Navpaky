@@ -63,7 +63,9 @@ namespace Navpaky.App.Tests.Views {
           var signUp = new SignUpViewModel(_ => Task.FromResult(true));
           Func<SettingsSection>[] sections = [
               () => new(
-                  "PageGeneral", SymbolRegular.Settings24, new GeneralPage(settings, _ => { })),
+                  "PageGeneral",
+                  SymbolRegular.Settings24,
+                  new GeneralPage(settings, _ => { }, dark: false)),
               () => new("PageCorrection", SymbolRegular.Book24, new CorrectionPage(settings)),
               () => new("PageHotkey", SymbolRegular.Keyboard24, new HotkeyPage(hotkey)),
               () => new(

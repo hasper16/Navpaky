@@ -30,7 +30,15 @@
                        IsChecked="{Binding ShowCursorIndicator}" />
       <TextBlock Text="{l:Loc ShowCursorIndicatorHint}"
                  Style="{StaticResource HintText}"
-                 Margin="0,4,0,16" />
+                 Margin="0,4,0,8" />
+      <TextBlock x:Name="StyleLabel"
+                 Text="{l:Loc CursorIndicatorStyleChoice}"
+                 Margin="0,0,0,4" />
+      <!-- One radio button per style, each with a preview of the mark (built in code). -->
+      <StackPanel x:Name="IndicatorStyles"
+                  Orientation="Horizontal"
+                  Margin="0,0,0,16"
+                  AutomationProperties.LabeledBy="{Binding ElementName=StyleLabel}" />
       <ui:ToggleSwitch x:Name="PlaySound"
                        Content="{l:Loc PlaySwitchSound}"
                        IsChecked="{Binding PlaySwitchSound}"

@@ -89,6 +89,13 @@ namespace Navpaky.App.Tests.ViewModels {
     }
 
     [Fact]
+    public void ChosenIndicatorStyleReachesTheSettings() {
+      _model.CursorIndicatorStyle = CursorIndicatorStyle.Underline;
+
+      Assert.Equal(CursorIndicatorStyle.Underline, _hub.Current.CursorIndicatorStyle);
+    }
+
+    [Fact]
     public void FlushSavesAPendingChangeAtOnce() {
       _model.ShowCursorIndicator = false;
 
