@@ -30,7 +30,7 @@
 ## 7. Quick panel (design D5)
 
 - [x] 7.1 Test first: `QuickPanelViewModel` turns Auto Correction off, pauses with a preset and resumes on the same preset, turns the current app off, shows today's Corrections, Undos and the share kept (none at zero Corrections), hides the strip when statistics are off, and picks the next installed Layout. Verify: `dotnet test tests/Navpaky.App.Tests` (`QuickPanelViewModelTests`).
-- [x] 7.2 `QuickPanel` window: a left click on the tray icon opens it above the tray, a right click keeps the menu; it closes on Esc, on losing focus and after an action; the Language key hands the focus back to the window the user typed in (`ScreenFacts.Foreground`, `ScreenFacts.Activate`) and switches to the next installed Layout. Verify: the build and `dotnet test tests/Navpaky.App.Tests` pass; an offscreen render of the panel was checked during the work; opening it from the tray, the Layout switch and the look are deferred to `deferred-by-hand.md` (a desktop check cannot click the notification area reliably).
+- [x] 7.2 `QuickPanel` window: a left click on the tray icon opens it above the tray, a right click keeps the menu; it closes on Esc, on losing focus and after an action; the Language key hands the focus back to the last app window `ForegroundApps` reported (never the taskbar; `ScreenFacts.Activate`) and switches to the next installed Layout. Verify: the build and `dotnet test tests/Navpaky.App.Tests` pass; an offscreen render of the panel was checked during the work; opening it from the tray, the Layout switch and the look are deferred to `deferred-by-hand.md` (a desktop check cannot click the notification area reliably).
 
 ## 8. Welcome and tray menu (design D9, D11)
 

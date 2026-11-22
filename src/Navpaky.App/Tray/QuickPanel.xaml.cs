@@ -13,9 +13,11 @@ namespace Navpaky.App.Tray {
     private readonly nint _typedIn;
     private bool _closing;
 
-    public QuickPanel(QuickPanelViewModel model, QuickPanelActions actions) {
+    // typedIn is the app window the user worked in before clicking the tray: the click itself
+    // puts the taskbar in front.
+    public QuickPanel(QuickPanelViewModel model, QuickPanelActions actions, nint typedIn) {
       _model = model;
-      _typedIn = ScreenFacts.Foreground();
+      _typedIn = typedIn;
       InitializeComponent();
       DataContext = model;
       LayoutKey.Click += (_, _) => {

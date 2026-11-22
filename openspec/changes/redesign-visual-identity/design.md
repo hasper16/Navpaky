@@ -54,8 +54,8 @@ the output folder. Grunt Grotesk is not used below 14 px.
 ### D5. Quick panel window
 `Tray/QuickPanel` is a borderless, topmost, `ShowInTaskbar=false` WPF UI window, placed above
 the tray in the work area of the screen holding the mouse pointer. `TrayIconView` sets
-`MenuActivation = RightClick` and opens the panel on `TrayLeftMouseUp`. Before showing it, the
-panel records the foreground window (`GetForegroundWindow`). It closes on `Deactivated` and Esc.
+`MenuActivation = RightClick` and opens the panel on `TrayLeftMouseUp`. The panel takes the last app
+window `ForegroundApps` reported (the tray click itself puts the taskbar in front). It closes on `Deactivated` and Esc.
 Clicking the Language key closes the panel, gives focus back to the recorded window
 (`SetForegroundWindow`, allowed because our process is in the foreground) and asks the input
 worker to switch to the next installed Layout (`InputWorker.SwitchLayout`, posted to the worker

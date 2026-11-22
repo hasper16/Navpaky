@@ -69,18 +69,10 @@ namespace Navpaky.Win32 {
     }
 
     /// <summary>
-    /// Returns the window the user works in, before Navpaky's quick panel takes the focus.
-    /// </summary>
-    /// <returns>The foreground window's handle, or zero when there is none.</returns>
-    public static nint Foreground() {
-      return PInvoke.GetForegroundWindow();
-    }
-
-    /// <summary>
     /// Gives the focus back to a window the user worked in; Windows allows it while Navpaky's
     /// own window is in front.
     /// </summary>
-    /// <param name="window">The window's handle, as <see cref="Foreground" /> returned it.</param>
+    /// <param name="window">The window's handle.</param>
     /// <returns><see langword="true" /> when the window came to the front.</returns>
     public static bool Activate(nint window) {
       return window != 0 && PInvoke.SetForegroundWindow((HWND)window);

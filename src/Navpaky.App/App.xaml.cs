@@ -91,6 +91,9 @@ namespace Navpaky.App {
 
     // The Layout the tray shows; written on the UI thread only.
     private LayoutId? _currentLayout;
+
+    // The last app window the user worked in, never the taskbar; written on the UI thread only.
+    private nint _typedInWindow;
     private ForegroundApps? _foregroundApps;
     private DispatcherTimer? _trayTimer;
     private DispatcherTimer? _statsTimer;
@@ -604,6 +607,8 @@ namespace Navpaky.App {
     private void StartTrayFollowers() {
       _foregroundApps = new ForegroundApps();
       _foregroundApps.Changed += app => {
+        // The window of the app just in front; the quick panel gives the focus back to it.
+        _typedInWindow = ForegroundApps.CurrentWindow();
         _tray!.CurrentApp = new CurrentApp(app, AppNames.Of(app));
         RefreshTray();
       };
@@ -869,7 +874,7 @@ namespace Navpaky.App {
           () => DateOnly.FromDateTime(DateTime.Now));
       var actions = new QuickPanelActions(
           SwitchToNextLayout, OpenSettings, OpenWelcome, OpenStatistics, Shutdown, RefreshTray);
-      new QuickPanel(model, actions).ShowAtPointer();
+      new QuickPanel(model, actions, _typedInWindow).ShowAtPointer();
     }
 
     private void SwitchToNextLayout() {
