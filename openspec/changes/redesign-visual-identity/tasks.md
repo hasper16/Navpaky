@@ -42,5 +42,5 @@
 
 ## 10. Docs and verification
 
-- [ ] 10.1 `docs/roadmap.md` lists the change; `docs/manual-tests/deferred-by-hand.md` gains the `redesign-visual-identity` checklist (look of tray, panel, settings, welcome, splash, indicator styles, sounds in both themes); `docs/manual-tests/redesign-visual-identity.md` names the desktop sets. Verify: files present.
+- [x] 10.1 `docs/roadmap.md` lists the change; `docs/manual-tests/deferred-by-hand.md` gains the `redesign-visual-identity` checklist (look of tray, panel, settings, welcome, splash, indicator styles, sounds in both themes); `docs/manual-tests/redesign-visual-identity.md` names the desktop sets. Verify: files present.
 - [ ] 10.2 All tests green on CI. Verify: CI `build` job green on the PR head.
