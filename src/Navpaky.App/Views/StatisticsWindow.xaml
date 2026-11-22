@@ -11,7 +11,8 @@
                  ResizeMode="CanMinimize"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
-                 WindowBackdropType="Mica">
+                 WindowBackdropType="None"
+                 Background="{DynamicResource BrandWindowBackground}">
   <Grid Grid.IsSharedSizeScope="True">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />

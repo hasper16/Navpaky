@@ -868,6 +868,42 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Correct automatically.
+        /// </summary>
+        public static string QuickAutoCorrection {
+            get {
+                return ResourceManager.GetString("QuickAutoCorrection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CURRENT APP.
+        /// </summary>
+        public static string QuickCaptionApp {
+            get {
+                return ResourceManager.GetString("QuickCaptionApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PAUSE.
+        /// </summary>
+        public static string QuickCaptionPause {
+            get {
+                return ResourceManager.GetString("QuickCaptionPause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SENSITIVITY.
+        /// </summary>
+        public static string QuickCaptionSensitivity {
+            get {
+                return ResourceManager.GetString("QuickCaptionSensitivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to corrected today.
         /// </summary>
         public static string QuickCorrectedToday {
@@ -900,6 +936,15 @@ namespace Navpaky.App {
         public static string QuickHotkeyHint {
             get {
                 return ResourceManager.GetString("QuickHotkeyHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mark at the cursor.
+        /// </summary>
+        public static string QuickIndicator {
+            get {
+                return ResourceManager.GetString("QuickIndicator", resourceCulture);
             }
         }
         
@@ -954,6 +999,42 @@ namespace Navpaky.App {
         public static string QuickPause60 {
             get {
                 return ResourceManager.GetString("QuickPause60", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings….
+        /// </summary>
+        public static string QuickSettings {
+            get {
+                return ResourceManager.GetString("QuickSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch sound.
+        /// </summary>
+        public static string QuickSound {
+            get {
+                return ResourceManager.GetString("QuickSound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Off.
+        /// </summary>
+        public static string QuickStateOff {
+            get {
+                return ResourceManager.GetString("QuickStateOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Working.
+        /// </summary>
+        public static string QuickStateOn {
+            get {
+                return ResourceManager.GetString("QuickStateOn", resourceCulture);
             }
         }
         
@@ -1760,15 +1841,6 @@ namespace Navpaky.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Navpaky fixes a word you typed in the wrong keyboard layout, such as &quot;ghbdtn&quot; instead of &quot;привет&quot;, and switches the layout for you..
-        /// </summary>
-        public static string WelcomeDescription {
-            get {
-                return ResourceManager.GetString("WelcomeDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Send anonymous crash reports and daily usage counts to help improve Navpaky. Never your text..
         /// </summary>
         public static string WelcomeDiagnostics {
@@ -1783,6 +1855,15 @@ namespace Navpaky.App {
         public static string WelcomeDone {
             get {
                 return ResourceManager.GetString("WelcomeDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to Navpaky.
+        /// </summary>
+        public static string WelcomeHeading {
+            get {
+                return ResourceManager.GetString("WelcomeHeading", resourceCulture);
             }
         }
         
@@ -1823,20 +1904,20 @@ namespace Navpaky.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Navpaky reads keystrokes only to check the word you are typing. It never sends your text anywhere and never uses the clipboard..
+        ///   Looks up a localized string similar to What you type here goes nowhere..
         /// </summary>
-        public static string WelcomePrivacy {
+        public static string WelcomePrivacyField {
             get {
-                return ResourceManager.GetString("WelcomePrivacy", resourceCulture);
+                return ResourceManager.GetString("WelcomePrivacyField", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your typing stays on this computer.
+        ///   Looks up a localized string similar to What you type stays on this computer..
         /// </summary>
-        public static string WelcomePrivacyTitle {
+        public static string WelcomePrivacyShort {
             get {
-                return ResourceManager.GetString("WelcomePrivacyTitle", resourceCulture);
+                return ResourceManager.GetString("WelcomePrivacyShort", resourceCulture);
             }
         }
         
@@ -1846,6 +1927,15 @@ namespace Navpaky.App {
         public static string WelcomeStep {
             get {
                 return ResourceManager.GetString("WelcomeStep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type away, we&apos;ll fix it..
+        /// </summary>
+        public static string WelcomeTagline {
+            get {
+                return ResourceManager.GetString("WelcomeTagline", resourceCulture);
             }
         }
         
@@ -1913,11 +2003,38 @@ namespace Navpaky.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Not what you meant? Press Ctrl+Z right after a correction, or press your hotkey, to get your typing back..
+        ///   Looks up a localized string similar to and the word comes back..
         /// </summary>
-        public static string WelcomeUndo {
+        public static string WelcomeUndoAfter {
             get {
-                return ResourceManager.GetString("WelcomeUndo", resourceCulture);
+                return ResourceManager.GetString("WelcomeUndoAfter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not it? Press right away.
+        /// </summary>
+        public static string WelcomeUndoBefore {
+            get {
+                return ResourceManager.GetString("WelcomeUndoBefore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Typed a word in the wrong layout? Navpaky notices when you press Space, fixes the word and switches the layout..
+        /// </summary>
+        public static string WelcomeWhatText {
+            get {
+                return ResourceManager.GetString("WelcomeWhatText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to What Navpaky does.
+        /// </summary>
+        public static string WelcomeWhatTitle {
+            get {
+                return ResourceManager.GetString("WelcomeWhatTitle", resourceCulture);
             }
         }
         

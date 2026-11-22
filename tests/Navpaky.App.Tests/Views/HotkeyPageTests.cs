@@ -13,6 +13,18 @@ namespace Navpaky.App.Tests.Views {
   // checked, so a click on it must still start recording.
   [Collection(nameof(Sta))]
   public sealed class HotkeyPageTests {
+    // The page takes its card and pill styles from Resources.xaml.
+    public HotkeyPageTests() {
+      Sta.Run(() => {
+        if (Application.Current is null) {
+          var host = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+          host.Resources.MergedDictionaries.Add(new ResourceDictionary {
+            Source = new Uri("pack://application:,,,/Navpaky.App;component/Resources.xaml"),
+          });
+        }
+      });
+    }
+
     [Fact]
     public void ClickOnTheCheckedCustomOptionStartsRecording() {
       Sta.Run(() => {
@@ -22,7 +34,7 @@ namespace Navpaky.App.Tests.Views {
         using var hub = new SettingsHub(settings, _ => { }, new ManualClock());
         using var model = new HotkeyViewModel(hub, _ => HotkeyConflict.None);
         var page = new HotkeyPage(model);
-        var options = (StackPanel)page.FindName("Options");
+        var options = (Panel)page.FindName("Options");
         RadioButton custom = options.Children.OfType<RadioButton>().Last();
         Assert.True(custom.IsChecked);
 

@@ -1,17 +1,21 @@
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Threading;
 using Navpaky.App.Localization;
 using Navpaky.App.Onboarding;
 using Navpaky.App.Tray;
 using Navpaky.App.ViewModels;
 using Wpf.Ui.Appearance;
+using ImageIcon = Wpf.Ui.Controls.ImageIcon;
 
 namespace Navpaky.App.Views {
   // The welcome window (design D1 of add-onboarding). The try-it field is an ordinary text box:
   // Navpaky's hook sees it like any other app's, so a Correction there proves the whole pipeline.
   internal sealed partial class WelcomeWindow {
     private readonly WelcomeViewModel _model;
+    private readonly DispatcherTimer _demo = new() { Interval = TimeSpan.FromSeconds(1.6) };
 
     // Written on the UI thread only, read on the worker thread when a Switch happens.
     private volatile bool _tryItFocused;
@@ -24,6 +28,13 @@ namespace Navpaky.App.Views {
       InitializeComponent();
       DataContext = model;
       Mark.Source = BrandMark.Large();
+      TitleBar.Icon = new ImageIcon { Source = BrandMark.Large(), Width = 16, Height = 16 };
+      _demo.Tick += (_, _) => FlipDemo();
+      ShowDemo(corrected: false);
+
+      // Key names are the same in every language.
+      UndoPlus.Text = "+";
+      UndoKey.Text = "Z";
       Hotkey.Content = hotkey;
       OuterWheelScroll.Attach(Scroller);
       Localizer.Follow(this, ShowLayouts);
@@ -53,6 +64,7 @@ namespace Navpaky.App.Views {
     }
 
     protected override void OnClosed(EventArgs e) {
+      _demo.Stop();
       _model.PropertyChanged -= OnModelChanged;
       base.OnClosed(e);
     }
@@ -83,6 +95,30 @@ namespace Navpaky.App.Views {
       Done.Visibility = _model.IsLastStep ? Visibility.Visible : Visibility.Collapsed;
       StepText.Text = UiText.Format(
           Strings.WelcomeStep, step + 1, WelcomeViewModel.LastStep + 1);
+      for (int bar = 0; bar < StepBars.Children.Count; bar++) {
+        var segment = (Border)StepBars.Children[bar];
+        segment.SetResourceReference(
+            Border.BackgroundProperty,
+            bar <= step ? "AccentFillColorDefaultBrush" : "BrandLine");
+      }
+
+      // The example on step 1 turns the wrong-layout word into the right one, as in the
+      // prototype; without animations it shows the result.
+      if (step == 0 && SystemParameters.ClientAreaAnimation) {
+        _demo.Start();
+      } else {
+        _demo.Stop();
+        ShowDemo(corrected: true);
+      }
+    }
+
+    private void FlipDemo() {
+      ShowDemo(corrected: DemoKey.Text != "UK");
+    }
+
+    private void ShowDemo(bool corrected) {
+      DemoWord.Text = corrected ? "привіт" : "ghbdsn";
+      DemoKey.Text = corrected ? "UK" : "EN";
     }
   }
 }

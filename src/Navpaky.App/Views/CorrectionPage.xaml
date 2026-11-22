@@ -5,64 +5,63 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:l="clr-namespace:Navpaky.App.Localization"
              xmlns:detection="clr-namespace:Navpaky.Core.Detection;assembly=Navpaky.Core"
-             xmlns:views="clr-namespace:Navpaky.App.Views">
+             xmlns:v="clr-namespace:Navpaky.App.Views">
   <UserControl.Resources>
-    <views:EqualsConverter x:Key="Equals" />
+    <v:EqualsConverter x:Key="Equals" />
   </UserControl.Resources>
-  <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-    <StackPanel Margin="24,16" MaxWidth="640" HorizontalAlignment="Left">
-      <ui:ToggleSwitch Content="{l:Loc AutoCorrection}"
-                       IsChecked="{Binding AutoCorrectionEnabled}"
-                       Margin="0,0,0,16" />
-      <TextBlock x:Name="SensitivityLabel"
-                 Text="{l:Loc Sensitivity}"
-                 Style="{StaticResource SectionText}" />
-      <StackPanel AutomationProperties.LabeledBy="{Binding ElementName=SensitivityLabel}"
-                  Margin="0,0,0,16">
-        <RadioButton GroupName="Sensitivity"
-                     Content="{l:Loc SensitivityBalanced}"
-                     IsChecked="{Binding Sensitivity, Converter={StaticResource Equals},
-                                 ConverterParameter={x:Static detection:Sensitivity.Balanced}}" />
-        <TextBlock Text="{l:Loc SensitivityBalancedHint}"
-                   Style="{StaticResource OptionHintText}" />
-        <RadioButton GroupName="Sensitivity"
-                     Content="{l:Loc SensitivityCautious}"
-                     IsChecked="{Binding Sensitivity, Converter={StaticResource Equals},
-                                 ConverterParameter={x:Static detection:Sensitivity.Cautious}}" />
-        <TextBlock Text="{l:Loc SensitivityCautiousHint}"
-                   Style="{StaticResource OptionHintText}" />
-        <RadioButton GroupName="Sensitivity"
-                     Content="{l:Loc SensitivityAggressive}"
-                     IsChecked="{Binding Sensitivity, Converter={StaticResource Equals},
-                                 ConverterParameter={x:Static detection:Sensitivity.Aggressive}}" />
-        <TextBlock Text="{l:Loc SensitivityAggressiveHint}"
-                   Style="{StaticResource OptionHintText}" />
+  <!-- Cards of rows, as in the approved prototype (fix-redesign-findings). -->
+  <StackPanel>
+    <Border Style="{StaticResource SettingsCard}">
+      <StackPanel>
+        <v:SettingRow Label="{l:Loc AutoCorrection}">
+          <ui:ToggleSwitch IsChecked="{Binding AutoCorrectionEnabled}"
+                           AutomationProperties.Name="{l:Loc AutoCorrection}" />
+        </v:SettingRow>
+        <v:SettingRow Label="{l:Loc Sensitivity}" Hint="{Binding SensitivityHint}">
+          <StackPanel Orientation="Horizontal" AutomationProperties.Name="{l:Loc Sensitivity}">
+            <RadioButton Style="{StaticResource PillRadio}"
+                         GroupName="Sensitivity"
+                         Content="{l:Loc SensitivityCautious}"
+                         IsChecked="{Binding Sensitivity, Converter={StaticResource Equals},
+                                     ConverterParameter={x:Static detection:Sensitivity.Cautious}}" />
+            <RadioButton Style="{StaticResource PillRadio}"
+                         GroupName="Sensitivity"
+                         Content="{l:Loc SensitivityBalanced}"
+                         IsChecked="{Binding Sensitivity, Converter={StaticResource Equals},
+                                     ConverterParameter={x:Static detection:Sensitivity.Balanced}}" />
+            <RadioButton Style="{StaticResource PillRadio}"
+                         GroupName="Sensitivity"
+                         Content="{l:Loc SensitivityAggressive}"
+                         IsChecked="{Binding Sensitivity, Converter={StaticResource Equals},
+                                     ConverterParameter={x:Static detection:Sensitivity.Aggressive}}" />
+          </StackPanel>
+        </v:SettingRow>
+        <v:SettingRow Label="{l:Loc CorrectWhenIPress}">
+          <StackPanel Orientation="Horizontal" AutomationProperties.Name="{l:Loc CorrectWhenIPress}">
+            <CheckBox Style="{StaticResource PillCheck}"
+                      Content="{l:Loc TriggerSpace}"
+                      IsChecked="{Binding TriggerOnSpace}" />
+            <CheckBox Style="{StaticResource PillCheck}"
+                      Content="{l:Loc TriggerEnter}"
+                      IsChecked="{Binding TriggerOnEnter}" />
+            <CheckBox Style="{StaticResource PillCheck}"
+                      Content="{l:Loc TriggerTab}"
+                      IsChecked="{Binding TriggerOnTab}" />
+          </StackPanel>
+        </v:SettingRow>
       </StackPanel>
-      <TextBlock x:Name="TriggerLabel"
-                 Text="{l:Loc CorrectWhenIPress}"
-                 Style="{StaticResource SectionText}" />
-      <StackPanel Orientation="Horizontal"
-                  AutomationProperties.LabeledBy="{Binding ElementName=TriggerLabel}"
-                  Margin="0,0,0,16">
-        <CheckBox Content="{l:Loc TriggerSpace}"
-                  IsChecked="{Binding TriggerOnSpace}"
-                  Margin="0,0,16,0" />
-        <CheckBox Content="{l:Loc TriggerEnter}"
-                  IsChecked="{Binding TriggerOnEnter}"
-                  Margin="0,0,16,0" />
-        <CheckBox Content="{l:Loc TriggerTab}"
-                  IsChecked="{Binding TriggerOnTab}" />
+    </Border>
+    <Border Style="{StaticResource SettingsCard}">
+      <StackPanel>
+        <v:SettingRow Label="{l:Loc SkipAfterManualSwitch}" Hint="{l:Loc SkipAfterManualSwitchHint}">
+          <ui:ToggleSwitch IsChecked="{Binding SkipAfterManualLayoutSwitch}"
+                           AutomationProperties.Name="{l:Loc SkipAfterManualSwitch}" />
+        </v:SettingRow>
+        <v:SettingRow Label="{l:Loc VerifiedReplacement}" Hint="{l:Loc VerifiedReplacementHint}">
+          <ui:ToggleSwitch IsChecked="{Binding VerifiedReplacement}"
+                           AutomationProperties.Name="{l:Loc VerifiedReplacement}" />
+        </v:SettingRow>
       </StackPanel>
-      <ui:ToggleSwitch Content="{l:Loc SkipAfterManualSwitch}"
-                       IsChecked="{Binding SkipAfterManualLayoutSwitch}" />
-      <TextBlock Text="{l:Loc SkipAfterManualSwitchHint}"
-                 Style="{StaticResource HintText}"
-                 Margin="0,4,0,16" />
-      <ui:ToggleSwitch Content="{l:Loc VerifiedReplacement}"
-                       IsChecked="{Binding VerifiedReplacement}" />
-      <TextBlock Text="{l:Loc VerifiedReplacementHint}"
-                 Style="{StaticResource HintText}"
-                 Margin="0,4,0,0" />
-    </StackPanel>
-  </ScrollViewer>
+    </Border>
+  </StackPanel>
 </UserControl>

@@ -20,7 +20,8 @@ namespace Navpaky.App.Tests.Localization {
               || (_textAttributes.Contains(attribute.Name.LocalName)
                   && attribute.Value != Product.Name
                   && !attribute.Value.StartsWith("{l:Loc ", StringComparison.Ordinal)
-                  && !attribute.Value.StartsWith("{Binding", StringComparison.Ordinal)))
+                  && !attribute.Value.StartsWith("{Binding", StringComparison.Ordinal)
+                  && !attribute.Value.StartsWith("{TemplateBinding", StringComparison.Ordinal)))
           .Select(Describe)];
 
       Assert.Empty(found);

@@ -23,13 +23,21 @@ namespace Navpaky.App.Views {
       _model = model;
       _chords = chords;
       foreach (Hotkey preset in HotkeyViewModel.Presets) {
-        var option = new RadioButton { GroupName = "Hotkey" };
+        var option = new RadioButton {
+          GroupName = "Hotkey",
+          Style = (Style)FindResource("PillRadio"),
+          Margin = new Thickness(0, 0, 6, 6),
+        };
         option.Checked += (_, _) => Choose(preset);
         _presets[option] = preset;
         Options.Children.Add(option);
       }
 
-      _custom = new RadioButton { GroupName = "Hotkey" };
+      _custom = new RadioButton {
+        GroupName = "Hotkey",
+        Style = (Style)FindResource("PillRadio"),
+        Margin = new Thickness(0, 0, 6, 6),
+      };
       _custom.SetBinding(ContentProperty, LocExtension.Binding("HotkeyCustom"));
       _custom.Checked += (_, _) => {
         if (!_showing) {

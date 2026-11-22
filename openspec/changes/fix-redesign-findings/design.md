@@ -28,6 +28,31 @@ The two `OFL-*.txt` items get `ExcludeFromSingleFile="true"`, so the publish fol
 ### D6. Sound names
 A sound's name in the picker is the name alone; the Navpaky sound reads "Navpaky" / "Навпаки" without an explanation (owner decision after the 0.4.5 check).
 
+### D7. Match the approved prototype (owner's comparison of 0.4.5 with prototype v24)
+Shared pieces in `Resources.xaml`: `SettingRow` (label and hint left, control right, divider), `SettingsCard`, `Pill`/`PillRadio`/`PillCheck` (outlined, accent ring when chosen) and `Segment` (accent fill when chosen); `BrandTheme` sets the prototype's surfaces per theme (`BrandWindowBackground`, `BrandSurface`, `BrandLine`, text shades). Windows drop Mica for the solid brand background. Ukrainian texts follow the prototype; English labels the desktop checks use stay as they are.
+
+| Screen | Prototype | 0.4.5 build | Now |
+|---|---|---|---|
+| All windows | Navy (dark) / white and blue-grey (light) surfaces, card borders | Grey Mica | Brand surfaces, no Mica |
+| Settings title bar | Mark and "Налаштування Navpaky" | No icon | Mark in the title bar |
+| Settings sidebar | Lighter row with a left accent bar | Filled blue block | Lighter row with an accent bar |
+| Settings rows | Label left, switch right, dividers, grouped cards | Switch left of label, one big card | `SettingRow` cards per group |
+| General | Sign-in, updates, interface language; indicator with hint; style pills with previews; sound row with dropdown, play and switch | Language first; radio buttons; sound split, "Прослухати" cut off | As the prototype |
+| Correction | Sensitivity and trigger keys as pills; "Смілива"; hint of the chosen level | Radio buttons and check boxes; "Активна" | As the prototype |
+| Hotkey | Pills ("Двічі Shift" …) | Radio buttons | Pills in a card |
+| Apps and words, Diagnostics, About | Cards | One card | Cards; the build's extra settings (word-analysis log, export, keyboard watchdog, restart after a freeze, usage digest, sign-up) kept in cards |
+| Section name | "Діагностика та приватність" | "… та конфіденційність" | As the prototype |
+| Quick panel | Accent UK key with a gold/black lip; "● Працює"; uppercase captions; app icon; pills with the chosen one filled; "Смілива"; stats with a chevron; short labels; plain footer buttons | Pale square; "Navpaky увімкнено"; boxed buttons; long labels | As the prototype |
+| Welcome | Compact; "Navpaky" title bar with mark; Grunt heading "Вітаємо в Navpaky" and "Пишіть, ми виправимо."; three-part progress bar; live example "ghbdsn → привіт" with a key; Ctrl + Z as keys | Tall window, long text, no heading or progress bar | As the prototype |
+| Statistics, Export | Brand surfaces | Mica | Brand surfaces |
+
+Still different on purpose (spec or platform):
+- Welcome step 1 keeps a one-line privacy statement (onboarding spec: step 1 states that typed text never leaves the computer); the prototype has it on step 2 only.
+- Welcome step 3 keeps the Auto Correction and launch-at-sign-in switches and all Hotkey options (onboarding spec "Main choices up front"); the prototype shows the Hotkey pills, the tray tip and crash reports only.
+- The Hotkey choice lists the build's presets (Ctrl+Space, Win+Space, custom), more than the prototype's three.
+- WPF has no letter spacing for the uppercase captions, and the window caption buttons are WPF UI's.
+- The right-click tray menu stays the standard WPF UI menu (the prototype shows only its items).
+
 ## Risks / Trade-offs
 
 - `SystemEvents` keeps a hidden window; it is released on exit.

@@ -11,7 +11,8 @@
                  MinHeight="360"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
-                 WindowBackdropType="Mica">
+                 WindowBackdropType="None"
+                 Background="{DynamicResource BrandWindowBackground}">
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />

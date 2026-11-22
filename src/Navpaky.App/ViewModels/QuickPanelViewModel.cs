@@ -21,7 +21,12 @@ namespace Navpaky.App.ViewModels {
 
     public TrayState State => _tray.State;
 
-    public string StateText => _tray.ToolTip;
+    // "Working" and "Off" as in the prototype; a pause keeps the tray's text with the time left.
+    public string StateText => State switch {
+      TrayState.Active => Strings.QuickStateOn,
+      TrayState.Off => Strings.QuickStateOff,
+      _ => _tray.ToolTip,
+    };
 
     public string? LanguageCode => _tray.LanguageCode;
 
@@ -66,6 +71,8 @@ namespace Navpaky.App.ViewModels {
     public string? CurrentAppName => _tray.CurrentApp?.Name;
 
     public bool HasCurrentApp => _tray.CurrentApp is not null;
+
+    public string? CurrentAppPath => _tray.CurrentApp?.Id.ExePath;
 
     public bool CurrentAppEnabled {
       get {

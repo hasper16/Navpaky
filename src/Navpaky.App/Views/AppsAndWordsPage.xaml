@@ -8,8 +8,10 @@
     <views:FormatConverter x:Key="Format" />
     <views:AppIconConverter x:Key="AppIcon" />
   </UserControl.Resources>
-  <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-    <StackPanel Margin="24,16" MaxWidth="640" HorizontalAlignment="Left">
+  <!-- Cards, as in the approved prototype (fix-redesign-findings). -->
+    <StackPanel>
+      <Border Style="{StaticResource SettingsCard}">
+        <StackPanel Margin="16,12">
       <TextBlock x:Name="AppsLabel"
                  Text="{l:Loc ExcludedApps}"
                  Style="{StaticResource SectionText}" />
@@ -40,11 +42,15 @@
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
-      <StackPanel Orientation="Horizontal" Margin="0,8,0,24">
+      <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
         <Button x:Name="AddRunning" Content="{l:Loc AddRunningApp}" />
         <Button x:Name="Browse" Content="{l:Loc BrowseForApp}" Margin="8,0,0,0" />
       </StackPanel>
 
+        </StackPanel>
+      </Border>
+      <Border Style="{StaticResource SettingsCard}">
+        <StackPanel Margin="16,12">
       <TextBlock x:Name="ProtectedLabel"
                  Text="{l:Loc ProtectedWords}"
                  Style="{StaticResource SectionText}" />
@@ -77,6 +83,10 @@
         </ItemsControl.ItemTemplate>
       </ItemsControl>
 
+        </StackPanel>
+      </Border>
+      <Border Style="{StaticResource SettingsCard}">
+        <StackPanel Margin="16,12">
       <TextBlock x:Name="LearnedLabel"
                  Text="{l:Loc LearnedWords}"
                  Style="{StaticResource SectionText}"
@@ -126,6 +136,7 @@
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
+        </StackPanel>
+      </Border>
     </StackPanel>
-  </ScrollViewer>
 </UserControl>

@@ -12,8 +12,9 @@ namespace Navpaky.App.Views {
     private static readonly Color[] _light = [
         Rgb(0xC8102E), Rgb(0xB00E28), Rgb(0x8F0B20), Rgb(0x6E0818)];
 
+    // WPF UI fills controls with the secondary shade in the dark theme, so it is the brand blue.
     private static readonly Color[] _dark = [
-        Rgb(0x4C86F0), Rgb(0x6B9CF7), Rgb(0x8AB2FA), Rgb(0xA9C7FC)];
+        Rgb(0x4C86F0), Rgb(0x6B9CF7), Rgb(0x3B74DE), Rgb(0x2F63C8)];
 
     public static void Follow() {
       Apply(ApplicationThemeManager.GetAppTheme());
@@ -32,9 +33,25 @@ namespace Navpaky.App.Views {
       bool dark = theme == ApplicationTheme.Dark;
       Color[] shades = dark ? _dark : _light;
       ApplicationAccentColorManager.Apply(shades[0], shades[1], shades[2], shades[3]);
-      var second = new SolidColorBrush(Secondary(dark));
-      second.Freeze();
-      UiApplication.Current.Resources["BrandSecondaryBrush"] = second;
+      Set("BrandSecondaryBrush", Secondary(dark));
+
+      // The prototype's surfaces: navy in dark, white and blue-grey in light.
+      Set("BrandWindowBackground", dark ? Argb(0xFF131B2F) : Argb(0xFFFFFFFF));
+      Set("BrandSurface", dark ? Argb(0xFF18213A) : Argb(0xFFF5F7FB));
+      Set("BrandLine", dark ? Argb(0x2496AAE6) : Argb(0x1F12283A));
+      Set("BrandTextSecondary", dark ? Argb(0xB8D2DAF2) : Argb(0xFF4A5468));
+      Set("BrandTextTertiary", dark ? Argb(0x7AAFBADE) : Argb(0xFF7A8498));
+    }
+
+    private static void Set(string key, Color color) {
+      var brush = new SolidColorBrush(color);
+      brush.Freeze();
+      UiApplication.Current.Resources[key] = brush;
+    }
+
+    private static Color Argb(uint argb) {
+      return Color.FromArgb(
+          (byte)(argb >> 24), (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb);
     }
 
     private static Color Rgb(int rgb) {

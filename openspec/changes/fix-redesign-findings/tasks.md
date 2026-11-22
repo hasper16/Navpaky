@@ -20,6 +20,10 @@
 
 - [x] 4.2 Test first: every sound name in en and uk has no explanation in brackets, and About shows no font-licence line. Then rename the Navpaky sound to "Navpaky" / "Навпаки" and drop the About line. Verify: `OwnerTextsTests` pass.
 
+## 4c. Match the approved prototype (design D7)
+
+- [x] 4.3 Shared row, card and pill styles and the prototype's surfaces per theme; Settings pages, the Settings window chrome and sidebar, the quick panel and the Welcome window rebuilt to the prototype; Ukrainian texts from the prototype. Verify: `dotnet test` (Core, Win32, App, DesktopChecks) passes; offscreen renders of Settings, Welcome (three steps) and the quick panel in light and dark were compared with prototype v24 during the work; the look is in `docs/manual-tests/fix-redesign-findings.md`.
+
 ## 5. Verification
 
 - [ ] 5.1 A published single-file build passes `--check-fonts`; CI runs it. Verify: the CI step passes on the PR head.

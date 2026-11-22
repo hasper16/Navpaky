@@ -13,68 +13,141 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
+        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         Topmost="True"
         ShowInTaskbar="False"
         ResizeMode="NoResize">
-  <!-- The quick panel (design D5 of redesign-visual-identity), opened by a left click on the
-       tray icon. -->
+  <!-- The quick panel of the approved prototype (design D5 of redesign-visual-identity, layout
+       per fix-redesign-findings), opened by a left click on the tray icon. -->
   <Window.Resources>
     <v:EqualsConverter x:Key="Is" />
+    <v:AppIconConverter x:Key="AppIcon" />
     <BooleanToVisibilityConverter x:Key="Shown" />
-    <Style x:Key="Segment" TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
-      <Setter Property="HorizontalAlignment" Value="Stretch" />
-      <Setter Property="Margin" Value="2" />
-      <Setter Property="Padding" Value="4,5" />
+    <Style x:Key="Section" TargetType="Border">
+      <Setter Property="BorderThickness" Value="0,1,0,0" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BrandLine}" />
+      <Setter Property="Padding" Value="16,10" />
+    </Style>
+    <Style x:Key="Caption" TargetType="TextBlock" BasedOn="{StaticResource CardCaption}">
+      <Setter Property="Margin" Value="2,0,0,6" />
+    </Style>
+    <Style x:Key="FooterButton" TargetType="Button">
+      <Setter Property="Foreground" Value="{DynamicResource BrandTextSecondary}" />
+      <Setter Property="Padding" Value="4,6" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Back" Background="Transparent" CornerRadius="6"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Back" Property="Background" Value="{DynamicResource BrandLine}" />
+              </Trigger>
+              <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter TargetName="Back" Property="Background" Value="{DynamicResource BrandLine}" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
     </Style>
   </Window.Resources>
   <Border Margin="12"
           CornerRadius="12"
           BorderThickness="1"
-          Background="{DynamicResource ApplicationBackgroundBrush}"
-          BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+          Background="{DynamicResource BrandWindowBackground}"
+          BorderBrush="{DynamicResource BrandLine}">
     <Border.Effect>
       <DropShadowEffect BlurRadius="24" ShadowDepth="4" Opacity="0.3" />
     </Border.Effect>
     <StackPanel>
       <DockPanel Margin="16,16,16,12">
-        <ui:Button x:Name="LayoutKey"
-                   DockPanel.Dock="Left"
-                   Appearance="Primary"
-                   Background="{DynamicResource AccentFillColorDefaultBrush}"
-                   MouseOverBackground="{DynamicResource AccentFillColorDefaultBrush}"
-                   Foreground="White"
-                   Width="44"
-                   Height="40"
-                   Padding="0"
-                   Margin="0,0,8,0"
-                   Content="{Binding LanguageCode}"
-                   FontWeight="Bold"
-                   ToolTip="{l:Loc QuickSwitchLayout}"
-                   AutomationProperties.Name="{l:Loc QuickSwitchLayout}" />
+        <Button x:Name="LayoutKey"
+                DockPanel.Dock="Left"
+                Width="44"
+                Height="44"
+                Margin="0,0,10,0"
+                Cursor="Hand"
+                ToolTip="{l:Loc QuickSwitchLayout}"
+                AutomationProperties.Name="{l:Loc QuickSwitchLayout}">
+          <Button.Template>
+            <ControlTemplate TargetType="Button">
+              <Border CornerRadius="9"
+                      Background="{DynamicResource AccentFillColorDefaultBrush}"
+                      BorderBrush="{DynamicResource BrandSecondaryBrush}"
+                      BorderThickness="0,0,0,3">
+                <TextBlock Text="{Binding LanguageCode}"
+                           Foreground="White"
+                           FontWeight="Bold"
+                           FontSize="15"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+              </Border>
+            </ControlTemplate>
+          </Button.Template>
+        </Button>
         <StackPanel VerticalAlignment="Center">
-          <TextBlock Text="{Binding LanguageName}" Style="{StaticResource HeadingText}" FontSize="17" />
-          <TextBlock Text="{Binding StateText}" Style="{StaticResource HintText}" />
+          <TextBlock Text="{Binding LanguageName}" Style="{StaticResource HeadingText}" FontSize="18" />
+          <StackPanel Orientation="Horizontal">
+            <Ellipse Width="7" Height="7" Margin="0,1,6,0" VerticalAlignment="Center">
+              <Ellipse.Style>
+                <Style TargetType="Ellipse">
+                  <Setter Property="Fill" Value="#22A06B" />
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static vm:TrayState.Paused}">
+                      <Setter Property="Fill" Value="#C98A00" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static vm:TrayState.Off}">
+                      <Setter Property="Fill" Value="#8C96A6" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static vm:TrayState.SelfPaused}">
+                      <Setter Property="Fill" Value="#E11D48" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </Ellipse.Style>
+            </Ellipse>
+            <TextBlock Text="{Binding StateText}"
+                       FontSize="12.5"
+                       Foreground="{DynamicResource BrandTextTertiary}" />
+          </StackPanel>
         </StackPanel>
       </DockPanel>
 
-      <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Padding="16,10">
-        <ui:ToggleSwitch Content="{l:Loc MenuAutoCorrection}" IsChecked="{Binding AutoCorrection}" />
+      <Border Style="{StaticResource Section}">
+        <DockPanel>
+          <ui:ToggleSwitch DockPanel.Dock="Right"
+                           IsChecked="{Binding AutoCorrection}"
+                           AutomationProperties.Name="{l:Loc QuickAutoCorrection}" />
+          <TextBlock Text="{l:Loc QuickAutoCorrection}" VerticalAlignment="Center" />
+        </DockPanel>
       </Border>
 
-      <Border BorderThickness="0,1,0,0"
-              BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-              Padding="16,10"
+      <Border Style="{StaticResource Section}"
               Visibility="{Binding HasCurrentApp, Converter={StaticResource Shown}}">
         <StackPanel>
-          <TextBlock Text="{l:Loc QuickCurrentAppTitle}" Style="{StaticResource HintText}" Margin="0,0,0,6" />
-          <ui:ToggleSwitch Content="{Binding CurrentAppText}" IsChecked="{Binding CurrentAppEnabled}" />
+          <TextBlock Text="{l:Loc QuickCaptionApp}" Style="{StaticResource Caption}" />
+          <DockPanel>
+            <ui:ToggleSwitch DockPanel.Dock="Right"
+                             IsChecked="{Binding CurrentAppEnabled}"
+                             AutomationProperties.Name="{Binding CurrentAppText}" />
+            <Image DockPanel.Dock="Left"
+                   Width="16"
+                   Height="16"
+                   Margin="0,0,6,0"
+                   Source="{Binding CurrentAppPath, Converter={StaticResource AppIcon}}" />
+            <TextBlock Text="{Binding CurrentAppText}" VerticalAlignment="Center" />
+          </DockPanel>
         </StackPanel>
       </Border>
 
-      <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Padding="14,10">
+      <Border Style="{StaticResource Section}">
         <StackPanel>
-          <TextBlock Text="{l:Loc Sensitivity}" Style="{StaticResource HintText}" Margin="2,0,0,4" />
-          <UniformGrid Columns="3">
+          <TextBlock Text="{l:Loc QuickCaptionSensitivity}" Style="{StaticResource Caption}" />
+          <UniformGrid Columns="3" AutomationProperties.Name="{l:Loc Sensitivity}">
             <ToggleButton x:Name="SensCautious"
                           Style="{StaticResource Segment}"
                           Content="{l:Loc SensitivityCautious}"
@@ -88,8 +161,13 @@
                           Content="{l:Loc SensitivityAggressive}"
                           IsChecked="{Binding Sensitivity, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static det:Sensitivity.Aggressive}}" />
           </UniformGrid>
-          <TextBlock Text="{l:Loc MenuPause}" Style="{StaticResource HintText}" Margin="2,10,0,4" />
-          <UniformGrid Columns="4">
+        </StackPanel>
+      </Border>
+
+      <Border Style="{StaticResource Section}">
+        <StackPanel>
+          <TextBlock Text="{l:Loc QuickCaptionPause}" Style="{StaticResource Caption}" />
+          <UniformGrid Columns="4" AutomationProperties.Name="{l:Loc MenuPause}">
             <ToggleButton x:Name="Pause15"
                           Style="{StaticResource Segment}"
                           Content="{l:Loc QuickPause15}"
@@ -115,56 +193,97 @@
       </Border>
 
       <Button x:Name="Stats"
-              Visibility="{Binding ShowStatistics, Converter={StaticResource Shown}}"
               HorizontalAlignment="Stretch"
-              HorizontalContentAlignment="Stretch"
-              Background="Transparent"
-              BorderThickness="0,1,0,0"
-              BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-              Padding="16,10"
+              Visibility="{Binding ShowStatistics, Converter={StaticResource Shown}}"
+              Cursor="Hand"
               AutomationProperties.Name="{l:Loc MenuStatistics}">
-        <UniformGrid Columns="3">
-          <StackPanel>
-            <TextBlock Text="{Binding CorrectionsToday}" FontSize="20" FontWeight="SemiBold" />
-            <TextBlock Text="{l:Loc QuickCorrectedToday}" Style="{StaticResource HintText}" />
-          </StackPanel>
-          <StackPanel>
-            <TextBlock Text="{Binding UndosToday}" FontSize="20" FontWeight="SemiBold" />
-            <TextBlock Text="{l:Loc QuickUndoneToday}" Style="{StaticResource HintText}" />
-          </StackPanel>
-          <StackPanel>
-            <TextBlock Text="{Binding KeptText}" FontSize="20" FontWeight="SemiBold" />
-            <TextBlock Text="{l:Loc QuickKept}" Style="{StaticResource HintText}" />
-          </StackPanel>
-        </UniformGrid>
+        <Button.Template>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Back"
+                    Background="Transparent"
+                    BorderThickness="0,1,0,0"
+                    BorderBrush="{DynamicResource BrandLine}"
+                    Padding="16,10">
+              <DockPanel>
+                <ui:SymbolIcon DockPanel.Dock="Right"
+                               Symbol="ChevronRight24"
+                               FontSize="16"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource BrandTextTertiary}" />
+                <UniformGrid Columns="3">
+                  <StackPanel>
+                    <TextBlock Text="{Binding CorrectionsToday}" FontSize="20" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <TextBlock Text="{l:Loc QuickCorrectedToday}" FontSize="12" TextWrapping="Wrap" Margin="0,0,6,0"
+                               Foreground="{DynamicResource BrandTextTertiary}" />
+                  </StackPanel>
+                  <StackPanel>
+                    <TextBlock Text="{Binding UndosToday}" FontSize="20" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <TextBlock Text="{l:Loc QuickUndoneToday}" FontSize="12" TextWrapping="Wrap" Margin="0,0,6,0"
+                               Foreground="{DynamicResource BrandTextTertiary}" />
+                  </StackPanel>
+                  <StackPanel>
+                    <TextBlock Text="{Binding KeptText}" FontSize="20" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <TextBlock Text="{l:Loc QuickKept}" FontSize="12" TextWrapping="Wrap" Margin="0,0,6,0"
+                               Foreground="{DynamicResource BrandTextTertiary}" />
+                  </StackPanel>
+                </UniformGrid>
+              </DockPanel>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Back" Property="Background" Value="{DynamicResource BrandSurface}" />
+              </Trigger>
+              <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter TargetName="Back" Property="Background" Value="{DynamicResource BrandSurface}" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Button.Template>
       </Button>
 
-      <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Padding="16,10">
+      <Border Style="{StaticResource Section}">
         <StackPanel>
-          <ui:ToggleSwitch Content="{l:Loc PlaySwitchSound}" IsChecked="{Binding PlaySwitchSound}" Margin="0,0,0,8" />
-          <ui:ToggleSwitch Content="{l:Loc ShowCursorIndicator}" IsChecked="{Binding ShowCursorIndicator}" />
+          <DockPanel Margin="0,0,0,8">
+            <ui:ToggleSwitch DockPanel.Dock="Right"
+                             IsChecked="{Binding PlaySwitchSound}"
+                             AutomationProperties.Name="{l:Loc QuickSound}" />
+            <TextBlock Text="{l:Loc QuickSound}" VerticalAlignment="Center" />
+          </DockPanel>
+          <DockPanel>
+            <ui:ToggleSwitch DockPanel.Dock="Right"
+                             IsChecked="{Binding ShowCursorIndicator}"
+                             AutomationProperties.Name="{l:Loc QuickIndicator}" />
+            <TextBlock Text="{l:Loc QuickIndicator}" VerticalAlignment="Center" />
+          </DockPanel>
         </StackPanel>
       </Border>
 
       <Border BorderThickness="0,1,0,0"
-              BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-              Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+              BorderBrush="{DynamicResource BrandLine}"
+              Background="{DynamicResource BrandSurface}"
               CornerRadius="0,0,12,12"
-              Padding="8,6,8,8">
+              Padding="8,6,8,10">
         <StackPanel>
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <ui:Button x:Name="Settings" Content="{l:Loc MenuSettings}" Appearance="Transparent" Padding="8,5" />
-            <ui:Button x:Name="FirstSteps" Content="{l:Loc MenuWelcome}" Appearance="Transparent" Padding="8,5">
-              <ui:Button.Icon>
-                <ui:SymbolIcon Symbol="Wand24" />
-              </ui:Button.Icon>
-            </ui:Button>
-            <ui:Button x:Name="Quit" Content="{l:Loc MenuQuit}" Appearance="Transparent" Padding="8,5" />
-          </StackPanel>
+          <UniformGrid Columns="3">
+            <Button x:Name="Settings" Style="{StaticResource FooterButton}"
+                    Content="{l:Loc QuickSettings}" />
+            <Button x:Name="FirstSteps" Style="{StaticResource FooterButton}"
+                    AutomationProperties.Name="{l:Loc MenuWelcome}">
+              <StackPanel Orientation="Horizontal">
+                <ui:SymbolIcon Symbol="Wand24" FontSize="14" Margin="0,0,4,0" />
+                <TextBlock Text="{l:Loc MenuWelcome}" />
+              </StackPanel>
+            </Button>
+            <Button x:Name="Quit" Style="{StaticResource FooterButton}"
+                    Content="{l:Loc MenuQuit}" />
+          </UniformGrid>
           <TextBlock Text="{Binding HotkeyHint}"
-                     Style="{StaticResource HintText}"
                      HorizontalAlignment="Center"
                      FontSize="11.5"
+                     Foreground="{DynamicResource BrandTextTertiary}"
                      Margin="0,4,0,0" />
         </StackPanel>
       </Border>

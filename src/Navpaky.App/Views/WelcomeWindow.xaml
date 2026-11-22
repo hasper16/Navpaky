@@ -4,138 +4,221 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:l="clr-namespace:Navpaky.App.Localization"
+                 xmlns:v="clr-namespace:Navpaky.App.Views"
                  Title="{l:Loc WelcomeTitle}"
-                 Width="640"
-                 Height="720"
-                 MinWidth="480"
-                 MinHeight="420"
+                 Width="580"
+                 SizeToContent="Height"
+                 MaxHeight="760"
+                 ResizeMode="CanMinimize"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
-                 WindowBackdropType="Mica">
+                 WindowBackdropType="None"
+                 Background="{DynamicResource BrandWindowBackground}">
+  <!-- The compact three-step welcome of the approved prototype (fix-redesign-findings). -->
   <Window.Resources>
     <BooleanToVisibilityConverter x:Key="Shown" />
+    <Style x:Key="Keycap" TargetType="Border">
+      <Setter Property="BorderBrush" Value="{DynamicResource BrandLine}" />
+      <Setter Property="BorderThickness" Value="1,1,1,3" />
+      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="Background" Value="{DynamicResource BrandSurface}" />
+      <Setter Property="Padding" Value="7,1" />
+      <Setter Property="Margin" Value="4,0" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="StepBar" TargetType="Border">
+      <Setter Property="Height" Value="4" />
+      <Setter Property="CornerRadius" Value="2" />
+      <Setter Property="Margin" Value="3,0" />
+      <Setter Property="Background" Value="{DynamicResource BrandLine}" />
+    </Style>
   </Window.Resources>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
-    <ui:TitleBar x:Name="TitleBar" Grid.Row="0" Title="{l:Loc WelcomeTitle}" />
-    <!-- Three steps, one shown at a time (design D9 of redesign-visual-identity). -->
+    <ui:TitleBar x:Name="TitleBar" Grid.Row="0" Title="Navpaky" ShowMaximize="False" />
+    <DockPanel Grid.Row="1" Margin="24,8,24,14">
+      <Image x:Name="Mark"
+             DockPanel.Dock="Left"
+             Width="64"
+             Height="64"
+             Margin="0,0,14,0"
+             AutomationProperties.Name="Navpaky" />
+      <StackPanel VerticalAlignment="Center">
+        <TextBlock Text="{l:Loc WelcomeHeading}"
+                   Style="{StaticResource HeadingText}"
+                   FontSize="28"
+                   Focusable="True" />
+        <TextBlock Text="{l:Loc WelcomeTagline}"
+                   Foreground="{DynamicResource BrandTextSecondary}"
+                   Focusable="True" />
+      </StackPanel>
+    </DockPanel>
+    <UniformGrid x:Name="StepBars" Grid.Row="2" Columns="3" Margin="21,0,21,8">
+      <Border Style="{StaticResource StepBar}" />
+      <Border Style="{StaticResource StepBar}" />
+      <Border Style="{StaticResource StepBar}" />
+    </UniformGrid>
     <ScrollViewer x:Name="Scroller"
-                  Grid.Row="1"
+                  Grid.Row="3"
                   VerticalScrollBarVisibility="Auto"
                   Focusable="False">
-      <StackPanel Margin="24,8,24,16">
+      <Grid Margin="24,6,24,18">
+        <!-- Step 1: what Navpaky does, with a live example and Undo. -->
         <StackPanel x:Name="Step0">
-        <Image x:Name="Mark"
-               Width="64"
-               Height="64"
-               HorizontalAlignment="Left"
-               Margin="0,0,0,12"
-               AutomationProperties.Name="Navpaky" />
-        <TextBlock Text="{l:Loc WelcomeDescription}"
-                   TextWrapping="Wrap"
-                   FontSize="16"
-                   Focusable="True"
-                   Margin="0,0,0,8" />
-        <TextBlock Text="{l:Loc WelcomeUndo}"
-                   Style="{StaticResource HintText}"
-                   Focusable="True"
-                   Margin="0,0,0,24" />
-
-        <TextBlock Text="{l:Loc WelcomePrivacyTitle}"
-                   Style="{StaticResource SectionText}" />
-        <TextBlock Text="{l:Loc WelcomePrivacy}"
-                   TextWrapping="Wrap"
-                   Focusable="True"
-                   Margin="0,0,0,24" />
-
+          <TextBlock Text="{l:Loc WelcomeWhatTitle}"
+                     FontSize="17"
+                     FontWeight="SemiBold"
+                     Margin="0,0,0,8"
+                     Focusable="True" />
+          <TextBlock Text="{l:Loc WelcomeWhatText}"
+                     TextWrapping="Wrap"
+                     Foreground="{DynamicResource BrandTextSecondary}"
+                     Margin="0,0,0,12"
+                     Focusable="True" />
+          <Border Style="{StaticResource SettingsCard}" Padding="16,12">
+            <DockPanel>
+              <Border DockPanel.Dock="Right" Style="{StaticResource Keycap}">
+                <TextBlock x:Name="DemoKey" FontWeight="SemiBold" FontSize="12" />
+              </Border>
+              <TextBlock x:Name="DemoWord"
+                         FontSize="20"
+                         VerticalAlignment="Center"
+                         AutomationProperties.Name="{l:Loc WelcomeWhatTitle}" />
+            </DockPanel>
+          </Border>
+          <WrapPanel Margin="0,2,0,6">
+            <TextBlock Text="{l:Loc WelcomeUndoBefore}"
+                       VerticalAlignment="Center"
+                       FontSize="13" />
+            <Border Style="{StaticResource Keycap}">
+              <TextBlock Text="{l:Loc KeyCtrl}" FontWeight="SemiBold" FontSize="12" />
+            </Border>
+            <TextBlock x:Name="UndoPlus" VerticalAlignment="Center" FontSize="13" />
+            <Border Style="{StaticResource Keycap}">
+              <TextBlock x:Name="UndoKey" FontWeight="SemiBold" FontSize="12" />
+            </Border>
+            <TextBlock Text="{l:Loc WelcomeUndoAfter}"
+                       VerticalAlignment="Center"
+                       FontSize="13" />
+          </WrapPanel>
+          <TextBlock Text="{l:Loc WelcomePrivacyShort}"
+                     TextWrapping="Wrap"
+                     FontSize="12.5"
+                     Foreground="{DynamicResource BrandTextTertiary}"
+                     Focusable="True" />
         </StackPanel>
+
+        <!-- Step 2: try it. -->
         <StackPanel x:Name="Step1" Visibility="Collapsed">
-        <TextBlock Text="{l:Loc WelcomeTryItTitle}"
-                   Style="{StaticResource SectionText}" />
-        <Border Visibility="{Binding NeedsAnotherLayout, Converter={StaticResource Shown}}"
-                BorderThickness="1"
-                BorderBrush="{DynamicResource SystemFillColorCautionBrush}"
-                Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
-                CornerRadius="4"
-                Padding="12"
-                Margin="0,0,0,8">
-          <StackPanel>
-            <TextBlock Text="{l:Loc WelcomeOneLayout}"
-                       TextWrapping="Wrap"
-                       Focusable="True" />
-            <Button x:Name="LanguageSettings"
-                    Content="{l:Loc WelcomeLanguageSettings}"
-                    Margin="0,12,0,0" />
-          </StackPanel>
-        </Border>
-        <TextBlock x:Name="TryItHint" TextWrapping="Wrap" Focusable="True" Margin="0,0,0,8" />
-        <TextBox x:Name="TryIt"
-                 AutomationProperties.Name="{l:Loc WelcomeTryItField}"
-                 AutomationProperties.HelpText="{Binding Text, ElementName=TryItHint}" />
-        <TextBlock x:Name="TryItWorked"
-                   Text="{l:Loc WelcomeTryItWorked}"
-                   Visibility="{Binding TryItWorked, Converter={StaticResource Shown}}"
-                   Foreground="{DynamicResource SystemFillColorSuccessBrush}"
-                   TextWrapping="Wrap"
-                   Focusable="True"
-                   AutomationProperties.LiveSetting="Polite"
-                   Margin="0,8,0,0" />
-
+          <TextBlock Text="{l:Loc WelcomeTryItTitle}"
+                     FontSize="17"
+                     FontWeight="SemiBold"
+                     Margin="0,0,0,8"
+                     Focusable="True" />
+          <Border Visibility="{Binding NeedsAnotherLayout, Converter={StaticResource Shown}}"
+                  BorderThickness="1"
+                  BorderBrush="{DynamicResource SystemFillColorCautionBrush}"
+                  Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                  CornerRadius="6"
+                  Padding="12"
+                  Margin="0,0,0,8">
+            <StackPanel>
+              <TextBlock Text="{l:Loc WelcomeOneLayout}"
+                         TextWrapping="Wrap"
+                         Focusable="True" />
+              <Button x:Name="LanguageSettings"
+                      Content="{l:Loc WelcomeLanguageSettings}"
+                      Margin="0,12,0,0" />
+            </StackPanel>
+          </Border>
+          <TextBlock x:Name="TryItHint"
+                     TextWrapping="Wrap"
+                     Foreground="{DynamicResource BrandTextSecondary}"
+                     Focusable="True"
+                     Margin="0,0,0,10" />
+          <TextBox x:Name="TryIt"
+                   FontSize="16"
+                   Padding="10,8"
+                   AutomationProperties.Name="{l:Loc WelcomeTryItField}"
+                   AutomationProperties.HelpText="{Binding Text, ElementName=TryItHint}" />
+          <TextBlock x:Name="TryItWorked"
+                     Text="{l:Loc WelcomeTryItWorked}"
+                     Visibility="{Binding TryItWorked, Converter={StaticResource Shown}}"
+                     Foreground="{DynamicResource SystemFillColorSuccessBrush}"
+                     TextWrapping="Wrap"
+                     Focusable="True"
+                     AutomationProperties.LiveSetting="Polite"
+                     Margin="0,8,0,0" />
+          <TextBlock Text="{l:Loc WelcomePrivacyField}"
+                     FontSize="12.5"
+                     Foreground="{DynamicResource BrandTextTertiary}"
+                     Margin="0,10,0,0"
+                     Focusable="True" />
         </StackPanel>
+
+        <!-- Step 3: your choices. -->
         <StackPanel x:Name="Step2" Visibility="Collapsed">
-        <TextBlock Text="{l:Loc WelcomeChoicesTitle}"
-                   Style="{StaticResource SectionText}"
-                   Margin="0,0,0,8" />
-        <ui:ToggleSwitch Content="{l:Loc AutoCorrection}"
-                         IsChecked="{Binding AutoCorrectionEnabled}"
-                         Margin="0,0,0,12" />
-        <ui:ToggleSwitch Content="{l:Loc LaunchAtSignIn}"
-                         IsChecked="{Binding LaunchAtSignIn}"
-                         Margin="0,0,0,12" />
-        <CheckBox Content="{l:Loc WelcomeDiagnostics}"
-                  IsChecked="{Binding DiagnosticsAgreed}"
-                  Margin="0,0,0,16" />
-        <TextBlock Text="{l:Loc WelcomeHotkeyTitle}"
-                   Style="{StaticResource SectionText}" />
-        <!-- The Hotkey page itself, so the choice works the same as in Settings. -->
-        <ContentControl x:Name="Hotkey" Focusable="False" Margin="-24,-16,-24,0" />
-
-        <TextBlock Text="{l:Loc WelcomeTrayTitle}"
-                   Style="{StaticResource SectionText}"
-                   Margin="0,8,0,8" />
-        <TextBlock Text="{l:Loc WelcomeTrayTip}"
-                   TextWrapping="Wrap"
-                   Focusable="True" />
+          <TextBlock Text="{l:Loc WelcomeChoicesTitle}"
+                     FontSize="17"
+                     FontWeight="SemiBold"
+                     Margin="0,0,0,8"
+                     Focusable="True" />
+          <Border Style="{StaticResource SettingsCard}">
+            <StackPanel>
+              <v:SettingRow Label="{l:Loc AutoCorrection}">
+                <ui:ToggleSwitch IsChecked="{Binding AutoCorrectionEnabled}"
+                                 AutomationProperties.Name="{l:Loc AutoCorrection}" />
+              </v:SettingRow>
+              <v:SettingRow Label="{l:Loc LaunchAtSignIn}">
+                <ui:ToggleSwitch IsChecked="{Binding LaunchAtSignIn}"
+                                 AutomationProperties.Name="{l:Loc LaunchAtSignIn}" />
+              </v:SettingRow>
+              <v:SettingRow Label="{l:Loc WelcomeTrayTitle}" Hint="{l:Loc WelcomeTrayTip}" />
+              <v:SettingRow Label="{l:Loc WelcomeDiagnostics}">
+                <ui:ToggleSwitch IsChecked="{Binding DiagnosticsAgreed}"
+                                 AutomationProperties.Name="{l:Loc WelcomeDiagnostics}" />
+              </v:SettingRow>
+            </StackPanel>
+          </Border>
+          <TextBlock Text="{l:Loc WelcomeHotkeyTitle}"
+                     Style="{StaticResource CardCaption}"
+                     Margin="2,6,0,6" />
+          <!-- The Hotkey page itself, so the choice works the same as in Settings. -->
+          <ContentControl x:Name="Hotkey" Focusable="False" />
         </StackPanel>
-      </StackPanel>
+      </Grid>
     </ScrollViewer>
-    <Border Grid.Row="2"
+    <Border Grid.Row="4"
             BorderThickness="0,1,0,0"
-            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+            BorderBrush="{DynamicResource BrandLine}"
+            Background="{DynamicResource BrandSurface}"
             Padding="24,12">
       <DockPanel>
         <ui:Button x:Name="Back"
                    DockPanel.Dock="Left"
                    Content="{l:Loc WelcomeBack}"
-                   MinWidth="100" />
+                   MinWidth="90" />
         <ui:Button x:Name="Done"
                    DockPanel.Dock="Right"
                    Content="{l:Loc WelcomeDone}"
                    Appearance="Primary"
-                   MinWidth="120" />
+                   MinWidth="100" />
         <ui:Button x:Name="Next"
                    DockPanel.Dock="Right"
                    Content="{l:Loc WelcomeNext}"
                    Appearance="Primary"
-                   MinWidth="120" />
+                   MinWidth="100" />
         <TextBlock x:Name="StepText"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
-                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                   FontSize="12"
+                   Foreground="{DynamicResource BrandTextTertiary}" />
       </DockPanel>
     </Border>
   </Grid>

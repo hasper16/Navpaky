@@ -3,79 +3,96 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-             xmlns:l="clr-namespace:Navpaky.App.Localization">
-  <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-    <StackPanel Margin="24,16" MaxWidth="640" HorizontalAlignment="Left">
-      <ui:ToggleSwitch Content="{l:Loc KeyboardWatchdog}"
-                       IsChecked="{Binding KeyboardWatchdogEnabled}"
-                       Margin="0,0,0,16" />
-      <ui:ToggleSwitch Content="{l:Loc RestartAfterFreeze}"
-                       IsChecked="{Binding RestartAfterFreezeEnabled}"
-                       Margin="0,0,0,24" />
-      <ui:ToggleSwitch Content="{l:Loc StatisticsEnabled}"
-                       IsChecked="{Binding StatisticsEnabled}"
-                       Margin="0,0,0,16" />
-      <ui:ToggleSwitch Content="{l:Loc AnalysisLogEnabled}"
-                       IsChecked="{Binding AnalysisLogEnabled}"
-                       Margin="0,0,0,4" />
-      <TextBlock Text="{l:Loc AnalysisLogNote}"
-                 Style="{StaticResource HintText}"
-                 Margin="0,0,0,16"
-                 Focusable="True" />
-      <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
-        <ui:Button x:Name="StatisticsButton"
-                   Content="{l:Loc OpenStatistics}"
-                   Margin="0,0,8,0" />
-        <ui:Button x:Name="ExportButton" Content="{l:Loc OpenExport}" />
+             xmlns:l="clr-namespace:Navpaky.App.Localization"
+             xmlns:v="clr-namespace:Navpaky.App.Views">
+  <!-- Cards of rows, as in the approved prototype (fix-redesign-findings). -->
+  <StackPanel>
+    <Border Style="{StaticResource SettingsCard}">
+      <StackPanel>
+        <v:SettingRow Label="{l:Loc StatisticsEnabled}">
+          <StackPanel Orientation="Horizontal">
+            <ui:Button x:Name="StatisticsButton"
+                       Content="{l:Loc OpenStatistics}"
+                       Margin="0,0,12,0" />
+            <ui:ToggleSwitch IsChecked="{Binding StatisticsEnabled}"
+                             AutomationProperties.Name="{l:Loc StatisticsEnabled}" />
+          </StackPanel>
+        </v:SettingRow>
+        <v:SettingRow Label="{l:Loc AnalysisLogEnabled}" Hint="{l:Loc AnalysisLogNote}">
+          <ui:ToggleSwitch IsChecked="{Binding AnalysisLogEnabled}"
+                           AutomationProperties.Name="{l:Loc AnalysisLogEnabled}" />
+        </v:SettingRow>
+        <v:SettingRow Label="{l:Loc OpenExport}">
+          <ui:Button x:Name="ExportButton" Content="{l:Loc OpenExport}" />
+        </v:SettingRow>
+        <TextBlock Text="{l:Loc PrivacyNote}"
+                   TextWrapping="Wrap"
+                   Margin="16,12"
+                   Foreground="{DynamicResource BrandTextTertiary}"
+                   Focusable="True" />
       </StackPanel>
-      <TextBlock Text="{l:Loc PrivacyNote}"
-                 TextWrapping="Wrap"
-                 Margin="0,0,0,24"
-                 Focusable="True" />
-      <ui:ToggleSwitch Content="{l:Loc CrashReportsEnabled}"
-                       IsChecked="{Binding CrashReportsEnabled}"
-                       Margin="0,0,0,16" />
-      <ui:ToggleSwitch Content="{l:Loc UsageDigestEnabled}"
-                       IsChecked="{Binding UsageDigestEnabled}"
-                       Margin="0,0,0,4" />
-      <TextBlock Text="{l:Loc TelemetryNote}"
-                 Style="{StaticResource HintText}"
-                 Margin="0,0,0,8"
-                 Focusable="True" />
-      <Expander x:Name="SentExpander"
-                Header="{l:Loc ShowWhatWasSent}"
-                Margin="0,0,0,24">
-        <TextBox x:Name="SentText"
-                 IsReadOnly="True"
-                 TextWrapping="Wrap"
-                 FontFamily="Consolas"
-                 MaxHeight="240"
-                 VerticalScrollBarVisibility="Auto"
-                 AutomationProperties.Name="{l:Loc ShowWhatWasSent}" />
-      </Expander>
-      <TextBlock Text="{l:Loc SignUpTitle}"
-                 Style="{StaticResource SectionText}"
-                 Margin="0,0,0,8" />
-      <StackPanel x:Name="SignUp">
-        <ui:TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
-                    PlaceholderText="{l:Loc SignUpEmail}"
-                    AutomationProperties.Name="{l:Loc SignUpEmail}"
+    </Border>
+    <Border Style="{StaticResource SettingsCard}">
+      <StackPanel>
+        <v:SettingRow Label="{l:Loc KeyboardWatchdog}">
+          <ui:ToggleSwitch IsChecked="{Binding KeyboardWatchdogEnabled}"
+                           AutomationProperties.Name="{l:Loc KeyboardWatchdog}" />
+        </v:SettingRow>
+        <v:SettingRow Label="{l:Loc RestartAfterFreeze}">
+          <ui:ToggleSwitch IsChecked="{Binding RestartAfterFreezeEnabled}"
+                           AutomationProperties.Name="{l:Loc RestartAfterFreeze}" />
+        </v:SettingRow>
+      </StackPanel>
+    </Border>
+    <Border Style="{StaticResource SettingsCard}">
+      <StackPanel>
+        <v:SettingRow Label="{l:Loc CrashReportsEnabled}">
+          <ui:ToggleSwitch IsChecked="{Binding CrashReportsEnabled}"
+                           AutomationProperties.Name="{l:Loc CrashReportsEnabled}" />
+        </v:SettingRow>
+        <v:SettingRow Label="{l:Loc UsageDigestEnabled}" Hint="{l:Loc TelemetryNote}">
+          <ui:ToggleSwitch IsChecked="{Binding UsageDigestEnabled}"
+                           AutomationProperties.Name="{l:Loc UsageDigestEnabled}" />
+        </v:SettingRow>
+        <Expander x:Name="SentExpander"
+                  Header="{l:Loc ShowWhatWasSent}"
+                  Margin="16,8,16,12">
+          <TextBox x:Name="SentText"
+                   IsReadOnly="True"
+                   TextWrapping="Wrap"
+                   FontFamily="Consolas"
+                   MaxHeight="240"
+                   VerticalScrollBarVisibility="Auto"
+                   AutomationProperties.Name="{l:Loc ShowWhatWasSent}" />
+        </Expander>
+      </StackPanel>
+    </Border>
+    <Border Style="{StaticResource SettingsCard}">
+      <StackPanel Margin="16,12">
+        <TextBlock Text="{l:Loc SignUpTitle}"
+                   Style="{StaticResource SectionText}"
+                   Margin="0,0,0,8" />
+        <StackPanel x:Name="SignUp">
+          <ui:TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+                      PlaceholderText="{l:Loc SignUpEmail}"
+                      AutomationProperties.Name="{l:Loc SignUpEmail}"
+                      Margin="0,0,0,8" />
+          <CheckBox Content="{l:Loc SignUpNewVersions}"
+                    IsChecked="{Binding NewVersions}" />
+          <CheckBox Content="{l:Loc SignUpReportedProblems}"
+                    IsChecked="{Binding ReportedProblems}"
                     Margin="0,0,0,8" />
-        <CheckBox Content="{l:Loc SignUpNewVersions}"
-                  IsChecked="{Binding NewVersions}" />
-        <CheckBox Content="{l:Loc SignUpReportedProblems}"
-                  IsChecked="{Binding ReportedProblems}"
-                  Margin="0,0,0,8" />
-        <StackPanel Orientation="Horizontal">
-          <ui:Button x:Name="SignUpButton"
-                     Content="{l:Loc SignUpSubmit}"
-                     Margin="0,0,12,0" />
-          <TextBlock x:Name="SignUpStatus"
-                     VerticalAlignment="Center"
-                     Focusable="True"
-                     AutomationProperties.LiveSetting="Polite" />
+          <StackPanel Orientation="Horizontal">
+            <ui:Button x:Name="SignUpButton"
+                       Content="{l:Loc SignUpSubmit}"
+                       Margin="0,0,12,0" />
+            <TextBlock x:Name="SignUpStatus"
+                       VerticalAlignment="Center"
+                       Focusable="True"
+                       AutomationProperties.LiveSetting="Polite" />
+          </StackPanel>
         </StackPanel>
       </StackPanel>
-    </StackPanel>
-  </ScrollViewer>
+    </Border>
+  </StackPanel>
 </UserControl>

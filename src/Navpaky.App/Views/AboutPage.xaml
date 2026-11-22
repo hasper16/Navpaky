@@ -3,15 +3,20 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:l="clr-namespace:Navpaky.App.Localization">
-  <StackPanel Margin="24,16" HorizontalAlignment="Left">
-    <Image x:Name="Mark"
-           Width="64"
-           Height="64"
-           HorizontalAlignment="Left"
-           Margin="0,0,0,16"
-           AutomationProperties.Name="Navpaky" />
-    <TextBlock Text="Navpaky" FontSize="28" FontWeight="SemiBold" />
-    <TextBlock Text="{l:Loc AboutTagline}" Margin="0,4,0,8" Focusable="True" />
-    <TextBlock x:Name="Version" Style="{StaticResource HintText}" Focusable="True" />
-  </StackPanel>
+  <!-- A card with the mark, as in the approved prototype (fix-redesign-findings). -->
+  <Border Style="{StaticResource SettingsCard}">
+    <DockPanel Margin="16">
+      <Image x:Name="Mark"
+             DockPanel.Dock="Left"
+             Width="64"
+             Height="64"
+             Margin="0,0,18,0"
+             AutomationProperties.Name="Navpaky" />
+      <StackPanel VerticalAlignment="Center">
+        <TextBlock Text="Navpaky" Style="{StaticResource HeadingText}" FontSize="22" />
+        <TextBlock Text="{l:Loc AboutTagline}" Margin="0,2,0,0" Focusable="True" />
+        <TextBlock x:Name="Version" Style="{StaticResource HintText}" Focusable="True" />
+      </StackPanel>
+    </DockPanel>
+  </Border>
 </UserControl>
