@@ -57,7 +57,7 @@ Still different on purpose (spec or platform):
 - The Hotkey choice lists the build's presets (Ctrl+Space, Win+Space, custom), more than the prototype's three.
 - WPF has no letter spacing for the uppercase captions, and the window caption buttons are WPF UI's.
 - The right-click tray menu stays the standard WPF UI menu (the prototype shows only its items).
-- Apps and words keeps the build's add-word field and language choice instead of the prototype's word chips.
+- Apps and words: each word chip has a remove button and Learned Words also has Add, because the word-learning spec lets the user add and remove both lists in settings; the prototype shows plain chips and Add on Protected Words only.
 - Statistics has no prototype screen; it uses the brand surfaces.
 
 ### D8. Welcome as in the prototype (owner decision on the second pass)

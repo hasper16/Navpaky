@@ -9,7 +9,7 @@ using Navpaky.Core;
 using WordLanguage = Navpaky.Core.Languages.Language;
 
 namespace Navpaky.App.Views {
-  // Apps and words: the Excluded Apps, the Protected Words and the Learned Words.
+  // Apps and words: the Excluded Apps, the Protected Words and the Learned Words as chips.
   internal sealed partial class AppsAndWordsPage {
     private readonly ExcludedAppsViewModel _apps;
     private readonly WordsViewModel _words;
@@ -33,6 +33,8 @@ namespace Navpaky.App.Views {
       AddLearned.Click += (_, _) => TakeLearned();
       NewProtected.KeyDown += (_, e) => OnEnter(e, TakeProtected);
       NewLearned.KeyDown += (_, e) => OnEnter(e, TakeLearned);
+      OpenProtected.Click += (_, _) => OpenEditor(OpenProtected, ProtectedEditor, NewProtected);
+      OpenLearned.Click += (_, _) => OpenEditor(OpenLearned, LearnedEditor, NewLearned);
     }
 
     private static void OnEnter(KeyEventArgs e, Action action) {
@@ -40,6 +42,13 @@ namespace Navpaky.App.Views {
         e.Handled = true;
         action();
       }
+    }
+
+    // The row's Add gives way to the field and its own Add, so one "Add" shows at a time.
+    private static void OpenEditor(UIElement opener, UIElement editor, TextBox field) {
+      opener.Visibility = Visibility.Collapsed;
+      editor.Visibility = Visibility.Visible;
+      field.Focus();
     }
 
     private void ShowRunningApps() {

@@ -29,6 +29,8 @@
 
 - [x] 4.6 Test first: every Hotkey preset shows keycaps and keeps its name in words for automation. Then draw the options with `HotkeyChip` (design D9) and update the user guide. Verify: `dotnet test tests/Navpaky.App.Tests` passes.
 
+- [x] 4.7 Test first: Protected and Learned Words lay out as chips, and each row's Add opens its field. Then rebuild Apps and words as the prototype (design D9) with its Ukrainian button texts. Verify: `dotnet test tests/Navpaky.App.Tests` passes; a render was compared with prototype v24.
+
 ## 5. Verification
 
 - [x] 5.1 A published single-file build passes `--check-fonts`; CI runs it. Verify: the CI step passes on the PR head.
