@@ -428,7 +428,7 @@ namespace Navpaky.App {
       _worker.Observed += KeepSoundAwake;
 
       // Where typing went is read when the Switch happens, before focus can move on.
-      _worker.WindowLayoutRequested += layout => Dispatcher.BeginInvoke(() => {
+      _worker.WindowLayoutShown += layout => Dispatcher.BeginInvoke(() => {
         _tray!.LanguageCode = layout.LanguageCode;
         RefreshTray();
         _quickPanelModel?.Refresh();
@@ -615,9 +615,10 @@ namespace Navpaky.App {
     private void StartTrayFollowers() {
       _foregroundApps = new ForegroundApps();
       _foregroundApps.Changed += (app, window) => {
-        // The app's window as ForegroundApps checked it; the quick panel gives the focus back
-        // to it. Read again later, the foreground could already be the taskbar.
+        // The app's window as ForegroundApps checked it, for the quick panel. Its Layout is read
+        // again: one the panel asked for may not have landed.
         _typedInWindow = window;
+        _worker?.ReadWindowLayout(window);
         _tray!.CurrentApp = new CurrentApp(app, AppNames.Of(app));
         RefreshTray();
       };

@@ -11,7 +11,7 @@ Findings of the owner's check of the 0.4.4 pack, traced in WPF UI 4.3.0's source
 ## Decisions
 
 ### D1. Follow the theme app-wide
-`Views/ThemeFollower` subscribes to `SystemEvents.UserPreferenceChanged` (raised for General/Color/VisualStyle changes, including the apps light/dark switch) and, on the UI dispatcher, calls `ApplicationThemeManager.ApplySystemTheme()`, re-applies the brand accent, and redraws the tray. Its `Refresh(systemTheme)` takes the system theme as a parameter so a test can drive it. UI thread.
+`Views/ThemeFollower` subscribes to `SystemEvents.UserPreferenceChanged` (raised for General/Color/VisualStyle changes, including the apps light/dark switch) and, on the UI dispatcher, applies the theme for Windows' apps-mode setting (`AppsUseLightTheme`, or high contrast) with the brand accent and redraws the tray. WPF UI reads the desktop theme file first, which can disagree with apps mode, so the follower also corrects a theme WPF UI applies itself when a watched window opens. `ThemeFor(highContrast, appsUseLightTheme)` is the tested selector. UI thread.
 
 ### D2. Explicit accent shades
 `BrandTheme.Apply` uses `ApplicationAccentColorManager.Apply(system, primary, secondary, tertiary)` with fixed shades: light red #C8102E / #B00E28 / #8F0B20 / #6E0818; dark blue #4C86F0 / #6B9CF7 / #8AB2FA / #A9C7FC. Text-on-accent stays WPF UI's choice.

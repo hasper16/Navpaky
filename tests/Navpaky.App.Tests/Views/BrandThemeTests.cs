@@ -64,6 +64,16 @@ namespace Navpaky.App.Tests.Views {
       Assert.Equal("#FFB00E28", primary);
     }
 
+    [Theory]
+    [InlineData(false, 0, ApplicationTheme.Dark)]
+    [InlineData(false, 1, ApplicationTheme.Light)]
+    [InlineData(false, null, ApplicationTheme.Light)]
+    [InlineData(true, 0, ApplicationTheme.HighContrast)]
+    public void ThemeFollowsTheAppsModeSetting(
+        bool highContrast, int? appsUseLightTheme, ApplicationTheme expected) {
+      Assert.Equal(expected, ThemeFollower.ThemeFor(highContrast, appsUseLightTheme));
+    }
+
     private static void EnsureApplication() {
       if (Application.Current is null) {
         var host = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };

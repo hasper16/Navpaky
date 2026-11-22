@@ -245,10 +245,11 @@ namespace Navpaky.Win32 {
     public event Action<SwitchFeedback>? Switched;
 
     /// <summary>
-    /// Occurs on the worker thread when Navpaky asked a window for the next Layout through
-    /// <see cref="SwitchWindowToNextLayout" />, with that Layout.
+    /// Occurs on the worker thread with the Layout of the window Navpaky tracks for the quick
+    /// panel: the Layout it asked for through <see cref="SwitchWindowToNextLayout" />, or the one
+    /// read through <see cref="ReadWindowLayout" />.
     /// </summary>
-    public event Action<LayoutId>? WindowLayoutRequested;
+    public event Action<LayoutId>? WindowLayoutShown;
 
     /// <summary>
     /// Occurs on the worker thread, while <see cref="RecordChords" /> is on, for each key pressed
@@ -389,11 +390,20 @@ namespace Navpaky.Win32 {
     /// <summary>
     /// Asks the worker to switch a window, which need not be in front, to the Layout after its
     /// current one in the installed order; safe to call from any thread. The worker raises
-    /// <see cref="WindowLayoutRequested" /> with the Layout it asked for.
+    /// <see cref="WindowLayoutShown" /> with the Layout it asked for.
     /// </summary>
     /// <param name="window">The window's handle.</param>
     public void SwitchWindowToNextLayout(nint window) {
-      PInvoke.PostThreadMessage(_threadId, _nextLayoutMessage, default, window);
+      PInvoke.PostThreadMessage(_threadId, _nextLayoutMessage, (nuint)1, window);
+    }
+
+    /// <summary>
+    /// Asks the worker to read a window's Layout and raise <see cref="WindowLayoutShown" /> with
+    /// it; safe to call from any thread.
+    /// </summary>
+    /// <param name="window">The window's handle.</param>
+    public void ReadWindowLayout(nint window) {
+      PInvoke.PostThreadMessage(_threadId, _nextLayoutMessage, (nuint)0, window);
     }
 
     /// <summary>
@@ -864,7 +874,7 @@ namespace Navpaky.Win32 {
           Execute(new SwitchLayout(new LayoutId((uint)message.lParam.Value)));
           return true;
         case _nextLayoutMessage:
-          RequestNextLayout(new HWND(message.lParam.Value));
+          WindowLayout(new HWND(message.lParam.Value), switchToNext: message.wParam.Value == 1);
           return true;
         case _resumeMessage:
           Apply(_hookWatchdog.Resume(), _hookWatchdog.SelfPausedUntil);
@@ -1031,22 +1041,33 @@ namespace Navpaky.Win32 {
       return InputClock.Now - held.Tick >= maxAge ? ReplacementResult.TooLate : null;
     }
 
-    // The window keeps its own Layout while Navpaky's quick panel is in front: the request goes to
-    // that window, as ForegroundLayout sends one to the focus target (design D4 of
-    // fix-redesign-findings).
-    private void RequestNextLayout(HWND window) {
-      if (window.IsNull) {
+    // The window keeps its own Layout while Navpaky's quick panel is in front: a switch request
+    // goes to that window, as ForegroundLayout sends one to the focus target (design D4 of
+    // fix-redesign-findings). Only a request Windows queued is reported.
+    private void WindowLayout(HWND window, bool switchToNext) {
+      uint thread = window.IsNull ? 0 : PInvoke.GetWindowThreadProcessId(window, out _);
+
+      // Thread 0 would read the worker's own Layout.
+      if (thread == 0) {
         return;
       }
 
-      uint thread = PInvoke.GetWindowThreadProcessId(window, out _);
       nint layout = PInvoke.GetKeyboardLayout(thread);
       LayoutId? current = _layouts.LayoutOf((uint)layout);
+      if (!switchToNext) {
+        if (current is { } shown) {
+          WindowLayoutShown?.Invoke(shown);
+        }
+
+        return;
+      }
+
+      // A 64-bit HKL is its 32-bit value sign-extended.
       if (LayoutCycle.Next(_installedLayouts, current) is { } next
-          && _layouts.HandleOf(next) is { } handle) {
-        // A 64-bit HKL is its 32-bit value sign-extended.
-        PInvoke.PostMessage(window, PInvoke.WM_INPUTLANGCHANGEREQUEST, default, (nint)(int)handle);
-        WindowLayoutRequested?.Invoke(next);
+          && _layouts.HandleOf(next) is { } handle
+          && PInvoke.PostMessage(
+              window, PInvoke.WM_INPUTLANGCHANGEREQUEST, default, (nint)(int)handle)) {
+        WindowLayoutShown?.Invoke(next);
       }
     }
   }
