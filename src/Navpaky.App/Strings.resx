@@ -646,4 +646,7 @@
   <data name="QuickPanelTitle" xml:space="preserve">
     <value>Navpaky quick panel</value>
   </data>
+  <data name="AboutFonts" xml:space="preserve">
+    <value>Fonts: Inter and Grunt Grotesk, under the SIL Open Font License 1.1; the licence texts are in the Fonts folder next to Navpaky.App.exe.</value>
+  </data>
 </root>

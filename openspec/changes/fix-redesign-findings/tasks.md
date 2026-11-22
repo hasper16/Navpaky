@@ -14,7 +14,7 @@
 
 ## 4. Licences (design D5)
 
-- [ ] 4.1 `OFL-*.txt` are excluded from the single-file bundle; About names both fonts and the licence. Verify: a single-file publish has both files next to the exe; `SettingsAutomationTests` pass.
+- [x] 4.1 `OFL-*.txt` are excluded from the single-file bundle; About names both fonts and the licence; the quick panel widens to 400 for Inter's wider text. Verify: a single-file publish has `Fonts\OFL-Inter.txt` and `Fonts\OFL-GruntGrotesk.txt` next to the exe; `SettingsAutomationTests` pass.
 
 ## 5. Verification
 

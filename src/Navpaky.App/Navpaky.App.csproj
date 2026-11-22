@@ -52,7 +52,12 @@
        (design D4). -->
   <ItemGroup>
     <Resource Include="Fonts\*.ttf;Fonts\*.otf" />
-    <None Include="Fonts\OFL-*.txt" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Outside the single-file bundle, so the install folder holds the licence texts
+         (fix-redesign-findings). -->
+    <None Include="Fonts\OFL-*.txt"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest"
+          ExcludeFromSingleFile="true" />
   </ItemGroup>
 
   <ItemGroup>

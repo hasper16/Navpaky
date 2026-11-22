@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:Navpaky.App.ViewModels"
         xmlns:det="clr-namespace:Navpaky.Core.Detection;assembly=Navpaky.Core"
         Title="{l:Loc QuickPanelTitle}"
-        Width="364"
+        Width="400"
         SizeToContent="Height"
         WindowStyle="None"
         AllowsTransparency="True"

@@ -58,6 +58,15 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fonts: Inter and Grunt Grotesk, under the SIL Open Font License 1.1; the licence texts are in the Fonts folder next to Navpaky.App.exe..
+        /// </summary>
+        public static string AboutFonts {
+            get {
+                return ResourceManager.GetString("AboutFonts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fixes words typed in the wrong keyboard layout..
         /// </summary>
         public static string AboutTagline {

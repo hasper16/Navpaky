@@ -646,4 +646,7 @@
   <data name="QuickPanelTitle" xml:space="preserve">
     <value>Швидка панель Navpaky</value>
   </data>
+  <data name="AboutFonts" xml:space="preserve">
+    <value>Шрифти: Inter і Grunt Grotesk, за ліцензією SIL Open Font License 1.1; тексти ліцензій лежать у теці Fonts поруч із Navpaky.App.exe.</value>
+  </data>
 </root>
