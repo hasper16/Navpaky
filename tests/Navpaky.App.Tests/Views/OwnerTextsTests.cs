@@ -19,10 +19,9 @@ namespace Navpaky.App.Tests.Views {
           "SoundDrop", "SoundGlass", "SoundCymbals", "SoundSopilka", "SoundJawHarp",
           "SoundFrameDrum", "SoundNavpaky"];
 
-      foreach (string key in keys) {
-        string name = Strings.ResourceManager.GetString(key, culture)!;
-        Assert.DoesNotContain("(", name, StringComparison.Ordinal);
-      }
+      Assert.All(
+          keys.Select(key => Strings.ResourceManager.GetString(key, culture)!),
+          name => Assert.DoesNotContain("(", name, StringComparison.Ordinal));
     }
 
     [Fact]
