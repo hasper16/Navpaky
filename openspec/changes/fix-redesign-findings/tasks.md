@@ -19,4 +19,4 @@
 ## 5. Verification
 
 - [ ] 5.1 A published single-file build passes `--check-fonts`; CI runs it. Verify: the CI step passes on the PR head.
-- [ ] 5.2 `docs/manual-tests/fix-redesign-findings.md` lists the owner's visual re-check unticked; `docs/roadmap.md` lists the change. Verify: files present.
+- [x] 5.2 `docs/manual-tests/fix-redesign-findings.md` lists the owner's visual re-check unticked; `docs/roadmap.md` lists the change. Verify: files present.

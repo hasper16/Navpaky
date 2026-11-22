@@ -1,0 +1,10 @@
+# Visual re-check: fix-redesign-findings
+
+The owner's re-check of the fixes for the findings from the 0.4.4 test pack. Install a test pack built from the PR head (Release single-file, as in `docs/manual-tests/upgrade-to-dotnet-11.md`). The automated part is covered by `BrandFontsTests`, `BrandThemeTests`, `QuickPanelViewModelTests` and the CI `--check-fonts` step on the published build; the desktop-check sets are unchanged.
+
+- [ ] **Theme follows Windows (finding 1).** With Windows apps in light mode, open the quick panel and Settings: both are light. Switch Windows to dark while Navpaky runs, open the quick panel again: it is dark, with no restart. Switch back to light: it is light again.
+- [ ] **Brand accent (finding 2).** In light mode the Language key, the selected Sensitivity, switches and the Settings section marker are red; in dark mode they are a saturated blue, not pale.
+- [ ] **Fonts (finding 3).** Text in the quick panel, Settings, the welcome window and the tray menu is Inter; headings (the Settings section titles, the panel's language name) are Grunt Grotesk.
+- [ ] **Language key keeps the panel open (finding 4).** Type in Notepad with English (US), open the quick panel, click the Language key: the panel stays open, its key and the tray show the next Language; close the panel and type in Notepad: it uses that Layout. Repeat with Telegram or a browser. Note any app (a console, a Store app) where the Layout does not change.
+- [ ] **Tray while the panel is open.** With the panel open, the tray icon shows the app's Language, not the panel's own.
+- [ ] **Licences.** The install folder (`%LOCALAPPDATA%\navpaky-app\current\Fonts`) holds `OFL-Inter.txt` and `OFL-GruntGrotesk.txt`; About names Inter, Grunt Grotesk and the SIL Open Font License.
