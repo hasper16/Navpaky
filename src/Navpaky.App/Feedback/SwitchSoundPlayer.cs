@@ -11,41 +11,58 @@ namespace Navpaky.App.Feedback {
   internal sealed class SwitchSoundPlayer : IDisposable {
     private const int _sampleRate = 44100;
 
-    private readonly Dictionary<SwitchSound, (short[] Samples, TimeSpan Length)> _sounds = [];
+    private readonly Dictionary<string, (short[] Samples, TimeSpan Length)> _sounds = [];
     private readonly SoundOutput _output = new(_sampleRate);
     private readonly SoundScheduler _scheduler;
 
     public SwitchSoundPlayer() {
-      foreach (SwitchSound sound in Enum.GetValues<SwitchSound>()) {
-        if (Read(sound) is { } wave && WaveFile.SampleRate(wave) == _sampleRate) {
-          _sounds[sound] = (WaveFile.Samples(wave), WaveFile.Length(wave));
+      IEnumerable<string> clips = Enum.GetValues<SwitchSound>()
+          .SelectMany(sound => new[] { Clip(sound, false), Clip(sound, true) })
+          .Distinct();
+      foreach (string clip in clips) {
+        if (Read(clip) is { } wave && WaveFile.SampleRate(wave) == _sampleRate) {
+          _sounds[clip] = (WaveFile.Samples(wave), WaveFile.Length(wave));
         }
       }
 
       _scheduler = new SoundScheduler(
           _output.Open,
           _output.Close,
-          (sound, _) => _output.Play(_sounds[sound].Samples),
+          (clip, _) => _output.Play(_sounds[clip].Samples),
           Later);
     }
 
     // For the desktop checks: how many sounds played since start.
     public int Played { get; private set; }
 
-    public static Stream? Open(SwitchSound sound) {
-      string name = sound switch {
+    // The file a sound plays; Navpaky has a rising and a falling variant (design D8).
+    public static string Clip(SwitchSound sound, bool towardEnglish) {
+      return sound switch {
         SwitchSound.KeyClick => "key-click",
         SwitchSound.SoftTick => "soft-tick",
-        _ => "chime",
+        SwitchSound.Chime => "chime",
+        SwitchSound.Bandura => "bandura",
+        SwitchSound.WoodenSpoons => "wooden-spoons",
+        SwitchSound.Drop => "drop",
+        SwitchSound.Glass => "glass",
+        SwitchSound.Cymbals => "cymbals",
+        SwitchSound.Sopilka => "sopilka",
+        SwitchSound.JawHarp => "jaw-harp",
+        SwitchSound.FrameDrum => "frame-drum",
+        _ => towardEnglish ? "navpaky-down" : "navpaky-up",
       };
-      return typeof(SwitchSoundPlayer).Assembly
-          .GetManifestResourceStream($"Navpaky.Sounds.{name}.wav");
     }
 
-    public void Play(SwitchSound sound) {
-      if (_sounds.TryGetValue(sound, out (short[] Samples, TimeSpan Length) loaded)) {
+    public static Stream? Open(string clip) {
+      return typeof(SwitchSoundPlayer).Assembly
+          .GetManifestResourceStream($"Navpaky.Sounds.{clip}.wav");
+    }
+
+    public void Play(SwitchSound sound, bool towardEnglish) {
+      string clip = Clip(sound, towardEnglish);
+      if (_sounds.TryGetValue(clip, out (short[] Samples, TimeSpan Length) loaded)) {
         Played++;
-        _scheduler.Play(sound, loaded.Length);
+        _scheduler.Play(clip, loaded.Length);
       }
     }
 
@@ -58,8 +75,8 @@ namespace Navpaky.App.Feedback {
       _output.Dispose();
     }
 
-    private static byte[]? Read(SwitchSound sound) {
-      using Stream? wave = Open(sound);
+    private static byte[]? Read(string clip) {
+      using Stream? wave = Open(clip);
       if (wave is null) {
         return null;
       }

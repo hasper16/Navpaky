@@ -55,7 +55,7 @@ namespace Navpaky.Core {
   /// </param>
   /// <param name="SwitchSound">
   /// One of the enumeration values that specifies the switch sound. The default is
-  /// <see cref="Core.SwitchSound.KeyClick" />.
+  /// <see cref="Core.SwitchSound.Navpaky" />.
   /// </param>
   /// <param name="LaunchAtSignIn">
   /// <see langword="true" /> to start Navpaky when the user signs in to Windows; otherwise,
@@ -100,6 +100,10 @@ namespace Navpaky.Core {
   /// One of the enumeration values that specifies the language of Navpaky's interface. The default
   /// is <see cref="Core.UiLanguage.System" />.
   /// </param>
+  /// <param name="CursorIndicatorStyle">
+  /// One of the enumeration values that specifies how the cursor indicator looks. The default is
+  /// <see cref="Core.CursorIndicatorStyle.Pill" />.
+  /// </param>
   // Each setting is a constructor parameter with a default: since .NET 10, source-generated JSON
   // gives an init-only property that the file omits its type default, not its initializer.
   public sealed record Settings(
@@ -115,7 +119,7 @@ namespace Navpaky.Core {
       Hotkey Hotkey = default,
       bool ShowCursorIndicator = true,
       bool PlaySwitchSound = false,
-      SwitchSound SwitchSound = SwitchSound.KeyClick,
+      SwitchSound SwitchSound = SwitchSound.Navpaky,
       bool LaunchAtSignIn = false,
       bool StatisticsEnabled = true,
       bool AnalysisLogEnabled = false,
@@ -125,7 +129,8 @@ namespace Navpaky.Core {
       DiagnosticsConsent DiagnosticsConsent = default,
       DateOnly? LastDigestDay = null,
       bool SetupSignalSent = false,
-      UiLanguage UiLanguage = UiLanguage.System) {
+      UiLanguage UiLanguage = UiLanguage.System,
+      CursorIndicatorStyle CursorIndicatorStyle = CursorIndicatorStyle.Pill) {
     /// <summary>
     /// The <see cref="PausedUntil" /> value of a Pause that lasts until Navpaky restarts.
     /// </summary>

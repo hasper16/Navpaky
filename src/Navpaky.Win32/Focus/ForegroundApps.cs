@@ -34,9 +34,10 @@ namespace Navpaky.Win32.Focus {
     }
 
     /// <summary>
-    /// Occurs when another application's window comes to the front, with that application.
+    /// Occurs when another application's window comes to the front, with that application and
+    /// the window's handle.
     /// </summary>
-    public event Action<AppId>? Changed;
+    public event Action<AppId, nint>? Changed;
 
     /// <summary>
     /// Returns whether a window of the given class is an application the user types in rather
@@ -122,7 +123,7 @@ namespace Navpaky.Win32.Focus {
 
     private void Report(HWND window) {
       if (!window.IsNull && CountsAsApp(ClassOf(window)) && AppOf(window) is { } app) {
-        Changed?.Invoke(app);
+        Changed?.Invoke(app, window);
       }
     }
   }

@@ -103,3 +103,4 @@ waveOutClose
 WAVE_MAPPER
 WHDR_DONE
 WAVE_FORMAT_PCM
+SetForegroundWindow

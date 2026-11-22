@@ -1,5 +1,4 @@
 using Navpaky.App.Feedback;
-using Navpaky.Core;
 using Xunit;
 
 namespace Navpaky.App.Tests.Feedback {
@@ -25,18 +24,18 @@ namespace Navpaky.App.Tests.Feedback {
     public void SoundAfterTypingPlaysAtOnce() {
       _scheduler.KeepAwake();
 
-      _scheduler.Play(SwitchSound.Chime, _sound);
+      _scheduler.Play("chime", _sound);
 
-      Assert.Equal(["silence", "Chime"], _log);
+      Assert.Equal(["silence", "chime"], _log);
     }
 
     [Fact]
     public void SoundWhileAsleepWaitsForTheLinkToWake() {
-      _scheduler.Play(SwitchSound.Chime, _sound);
+      _scheduler.Play("chime", _sound);
 
       Assert.Equal(["silence"], _log);
       _later.Single(item => item.Delay == SoundScheduler.WakeUp).Then();
-      Assert.Equal(["silence", "Chime"], _log);
+      Assert.Equal(["silence", "chime"], _log);
     }
 
     [Fact]
@@ -62,11 +61,11 @@ namespace Navpaky.App.Tests.Feedback {
     [Fact]
     public void SilenceResumesOnceTheSoundIsOver() {
       _scheduler.KeepAwake();
-      _scheduler.Play(SwitchSound.Chime, _sound);
+      _scheduler.Play("chime", _sound);
 
       _later.Single(item => item.Delay == _sound).Then();
 
-      Assert.Equal(["silence", "Chime", "silence"], _log);
+      Assert.Equal(["silence", "chime", "silence"], _log);
     }
   }
 }

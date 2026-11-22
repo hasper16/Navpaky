@@ -424,9 +424,6 @@
   <data name="UninstallDataKept" xml:space="preserve">
     <value>Navpaky встановлено знову, тому його налаштування та списки слів збережено.</value>
   </data>
-  <data name="MenuWelcome" xml:space="preserve">
-    <value>Знайомство з {0}</value>
-  </data>
   <data name="WelcomeTitle" xml:space="preserve">
     <value>Ласкаво просимо до Navpaky</value>
   </data>
@@ -558,5 +555,95 @@
   </data>
   <data name="UiLanguageUkrainian" xml:space="preserve">
     <value>Українська</value>
+  </data>
+  <data name="SoundBandura" xml:space="preserve">
+    <value>Бандура</value>
+  </data>
+  <data name="SoundWoodenSpoons" xml:space="preserve">
+    <value>Дерев'яні ложки</value>
+  </data>
+  <data name="SoundDrop" xml:space="preserve">
+    <value>Крапля</value>
+  </data>
+  <data name="SoundGlass" xml:space="preserve">
+    <value>Скло</value>
+  </data>
+  <data name="SoundCymbals" xml:space="preserve">
+    <value>Цимбали</value>
+  </data>
+  <data name="SoundSopilka" xml:space="preserve">
+    <value>Сопілка</value>
+  </data>
+  <data name="SoundJawHarp" xml:space="preserve">
+    <value>Дримба</value>
+  </data>
+  <data name="SoundFrameDrum" xml:space="preserve">
+    <value>Бубон</value>
+  </data>
+  <data name="SoundNavpaky" xml:space="preserve">
+    <value>Навпаки (вгору до вашої мови, униз до англійської)</value>
+  </data>
+  <data name="CursorIndicatorStyleChoice" xml:space="preserve">
+    <value>Вигляд мітки</value>
+  </data>
+  <data name="IndicatorStylePill" xml:space="preserve">
+    <value>Пігулка</value>
+  </data>
+  <data name="IndicatorStyleTag" xml:space="preserve">
+    <value>Мітка</value>
+  </data>
+  <data name="IndicatorStyleUnderline" xml:space="preserve">
+    <value>Підкреслення</value>
+  </data>
+  <data name="WelcomeBack" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="WelcomeNext" xml:space="preserve">
+    <value>Далі</value>
+  </data>
+  <data name="WelcomeStep" xml:space="preserve">
+    <value>Крок {0} з {1}</value>
+  </data>
+  <data name="MenuWelcome" xml:space="preserve">
+    <value>Перші кроки</value>
+  </data>
+  <data name="SplashGreeting" xml:space="preserve">
+    <value>Привіт</value>
+  </data>
+  <data name="QuickCurrentApp" xml:space="preserve">
+    <value>У {0}</value>
+  </data>
+  <data name="QuickCurrentAppTitle" xml:space="preserve">
+    <value>Поточна програма</value>
+  </data>
+  <data name="QuickPause15" xml:space="preserve">
+    <value>15 хв</value>
+  </data>
+  <data name="QuickPause30" xml:space="preserve">
+    <value>30 хв</value>
+  </data>
+  <data name="QuickPause60" xml:space="preserve">
+    <value>1 год</value>
+  </data>
+  <data name="QuickPause180" xml:space="preserve">
+    <value>3 год</value>
+  </data>
+  <data name="QuickCorrectedToday" xml:space="preserve">
+    <value>виправлено сьогодні</value>
+  </data>
+  <data name="QuickUndoneToday" xml:space="preserve">
+    <value>скасовано</value>
+  </data>
+  <data name="QuickKept" xml:space="preserve">
+    <value>влучних</value>
+  </data>
+  <data name="QuickHotkeyHint" xml:space="preserve">
+    <value>{0}: виправити останнє слово</value>
+  </data>
+  <data name="QuickSwitchLayout" xml:space="preserve">
+    <value>Перемкнути розкладку</value>
+  </data>
+  <data name="QuickPanelTitle" xml:space="preserve">
+    <value>Швидка панель Navpaky</value>
   </data>
 </root>

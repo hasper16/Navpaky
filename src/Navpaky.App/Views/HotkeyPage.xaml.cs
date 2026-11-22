@@ -167,9 +167,12 @@ namespace Navpaky.App.Views {
             : string.Empty;
       }
 
+      // Focus moves to the warning only when it first shows: on one-page settings this page
+      // stays loaded, and a later refresh must not pull the focus from another section.
+      bool appears = _model.ConflictText is not null && Conflict.Visibility != Visibility.Visible;
       Conflict.Visibility = _model.ConflictText is null ? Visibility.Collapsed : Visibility.Visible;
       ConflictText.Text = _model.ConflictText ?? string.Empty;
-      if (_model.ConflictText is not null) {
+      if (appears) {
         UseAnyway.Focus();
       }
     }

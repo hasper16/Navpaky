@@ -87,6 +87,9 @@ namespace Navpaky.App {
     private SettingsHub? _hub;
     private TrayViewModel? _tray;
     private TrayIconView? _trayView;
+
+    // The last app window the user worked in, never the taskbar; written on the UI thread only.
+    private nint _typedInWindow;
     private ForegroundApps? _foregroundApps;
     private DispatcherTimer? _trayTimer;
     private DispatcherTimer? _statsTimer;
@@ -137,6 +140,7 @@ namespace Navpaky.App {
 
       _incidents = new QueuedIncidentLog(new IncidentLog(_localFolder), ReportIncidentNotSaved);
       ApplicationThemeManager.ApplySystemTheme();
+      BrandTheme.Follow();
       IconText.HideFromScreenReaders();
 
       // Windows holds the truth about starting at sign-in: Task Manager can change it.
@@ -159,7 +163,13 @@ namespace Navpaky.App {
       _tray = new TrayViewModel(_hub, TimeProvider.System, () => _worker?.ResumeSelfPause());
       var trayIcon = (TaskbarIcon)FindResource("TrayIcon");
       var commands = new TrayCommands(
-          OpenSettings, OpenStatistics, OnUpdatesItem, OpenWelcome, OpenAbout, () => Shutdown());
+          OpenSettings,
+          OpenStatistics,
+          OnUpdatesItem,
+          OpenWelcome,
+          OpenAbout,
+          () => Shutdown(),
+          OpenQuickPanel);
       _trayView = new TrayIconView(trayIcon, _tray, commands);
 #if DEBUG
       AddDebugMenuItems(_trayView);
@@ -177,6 +187,11 @@ namespace Navpaky.App {
       _telemetry.Start();
       StartInput(_hub.Current);
       _hub.Changed += OnSettingsChanged;
+      LaunchSplash.Show(
+          Strings.SplashGreeting,
+          (Strings.Culture ?? CultureInfo.CurrentUICulture).TwoLetterISOLanguageName
+              .ToUpperInvariant(),
+          ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark);
 
       // After the subscription, so the first start's launch at sign-in reaches Windows.
       _hub.Update(WelcomeViewModel.FirstStartDefaults);
@@ -587,7 +602,10 @@ namespace Navpaky.App {
 #endif
     private void StartTrayFollowers() {
       _foregroundApps = new ForegroundApps();
-      _foregroundApps.Changed += app => {
+      _foregroundApps.Changed += (app, window) => {
+        // The app's window as ForegroundApps checked it; the quick panel gives the focus back
+        // to it. Read again later, the foreground could already be the taskbar.
+        _typedInWindow = window;
         _tray!.CurrentApp = new CurrentApp(app, AppNames.Of(app));
         RefreshTray();
       };
@@ -695,11 +713,14 @@ namespace Navpaky.App {
       if (response.Indicator) {
         _indicator!.Show(
             feedback.Target.LanguageCode,
-            ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark);
+            ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark,
+            _hub.Current.CursorIndicatorStyle);
       }
 
       if (response.Sound) {
-        _sounds!.Play(_hub.Current.SwitchSound);
+        _sounds!.Play(
+            _hub.Current.SwitchSound,
+            string.Equals(feedback.Target.LanguageCode, "EN", StringComparison.OrdinalIgnoreCase));
       }
 
       if (feedback.Cause == SwitchCause.Correction) {
@@ -756,10 +777,9 @@ namespace Navpaky.App {
         ReadLaunchAtSignIn();
         var welcome = new WelcomeViewModel(_hub!, _worker?.InstalledLayouts ?? []);
         var hotkey = new HotkeyViewModel(_hub!, CheckHotkey);
-        bool dark = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
         _welcome = welcome;
         _welcomeWindow = new WelcomeWindow(
-            welcome, new HotkeyPage(hotkey, _chords), dark, OpenLanguageSettings);
+            welcome, new HotkeyPage(hotkey, _chords), OpenLanguageSettings);
         _welcomeWindow.Closed += (_, _) => {
           welcome.Close();
           _telemetry?.OnWelcomeClosed(welcome.Progress);
@@ -812,10 +832,12 @@ namespace Navpaky.App {
       var settings = new SettingsViewModel(_hub!);
       var hotkey = new HotkeyViewModel(_hub!, CheckHotkey);
       var apps = new ExcludedAppsViewModel(_hub!, AppNames.OfKey);
-      bool dark = ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark;
       SettingsSection[] sections = [
           new("PageGeneral", SymbolRegular.Settings24,
-              new GeneralPage(settings, sound => _sounds!.Play(sound))),
+              new GeneralPage(
+                  settings,
+                  sound => _sounds!.Play(sound, towardEnglish: false),
+                  ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark)),
           new("PageCorrection", SymbolRegular.TextGrammarCheckmark24,
               new CorrectionPage(settings)),
           new("PageHotkey", SymbolRegular.Keyboard24, new HotkeyPage(hotkey, _chords)),
@@ -828,7 +850,7 @@ namespace Navpaky.App {
                   _telemetry.ReadSent,
                   OpenStatistics,
                   OpenExport)),
-          new("PageAbout", SymbolRegular.Info24, new AboutPage(dark)),
+          new("PageAbout", SymbolRegular.Info24, new AboutPage()),
       ];
       var window = new SettingsWindow(sections);
       window.Closed += (_, _) => {
@@ -840,6 +862,22 @@ namespace Navpaky.App {
     }
 
     // One statistics window at a time: asking again brings it to the front.
+    private void OpenQuickPanel() {
+      var model = new QuickPanelViewModel(
+          _hub!,
+          _tray!,
+          () => _worker?.Statistics ?? StatsDocument.Empty,
+          () => DateOnly.FromDateTime(DateTime.Now));
+      var actions = new QuickPanelActions(
+          SwitchToNextLayout, OpenSettings, OpenWelcome, OpenStatistics, Shutdown, RefreshTray);
+      new QuickPanel(model, actions, _typedInWindow).ShowAtPointer();
+    }
+
+    // The worker reads the Layout of the app the panel gave the focus back to.
+    private void SwitchToNextLayout() {
+      _worker?.SwitchToNextLayout();
+    }
+
     private void OpenStatistics() {
       if (_statisticsWindow is null) {
         var model = new StatisticsViewModel(

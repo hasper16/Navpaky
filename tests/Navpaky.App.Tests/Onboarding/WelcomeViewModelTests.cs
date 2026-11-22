@@ -162,5 +162,31 @@ namespace Navpaky.App.Tests.Onboarding {
       Assert.Contains(nameof(WelcomeViewModel.NeedsAnotherLayout), changed);
       Assert.Contains(nameof(WelcomeViewModel.LayoutNames), changed);
     }
+
+    [Fact]
+    public void StepsGoForwardToTheLastAndBack() {
+      using var model = new WelcomeViewModel(_hub, [_english, _russian]);
+
+      Assert.Equal(0, model.Step);
+      model.Next();
+      model.Next();
+      Assert.Equal(2, model.Step);
+      Assert.True(model.IsLastStep);
+      model.Next();
+      Assert.Equal(2, model.Step);
+      model.Back();
+      Assert.Equal(1, model.Step);
+      Assert.False(model.IsLastStep);
+    }
+
+    [Fact]
+    public void BackStopsAtTheFirstStep() {
+      using var model = new WelcomeViewModel(_hub, [_english, _russian]);
+
+      model.Back();
+
+      Assert.Equal(0, model.Step);
+      Assert.False(model.CanGoBack);
+    }
   }
 }

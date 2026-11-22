@@ -18,12 +18,12 @@ namespace Navpaky.App.Views {
     private nint _handle;
 
     public WelcomeWindow(
-        WelcomeViewModel model, HotkeyPage hotkey, bool dark, Action openLanguageSettings) {
+        WelcomeViewModel model, HotkeyPage hotkey, Action openLanguageSettings) {
       _model = model;
       SystemThemeWatcher.Watch(this);
       InitializeComponent();
       DataContext = model;
-      Mark.Source = Keycap.Render("EN", TrayState.Active, dark, 64);
+      Mark.Source = BrandMark.Large();
       Hotkey.Content = hotkey;
       OuterWheelScroll.Attach(Scroller);
       Localizer.Follow(this, ShowLayouts);
@@ -37,9 +37,12 @@ namespace Navpaky.App.Views {
       TryIt.LostKeyboardFocus += (_, _) => _tryItFocused = false;
       SourceInitialized += (_, _) => Interlocked.Exchange(
           ref _handle, new WindowInteropHelper(this).Handle);
+      Next.Click += (_, _) => model.Next();
+      Back.Click += (_, _) => model.Back();
+      Localizer.Follow(this, ShowStep);
       Loaded += (_, _) => {
         TitleBarButtons.Name(TitleBar);
-        TryIt.Focus();
+        Next.Focus();
       };
     }
 
@@ -57,11 +60,29 @@ namespace Navpaky.App.Views {
     private void OnModelChanged(object? sender, PropertyChangedEventArgs e) {
       if (e.PropertyName == nameof(WelcomeViewModel.LayoutNames)) {
         ShowLayouts();
+      } else if (e.PropertyName == nameof(WelcomeViewModel.Step)) {
+        ShowStep();
+        Scroller.ScrollToTop();
+        if (_model.Step == 1) {
+          TryIt.Focus();
+        }
       }
     }
 
     private void ShowLayouts() {
       TryItHint.Text = UiText.Format(Strings.WelcomeTryIt, _model.LayoutNames);
+    }
+
+    private void ShowStep() {
+      int step = _model.Step;
+      Step0.Visibility = step == 0 ? Visibility.Visible : Visibility.Collapsed;
+      Step1.Visibility = step == 1 ? Visibility.Visible : Visibility.Collapsed;
+      Step2.Visibility = step == 2 ? Visibility.Visible : Visibility.Collapsed;
+      Back.Visibility = _model.CanGoBack ? Visibility.Visible : Visibility.Hidden;
+      Next.Visibility = _model.IsLastStep ? Visibility.Collapsed : Visibility.Visible;
+      Done.Visibility = _model.IsLastStep ? Visibility.Visible : Visibility.Collapsed;
+      StepText.Text = UiText.Format(
+          Strings.WelcomeStep, step + 1, WelcomeViewModel.LastStep + 1);
     }
   }
 }

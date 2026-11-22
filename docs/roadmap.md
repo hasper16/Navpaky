@@ -34,6 +34,12 @@ Platform changes move the runtime or SDK. They run between product changes, when
 |---|---|---|---|
 | P1 | `upgrade-to-dotnet-11` | keyboard-capture (input times survive sleep) | 1–15 |
 
+Design changes reshape the look and feel after the product is complete.
+
+| # | Change | Capability | Depends on |
+|---|---|---|---|
+| D1 | `redesign-visual-identity` | tray-and-settings, onboarding, app-lifecycle (new mark, palette, quick panel, one-page settings, splash) | 1–15, P1 |
+
 T1 can run in parallel with changes 12–15: it touches no file under `src/`, `tests/` or `tools/Navpaky.DesktopChecks/`. Its global installs reach only sessions started after them, so implementers already at work keep their tools until their change ends.
 
 By-hand checks are not a merge gate for changes 1–14: each change appends them to `docs/manual-tests/deferred-by-hand.md`, and change 15 is the owner's single pass over that file plus the fixes for what fails (owner decision, 2026-11-14).

@@ -184,6 +184,15 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mark style.
+        /// </summary>
+        public static string CursorIndicatorStyleChoice {
+            get {
+                return ResourceManager.GetString("CursorIndicatorStyleChoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apps where Navpaky stays off.
         /// </summary>
         public static string ExcludedApps {
@@ -369,6 +378,33 @@ namespace Navpaky.App {
         public static string HotkeyUseAnyway {
             get {
                 return ResourceManager.GetString("HotkeyUseAnyway", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pill.
+        /// </summary>
+        public static string IndicatorStylePill {
+            get {
+                return ResourceManager.GetString("IndicatorStylePill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tag.
+        /// </summary>
+        public static string IndicatorStyleTag {
+            get {
+                return ResourceManager.GetString("IndicatorStyleTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Underline.
+        /// </summary>
+        public static string IndicatorStyleUnderline {
+            get {
+                return ResourceManager.GetString("IndicatorStyleUnderline", resourceCulture);
             }
         }
         
@@ -661,7 +697,7 @@ namespace Navpaky.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Getting started with {0}.
+        ///   Looks up a localized string similar to First steps.
         /// </summary>
         public static string MenuWelcome {
             get {
@@ -828,6 +864,114 @@ namespace Navpaky.App {
         public static string ProtectedWords {
             get {
                 return ResourceManager.GetString("ProtectedWords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to corrected today.
+        /// </summary>
+        public static string QuickCorrectedToday {
+            get {
+                return ResourceManager.GetString("QuickCorrectedToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In {0}.
+        /// </summary>
+        public static string QuickCurrentApp {
+            get {
+                return ResourceManager.GetString("QuickCurrentApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current app.
+        /// </summary>
+        public static string QuickCurrentAppTitle {
+            get {
+                return ResourceManager.GetString("QuickCurrentAppTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: fix the last word.
+        /// </summary>
+        public static string QuickHotkeyHint {
+            get {
+                return ResourceManager.GetString("QuickHotkeyHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to kept.
+        /// </summary>
+        public static string QuickKept {
+            get {
+                return ResourceManager.GetString("QuickKept", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Navpaky quick panel.
+        /// </summary>
+        public static string QuickPanelTitle {
+            get {
+                return ResourceManager.GetString("QuickPanelTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 15 min.
+        /// </summary>
+        public static string QuickPause15 {
+            get {
+                return ResourceManager.GetString("QuickPause15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 3 h.
+        /// </summary>
+        public static string QuickPause180 {
+            get {
+                return ResourceManager.GetString("QuickPause180", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 30 min.
+        /// </summary>
+        public static string QuickPause30 {
+            get {
+                return ResourceManager.GetString("QuickPause30", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 h.
+        /// </summary>
+        public static string QuickPause60 {
+            get {
+                return ResourceManager.GetString("QuickPause60", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch layout.
+        /// </summary>
+        public static string QuickSwitchLayout {
+            get {
+                return ResourceManager.GetString("QuickSwitchLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to undone.
+        /// </summary>
+        public static string QuickUndoneToday {
+            get {
+                return ResourceManager.GetString("QuickUndoneToday", resourceCulture);
             }
         }
         
@@ -1066,11 +1210,65 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bandura.
+        /// </summary>
+        public static string SoundBandura {
+            get {
+                return ResourceManager.GetString("SoundBandura", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Chime.
         /// </summary>
         public static string SoundChime {
             get {
                 return ResourceManager.GetString("SoundChime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cymbals.
+        /// </summary>
+        public static string SoundCymbals {
+            get {
+                return ResourceManager.GetString("SoundCymbals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drop.
+        /// </summary>
+        public static string SoundDrop {
+            get {
+                return ResourceManager.GetString("SoundDrop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Frame drum.
+        /// </summary>
+        public static string SoundFrameDrum {
+            get {
+                return ResourceManager.GetString("SoundFrameDrum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Glass.
+        /// </summary>
+        public static string SoundGlass {
+            get {
+                return ResourceManager.GetString("SoundGlass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jaw harp.
+        /// </summary>
+        public static string SoundJawHarp {
+            get {
+                return ResourceManager.GetString("SoundJawHarp", resourceCulture);
             }
         }
         
@@ -1084,11 +1282,47 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Navpaky (rises to your language, falls to English).
+        /// </summary>
+        public static string SoundNavpaky {
+            get {
+                return ResourceManager.GetString("SoundNavpaky", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Soft tick.
         /// </summary>
         public static string SoundSoftTick {
             get {
                 return ResourceManager.GetString("SoundSoftTick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sopilka.
+        /// </summary>
+        public static string SoundSopilka {
+            get {
+                return ResourceManager.GetString("SoundSopilka", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wooden spoons.
+        /// </summary>
+        public static string SoundWoodenSpoons {
+            get {
+                return ResourceManager.GetString("SoundWoodenSpoons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hello.
+        /// </summary>
+        public static string SplashGreeting {
+            get {
+                return ResourceManager.GetString("SplashGreeting", resourceCulture);
             }
         }
         
@@ -1508,6 +1742,15 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string WelcomeBack {
+            get {
+                return ResourceManager.GetString("WelcomeBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your choices.
         /// </summary>
         public static string WelcomeChoicesTitle {
@@ -1562,6 +1805,15 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string WelcomeNext {
+            get {
+                return ResourceManager.GetString("WelcomeNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Navpaky needs at least two keyboard layouts in different languages. Add another one in Windows language settings..
         /// </summary>
         public static string WelcomeOneLayout {
@@ -1585,6 +1837,15 @@ namespace Navpaky.App {
         public static string WelcomePrivacyTitle {
             get {
                 return ResourceManager.GetString("WelcomePrivacyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Step {0} of {1}.
+        /// </summary>
+        public static string WelcomeStep {
+            get {
+                return ResourceManager.GetString("WelcomeStep", resourceCulture);
             }
         }
         

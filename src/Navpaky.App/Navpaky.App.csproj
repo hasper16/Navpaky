@@ -45,6 +45,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\*.png" LogicalName="Navpaky.Assets.%(Filename).png" />
+  </ItemGroup>
+
+  <!-- Inter for text and Grunt Grotesk for headings; their OFL texts ship next to the app
+       (design D4). -->
+  <ItemGroup>
+    <Resource Include="Fonts\*.ttf;Fonts\*.otf" />
+    <None Include="Fonts\OFL-*.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="Navpaky.App.Tests" />
   </ItemGroup>
 

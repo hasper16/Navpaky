@@ -4,17 +4,15 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using Navpaky.App.Tray;
-using Navpaky.App.ViewModels;
+using Navpaky.Core;
 using Navpaky.Win32;
 
 namespace Navpaky.App.Feedback {
-  // The keycap badge that shows the new Language next to the caret after Navpaky switched the
+  // The mark that shows the new Language next to the caret after Navpaky switched the
   // Layout (design D5). One window, created once and reused; it never takes focus.
   internal sealed class CursorIndicator {
     public const string WindowTitle = "Navpaky indicator";
 
-    private const double _sizeAtStandardDpi = 28;
     private const int _caretTries = 5;
     private static readonly TimeSpan _shown = TimeSpan.FromMilliseconds(900);
     private static readonly Duration _fade = new(TimeSpan.FromMilliseconds(150));
@@ -25,7 +23,7 @@ namespace Navpaky.App.Feedback {
     private static readonly TimeSpan _caretRetry = TimeSpan.FromMilliseconds(20);
 
     private readonly Window _window;
-    private readonly Image _image = new();
+    private readonly ContentControl _mark = new() { Focusable = false };
     private readonly DispatcherTimer _timer;
     private readonly DispatcherTimer _caretTimer;
     private int _caretTriesLeft;
@@ -46,7 +44,7 @@ namespace Navpaky.App.Feedback {
         SizeToContent = SizeToContent.WidthAndHeight,
         Focusable = false,
         IsHitTestVisible = false,
-        Content = _image,
+        Content = _mark,
 
         // An own empty style keeps out WPF UI's default window style, whose MinWidth of 460
         // and template made the window a large box with the badge in its middle, far from
@@ -77,12 +75,8 @@ namespace Navpaky.App.Feedback {
 
     public bool IsShown => _window.IsVisible;
 
-    public void Show(string languageCode, bool dark) {
-      double scale = VisualTreeHelper.GetDpi(_image).DpiScaleX;
-      int size = (int)Math.Round(_sizeAtStandardDpi * scale);
-      _image.Source = Keycap.Render(languageCode, TrayState.Active, dark, size);
-      _image.Width = size / scale;
-      _image.Height = size / scale;
+    public void Show(string languageCode, bool dark, CursorIndicatorStyle style) {
+      _mark.Content = IndicatorMark.Build(style, languageCode, dark);
       _caretTriesLeft = _caretTries;
       Place();
     }
@@ -98,8 +92,10 @@ namespace Navpaky.App.Feedback {
         return;
       }
 
-      double scale = VisualTreeHelper.GetDpi(_image).DpiScaleX;
-      int size = (int)Math.Round(_sizeAtStandardDpi * scale);
+      double scale = VisualTreeHelper.GetDpi(_mark).DpiScaleX;
+      _mark.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+      int size = (int)Math.Ceiling(
+          Math.Max(_mark.DesiredSize.Width, _mark.DesiredSize.Height) * scale);
       (int x, int y) = ScreenFacts.Mouse();
       (int left, int top, int right, int bottom) =
           ScreenFacts.WorkAreaAt(caret?.Left ?? x, caret?.Top ?? y);

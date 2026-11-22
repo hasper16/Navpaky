@@ -1,5 +1,3 @@
-using Navpaky.Core;
-
 namespace Navpaky.App.Feedback {
   // Decides when the switch sounds play and when silence keeps the audio link awake (re-check
   // of fix 2.7, add-final-acceptance). Monitor audio over DisplayPort or HDMI sleeps after a
@@ -15,7 +13,7 @@ namespace Navpaky.App.Feedback {
 
     private readonly Action _startSilence;
     private readonly Action _stopSilence;
-    private readonly Action<SwitchSound, TimeSpan> _playNow;
+    private readonly Action<string, TimeSpan> _playNow;
     private readonly Action<TimeSpan, Action> _later;
     private bool _awake;
     private int _keepAwakeCalls;
@@ -23,7 +21,7 @@ namespace Navpaky.App.Feedback {
     public SoundScheduler(
         Action startSilence,
         Action stopSilence,
-        Action<SwitchSound, TimeSpan> playNow,
+        Action<string, TimeSpan> playNow,
         Action<TimeSpan, Action> later) {
       _startSilence = startSilence;
       _stopSilence = stopSilence;
@@ -46,7 +44,7 @@ namespace Navpaky.App.Feedback {
       });
     }
 
-    public void Play(SwitchSound sound, TimeSpan length) {
+    public void Play(string sound, TimeSpan length) {
       if (!_awake) {
         KeepAwake();
         _later(WakeUp, () => Play(sound, length));

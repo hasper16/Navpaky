@@ -1,0 +1,173 @@
+<Window x:Class="Navpaky.App.Tray.QuickPanel"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:l="clr-namespace:Navpaky.App.Localization"
+        xmlns:v="clr-namespace:Navpaky.App.Views"
+        xmlns:vm="clr-namespace:Navpaky.App.ViewModels"
+        xmlns:det="clr-namespace:Navpaky.Core.Detection;assembly=Navpaky.Core"
+        Title="{l:Loc QuickPanelTitle}"
+        Width="364"
+        SizeToContent="Height"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize">
+  <!-- The quick panel (design D5 of redesign-visual-identity), opened by a left click on the
+       tray icon. -->
+  <Window.Resources>
+    <v:EqualsConverter x:Key="Is" />
+    <BooleanToVisibilityConverter x:Key="Shown" />
+    <Style x:Key="Segment" TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="Margin" Value="2" />
+      <Setter Property="Padding" Value="4,5" />
+    </Style>
+  </Window.Resources>
+  <Border Margin="12"
+          CornerRadius="12"
+          BorderThickness="1"
+          Background="{DynamicResource ApplicationBackgroundBrush}"
+          BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+    <Border.Effect>
+      <DropShadowEffect BlurRadius="24" ShadowDepth="4" Opacity="0.3" />
+    </Border.Effect>
+    <StackPanel>
+      <DockPanel Margin="16,16,16,12">
+        <ui:Button x:Name="LayoutKey"
+                   DockPanel.Dock="Left"
+                   Appearance="Primary"
+                   Background="{DynamicResource AccentFillColorDefaultBrush}"
+                   MouseOverBackground="{DynamicResource AccentFillColorDefaultBrush}"
+                   Foreground="White"
+                   Width="44"
+                   Height="40"
+                   Padding="0"
+                   Margin="0,0,8,0"
+                   Content="{Binding LanguageCode}"
+                   FontWeight="Bold"
+                   ToolTip="{l:Loc QuickSwitchLayout}"
+                   AutomationProperties.Name="{l:Loc QuickSwitchLayout}" />
+        <StackPanel VerticalAlignment="Center">
+          <TextBlock Text="{Binding LanguageName}" Style="{StaticResource HeadingText}" FontSize="17" />
+          <TextBlock Text="{Binding StateText}" Style="{StaticResource HintText}" />
+        </StackPanel>
+      </DockPanel>
+
+      <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Padding="16,10">
+        <ui:ToggleSwitch Content="{l:Loc MenuAutoCorrection}" IsChecked="{Binding AutoCorrection}" />
+      </Border>
+
+      <Border BorderThickness="0,1,0,0"
+              BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+              Padding="16,10"
+              Visibility="{Binding HasCurrentApp, Converter={StaticResource Shown}}">
+        <StackPanel>
+          <TextBlock Text="{l:Loc QuickCurrentAppTitle}" Style="{StaticResource HintText}" Margin="0,0,0,6" />
+          <ui:ToggleSwitch Content="{Binding CurrentAppText}" IsChecked="{Binding CurrentAppEnabled}" />
+        </StackPanel>
+      </Border>
+
+      <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Padding="14,10">
+        <StackPanel>
+          <TextBlock Text="{l:Loc Sensitivity}" Style="{StaticResource HintText}" Margin="2,0,0,4" />
+          <UniformGrid Columns="3">
+            <ToggleButton x:Name="SensCautious"
+                          Style="{StaticResource Segment}"
+                          Content="{l:Loc SensitivityCautious}"
+                          IsChecked="{Binding Sensitivity, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static det:Sensitivity.Cautious}}" />
+            <ToggleButton x:Name="SensBalanced"
+                          Style="{StaticResource Segment}"
+                          Content="{l:Loc SensitivityBalanced}"
+                          IsChecked="{Binding Sensitivity, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static det:Sensitivity.Balanced}}" />
+            <ToggleButton x:Name="SensAggressive"
+                          Style="{StaticResource Segment}"
+                          Content="{l:Loc SensitivityAggressive}"
+                          IsChecked="{Binding Sensitivity, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static det:Sensitivity.Aggressive}}" />
+          </UniformGrid>
+          <TextBlock Text="{l:Loc MenuPause}" Style="{StaticResource HintText}" Margin="2,10,0,4" />
+          <UniformGrid Columns="4">
+            <ToggleButton x:Name="Pause15"
+                          Style="{StaticResource Segment}"
+                          Content="{l:Loc QuickPause15}"
+                          IsChecked="{Binding ActivePause, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static vm:PausePreset.FifteenMinutes}}" />
+            <ToggleButton x:Name="Pause30"
+                          Style="{StaticResource Segment}"
+                          Content="{l:Loc QuickPause30}"
+                          IsChecked="{Binding ActivePause, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static vm:PausePreset.ThirtyMinutes}}" />
+            <ToggleButton x:Name="Pause60"
+                          Style="{StaticResource Segment}"
+                          Content="{l:Loc QuickPause60}"
+                          IsChecked="{Binding ActivePause, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static vm:PausePreset.OneHour}}" />
+            <ToggleButton x:Name="Pause180"
+                          Style="{StaticResource Segment}"
+                          Content="{l:Loc QuickPause180}"
+                          IsChecked="{Binding ActivePause, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static vm:PausePreset.ThreeHours}}" />
+          </UniformGrid>
+          <ToggleButton x:Name="PauseRestart"
+                        Style="{StaticResource Segment}"
+                        Content="{l:Loc MenuPauseUntilRestart}"
+                        IsChecked="{Binding ActivePause, Mode=OneWay, Converter={StaticResource Is}, ConverterParameter={x:Static vm:PausePreset.UntilRestart}}" />
+        </StackPanel>
+      </Border>
+
+      <Button x:Name="Stats"
+              Visibility="{Binding ShowStatistics, Converter={StaticResource Shown}}"
+              HorizontalAlignment="Stretch"
+              HorizontalContentAlignment="Stretch"
+              Background="Transparent"
+              BorderThickness="0,1,0,0"
+              BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+              Padding="16,10"
+              AutomationProperties.Name="{l:Loc MenuStatistics}">
+        <UniformGrid Columns="3">
+          <StackPanel>
+            <TextBlock Text="{Binding CorrectionsToday}" FontSize="20" FontWeight="SemiBold" />
+            <TextBlock Text="{l:Loc QuickCorrectedToday}" Style="{StaticResource HintText}" />
+          </StackPanel>
+          <StackPanel>
+            <TextBlock Text="{Binding UndosToday}" FontSize="20" FontWeight="SemiBold" />
+            <TextBlock Text="{l:Loc QuickUndoneToday}" Style="{StaticResource HintText}" />
+          </StackPanel>
+          <StackPanel>
+            <TextBlock Text="{Binding KeptText}" FontSize="20" FontWeight="SemiBold" />
+            <TextBlock Text="{l:Loc QuickKept}" Style="{StaticResource HintText}" />
+          </StackPanel>
+        </UniformGrid>
+      </Button>
+
+      <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Padding="16,10">
+        <StackPanel>
+          <ui:ToggleSwitch Content="{l:Loc PlaySwitchSound}" IsChecked="{Binding PlaySwitchSound}" Margin="0,0,0,8" />
+          <ui:ToggleSwitch Content="{l:Loc ShowCursorIndicator}" IsChecked="{Binding ShowCursorIndicator}" />
+        </StackPanel>
+      </Border>
+
+      <Border BorderThickness="0,1,0,0"
+              BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+              Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+              CornerRadius="0,0,12,12"
+              Padding="8,6,8,8">
+        <StackPanel>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <ui:Button x:Name="Settings" Content="{l:Loc MenuSettings}" Appearance="Transparent" Padding="8,5" />
+            <ui:Button x:Name="FirstSteps" Content="{l:Loc MenuWelcome}" Appearance="Transparent" Padding="8,5">
+              <ui:Button.Icon>
+                <ui:SymbolIcon Symbol="Wand24" />
+              </ui:Button.Icon>
+            </ui:Button>
+            <ui:Button x:Name="Quit" Content="{l:Loc MenuQuit}" Appearance="Transparent" Padding="8,5" />
+          </StackPanel>
+          <TextBlock Text="{Binding HotkeyHint}"
+                     Style="{StaticResource HintText}"
+                     HorizontalAlignment="Center"
+                     FontSize="11.5"
+                     Margin="0,4,0,0" />
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </Border>
+</Window>

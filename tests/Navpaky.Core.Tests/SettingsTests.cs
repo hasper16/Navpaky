@@ -93,7 +93,8 @@ namespace Navpaky.Core.Tests {
 
       Assert.True(defaults.ShowCursorIndicator);
       Assert.False(defaults.PlaySwitchSound);
-      Assert.Equal(SwitchSound.KeyClick, defaults.SwitchSound);
+      Assert.Equal(SwitchSound.Navpaky, defaults.SwitchSound);
+      Assert.Equal(CursorIndicatorStyle.Pill, defaults.CursorIndicatorStyle);
       Assert.False(defaults.LaunchAtSignIn);
     }
 
@@ -128,8 +129,31 @@ namespace Navpaky.Core.Tests {
 
       Assert.True(restored?.ShowCursorIndicator);
       Assert.False(restored?.PlaySwitchSound);
-      Assert.Equal(SwitchSound.KeyClick, restored?.SwitchSound);
+      Assert.Equal(SwitchSound.Navpaky, restored?.SwitchSound);
+      Assert.Equal(CursorIndicatorStyle.Pill, restored?.CursorIndicatorStyle);
       Assert.False(restored?.LaunchAtSignIn);
+    }
+
+    [Fact]
+    public void SoundChosenBeforeTheRedesignStaysChosen() {
+      Settings? restored = JsonSerializer.Deserialize(
+          "{ \"switchSound\": \"chime\" }", SettingsJsonContext.Default.Settings);
+
+      Assert.Equal(SwitchSound.Chime, restored?.SwitchSound);
+    }
+
+    [Theory]
+    [InlineData(CursorIndicatorStyle.Tag, "tag")]
+    [InlineData(CursorIndicatorStyle.Underline, "underline")]
+    public void CursorIndicatorStyleRoundTripsByName(CursorIndicatorStyle style, string name) {
+      var settings = new Settings(CursorIndicatorStyle: style);
+
+      string json = JsonSerializer.Serialize(settings, SettingsJsonContext.Default.Settings);
+      Settings? restored = JsonSerializer.Deserialize(json, SettingsJsonContext.Default.Settings);
+
+      using JsonDocument document = JsonDocument.Parse(json);
+      Assert.Equal(name, document.RootElement.GetProperty("cursorIndicatorStyle").GetString());
+      Assert.Equal(style, restored?.CursorIndicatorStyle);
     }
 
     [Fact]

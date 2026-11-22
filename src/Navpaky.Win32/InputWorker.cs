@@ -36,6 +36,7 @@ namespace Navpaky.Win32 {
     private const uint _freezeMessage = PInvoke.WM_APP + 3;
     private const uint _settingsMessage = PInvoke.WM_APP + 4;
     private const uint _wordsMessage = PInvoke.WM_APP + 5;
+    private const uint _nextLayoutMessage = PInvoke.WM_APP + 6;
     private const uint _idleWaitMilliseconds = 250;
 
     // The settings message carries these flags as they were when it was posted, so a setting
@@ -377,6 +378,15 @@ namespace Navpaky.Win32 {
     /// <param name="target">The Layout to switch to.</param>
     public void SwitchLayout(LayoutId target) {
       PInvoke.PostThreadMessage(_threadId, _switchMessage, default, (nint)target.Value);
+    }
+
+    /// <summary>
+    /// Asks the worker to switch the foreground window to the Layout after its current one in the
+    /// installed order; safe to call from any thread. The worker reads the window's Layout when
+    /// it handles the request, so a window just brought to the front counts.
+    /// </summary>
+    public void SwitchToNextLayout() {
+      PInvoke.PostThreadMessage(_threadId, _nextLayoutMessage, default, default);
     }
 
     /// <summary>
@@ -845,6 +855,12 @@ namespace Navpaky.Win32 {
       switch (message.message) {
         case _switchMessage:
           Execute(new SwitchLayout(new LayoutId((uint)message.lParam.Value)));
+          return true;
+        case _nextLayoutMessage:
+          if (LayoutCycle.Next(_installedLayouts, _foregroundLayout.CurrentLayout()) is { } next) {
+            Execute(new SwitchLayout(next));
+          }
+
           return true;
         case _resumeMessage:
           Apply(_hookWatchdog.Resume(), _hookWatchdog.SelfPausedUntil);

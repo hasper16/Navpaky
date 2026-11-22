@@ -8,6 +8,8 @@ using Navpaky.App.Localization;
 using Navpaky.App.Updates;
 using Navpaky.App.ViewModels;
 using Navpaky.Win32;
+using SymbolIcon = Wpf.Ui.Controls.SymbolIcon;
+using SymbolRegular = Wpf.Ui.Controls.SymbolRegular;
 
 namespace Navpaky.App.Tray {
   // The notification-area icon and its menu, redrawn from the TrayViewModel whenever something
@@ -32,7 +34,10 @@ namespace Navpaky.App.Tray {
       _icon = icon;
       _model = model;
       _commands = commands;
-      _icon.MenuActivation = PopupActivationMode.LeftOrRightClick;
+
+      // A left click opens the quick panel, a right click the menu (redesign-visual-identity).
+      _icon.MenuActivation = PopupActivationMode.RightClick;
+      _icon.TrayLeftMouseUp += (_, _) => _commands.OpenQuickPanel();
       _icon.ContextMenu = new ContextMenu();
       Localizer.BindLanguage(_icon.ContextMenu);
 
@@ -121,7 +126,9 @@ namespace Navpaky.App.Tray {
       MenuItem updates = Item(_model.UpdateItemText, _commands.Updates);
       updates.IsEnabled = _model.UpdateItemEnabled;
       items.Add(updates);
-      items.Add(Item(UiText.Format(Strings.MenuWelcome, Product.Name), _commands.OpenWelcome));
+      MenuItem firstSteps = Item(Strings.MenuWelcome, _commands.OpenWelcome);
+      firstSteps.Icon = new SymbolIcon { Symbol = SymbolRegular.Wand24 };
+      items.Add(firstSteps);
       items.Add(Item(Strings.MenuAbout, _commands.OpenAbout));
       items.Add(new Separator());
       items.Add(Item(Strings.MenuQuit, _commands.Quit));
