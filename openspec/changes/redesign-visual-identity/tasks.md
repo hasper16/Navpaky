@@ -29,7 +29,7 @@
 
 ## 7. Quick panel (design D5)
 
-- [ ] 7.1 Test first: `QuickPanelViewModel` exposes state text, toggles Auto Correction, applies and resumes a Pause preset, computes the kept share (hidden at zero Corrections) and hides the strip when statistics are off. Verify: `dotnet test tests/Navpaky.App.Tests`.
+- [x] 7.1 Test first: `QuickPanelViewModel` turns Auto Correction off, pauses with a preset and resumes on the same preset, turns the current app off, shows today's Corrections, Undos and the share kept (none at zero Corrections), hides the strip when statistics are off, and picks the next installed Layout. Verify: `dotnet test tests/Navpaky.App.Tests` (`QuickPanelViewModelTests`).
 - [ ] 7.2 `QuickPanel` window: left click opens, right click keeps the menu, closes on Esc and deactivation, Language key hands focus back and switches the Layout. Verify: a desktop check opens the panel by left click and closes it with Esc; Layout switch from the panel deferred to `deferred-by-hand.md`.
 
 ## 8. Welcome and tray menu (design D9, D11)
