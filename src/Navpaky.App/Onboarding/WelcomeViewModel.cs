@@ -9,10 +9,13 @@ namespace Navpaky.App.Onboarding {
   // The welcome window (spec onboarding): the main choices read and write the hub's snapshot,
   // and closing the window in any way completes the welcome.
   internal sealed class WelcomeViewModel : ObservableObject, IDisposable {
+    public const int LastStep = 2;
+
     private readonly SettingsHub _hub;
     private string[] _languages;
     private bool _tryItWorked;
     private bool _closedWithDone;
+    private int _step;
 
     public WelcomeViewModel(SettingsHub hub, IReadOnlyList<LayoutId> layouts) {
       _hub = hub;
@@ -49,6 +52,24 @@ namespace Navpaky.App.Onboarding {
       private set => SetProperty(ref _tryItWorked, value);
     }
 
+    // The window leads through three steps: what it does, try it, your choices (design D9).
+    public int Step {
+      get {
+        return _step;
+      }
+
+      private set {
+        if (SetProperty(ref _step, value)) {
+          OnPropertyChanged(nameof(IsLastStep));
+          OnPropertyChanged(nameof(CanGoBack));
+        }
+      }
+    }
+
+    public bool IsLastStep => Step == LastStep;
+
+    public bool CanGoBack => Step > 0;
+
     public static bool OpensAtStart(Settings settings) {
       return !settings.WelcomeCompleted;
     }
@@ -67,6 +88,14 @@ namespace Navpaky.App.Onboarding {
     // A Correction Navpaky made in the try-it field proves the whole pipeline works.
     public void NoteTryItCorrection() {
       TryItWorked = true;
+    }
+
+    public void Next() {
+      Step = Math.Min(Step + 1, LastStep);
+    }
+
+    public void Back() {
+      Step = Math.Max(Step - 1, 0);
     }
 
     public void NoteDone() {

@@ -10,6 +10,11 @@ namespace Navpaky.App {
       return string.Format(CultureInfo.CurrentCulture, CompositeFormat.Parse(format), argument);
     }
 
+    public static string Format<T1, T2>(string format, T1 first, T2 second) {
+      return string.Format(
+          CultureInfo.CurrentCulture, CompositeFormat.Parse(format), first, second);
+    }
+
     // Fills the variant of key whose plural category in culture matches count, such as
     // TrayPausedMinutes_Few.
     public static string Plural(CultureInfo culture, string key, int count) {

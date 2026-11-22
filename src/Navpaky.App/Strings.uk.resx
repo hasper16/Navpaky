@@ -424,9 +424,6 @@
   <data name="UninstallDataKept" xml:space="preserve">
     <value>Navpaky встановлено знову, тому його налаштування та списки слів збережено.</value>
   </data>
-  <data name="MenuWelcome" xml:space="preserve">
-    <value>Знайомство з {0}</value>
-  </data>
   <data name="WelcomeTitle" xml:space="preserve">
     <value>Ласкаво просимо до Navpaky</value>
   </data>
@@ -597,5 +594,17 @@
   </data>
   <data name="IndicatorStyleUnderline" xml:space="preserve">
     <value>Підкреслення</value>
+  </data>
+  <data name="WelcomeBack" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="WelcomeNext" xml:space="preserve">
+    <value>Далі</value>
+  </data>
+  <data name="WelcomeStep" xml:space="preserve">
+    <value>Крок {0} з {1}</value>
+  </data>
+  <data name="MenuWelcome" xml:space="preserve">
+    <value>Перші кроки</value>
   </data>
 </root>

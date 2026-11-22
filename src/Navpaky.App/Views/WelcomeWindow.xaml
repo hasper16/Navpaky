@@ -22,12 +22,13 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <ui:TitleBar x:Name="TitleBar" Grid.Row="0" Title="{l:Loc WelcomeTitle}" />
-    <!-- One scrolling page rather than a wizard, so the user can skim (design D1). -->
+    <!-- Three steps, one shown at a time (design D9 of redesign-visual-identity). -->
     <ScrollViewer x:Name="Scroller"
                   Grid.Row="1"
                   VerticalScrollBarVisibility="Auto"
                   Focusable="False">
       <StackPanel Margin="24,8,24,16">
+        <StackPanel x:Name="Step0">
         <Image x:Name="Mark"
                Width="64"
                Height="64"
@@ -51,6 +52,8 @@
                    Focusable="True"
                    Margin="0,0,0,24" />
 
+        </StackPanel>
+        <StackPanel x:Name="Step1" Visibility="Collapsed">
         <TextBlock Text="{l:Loc WelcomeTryItTitle}"
                    Style="{StaticResource SectionText}" />
         <Border Visibility="{Binding NeedsAnotherLayout, Converter={StaticResource Shown}}"
@@ -82,9 +85,11 @@
                    AutomationProperties.LiveSetting="Polite"
                    Margin="0,8,0,0" />
 
+        </StackPanel>
+        <StackPanel x:Name="Step2" Visibility="Collapsed">
         <TextBlock Text="{l:Loc WelcomeChoicesTitle}"
                    Style="{StaticResource SectionText}"
-                   Margin="0,24,0,8" />
+                   Margin="0,0,0,8" />
         <ui:ToggleSwitch Content="{l:Loc AutoCorrection}"
                          IsChecked="{Binding AutoCorrectionEnabled}"
                          Margin="0,0,0,12" />
@@ -105,17 +110,33 @@
         <TextBlock Text="{l:Loc WelcomeTrayTip}"
                    TextWrapping="Wrap"
                    Focusable="True" />
+        </StackPanel>
       </StackPanel>
     </ScrollViewer>
     <Border Grid.Row="2"
             BorderThickness="0,1,0,0"
             BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
             Padding="24,12">
-      <ui:Button x:Name="Done"
-                 Content="{l:Loc WelcomeDone}"
-                 Appearance="Primary"
-                 HorizontalAlignment="Right"
-                 MinWidth="120" />
+      <DockPanel>
+        <ui:Button x:Name="Back"
+                   DockPanel.Dock="Left"
+                   Content="{l:Loc WelcomeBack}"
+                   MinWidth="100" />
+        <ui:Button x:Name="Done"
+                   DockPanel.Dock="Right"
+                   Content="{l:Loc WelcomeDone}"
+                   Appearance="Primary"
+                   MinWidth="120" />
+        <ui:Button x:Name="Next"
+                   DockPanel.Dock="Right"
+                   Content="{l:Loc WelcomeNext}"
+                   Appearance="Primary"
+                   MinWidth="120" />
+        <TextBlock x:Name="StepText"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+      </DockPanel>
     </Border>
   </Grid>
 </ui:FluentWindow>

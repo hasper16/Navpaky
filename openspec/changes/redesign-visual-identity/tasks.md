@@ -34,7 +34,7 @@
 
 ## 8. Welcome and tray menu (design D9, D11)
 
-- [ ] 8.1 Test first: `WelcomeViewModel` steps 0→1→2, `Back` returns, `IsLast` on step 2, closing at any step completes. Then show one step at a time; rename the menu item to First steps / Перші кроки. Verify: `dotnet test tests/Navpaky.App.Tests`.
+- [x] 8.1 Test first: `WelcomeViewModel` steps 0→1→2, `Back` returns and stops at 0, `IsLastStep` on step 2; closing at any step completes (unchanged). Then the window shows one step at a time with Back, Next, Done and "Step N of 3"; the tray item becomes First steps / Перші кроки with a wand icon; the onboarding desktop set presses Next to reach the try-it field and Done. Verify: `dotnet test tests/Navpaky.App.Tests`; the onboarding set runs on the orchestrator's gate.
 
 ## 9. Launch splash (design D10)
 

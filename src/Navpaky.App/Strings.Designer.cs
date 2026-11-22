@@ -697,7 +697,7 @@ namespace Navpaky.App {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Getting started with {0}.
+        ///   Looks up a localized string similar to First steps.
         /// </summary>
         public static string MenuWelcome {
             get {
@@ -1625,6 +1625,15 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string WelcomeBack {
+            get {
+                return ResourceManager.GetString("WelcomeBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your choices.
         /// </summary>
         public static string WelcomeChoicesTitle {
@@ -1679,6 +1688,15 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string WelcomeNext {
+            get {
+                return ResourceManager.GetString("WelcomeNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Navpaky needs at least two keyboard layouts in different languages. Add another one in Windows language settings..
         /// </summary>
         public static string WelcomeOneLayout {
@@ -1702,6 +1720,15 @@ namespace Navpaky.App {
         public static string WelcomePrivacyTitle {
             get {
                 return ResourceManager.GetString("WelcomePrivacyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Step {0} of {1}.
+        /// </summary>
+        public static string WelcomeStep {
+            get {
+                return ResourceManager.GetString("WelcomeStep", resourceCulture);
             }
         }
         

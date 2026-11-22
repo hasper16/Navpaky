@@ -59,12 +59,24 @@ namespace Navpaky.DesktopChecks {
     }
 
     private static bool PressDone(AutomationElement window) {
+      // Done shows on the last of the three steps (redesign-visual-identity).
+      for (int step = 0; step < 2 && Named(window, "Done", ControlType.Button) is null; step++) {
+        PressNext(window);
+      }
+
       if (Named(window, "Done", ControlType.Button) is not { } done) {
         return false;
       }
 
       ((InvokePattern)done.GetCurrentPattern(InvokePattern.Pattern)).Invoke();
       return WelcomeGone();
+    }
+
+    private static void PressNext(AutomationElement window) {
+      if (Named(window, "Next", ControlType.Button) is { } next) {
+        ((InvokePattern)next.GetCurrentPattern(InvokePattern.Pattern)).Invoke();
+        Thread.Sleep(200);
+      }
     }
 
     private static bool WelcomeCompletedSaved() {
@@ -100,6 +112,12 @@ namespace Navpaky.DesktopChecks {
     }
 
     private void CheckTryIt() {
+      // The try-it field is on step 2 of 3 (redesign-visual-identity).
+      if (WelcomeWindow(_uiWait) is { } shown
+          && Named(shown, _tryItName, ControlType.Edit) is null) {
+        PressNext(shown);
+      }
+
       if (WelcomeWindow(_uiWait) is not { } window
           || Named(window, _tryItName, ControlType.Edit) is not { } field) {
         Expect("2.2 the try-it field corrects and confirms", false, "no try-it field");

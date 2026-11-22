@@ -424,9 +424,6 @@
   <data name="UninstallDataKept" xml:space="preserve">
     <value>Navpaky was installed again, so its settings and word lists were kept.</value>
   </data>
-  <data name="MenuWelcome" xml:space="preserve">
-    <value>Getting started with {0}</value>
-  </data>
   <data name="WelcomeTitle" xml:space="preserve">
     <value>Welcome to Navpaky</value>
   </data>
@@ -597,5 +594,17 @@
   </data>
   <data name="IndicatorStyleUnderline" xml:space="preserve">
     <value>Underline</value>
+  </data>
+  <data name="WelcomeBack" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="WelcomeNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="WelcomeStep" xml:space="preserve">
+    <value>Step {0} of {1}</value>
+  </data>
+  <data name="MenuWelcome" xml:space="preserve">
+    <value>First steps</value>
   </data>
 </root>
