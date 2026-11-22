@@ -6,8 +6,8 @@
                  xmlns:l="clr-namespace:Navpaky.App.Localization"
                  xmlns:v="clr-namespace:Navpaky.App.Views"
                  Title="{l:Loc SettingsTitle}"
-                 Width="820"
-                 Height="560"
+                 Width="900"
+                 Height="640"
                  MinWidth="560"
                  MinHeight="420"
                  WindowStartupLocation="CenterScreen"
@@ -65,9 +65,13 @@
         </Style>
       </ListBox.ItemContainerStyle>
     </ListBox>
-    <ContentControl x:Name="Page"
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Focusable="False" />
+    <!-- Every section on one scrolling page (design D6 of redesign-visual-identity). -->
+    <ScrollViewer x:Name="Scroller"
+                  Grid.Row="1"
+                  Grid.Column="1"
+                  VerticalScrollBarVisibility="Auto"
+                  Focusable="False">
+      <StackPanel x:Name="PageStack" Margin="0,0,0,24" />
+    </ScrollViewer>
   </Grid>
 </ui:FluentWindow>

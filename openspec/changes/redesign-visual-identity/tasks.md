@@ -25,7 +25,7 @@
 
 ## 6. Settings page (design D6)
 
-- [ ] 6.1 Test first: `SectionInView` returns the section at the top, the last section at the end, and the first section at offset 0. Then stack the pages in one scroll view with section headings and cards, wire the list both ways. Verify: `dotnet test tests/Navpaky.App.Tests`; keyboard-only pass deferred.
+- [x] 6.1 Test first: `SectionScroll.InView` returns the section whose heading reached the top, the last section at the end, and the first at offset 0. Then the six pages sit on one scrolling page, each under a Grunt Grotesk heading in a card; choosing a section scrolls to it and scrolling moves the highlight. Verify: `dotnet test tests/Navpaky.App.Tests` (`SectionScrollTests`, `SettingsAutomationTests`); keyboard-only pass deferred.
 
 ## 7. Quick panel (design D5)
 
