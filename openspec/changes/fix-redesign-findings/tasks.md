@@ -6,7 +6,7 @@
 
 ## 2. Theme and accent (design D1, D2)
 
-- [ ] 2.1 Test first: in the dark theme the primary accent is the saturated brand blue; after the app sits in the dark theme, `ThemeFollower.Refresh` with a light system theme gives the light theme and the red accent. Then implement and subscribe at start. Verify: `dotnet test tests/Navpaky.App.Tests`.
+- [x] 2.1 Test first: in the dark theme the primary accent is the saturated brand blue; after the app sits in the dark theme, `ThemeFollower.Refresh` with a light system theme gives the light theme and the red accent. Then implement and subscribe at start. Verify: `dotnet test tests/Navpaky.App.Tests`.
 
 ## 3. Quick panel Language key (design D4)
 

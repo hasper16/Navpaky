@@ -87,6 +87,7 @@ namespace Navpaky.App {
     private SettingsHub? _hub;
     private TrayViewModel? _tray;
     private TrayIconView? _trayView;
+    private ThemeFollower? _themeFollower;
 
     // The last app window the user worked in, never the taskbar; written on the UI thread only.
     private nint _typedInWindow;
@@ -142,6 +143,7 @@ namespace Navpaky.App {
       ApplicationThemeManager.ApplySystemTheme();
       BrandTheme.Follow();
       BrandFonts.Apply();
+      _themeFollower = new ThemeFollower(Dispatcher, RefreshTray);
       IconText.HideFromScreenReaders();
 
       // Windows holds the truth about starting at sign-in: Task Manager can change it.
@@ -249,6 +251,7 @@ namespace Navpaky.App {
         _wordsSaver.Flush();
         _wordsSaver.Dispose();
         _sounds?.Dispose();
+        _themeFollower?.Dispose();
 
         // After the worker and the freeze guard, so their last Incidents are written too.
         _incidents?.Dispose();

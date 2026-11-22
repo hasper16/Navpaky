@@ -33,5 +33,48 @@ namespace Navpaky.App.Tests.Views {
       Assert.Equal(accent, appliedAccent);
       Assert.Equal(second, appliedSecond);
     }
+
+    [Theory]
+    [InlineData(ApplicationTheme.Light, "#FFB00E28")]
+    [InlineData(ApplicationTheme.Dark, "#FF6B9CF7")]
+    public void PrimaryAccentKeepsTheBrandShade(ApplicationTheme theme, string primary) {
+      string? applied = null;
+      Sta.Run(() => {
+        EnsureApplication();
+        BrandTheme.Apply(theme);
+        applied = Hex(UiApplication.Current.Resources["SystemAccentColorPrimary"]);
+      });
+
+      Assert.Equal(primary, applied);
+    }
+
+    [Fact]
+    public void RefreshFollowsAThemeChangedWhileRunning() {
+      ApplicationTheme after = ApplicationTheme.Unknown;
+      string? primary = null;
+      Sta.Run(() => {
+        EnsureApplication();
+        ApplicationThemeManager.Apply(ApplicationTheme.Dark);
+        ThemeFollower.Refresh(ApplicationTheme.Light);
+        after = ApplicationThemeManager.GetAppTheme();
+        primary = Hex(UiApplication.Current.Resources["SystemAccentColorPrimary"]);
+      });
+
+      Assert.Equal(ApplicationTheme.Light, after);
+      Assert.Equal("#FFB00E28", primary);
+    }
+
+    private static void EnsureApplication() {
+      if (Application.Current is null) {
+        var host = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+        host.Resources.MergedDictionaries.Add(new ResourceDictionary {
+          Source = new Uri("pack://application:,,,/Navpaky.App;component/Resources.xaml"),
+        });
+      }
+    }
+
+    private static string Hex(object value) {
+      return ((Color)value).ToString(CultureInfo.InvariantCulture);
+    }
   }
 }
