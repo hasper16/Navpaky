@@ -72,6 +72,12 @@ namespace Navpaky.App.Tests.Views {
         pairs.Add((tertiary, Brush("BrandWindowBackground")));
         pairs.Add((tertiary, Brush("BrandSurface")));
         pairs.Add((Brush("AccentButtonForeground"), Brush("AccentFillColorDefaultBrush")));
+        pairs.Add((
+            Brush("AccentButtonForegroundPointerOver"),
+            Brush("AccentFillColorSecondaryBrush")));
+        pairs.Add((Brush("AccentButtonForegroundPressed"), Brush("AccentFillColorTertiaryBrush")));
+        pairs.Add((
+            Brush("TextOnAccentFillColorPrimaryBrush"), Brush("AccentFillColorDefaultBrush")));
       });
 
       Assert.All(pairs, pair => Assert.True(
