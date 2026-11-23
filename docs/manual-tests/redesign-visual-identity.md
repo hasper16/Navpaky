@@ -11,4 +11,4 @@ Needs the English (US) and Russian Layouts installed and a Debug build. Close ev
 - [x] Default set: `dotnet run --project tools/Navpaky.DesktopChecks` (the launch splash shows at every start and must not take focus from the checks).
 - [x] The input-language list is the same before and after the runs.
 
-Last run: `onboarding` 9 of 9, `tray-and-settings` 10 of 10, default 36 of 36 at f1bd235 on the owner's desktop; input-language list unchanged (`en-US 0409:00000409; uk 0422:00020422, 0422:00000419`).
+Last run: `onboarding` 9 of 9, `tray-and-settings` 10 of 10, default 36 of 36 at 3d3b914 (fix-redesign-findings) on the owner's desktop; before that the same at f1bd235; input-language list unchanged (`en-US 0409:00000409; uk 0422:00020422, 0422:00000419`).

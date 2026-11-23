@@ -37,3 +37,4 @@
 
 - [x] 5.1 A published single-file build passes `--check-fonts`; CI runs it. Verify: the CI step passes on the PR head.
 - [x] 5.2 `docs/manual-tests/fix-redesign-findings.md` lists the owner's visual re-check unticked; `docs/roadmap.md` lists the change. Verify: files present.
+- [x] 5.3 The desktop-check sets pass on the PR head. Verify: `onboarding`, `tray-and-settings` and the default set of `tools/Navpaky.DesktopChecks` pass with the input-language list unchanged (9 of 9, 10 of 10, 36 of 36 at 3d3b914).
