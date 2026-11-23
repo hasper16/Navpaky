@@ -7,7 +7,7 @@ Defines the first-run experience: explaining what Navpaky does and how it treats
 ## Requirements
 
 ### Requirement: Welcome window on first run
-On the first start for a Windows user, Navpaky SHALL open a welcome window that leads through three steps with Back, Next and Done: what Navpaky does (with a before/after example, the statement that typed text never leaves the computer, and how to undo a Correction), try it, and your choices. Closing the window at any step SHALL count as completing it.
+On the first start for a Windows user, Navpaky SHALL open a welcome window that leads through three steps with Back, Next and Done: what Navpaky does (with a before/after example and how to undo a Correction), try it (with the statement that what is typed there is sent nowhere), and your choices. Closing the window at any step SHALL count as completing it.
 
 #### Scenario: First start
 - **WHEN** Navpaky starts for the first time for this user
@@ -34,11 +34,15 @@ The welcome window SHALL contain a text field where the user can type a word in 
 - **THEN** the welcome window explains that Navpaky needs at least two Layouts and links to Windows language settings
 
 ### Requirement: Main choices up front
-The welcome window SHALL let the user set Auto Correction on or off, choose the Hotkey, and turn launch at sign-in on or off (on by default, design decision), and SHALL show how to keep the tray icon visible.
+The welcome window's last step SHALL let the user choose the Hotkey from the same options as Settings, drawn the same way (owner decision), SHALL show how to keep the tray icon visible, and SHALL offer crash reports, as in the approved prototype (owner decision). Launch at sign-in SHALL be on after the first start (design decision); Auto Correction, launch at sign-in and the other Hotkeys are set in Settings.
 
 #### Scenario: Launch at sign-in default
 - **WHEN** the user closes the welcome window opened at the first start without changing anything
 - **THEN** launch at sign-in is on
+
+#### Scenario: Hotkey from the welcome window
+- **WHEN** the user picks Ctrl twice, or any other option Settings offers, on the last step
+- **THEN** the Hotkey is that option, as if chosen in Settings
 
 ### Requirement: Reopen from tray
 The user SHALL be able to reopen the welcome window from the tray menu and the quick panel at any time, through an item named "First steps" ("Перші кроки" in Ukrainian; owner decision), which does not read like the Settings item.
