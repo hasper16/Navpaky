@@ -1,0 +1,18 @@
+# Visual re-check: fix-redesign-findings
+
+The owner's re-check of the fixes for the findings from the 0.4.4 test pack. Install a test pack built from the PR head (Release single-file, as in `docs/manual-tests/upgrade-to-dotnet-11.md`). The automated part is covered by `BrandFontsTests`, `BrandThemeTests`, `QuickPanelViewModelTests` and the CI `--check-fonts` step on the published build; the desktop-check sets are unchanged.
+
+- [x] **Desktop-check sets.** `onboarding` 9 of 9, `tray-and-settings` 10 of 10 and the default set 36 of 36 at 3d3b914 and again at 773c8aa on the owner's desktop (commands in `redesign-visual-identity.md`); input-language list unchanged (`en-US 0409:00000409; uk 0422:00020422, 0422:00000419`).
+
+- [ ] **Theme follows Windows (finding 1).** With Windows apps in light mode, open the quick panel and Settings: both are light. Switch Windows to dark while Navpaky runs, open the quick panel again: it is dark, with no restart. Switch back to light: it is light again.
+- [ ] **Brand accent (finding 2).** In light mode the Language key, the selected Sensitivity, switches and the Settings section marker are red; in dark mode they are a saturated blue, not pale.
+- [ ] **Fonts (finding 3).** Text in the quick panel, Settings, the welcome window and the tray menu is Inter; headings (the Settings section titles, the panel's language name) are Grunt Grotesk.
+- [ ] **Language key keeps the panel open (finding 4).** Type in Notepad with English (US), open the quick panel, click the Language key: the panel stays open, its key and the tray show the next Language; close the panel and type in Notepad: it uses that Layout. Repeat with Telegram or a browser. Note any app (a console, a Store app) where the Layout does not change.
+- [ ] **Tray while the panel is open.** With the panel open, the tray icon shows the app's Language, not the panel's own.
+- [ ] **Licences.** The install folder (`%LOCALAPPDATA%\navpaky-app\current\Fonts`) holds `OFL-Inter.txt` and `OFL-GruntGrotesk.txt`; About has no font-licence line.
+- [ ] **Sound names.** The sound picker in General lists the names only; the default reads "Навпаки" ("Navpaky" in English).
+- [ ] **Against the prototype (artifact v24).** Side by side in light and dark, and again after switching the Windows theme while the windows are open: Settings (navy or white page, lighter sidebar with a divider, title bar with the mark, every section as cards with the switch on the right, white switch knobs), the quick panel (round-ended chips, statistics on one line), the tray menu order, the three Welcome steps, About, the splash and the cursor indicator match the prototype, apart from the deliberate differences listed in design D7.
+- [ ] **Welcome as the prototype.** Open First steps: step 1 has the example and Ctrl + Z, no privacy line; step 2 has the try-it field with "Набране тут нікуди не надсилається."; step 3 has one card: Hotkey with every option Settings has (keycaps, wrapping onto a second line), the tray tip, and "Надсилати звіти про збої". Turning that switch on turns on crash reports only: Settings → Diagnostics shows daily usage counters still off.
+- [ ] **Hotkey keycaps.** Settings → Hotkey shows keycaps (Shift ×2, Ctrl ×2, Alt ×2, Ctrl + Пробіл, Win + Пробіл, Власна…); Narrator reads "Double Shift" and so on.
+- [ ] **Word chips.** Apps and words shows the buttons on the apps label row, apps with "Прибрати", and both word lists as chips; Add opens the field, the × on a chip removes that word.
+- [ ] **Icons.** Right-click the tray icon: every item, also in the Pause submenu, has an icon in the text colour, readable in light and dark. The quick panel's Налаштування…, Перші кроки and Вийти have the same icons and none is cut off.

@@ -83,6 +83,12 @@ namespace Navpaky.App.Tray {
       return key?.GetValue("SystemUsesLightTheme") is int light && light == 0;
     }
 
+    // One icon family with the Settings sections (Fluent System Icons via WPF UI), in the text
+    // colour, so it reads in light and dark (owner request).
+    private static SymbolIcon Icon(SymbolRegular symbol) {
+      return new SymbolIcon { Symbol = symbol };
+    }
+
     private void DrawIcon() {
       var look = (_model.LanguageCode ?? "··", _model.State, TaskbarIsDark(),
           Display.SmallIconSize());
@@ -111,31 +117,35 @@ namespace Navpaky.App.Tray {
         items.Add(extra);
       }
 
-      MenuItem autoCorrection = Item(Strings.MenuAutoCorrection, _model.ToggleAutoCorrection);
+      MenuItem autoCorrection = Item(
+          Strings.MenuAutoCorrection, _model.ToggleAutoCorrection,
+          SymbolRegular.TextGrammarCheckmark24);
       autoCorrection.IsCheckable = true;
       autoCorrection.IsChecked = _model.AutoCorrectionEnabled;
       items.Add(autoCorrection);
-      items.Add(_model.IsPaused ? Item(Strings.MenuResume, _model.Resume) : PauseMenu());
+      items.Add(_model.IsPaused
+          ? Item(Strings.MenuResume, _model.Resume, SymbolRegular.Play24)
+          : PauseMenu());
       if (_model.ExcludeItemText is { } exclude) {
-        items.Add(Item(exclude, _model.ToggleCurrentApp));
+        items.Add(Item(exclude, _model.ToggleCurrentApp, SymbolRegular.AppsList24));
       }
 
       items.Add(new Separator());
-      items.Add(Item(Strings.MenuSettings, _commands.OpenSettings));
-      items.Add(Item(Strings.MenuStatistics, _commands.OpenStatistics));
-      MenuItem updates = Item(_model.UpdateItemText, _commands.Updates);
+      items.Add(Item(Strings.MenuSettings, _commands.OpenSettings, SymbolRegular.Settings24));
+      items.Add(Item(
+          Strings.MenuStatistics, _commands.OpenStatistics, SymbolRegular.DataBarVertical24));
+      items.Add(Item(Strings.MenuWelcome, _commands.OpenWelcome, SymbolRegular.Wand24));
+      items.Add(new Separator());
+      MenuItem updates = Item(
+          _model.UpdateItemText, _commands.Updates, SymbolRegular.ArrowDownload24);
       updates.IsEnabled = _model.UpdateItemEnabled;
       items.Add(updates);
-      MenuItem firstSteps = Item(Strings.MenuWelcome, _commands.OpenWelcome);
-      firstSteps.Icon = new SymbolIcon { Symbol = SymbolRegular.Wand24 };
-      items.Add(firstSteps);
-      items.Add(Item(Strings.MenuAbout, _commands.OpenAbout));
-      items.Add(new Separator());
-      items.Add(Item(Strings.MenuQuit, _commands.Quit));
+      items.Add(Item(Strings.MenuAbout, _commands.OpenAbout, SymbolRegular.Info24));
+      items.Add(Item(Strings.MenuQuit, _commands.Quit, SymbolRegular.Power24));
     }
 
     private MenuItem PauseMenu() {
-      var pause = new MenuItem { Header = Strings.MenuPause };
+      var pause = new MenuItem { Header = Strings.MenuPause, Icon = Icon(SymbolRegular.Pause24) };
       (string Text, PausePreset Preset)[] presets = [
           (Strings.MenuPause15, PausePreset.FifteenMinutes),
           (Strings.MenuPause30, PausePreset.ThirtyMinutes),
@@ -143,14 +153,17 @@ namespace Navpaky.App.Tray {
           (Strings.MenuPause180, PausePreset.ThreeHours),
           (Strings.MenuPauseUntilRestart, PausePreset.UntilRestart)];
       foreach ((string text, PausePreset preset) in presets) {
-        pause.Items.Add(Item(text, () => _model.Pause(preset)));
+        SymbolRegular symbol = preset == PausePreset.UntilRestart
+            ? SymbolRegular.ArrowRepeatAll24
+            : SymbolRegular.Timer24;
+        pause.Items.Add(Item(text, () => _model.Pause(preset), symbol));
       }
 
       return pause;
     }
 
-    private MenuItem Item(string text, Action action) {
-      var item = new MenuItem { Header = text };
+    private MenuItem Item(string text, Action action, SymbolRegular symbol) {
+      var item = new MenuItem { Header = text, Icon = Icon(symbol) };
       item.Click += (_, _) => {
         action();
         Refresh();

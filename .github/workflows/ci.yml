@@ -44,6 +44,11 @@ jobs:
             -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
             -p:PublishReadyToRun=true -o smoke
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          # The brand fonts must load from the single-file build (fix-redesign-findings).
+          $fonts = Start-Process smoke/Navpaky.App.exe -ArgumentList '--check-fonts' -PassThru -Wait
+          if ($fonts.ExitCode -ne 0) {
+            throw "The brand fonts did not load in the published build (exit $($fonts.ExitCode))."
+          }
           $app = Start-Process smoke/Navpaky.App.exe -PassThru
           if ($app.WaitForExit(30000)) {
             throw "Navpaky exited at start with code $($app.ExitCode)."

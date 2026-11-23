@@ -21,7 +21,12 @@ namespace Navpaky.App.ViewModels {
 
     public TrayState State => _tray.State;
 
-    public string StateText => _tray.ToolTip;
+    // "Working" and "Off" as in the prototype; a pause keeps the tray's text with the time left.
+    public string StateText => State switch {
+      TrayState.Active => Strings.QuickStateOn,
+      TrayState.Off => Strings.QuickStateOff,
+      _ => _tray.ToolTip,
+    };
 
     public string? LanguageCode => _tray.LanguageCode;
 
@@ -66,6 +71,8 @@ namespace Navpaky.App.ViewModels {
     public string? CurrentAppName => _tray.CurrentApp?.Name;
 
     public bool HasCurrentApp => _tray.CurrentApp is not null;
+
+    public string? CurrentAppPath => _tray.CurrentApp?.Id.ExePath;
 
     public bool CurrentAppEnabled {
       get {
@@ -114,6 +121,11 @@ namespace Navpaky.App.ViewModels {
     public int? KeptPercent => _today.UndoShare is { } undone
         ? (int)Math.Round(Math.Max(0, 1 - undone) * 100)
         : null;
+
+    // Shows a change made outside the panel, such as the app's new Layout.
+    public void Refresh() {
+      Changed();
+    }
 
     public void ChooseSensitivity(Sensitivity sensitivity) {
       _hub.Update(settings => settings with { Sensitivity = sensitivity });

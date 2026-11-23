@@ -4,22 +4,154 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tb="clr-namespace:H.NotifyIcon;assembly=H.NotifyIcon.Wpf"
                     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-                    xmlns:l="clr-namespace:Navpaky.App.Localization">
+                    xmlns:l="clr-namespace:Navpaky.App.Localization"
+                    xmlns:v="clr-namespace:Navpaky.App.Views">
   <ResourceDictionary.MergedDictionaries>
     <!-- The app follows the Windows theme from start (App.OnStartup). -->
     <ui:ThemesDictionary Theme="Light" />
     <ui:ControlsDictionary />
   </ResourceDictionary.MergedDictionaries>
 
-  <!-- Brand fonts (design D4): Inter for every control through WPF UI's own key, Grunt Grotesk
-       for headings; the system face stands in when a font cannot load. -->
-  <FontFamily x:Key="ContentControlThemeFontFamily">pack://application:,,,/Navpaky.App;component/Fonts/#Inter, Segoe UI Variable Text, Segoe UI</FontFamily>
+  <!-- Grunt Grotesk for headings; Inter for other text is set on every window (BrandFonts). The
+       system face stands in when a font cannot load. -->
   <FontFamily x:Key="HeadingFontFamily">pack://application:,,,/Navpaky.App;component/Fonts/#Grunt Grotesk, Segoe UI Variable Display, Segoe UI</FontFamily>
   <Style x:Key="HeadingText" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource HeadingFontFamily}" />
     <Setter Property="FontWeight" Value="Bold" />
     <Setter Property="FontSize" Value="20" />
     <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+  </Style>
+
+
+  <!-- Surfaces of the approved prototype (fix-redesign-findings): BrandTheme sets the dark
+       values; these are the light ones. -->
+  <SolidColorBrush x:Key="BrandWindowBackground" Color="#FFFFFF" />
+  <SolidColorBrush x:Key="BrandSurface" Color="#F5F7FB" />
+  <SolidColorBrush x:Key="BrandLine" Color="#1F12283A" />
+  <SolidColorBrush x:Key="BrandTextSecondary" Color="#4A5468" />
+  <SolidColorBrush x:Key="BrandTextTertiary" Color="#5F6B80" />
+
+  <Style x:Key="SettingsCard" TargetType="Border">
+    <Setter Property="Background" Value="{DynamicResource BrandSurface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BrandLine}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Margin" Value="0,0,0,10" />
+  </Style>
+
+  <Style x:Key="CardCaption" TargetType="TextBlock">
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{DynamicResource BrandTextTertiary}" />
+    <Setter Property="Margin" Value="0,0,0,6" />
+  </Style>
+
+  <Style TargetType="v:SettingRow">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="v:SettingRow">
+          <Border BorderThickness="0,0,0,1"
+                  BorderBrush="{DynamicResource BrandLine}"
+                  Padding="16,12">
+            <DockPanel>
+              <ContentPresenter DockPanel.Dock="Right"
+                                VerticalAlignment="Center"
+                                Margin="16,0,0,0" />
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{TemplateBinding Label}"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                <TextBlock x:Name="HintText"
+                           Text="{TemplateBinding Hint}"
+                           TextWrapping="Wrap"
+                           FontSize="12.5"
+                           Foreground="{DynamicResource BrandTextTertiary}" />
+              </StackPanel>
+            </DockPanel>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Hint" Value="{x:Null}">
+              <Setter TargetName="HintText" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- A rounded choice: outlined, the chosen one ringed in the accent (settings) -->
+  <ControlTemplate x:Key="PillTemplate" TargetType="ToggleButton">
+    <Border x:Name="Pill"
+            CornerRadius="14"
+            BorderThickness="1"
+            BorderBrush="{DynamicResource BrandLine}"
+            Background="{DynamicResource BrandWindowBackground}"
+            Padding="{TemplateBinding Padding}">
+      <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+    </Border>
+    <ControlTemplate.Triggers>
+      <Trigger Property="IsChecked" Value="True">
+        <Setter TargetName="Pill" Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+        <Setter TargetName="Pill" Property="BorderThickness" Value="2" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+      </Trigger>
+      <Trigger Property="IsKeyboardFocused" Value="True">
+        <Setter TargetName="Pill" Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+      </Trigger>
+    </ControlTemplate.Triggers>
+  </ControlTemplate>
+  <Style x:Key="Pill" TargetType="ToggleButton">
+    <Setter Property="Template" Value="{StaticResource PillTemplate}" />
+    <Setter Property="Padding" Value="12,4" />
+    <Setter Property="Margin" Value="0,0,6,0" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Foreground" Value="{DynamicResource BrandTextSecondary}" />
+  </Style>
+  <Style x:Key="PillRadio" TargetType="RadioButton" BasedOn="{StaticResource Pill}" />
+  <Style x:Key="PillCheck" TargetType="CheckBox" BasedOn="{StaticResource Pill}" />
+
+  <!-- A key drawn as a keycap: the Welcome Undo line and the Hotkey chips -->
+  <Style x:Key="Keycap" TargetType="Border">
+    <Setter Property="BorderBrush" Value="{DynamicResource BrandLine}" />
+    <Setter Property="BorderThickness" Value="1,1,1,3" />
+    <Setter Property="CornerRadius" Value="5" />
+    <Setter Property="Background" Value="{DynamicResource BrandSurface}" />
+    <Setter Property="Padding" Value="7,1" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <!-- A segment of the quick panel: the chosen one filled with the accent -->
+  <ControlTemplate x:Key="SegmentTemplate" TargetType="ToggleButton">
+    <Border x:Name="Pill"
+            CornerRadius="14"
+            BorderThickness="1"
+            BorderBrush="{DynamicResource BrandLine}"
+            Background="Transparent"
+            Padding="{TemplateBinding Padding}">
+      <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+    </Border>
+    <ControlTemplate.Triggers>
+      <Trigger Property="IsChecked" Value="True">
+        <Setter TargetName="Pill" Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+        <Setter TargetName="Pill" Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+      </Trigger>
+      <Trigger Property="IsKeyboardFocused" Value="True">
+        <Setter TargetName="Pill" Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+      </Trigger>
+    </ControlTemplate.Triggers>
+  </ControlTemplate>
+  <Style x:Key="Segment" TargetType="ToggleButton">
+    <Setter Property="Template" Value="{StaticResource SegmentTemplate}" />
+    <Setter Property="Padding" Value="4,5" />
+    <Setter Property="Margin" Value="2" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Foreground" Value="{DynamicResource BrandTextSecondary}" />
   </Style>
 
   <!-- Its icon and menu are built at run time from the tray view-model

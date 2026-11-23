@@ -48,16 +48,17 @@ namespace Navpaky.App.Tests.Onboarding {
       Assert.Same(later, WelcomeViewModel.FirstStartDefaults(later));
     }
 
-    // Spec telemetry: the welcome window asks, unticked by default, with one choice for both.
+    // Spec telemetry (fix-redesign-findings): the welcome window asks about crash reports only,
+    // off by default; Usage Digests are agreed in Settings.
     [Fact]
-    public void DiagnosticsStartUntickedAndOneTickAgreesToBoth() {
+    public void CrashReportsStartOffAndAgreeToCrashReportsOnly() {
       using var model = new WelcomeViewModel(_hub, []);
-      Assert.False(model.DiagnosticsAgreed);
+      Assert.False(model.CrashReportsAgreed);
 
-      model.DiagnosticsAgreed = true;
+      model.CrashReportsAgreed = true;
 
-      Assert.Equal(DiagnosticsConsent.All(true), _hub.Current.DiagnosticsConsent);
-      Assert.True(model.DiagnosticsAgreed);
+      Assert.Equal(new DiagnosticsConsent(true, false), _hub.Current.DiagnosticsConsent);
+      Assert.True(model.CrashReportsAgreed);
     }
 
     [Fact]
@@ -82,23 +83,12 @@ namespace Navpaky.App.Tests.Onboarding {
     }
 
     [Fact]
-    public void ChoicesChangeTheSettings() {
-      using var model = new WelcomeViewModel(_hub, []);
-
-      model.AutoCorrectionEnabled = false;
-      model.LaunchAtSignIn = true;
-
-      Assert.False(_hub.Current.AutoCorrectionEnabled);
-      Assert.True(_hub.Current.LaunchAtSignIn);
-    }
-
-    [Fact]
     public void ChoicesShowSettingsChangedElsewhere() {
       using var model = new WelcomeViewModel(_hub, []);
 
-      _hub.Update(settings => settings with { AutoCorrectionEnabled = false });
+      _hub.Update(settings => settings with { DiagnosticsConsent = new(true, false) });
 
-      Assert.False(model.AutoCorrectionEnabled);
+      Assert.True(model.CrashReportsAgreed);
     }
 
     [Fact]

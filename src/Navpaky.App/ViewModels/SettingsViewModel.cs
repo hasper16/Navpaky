@@ -18,6 +18,13 @@ namespace Navpaky.App.ViewModels {
       set => _hub.Update(settings => settings with { AutoCorrectionEnabled = value });
     }
 
+    // The hint of the chosen Sensitivity, shown under the row as in the prototype.
+    public string SensitivityHint => Sensitivity switch {
+      Sensitivity.Cautious => Strings.SensitivityCautiousHint,
+      Sensitivity.Aggressive => Strings.SensitivityAggressiveHint,
+      _ => Strings.SensitivityBalancedHint,
+    };
+
     public Sensitivity Sensitivity {
       get => _hub.Current.Sensitivity;
       set => _hub.Update(settings => settings with { Sensitivity = value });

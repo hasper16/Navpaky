@@ -51,7 +51,8 @@ namespace Navpaky.App.Views {
           GroupName = "IndicatorStyle",
           Content = content,
           IsChecked = model.CursorIndicatorStyle == style,
-          Margin = new Thickness(0, 0, 16, 0),
+          Style = (Style)FindResource("PillRadio"),
+          Padding = new Thickness(4, 0, 12, 0),
         };
         Localizer.Follow(this, () => {
           name.Text = Strings.ResourceManager.GetString(key, Strings.Culture);

@@ -10,7 +10,7 @@ colors:
     line: "#12283A1F"
     fg: "#111726"
     fg-2: "#4A5468"
-    fg-3: "#7A8498"
+    fg-3: "#5F6B80"
     accent: "#C8102E"
     accent-2: "#17171C"
   dark:

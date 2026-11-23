@@ -427,18 +427,6 @@
   <data name="WelcomeTitle" xml:space="preserve">
     <value>Welcome to Navpaky</value>
   </data>
-  <data name="WelcomeDescription" xml:space="preserve">
-    <value>Navpaky fixes a word you typed in the wrong keyboard layout, such as "ghbdtn" instead of "привет", and switches the layout for you.</value>
-  </data>
-  <data name="WelcomeUndo" xml:space="preserve">
-    <value>Not what you meant? Press Ctrl+Z right after a correction, or press your hotkey, to get your typing back.</value>
-  </data>
-  <data name="WelcomePrivacyTitle" xml:space="preserve">
-    <value>Your typing stays on this computer</value>
-  </data>
-  <data name="WelcomePrivacy" xml:space="preserve">
-    <value>Navpaky reads keystrokes only to check the word you are typing. It never sends your text anywhere and never uses the clipboard.</value>
-  </data>
   <data name="WelcomeTryItTitle" xml:space="preserve">
     <value>Try it</value>
   </data>
@@ -460,14 +448,11 @@
   <data name="WelcomeChoicesTitle" xml:space="preserve">
     <value>Your choices</value>
   </data>
-  <data name="WelcomeHotkeyTitle" xml:space="preserve">
-    <value>Hotkey for a manual correction</value>
-  </data>
   <data name="WelcomeTrayTitle" xml:space="preserve">
-    <value>Keep Navpaky in sight</value>
+    <value>Pin the icon to the tray</value>
   </data>
   <data name="WelcomeTrayTip" xml:space="preserve">
-    <value>Windows may hide the Navpaky icon under the arrow in the taskbar. To keep it visible, open Settings &gt; Personalization &gt; Taskbar &gt; Other system tray icons and turn Navpaky on.</value>
+    <value>Windows may hide it under «^». Drag the icon onto the taskbar.</value>
   </data>
   <data name="WelcomeDone" xml:space="preserve">
     <value>Done</value>
@@ -498,9 +483,6 @@
   </data>
   <data name="MovedClose" xml:space="preserve">
     <value>Close</value>
-  </data>
-  <data name="WelcomeDiagnostics" xml:space="preserve">
-    <value>Send anonymous crash reports and daily usage counts to help improve Navpaky. Never your text.</value>
   </data>
   <data name="CrashReportsEnabled" xml:space="preserve">
     <value>Send crash and freeze reports</value>
@@ -580,9 +562,6 @@
   <data name="SoundFrameDrum" xml:space="preserve">
     <value>Frame drum</value>
   </data>
-  <data name="SoundNavpaky" xml:space="preserve">
-    <value>Navpaky (rises to your language, falls to English)</value>
-  </data>
   <data name="CursorIndicatorStyleChoice" xml:space="preserve">
     <value>Mark style</value>
   </data>
@@ -645,5 +624,65 @@
   </data>
   <data name="QuickPanelTitle" xml:space="preserve">
     <value>Navpaky quick panel</value>
+  </data>
+  <data name="SoundNavpaky" xml:space="preserve">
+    <value>Navpaky</value>
+  </data>
+  <data name="WelcomeHeading" xml:space="preserve">
+    <value>Welcome to Navpaky</value>
+  </data>
+  <data name="WelcomeTagline" xml:space="preserve">
+    <value>Type away, we'll fix it.</value>
+  </data>
+  <data name="WelcomeWhatTitle" xml:space="preserve">
+    <value>What Navpaky does</value>
+  </data>
+  <data name="WelcomeWhatText" xml:space="preserve">
+    <value>Typed a word in the wrong layout? Navpaky notices when you press Space, fixes the word and switches the layout.</value>
+  </data>
+  <data name="WelcomeUndoBefore" xml:space="preserve">
+    <value>Not it? Press right away</value>
+  </data>
+  <data name="WelcomeUndoAfter" xml:space="preserve">
+    <value>and the word comes back.</value>
+  </data>
+  <data name="WelcomePrivacyField" xml:space="preserve">
+    <value>What you type here goes nowhere.</value>
+  </data>
+  <data name="QuickStateOn" xml:space="preserve">
+    <value>Working</value>
+  </data>
+  <data name="QuickStateOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="QuickAutoCorrection" xml:space="preserve">
+    <value>Correct automatically</value>
+  </data>
+  <data name="QuickSound" xml:space="preserve">
+    <value>Switch sound</value>
+  </data>
+  <data name="QuickIndicator" xml:space="preserve">
+    <value>Mark at the cursor</value>
+  </data>
+  <data name="QuickCaptionApp" xml:space="preserve">
+    <value>CURRENT APP</value>
+  </data>
+  <data name="QuickCaptionSensitivity" xml:space="preserve">
+    <value>SENSITIVITY</value>
+  </data>
+  <data name="QuickCaptionPause" xml:space="preserve">
+    <value>PAUSE</value>
+  </data>
+  <data name="QuickSettings" xml:space="preserve">
+    <value>Settings…</value>
+  </data>
+  <data name="WelcomeHotkeyHint" xml:space="preserve">
+    <value>Fix the last word by hand</value>
+  </data>
+  <data name="HotkeyCustomShort" xml:space="preserve">
+    <value>Custom…</value>
+  </data>
+  <data name="HotkeyTwice" xml:space="preserve">
+    <value>×2</value>
   </data>
 </root>

@@ -12,8 +12,9 @@
                  MinHeight="420"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
-                 WindowBackdropType="Mica">
-  <Grid>
+                 WindowBackdropType="None">
+  <!-- WPF UI resets Window.Background on each theme change, so the root carries the surface. -->
+  <Grid Background="{DynamicResource BrandWindowBackground}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
@@ -27,14 +28,25 @@
                  Grid.Row="0"
                  Grid.ColumnSpan="2"
                  Title="{l:Loc SettingsTitle}" />
+    <Border Grid.Row="0"
+            Grid.ColumnSpan="2"
+            BorderBrush="{DynamicResource BrandLine}"
+            BorderThickness="0,0,0,1"
+            IsHitTestVisible="False" />
     <!-- A ListBox rather than WPF UI's NavigationView: its items expose selection to screen
          readers and follow the arrow keys (design D3). -->
+    <!-- WPF UI's ListBox template draws neither its background nor its border. -->
+    <Border Grid.Row="1"
+            Grid.Column="0"
+            Background="{DynamicResource BrandSurface}"
+            BorderBrush="{DynamicResource BrandLine}"
+            BorderThickness="0,0,1,0" />
     <ListBox x:Name="Sections"
              Grid.Row="1"
              Grid.Column="0"
-             Margin="8,0,4,8"
+             Margin="0"
+             Padding="8,12"
              Background="Transparent"
-             BorderThickness="0"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
              AutomationProperties.Name="{l:Loc SettingsTitle}">
       <ListBox.ItemTemplate>
@@ -53,7 +65,45 @@
         </DataTemplate>
       </ListBox.ItemTemplate>
       <ListBox.ItemContainerStyle>
-        <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+        <Style TargetType="ListBoxItem">
+          <!-- The prototype's selection: a lighter row with an accent bar on the left. -->
+          <Setter Property="Template">
+            <Setter.Value>
+              <ControlTemplate TargetType="ListBoxItem">
+                <Grid Margin="0,1">
+                  <Border x:Name="Row"
+                          CornerRadius="6"
+                          Background="Transparent"
+                          Padding="8,2">
+                    <ContentPresenter />
+                  </Border>
+                  <Border x:Name="Bar"
+                          Width="3"
+                          Margin="0,9"
+                          HorizontalAlignment="Left"
+                          CornerRadius="2"
+                          Background="{DynamicResource AccentFillColorDefaultBrush}"
+                          Visibility="Collapsed" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                  <Trigger Property="IsSelected" Value="True">
+                    <Setter TargetName="Row" Property="Background" Value="{DynamicResource BrandWindowBackground}" />
+                    <Setter TargetName="Bar" Property="Visibility" Value="Visible" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                  </Trigger>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Row" Property="Background" Value="{DynamicResource BrandWindowBackground}" />
+                  </Trigger>
+                  <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                    <Setter TargetName="Row" Property="BorderThickness" Value="1" />
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Setter.Value>
+          </Setter>
+          <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+          <Setter Property="FocusVisualStyle" Value="{x:Null}" />
           <Setter Property="AutomationProperties.Name">
             <Setter.Value>
               <MultiBinding Converter="{StaticResource KeyText}">

@@ -245,6 +245,13 @@ namespace Navpaky.Win32 {
     public event Action<SwitchFeedback>? Switched;
 
     /// <summary>
+    /// Occurs on the worker thread with the Layout of the window Navpaky tracks for the quick
+    /// panel: the Layout it asked for through <see cref="SwitchWindowToNextLayout" />, or the one
+    /// read through <see cref="ReadWindowLayout" />.
+    /// </summary>
+    public event Action<LayoutId>? WindowLayoutShown;
+
+    /// <summary>
     /// Occurs on the worker thread, while <see cref="RecordChords" /> is on, for each key pressed
     /// with modifiers: the modifiers and the virtual-key code.
     /// </summary>
@@ -381,12 +388,22 @@ namespace Navpaky.Win32 {
     }
 
     /// <summary>
-    /// Asks the worker to switch the foreground window to the Layout after its current one in the
-    /// installed order; safe to call from any thread. The worker reads the window's Layout when
-    /// it handles the request, so a window just brought to the front counts.
+    /// Asks the worker to switch a window, which need not be in front, to the Layout after its
+    /// current one in the installed order; safe to call from any thread. The worker raises
+    /// <see cref="WindowLayoutShown" /> with the Layout it asked for.
     /// </summary>
-    public void SwitchToNextLayout() {
-      PInvoke.PostThreadMessage(_threadId, _nextLayoutMessage, default, default);
+    /// <param name="window">The window's handle.</param>
+    public void SwitchWindowToNextLayout(nint window) {
+      PInvoke.PostThreadMessage(_threadId, _nextLayoutMessage, (nuint)1, window);
+    }
+
+    /// <summary>
+    /// Asks the worker to read a window's Layout and raise <see cref="WindowLayoutShown" /> with
+    /// it; safe to call from any thread.
+    /// </summary>
+    /// <param name="window">The window's handle.</param>
+    public void ReadWindowLayout(nint window) {
+      PInvoke.PostThreadMessage(_threadId, _nextLayoutMessage, (nuint)0, window);
     }
 
     /// <summary>
@@ -857,10 +874,7 @@ namespace Navpaky.Win32 {
           Execute(new SwitchLayout(new LayoutId((uint)message.lParam.Value)));
           return true;
         case _nextLayoutMessage:
-          if (LayoutCycle.Next(_installedLayouts, _foregroundLayout.CurrentLayout()) is { } next) {
-            Execute(new SwitchLayout(next));
-          }
-
+          WindowLayout(new HWND(message.lParam.Value), switchToNext: message.wParam.Value == 1);
           return true;
         case _resumeMessage:
           Apply(_hookWatchdog.Resume(), _hookWatchdog.SelfPausedUntil);
@@ -1025,6 +1039,36 @@ namespace Navpaky.Win32 {
       }
 
       return InputClock.Now - held.Tick >= maxAge ? ReplacementResult.TooLate : null;
+    }
+
+    // The window keeps its own Layout while Navpaky's quick panel is in front: a switch request
+    // goes to that window, as ForegroundLayout sends one to the focus target (design D4 of
+    // fix-redesign-findings). Only a request Windows queued is reported.
+    private void WindowLayout(HWND window, bool switchToNext) {
+      uint thread = window.IsNull ? 0 : PInvoke.GetWindowThreadProcessId(window, out _);
+
+      // Thread 0 would read the worker's own Layout.
+      if (thread == 0) {
+        return;
+      }
+
+      nint layout = PInvoke.GetKeyboardLayout(thread);
+      LayoutId? current = _layouts.LayoutOf((uint)layout);
+      if (!switchToNext) {
+        if (current is { } shown) {
+          WindowLayoutShown?.Invoke(shown);
+        }
+
+        return;
+      }
+
+      // A 64-bit HKL is its 32-bit value sign-extended.
+      if (LayoutCycle.Next(_installedLayouts, current) is { } next
+          && _layouts.HandleOf(next) is { } handle
+          && PInvoke.PostMessage(
+              window, PInvoke.WM_INPUTLANGCHANGEREQUEST, default, (nint)(int)handle)) {
+        WindowLayoutShown?.Invoke(next);
+      }
     }
   }
 }

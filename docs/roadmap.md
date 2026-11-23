@@ -39,6 +39,7 @@ Design changes reshape the look and feel after the product is complete.
 | # | Change | Capability | Depends on |
 |---|---|---|---|
 | D1 | `redesign-visual-identity` | tray-and-settings, onboarding, app-lifecycle (new mark, palette, quick panel, one-page settings, splash) | 1–15, P1 |
+| D2 | `fix-redesign-findings` | tray-and-settings (theme following, accent, fonts, licences, quick panel Language key) | D1 |
 
 T1 can run in parallel with changes 12–15: it touches no file under `src/`, `tests/` or `tools/Navpaky.DesktopChecks/`. Its global installs reach only sessions started after them, so implementers already at work keep their tools until their change ends.
 

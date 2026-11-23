@@ -13,7 +13,7 @@ namespace Navpaky.Core {
   /// </param>
   public readonly record struct DiagnosticsConsent(bool CrashReports, bool UsageDigest) {
     /// <summary>
-    /// Returns the consent the welcome window's single checkbox gives.
+    /// Returns a consent that agrees to every kind of report or to none.
     /// </summary>
     /// <param name="agreed">
     /// <see langword="true" /> to agree to everything; <see langword="false" /> to nothing.

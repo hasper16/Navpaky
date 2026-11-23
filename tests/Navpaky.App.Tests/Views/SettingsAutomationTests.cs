@@ -38,14 +38,7 @@ namespace Navpaky.App.Tests.Views {
       Sta.Run(() => {
         CultureInfo before = Localizer.Instance.Culture;
         try {
-          // The pages take styles and templates from Resources.xaml. A plain Application holds
-          // them: the real App would start Navpaky once the dispatcher runs.
-          if (Application.Current is null) {
-            var host = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-            host.Resources.MergedDictionaries.Add(new ResourceDictionary {
-              Source = new Uri("pack://application:,,,/Navpaky.App;component/Resources.xaml"),
-            });
-          }
+          Sta.EnsureApplication();
 
           IconText.HideFromScreenReaders();
           if (!_windowsBound) {

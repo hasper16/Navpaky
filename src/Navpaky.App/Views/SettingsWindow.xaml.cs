@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Navpaky.App.Localization;
 using Wpf.Ui.Appearance;
+using ImageIcon = Wpf.Ui.Controls.ImageIcon;
 
 namespace Navpaky.App.Views {
   // The settings window: every section on one scrolling page, each under its heading and in a
@@ -41,6 +42,7 @@ namespace Navpaky.App.Views {
           }),
           handledEventsToo: true);
       Sections.SelectedIndex = 0;
+      TitleBar.Icon = new ImageIcon { Source = BrandMark.Large(), Width = 16, Height = 16 };
       Loaded += (_, _) => TitleBarButtons.Name(TitleBar);
     }
 
@@ -51,19 +53,17 @@ namespace Navpaky.App.Views {
     private void AddSection(SettingsSection section) {
       var heading = new TextBlock {
         Style = (Style)FindResource("HeadingText"),
-        Margin = new Thickness(24, 20, 24, 8),
+        Margin = new Thickness(24, 22, 24, 10),
       };
       Localizer.Follow(heading, () => heading.Text =
           Strings.ResourceManager.GetString(section.TitleKey, Strings.Culture));
-      var card = new Border {
-        Child = section.Page,
-        Margin = new Thickness(16, 0, 24, 0),
-        CornerRadius = new CornerRadius(8),
-        BorderThickness = new Thickness(1),
+
+      // Each page brings its own cards (fix-redesign-findings).
+      var card = new ContentControl {
+        Content = section.Page,
+        Margin = new Thickness(24, 0, 24, 0),
+        Focusable = false,
       };
-      card.SetResourceReference(
-          Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
-      card.SetResourceReference(Border.BorderBrushProperty, "CardStrokeColorDefaultBrush");
       _headings.Add(heading);
       PageStack.Children.Add(heading);
       PageStack.Children.Add(card);

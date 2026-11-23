@@ -23,20 +23,10 @@ namespace Navpaky.App.Onboarding {
       _languages = LanguagesOf(layouts);
     }
 
-    public bool AutoCorrectionEnabled {
-      get => _hub.Current.AutoCorrectionEnabled;
-      set => _hub.Update(settings => settings with { AutoCorrectionEnabled = value });
-    }
-
-    public bool LaunchAtSignIn {
-      get => _hub.Current.LaunchAtSignIn;
-      set => _hub.Update(settings => settings with { LaunchAtSignIn = value });
-    }
-
-    // Spec telemetry: one checkbox, unticked by default, agrees to every kind of report.
-    public bool DiagnosticsAgreed {
-      get => _hub.Current.DiagnosticsConsent == DiagnosticsConsent.All(true);
-      set => _hub.Update(settings => settings with { DiagnosticsConsent = Agreed(value) });
+    // Spec telemetry: the welcome window asks about crash reports only, off by default.
+    public bool CrashReportsAgreed {
+      get => _hub.Current.DiagnosticsConsent.CrashReports;
+      set => _hub.Update(settings => settings with { DiagnosticsConsent = Crash(settings, value) });
     }
 
     public WelcomeProgress Progress => new(TryItWorked, _closedWithDone);
@@ -110,8 +100,8 @@ namespace Navpaky.App.Onboarding {
       _hub.Changed -= OnHubChanged;
     }
 
-    private static DiagnosticsConsent Agreed(bool agreed) {
-      return DiagnosticsConsent.All(agreed);
+    private static DiagnosticsConsent Crash(Settings settings, bool agreed) {
+      return settings.DiagnosticsConsent with { CrashReports = agreed };
     }
 
     private static string[] LanguagesOf(IReadOnlyList<LayoutId> layouts) {
@@ -127,9 +117,7 @@ namespace Navpaky.App.Onboarding {
     }
 
     private void OnHubChanged(Settings settings) {
-      OnPropertyChanged(nameof(AutoCorrectionEnabled));
-      OnPropertyChanged(nameof(LaunchAtSignIn));
-      OnPropertyChanged(nameof(DiagnosticsAgreed));
+      OnPropertyChanged(nameof(CrashReportsAgreed));
     }
   }
 }

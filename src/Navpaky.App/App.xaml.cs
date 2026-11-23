@@ -87,6 +87,10 @@ namespace Navpaky.App {
     private SettingsHub? _hub;
     private TrayViewModel? _tray;
     private TrayIconView? _trayView;
+    private ThemeFollower? _themeFollower;
+
+    // The open quick panel's model, to show a Layout switched from it; UI thread only.
+    private QuickPanelViewModel? _quickPanelModel;
 
     // The last app window the user worked in, never the taskbar; written on the UI thread only.
     private nint _typedInWindow;
@@ -141,6 +145,8 @@ namespace Navpaky.App {
       _incidents = new QueuedIncidentLog(new IncidentLog(_localFolder), ReportIncidentNotSaved);
       ApplicationThemeManager.ApplySystemTheme();
       BrandTheme.Follow();
+      BrandFonts.Apply();
+      _themeFollower = new ThemeFollower(Dispatcher, RefreshTray);
       IconText.HideFromScreenReaders();
 
       // Windows holds the truth about starting at sign-in: Task Manager can change it.
@@ -248,6 +254,7 @@ namespace Navpaky.App {
         _wordsSaver.Flush();
         _wordsSaver.Dispose();
         _sounds?.Dispose();
+        _themeFollower?.Dispose();
 
         // After the worker and the freeze guard, so their last Incidents are written too.
         _incidents?.Dispose();
@@ -421,6 +428,11 @@ namespace Navpaky.App {
       _worker.Observed += KeepSoundAwake;
 
       // Where typing went is read when the Switch happens, before focus can move on.
+      _worker.WindowLayoutShown += layout => Dispatcher.BeginInvoke(() => {
+        _tray!.LanguageCode = layout.LanguageCode;
+        RefreshTray();
+        _quickPanelModel?.Refresh();
+      });
       _worker.Switched += feedback => {
         bool inTryIt = _welcomeWindow?.IsTryItIn(ForegroundApps.CurrentWindow()) == true;
         Dispatcher.BeginInvoke(() => RespondToSwitch(feedback, inTryIt));
@@ -603,9 +615,10 @@ namespace Navpaky.App {
     private void StartTrayFollowers() {
       _foregroundApps = new ForegroundApps();
       _foregroundApps.Changed += (app, window) => {
-        // The app's window as ForegroundApps checked it; the quick panel gives the focus back
-        // to it. Read again later, the foreground could already be the taskbar.
+        // The app's window as ForegroundApps checked it, for the quick panel. Its Layout is read
+        // again: one the panel asked for may not have landed.
         _typedInWindow = window;
+        _worker?.ReadWindowLayout(window);
         _tray!.CurrentApp = new CurrentApp(app, AppNames.Of(app));
         RefreshTray();
       };
@@ -699,7 +712,10 @@ namespace Navpaky.App {
         Dispatcher.BeginInvoke(() => _welcome?.UseLayouts(installed.Layouts));
       }
 
-      if (inputEvent is LayoutChanged changed) {
+      // While Navpaky's own window, such as the quick panel, or the taskbar is in front, the tray
+      // keeps the Language of the app the user typed in.
+      if (inputEvent is LayoutChanged changed
+          && ForegroundApps.AppOf(ForegroundApps.CurrentWindow()) is not null) {
         string code = changed.Layout.LanguageCode;
         Dispatcher.BeginInvoke(() => {
           _tray!.LanguageCode = code;
@@ -779,7 +795,7 @@ namespace Navpaky.App {
         var hotkey = new HotkeyViewModel(_hub!, CheckHotkey);
         _welcome = welcome;
         _welcomeWindow = new WelcomeWindow(
-            welcome, new HotkeyPage(hotkey, _chords), OpenLanguageSettings);
+            welcome, hotkey, _chords, OpenLanguageSettings);
         _welcomeWindow.Closed += (_, _) => {
           welcome.Close();
           _telemetry?.OnWelcomeClosed(welcome.Progress);
@@ -870,12 +886,20 @@ namespace Navpaky.App {
           () => DateOnly.FromDateTime(DateTime.Now));
       var actions = new QuickPanelActions(
           SwitchToNextLayout, OpenSettings, OpenWelcome, OpenStatistics, Shutdown, RefreshTray);
-      new QuickPanel(model, actions, _typedInWindow).ShowAtPointer();
+      var panel = new QuickPanel(model, actions);
+      _quickPanelModel = model;
+      panel.Closed += (_, _) => {
+        if (_quickPanelModel == model) {
+          _quickPanelModel = null;
+        }
+      };
+      panel.ShowAtPointer();
     }
 
-    // The worker reads the Layout of the app the panel gave the focus back to.
+    // The app the user typed in keeps its window in the background (design D4 of
+    // fix-redesign-findings).
     private void SwitchToNextLayout() {
-      _worker?.SwitchToNextLayout();
+      _worker?.SwitchWindowToNextLayout(_typedInWindow);
     }
 
     private void OpenStatistics() {
