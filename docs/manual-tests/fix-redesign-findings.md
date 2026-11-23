@@ -2,7 +2,7 @@
 
 The owner's re-check of the fixes for the findings from the 0.4.4 test pack. Install a test pack built from the PR head (Release single-file, as in `docs/manual-tests/upgrade-to-dotnet-11.md`). The automated part is covered by `BrandFontsTests`, `BrandThemeTests`, `QuickPanelViewModelTests` and the CI `--check-fonts` step on the published build; the desktop-check sets are unchanged.
 
-- [x] **Desktop-check sets.** `onboarding` 9 of 9, `tray-and-settings` 10 of 10 and the default set 36 of 36 at 3d3b914 on the owner's desktop (commands in `redesign-visual-identity.md`); input-language list unchanged (`en-US 0409:00000409; uk 0422:00020422, 0422:00000419`).
+- [x] **Desktop-check sets.** `onboarding` 9 of 9, `tray-and-settings` 10 of 10 and the default set 36 of 36 at 3d3b914 and again at 773c8aa on the owner's desktop (commands in `redesign-visual-identity.md`); input-language list unchanged (`en-US 0409:00000409; uk 0422:00020422, 0422:00000419`).
 
 - [ ] **Theme follows Windows (finding 1).** With Windows apps in light mode, open the quick panel and Settings: both are light. Switch Windows to dark while Navpaky runs, open the quick panel again: it is dark, with no restart. Switch back to light: it is light again.
 - [ ] **Brand accent (finding 2).** In light mode the Language key, the selected Sensitivity, switches and the Settings section marker are red; in dark mode they are a saturated blue, not pale.
