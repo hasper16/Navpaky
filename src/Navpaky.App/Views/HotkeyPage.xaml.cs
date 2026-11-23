@@ -69,6 +69,9 @@ namespace Navpaky.App.Views {
           StopRecording();
         }
       };
+
+      // The page leaves with its window (Settings or the welcome); the hook must not outlive it.
+      Unloaded += (_, _) => StopRecording();
       UseAnyway.Click += (_, _) => _model.ConfirmPending();
       PickAnother.Click += (_, _) => _model.CancelPending();
       _model.PropertyChanged += OnModelChanged;

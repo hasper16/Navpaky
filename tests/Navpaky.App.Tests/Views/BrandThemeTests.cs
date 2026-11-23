@@ -94,6 +94,22 @@ namespace Navpaky.App.Tests.Views {
       Assert.Equal(SystemColors.WindowTextColor, tertiary);
     }
 
+    // The white text and knobs of the other themes would hide the high-contrast scheme's own.
+    [Fact]
+    public void HighContrastDropsTheWhiteOnTheAccent() {
+      bool kept = true;
+      Sta.Run(() => {
+        Sta.EnsureApplication();
+        BrandTheme.Apply(ApplicationTheme.Dark);
+        BrandTheme.Apply(ApplicationTheme.HighContrast);
+        kept = UiApplication.Current.Resources.Keys.Cast<object>()
+            .Contains("AccentButtonForeground");
+        BrandTheme.Apply(ApplicationTheme.Light);
+      });
+
+      Assert.False(kept);
+    }
+
     [Fact]
     public void RefreshFollowsAThemeChangedWhileRunning() {
       ApplicationTheme after = ApplicationTheme.Unknown;

@@ -44,6 +44,10 @@ namespace Navpaky.App.Views {
       ApplicationAccentColorManager.Apply(shades[0], shades[1], shades[2], shades[3]);
       Set("BrandSecondaryBrush", Secondary(dark));
       if (theme == ApplicationTheme.HighContrast) {
+        foreach (string key in _onAccent) {
+          UiApplication.Current.Resources.Remove(key);
+        }
+
         UseSystemSurfaces();
         return;
       }
