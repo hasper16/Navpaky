@@ -30,7 +30,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Navpaky.App" />
     <InternalsVisibleTo Include="Navpaky.App.Tests" />
-    <InternalsVisibleTo Include="Navpaky.Setup" />
+    <InternalsVisibleTo Include="NavpakySetup" />
     <InternalsVisibleTo Include="Navpaky.Setup.Tests" />
   </ItemGroup>
 

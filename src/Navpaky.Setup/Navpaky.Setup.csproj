@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Navpaky's own install wizard (add-install-wizard, design D1): asks the install questions,
+       then runs Velopack's setup silently and hands the choices to the app. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>$(DotNetTargetFramework)-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>NavpakySetup</AssemblyName>
+    <RootNamespace>Navpaky.Setup</RootNamespace>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Product>Navpaky</Product>
+    <AssemblyTitle>Navpaky Setup</AssemblyTitle>
+    <ApplicationIcon>..\Navpaky.App\Navpaky.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Navpaky.Setup.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Navpaky.Core\Navpaky.Core.csproj" />
+    <ProjectReference Include="..\Navpaky.Ui\Navpaky.Ui.csproj" />
+  </ItemGroup>
+
+</Project>

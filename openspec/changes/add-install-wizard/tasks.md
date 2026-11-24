@@ -16,7 +16,7 @@
 
 ## 3. Folder rules (design D5)
 
-- [ ] 3.1 Test first, through a fake file-system port: `InstallTarget` covers each of these cases. Then implement it in `src/Navpaky.Setup`.
+- [x] 3.1 Test first, through a fake file-system port: `InstallTarget` covers each of these cases. Then implement it in `src/Navpaky.Setup`.
   - It appends `\Navpaky` to a pick with another name, case-insensitive, but uses an existing install's folder as it is (for example `navpaky-app`).
   - It returns NotEmpty for a folder with foreign files.
   - It returns OverlapsData for a target equal to, inside or containing `%APPDATA%\Navpaky` or `%LOCALAPPDATA%\Navpaky`, and accepts `%LOCALAPPDATA%\Programs\Navpaky`.
@@ -26,7 +26,7 @@
   - It locks to an existing install's folder.
 
   Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 3.2 Test first: the existing install is HKCU `Uninstall\navpaky-app` → `InstallLocation` only while that folder holds `Update.exe`, and it locks the folder. `InstallFolder` from kept settings is only the proposed, editable default. With neither, the default is `%LOCALAPPDATA%\Programs\Navpaky`. Registry and file reads go through ports. Then implement it. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 3.2 Test first: the existing install is HKCU `Uninstall\navpaky-app` → `InstallLocation` only while that folder holds `Update.exe`, and it locks the folder. `InstallFolder` from kept settings is only the proposed, editable default. With neither, the default is `%LOCALAPPDATA%\Programs\Navpaky`. Registry and file reads go through ports. Then implement it. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
 
 ## 4. Choices reach the app (design D4, D6, D10)
 
