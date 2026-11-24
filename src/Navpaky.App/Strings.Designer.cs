@@ -1922,6 +1922,24 @@ namespace Navpaky.App {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create a desktop shortcut.
+        /// </summary>
+        public static string WelcomeShortcut {
+            get {
+                return ResourceManager.GetString("WelcomeShortcut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Navpaky is always in the Start menu and the tray..
+        /// </summary>
+        public static string WelcomeShortcutHint {
+            get {
+                return ResourceManager.GetString("WelcomeShortcutHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Step {0} of {1}.
         /// </summary>
         public static string WelcomeStep {
@@ -1936,6 +1954,24 @@ namespace Navpaky.App {
         public static string WelcomeTagline {
             get {
                 return ResourceManager.GetString("WelcomeTagline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send anonymous usage counters and crash reports.
+        /// </summary>
+        public static string WelcomeTelemetry {
+            get {
+                return ResourceManager.GetString("WelcomeTelemetry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Counts, error types and versions. Never what you type, window titles, your name or file paths..
+        /// </summary>
+        public static string WelcomeTelemetryHint {
+            get {
+                return ResourceManager.GetString("WelcomeTelemetryHint", resourceCulture);
             }
         }
         

@@ -38,6 +38,15 @@ namespace Navpaky.App.Tests {
       }
     }
 
+    // Runs what the dispatcher queued, such as bindings and Unloaded, up to background priority.
+    // Call it from inside Run.
+    public static void Flush() {
+      var frame = new DispatcherFrame();
+      Dispatcher.CurrentDispatcher.BeginInvoke(
+          DispatcherPriority.Background, () => frame.Continue = false);
+      Dispatcher.PushFrame(frame);
+    }
+
     private static Dispatcher StartUiThread() {
       using var ready = new ManualResetEventSlim();
       Dispatcher? dispatcher = null;

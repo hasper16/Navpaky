@@ -48,13 +48,13 @@
 
 ## 5. Welcome (spec onboarding, telemetry)
 
-- [ ] 5.1 Test first: the Welcome's one switch, "Send anonymous usage counters and crash reports" (en and uk), turns crash reports and Usage Digests on together and off together; the setup signal stays off. Then replace the crash-report switch. Verify: `dotnet test tests/Navpaky.App.Tests`.
-- [ ] 5.2 Test first:
+- [x] 5.1 Test first: the Welcome's one switch, "Send anonymous usage counters and crash reports" (en and uk), turns crash reports and Usage Digests (which also cover the setup signal) on together and off together. Then replace the crash-report switch. Verify: `dotnet test tests/Navpaky.App.Tests`.
+- [x] 5.2 Test first:
   - When `InstallQuestionsAnswered` is unknown, step 1 shows the interface-language chips (Same as Windows, English, Українська) that switch the window at once, and step 3 shows launch at sign-in (on) and the desktop shortcut (off).
   - When it is set, they're absent.
   - Closing without changes leaves launch at sign-in on.
 
-  Then implement it as in prototype v2/v3.1. Verify: `dotnet test tests/Navpaky.App.Tests`; offscreen renders of both forms in light and dark compared with the prototype.
+  Then implement it as in prototype v2/v3.1. Verify: `dotnet test tests/Navpaky.App.Tests`; offscreen renders of both forms in light and dark compared with the prototype (the comparison is deferred to `deferred-by-hand.md`, task 8.2).
 
 ## 6. The wizard (spec install-wizard, design D1, D3, D7)
 

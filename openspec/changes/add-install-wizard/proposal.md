@@ -30,7 +30,7 @@ The approved prototype is v3.1, https://claude.ai/artifact/PVqBHe6vAHB1eWrg5fyp8
   - "Use previous settings" presets the options from the kept settings, and no Welcome follows.
   - "Start fresh" deletes all kept data after a confirmation, then the full Welcome shows on first start.
 - **Slimmer Welcome:** demo, try-it, then the hotkey, one telemetry consent and the tray tip. The language, sign-in and shortcut questions move to the wizard. They come back in the Welcome only when Navpaky was installed without the wizard (plain `Setup.exe`), so nothing goes unasked.
-- **One telemetry consent** ("Send anonymous usage counters and crash reports") replaces the crash-report switch in the Welcome. It turns on both crash/freeze reports and Usage Digests. Settings keeps the two separate.
+- **One telemetry consent** ("Send anonymous usage counters and crash reports") replaces the crash-report switch in the Welcome. It turns on both crash/freeze reports and Usage Digests, which have always covered the one-time setup signal too. Settings keeps the two separate.
 - **Release pipeline:** a single signed `NavpakySetup.exe` with Velopack's `Setup.exe` embedded is published next to the Velopack packages. Updates keep working as now.
 
 ## Capabilities

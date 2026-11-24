@@ -34,6 +34,11 @@ namespace Navpaky.App {
       return app.Run();
     }
 
+    // Velopack runs the hooks from <root>\current; the root holds the Navpaky.exe launcher.
+    internal static string InstallRoot() {
+      return Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory))!;
+    }
+
     // Applies the install wizard's choices (design D4 of add-install-wizard). A step that fails
     // leaves no acknowledgement, so the wizard reports the install as failed; without the wizard
     // only the install marker is written, and its failure must not fail the install.
@@ -48,11 +53,6 @@ namespace Navpaky.App {
           or System.Runtime.InteropServices.COMException) {
         Trace.WriteLine($"Navpaky could not apply its installation: {e.GetType().Name}");
       }
-    }
-
-    // Velopack runs the hooks from <root>\current; the root holds the Navpaky.exe launcher.
-    private static string InstallRoot() {
-      return Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory))!;
     }
 
     private static void Uninstall() {

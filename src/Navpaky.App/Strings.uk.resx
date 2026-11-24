@@ -451,6 +451,18 @@
   <data name="WelcomeTrayTitle" xml:space="preserve">
     <value>Закріпити значок у треї</value>
   </data>
+  <data name="WelcomeTelemetry" xml:space="preserve">
+    <value>Надсилати анонімні лічильники використання та звіти про збої</value>
+  </data>
+  <data name="WelcomeTelemetryHint" xml:space="preserve">
+    <value>Лічильники, типи помилок і версії. Ніколи не те, що ви друкуєте, заголовки вікон, ім’я чи шляхи до файлів.</value>
+  </data>
+  <data name="WelcomeShortcut" xml:space="preserve">
+    <value>Створити ярлик на робочому столі</value>
+  </data>
+  <data name="WelcomeShortcutHint" xml:space="preserve">
+    <value>Navpaky завжди є в меню «Пуск» і в треї.</value>
+  </data>
   <data name="WelcomeTrayTip" xml:space="preserve">
     <value>Windows може сховати його під «^». Перетягніть значок на панель.</value>
   </data>

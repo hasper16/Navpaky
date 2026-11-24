@@ -150,7 +150,7 @@ A dry run builds the wizard unsigned and keeps it as an artifact. Velopack's own
 - **App hook:** `SignInLaunch` (registry) and `IShellLinkW` on the hook thread, which runs before the app's UI starts.
 
 ### D10. Telemetry consent in the Welcome
-The Welcome's one switch sets both `DiagnosticsConsent.CrashReports` and the Usage Digest consent. Turning it off clears both. Settings keeps its two switches. The setup signal stays in Settings.
+The Welcome's one switch sets both `DiagnosticsConsent.CrashReports` and `DiagnosticsConsent.UsageDigest` (`DiagnosticsConsent.All`). Turning it off clears both. Settings keeps its two switches. The setup signal follows `UsageDigest`, as it always has, so the one switch covers it too; no third consent is added.
 
 ## Risks / Trade-offs
 

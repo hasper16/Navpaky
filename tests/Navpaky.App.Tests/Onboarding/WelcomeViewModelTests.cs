@@ -24,6 +24,50 @@ namespace Navpaky.App.Tests.Onboarding {
       _hub.Dispose();
     }
 
+    // Spec onboarding (add-install-wizard): without the wizard, the welcome window asks the
+    // install questions itself.
+    [Fact]
+    public void WithoutTheWizardTheWelcomeAsksTheInstallQuestions() {
+      using var model = new WelcomeViewModel(_hub, []);
+
+      Assert.True(model.AsksInstallQuestions);
+    }
+
+    [Fact]
+    public void AfterTheWizardTheWelcomeDoesNotAskThemAgain() {
+      _hub.Update(settings => settings with { InstallQuestionsAnswered = true });
+      using var model = new WelcomeViewModel(_hub, []);
+
+      Assert.False(model.AsksInstallQuestions);
+    }
+
+    [Theory]
+    [InlineData(UiLanguage.English)]
+    [InlineData(UiLanguage.Ukrainian)]
+    [InlineData(UiLanguage.System)]
+    public void ThePickedLanguageBecomesTheInterfaceLanguage(UiLanguage language) {
+      using var model = new WelcomeViewModel(_hub, []);
+      _hub.Update(settings => settings with { UiLanguage = UiLanguage.English });
+      _hub.Update(settings => settings with { UiLanguage = UiLanguage.Ukrainian });
+
+      model.Language = language;
+
+      Assert.Equal(language, _hub.Current.UiLanguage);
+      Assert.Equal(language, model.Language);
+    }
+
+    [Fact]
+    public void SignInAndShortcutChoicesReachTheSettings() {
+      using var model = new WelcomeViewModel(_hub, []);
+      Assert.False(model.DesktopShortcut);
+
+      model.LaunchAtSignIn = false;
+      model.DesktopShortcut = true;
+
+      Assert.False(_hub.Current.LaunchAtSignIn);
+      Assert.True(_hub.Current.DesktopShortcut);
+    }
+
     [Fact]
     public void WelcomeOpensAtTheFirstStart() {
       Assert.True(WelcomeViewModel.OpensAtStart(new Settings()));
@@ -55,17 +99,28 @@ namespace Navpaky.App.Tests.Onboarding {
       Assert.Same(later, WelcomeViewModel.FirstStartDefaults(later));
     }
 
-    // Spec telemetry (fix-redesign-findings): the welcome window asks about crash reports only,
-    // off by default; Usage Digests are agreed in Settings.
+    // Spec telemetry (add-install-wizard): one switch, off by default, agrees to crash reports
+    // and Usage Digests together and withdraws both together.
     [Fact]
-    public void CrashReportsStartOffAndAgreeToCrashReportsOnly() {
+    public void TheOneSwitchStartsOffAndCoversEveryReport() {
       using var model = new WelcomeViewModel(_hub, []);
-      Assert.False(model.CrashReportsAgreed);
+      Assert.False(model.TelemetryAgreed);
 
-      model.CrashReportsAgreed = true;
+      model.TelemetryAgreed = true;
+      DiagnosticsConsent agreed = _hub.Current.DiagnosticsConsent;
+      model.TelemetryAgreed = false;
 
-      Assert.Equal(new DiagnosticsConsent(true, false), _hub.Current.DiagnosticsConsent);
-      Assert.True(model.CrashReportsAgreed);
+      Assert.Equal(new DiagnosticsConsent(true, true), agreed);
+      Assert.Equal(new DiagnosticsConsent(false, false), _hub.Current.DiagnosticsConsent);
+    }
+
+    [Fact]
+    public void TheSwitchIsOnOnlyWhenEveryReportIsAgreed() {
+      using var model = new WelcomeViewModel(_hub, []);
+
+      _hub.Update(settings => settings with { DiagnosticsConsent = new(true, false) });
+
+      Assert.False(model.TelemetryAgreed);
     }
 
     [Fact]
@@ -93,9 +148,9 @@ namespace Navpaky.App.Tests.Onboarding {
     public void ChoicesShowSettingsChangedElsewhere() {
       using var model = new WelcomeViewModel(_hub, []);
 
-      _hub.Update(settings => settings with { DiagnosticsConsent = new(true, false) });
+      _hub.Update(settings => settings with { DiagnosticsConsent = new(true, true) });
 
-      Assert.True(model.CrashReportsAgreed);
+      Assert.True(model.TelemetryAgreed);
     }
 
     [Fact]

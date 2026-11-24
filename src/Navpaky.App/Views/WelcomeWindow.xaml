@@ -67,6 +67,32 @@
       <Grid Margin="24,6,24,18">
         <!-- Step 1: what Navpaky does, with a live example and Undo. -->
         <StackPanel x:Name="Step0">
+          <!-- Installed without the wizard: the interface language, switched at once. -->
+          <Border x:Name="LanguageChoice"
+                  Style="{StaticResource SettingsCard}"
+                  Padding="12,10"
+                  Margin="0,0,0,14"
+                  Visibility="{Binding AsksInstallQuestions, Converter={StaticResource Shown}}">
+            <WrapPanel>
+              <TextBlock Text="{u:Loc UiLanguageChoice}"
+                         VerticalAlignment="Center"
+                         Margin="0,0,12,0"
+                         FontSize="13"
+                         Foreground="{DynamicResource BrandTextSecondary}" />
+              <RadioButton GroupName="Language"
+                           Style="{StaticResource PillRadio}"
+                           Content="{u:Loc UiLanguageSystem}"
+                           IsChecked="{Binding UsesSystemLanguage}" />
+              <RadioButton GroupName="Language"
+                           Style="{StaticResource PillRadio}"
+                           Content="{u:Loc UiLanguageEnglish}"
+                           IsChecked="{Binding UsesEnglish}" />
+              <RadioButton GroupName="Language"
+                           Style="{StaticResource PillRadio}"
+                           Content="{u:Loc UiLanguageUkrainian}"
+                           IsChecked="{Binding UsesUkrainian}" />
+            </WrapPanel>
+          </Border>
           <TextBlock Text="{u:Loc WelcomeWhatTitle}"
                      FontSize="17"
                      FontWeight="SemiBold"
@@ -176,11 +202,22 @@
                   <ContentControl x:Name="Hotkey" Focusable="False" Margin="0,10,0,0" />
                 </StackPanel>
               </Border>
-              <u:SettingRow Label="{u:Loc WelcomeTrayTitle}" Hint="{u:Loc WelcomeTrayTip}" />
-              <u:SettingRow Label="{u:Loc CrashReportsEnabled}">
-                <ui:ToggleSwitch IsChecked="{Binding CrashReportsAgreed}"
-                                 AutomationProperties.Name="{u:Loc CrashReportsEnabled}" />
+              <u:SettingRow Label="{u:Loc WelcomeTelemetry}" Hint="{u:Loc WelcomeTelemetryHint}">
+                <ui:ToggleSwitch IsChecked="{Binding TelemetryAgreed}"
+                                 AutomationProperties.Name="{u:Loc WelcomeTelemetry}" />
               </u:SettingRow>
+              <u:SettingRow Label="{u:Loc LaunchAtSignIn}"
+                            Visibility="{Binding AsksInstallQuestions, Converter={StaticResource Shown}}">
+                <ui:ToggleSwitch IsChecked="{Binding LaunchAtSignIn}"
+                                 AutomationProperties.Name="{u:Loc LaunchAtSignIn}" />
+              </u:SettingRow>
+              <u:SettingRow Label="{u:Loc WelcomeShortcut}"
+                            Hint="{u:Loc WelcomeShortcutHint}"
+                            Visibility="{Binding AsksInstallQuestions, Converter={StaticResource Shown}}">
+                <ui:ToggleSwitch IsChecked="{Binding DesktopShortcut}"
+                                 AutomationProperties.Name="{u:Loc WelcomeShortcut}" />
+              </u:SettingRow>
+              <u:SettingRow Label="{u:Loc WelcomeTrayTitle}" Hint="{u:Loc WelcomeTrayTip}" />
             </StackPanel>
           </Border>
         </StackPanel>

@@ -84,6 +84,9 @@ namespace Navpaky.App {
     // The start-at-sign-in choice last written to or read from Windows; UI thread only.
     private bool _launchAtSignIn;
 
+    // The desktop-shortcut choice last applied; UI thread only.
+    private bool? _desktopShortcut;
+
     private SingleInstanceGuard? _guard;
     private SettingsHub? _hub;
     private TrayViewModel? _tray;
@@ -155,6 +158,7 @@ namespace Navpaky.App {
       Settings loaded = _settingsStore.Load().ForNewSession() with {
         LaunchAtSignIn = _launchAtSignIn,
       };
+      _desktopShortcut = loaded.DesktopShortcut;
       _hub = new SettingsHub(
           loaded, _settingsStore.Save, TimeProvider.System, ReportSettingsNotSaved);
       UseUiLanguage(loaded.UiLanguage);
@@ -270,6 +274,27 @@ namespace Navpaky.App {
         _hub?.Dispose();
         _guard?.Dispose();
         base.OnExit(e);
+      }
+    }
+
+    // The welcome window's shortcut switch, when Navpaky was installed without the wizard
+    // (add-install-wizard). A copy outside a Velopack install has no root launcher to point at.
+    private static void ApplyDesktopShortcut(bool wanted) {
+      string root = Program.InstallRoot();
+      if (!File.Exists(Path.Join(root, "Update.exe"))) {
+        return;
+      }
+
+      try {
+        var shortcut = new UserDesktopShortcut();
+        if (wanted) {
+          shortcut.Create(root);
+        } else {
+          shortcut.Remove(root);
+        }
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException
+          or System.Runtime.InteropServices.COMException) {
+        Trace.WriteLine($"Navpaky could not change its desktop shortcut: {e.GetType().Name}");
       }
     }
 
@@ -764,6 +789,11 @@ namespace Navpaky.App {
       if (settings.LaunchAtSignIn != _launchAtSignIn && Environment.ProcessPath is { } path) {
         _launchAtSignIn = settings.LaunchAtSignIn;
         _signIn.Set(settings.LaunchAtSignIn, path);
+      }
+
+      if (settings.DesktopShortcut != _desktopShortcut) {
+        _desktopShortcut = settings.DesktopShortcut;
+        ApplyDesktopShortcut(settings.DesktopShortcut == true);
       }
 
       RefreshTray();
