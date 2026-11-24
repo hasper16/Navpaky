@@ -8,6 +8,7 @@ using Navpaky.App.ViewModels;
 using Navpaky.App.Views;
 using Navpaky.Core;
 using Navpaky.Core.Tests;
+using Navpaky.Ui;
 using Navpaky.Win32.Hotkeys;
 using Xunit;
 
@@ -35,7 +36,7 @@ namespace Navpaky.App.Tests.Views {
       string? crashReports = null;
       Sta.Run(() => {
         crashReports = Strings.ResourceManager.GetString(
-            "CrashReportsEnabled", Navpaky.App.Localization.Localizer.Instance.Culture);
+            "CrashReportsEnabled", Navpaky.Ui.Localizer.Instance.Culture);
         Sta.EnsureApplication();
         Open((window, hub) => {
           Option(window, Hotkey.DoubleCtrl).IsChecked = true;

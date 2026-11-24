@@ -1,6 +1,7 @@
 using System.Windows;
 using Navpaky.App.Localization;
 using Navpaky.App.ViewModels;
+using Navpaky.Ui;
 using Wpf.Ui.Appearance;
 
 namespace Navpaky.App.Views {

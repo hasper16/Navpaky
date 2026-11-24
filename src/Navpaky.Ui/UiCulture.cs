@@ -1,7 +1,7 @@
 using System.Globalization;
 using Navpaky.Core;
 
-namespace Navpaky.App.Localization {
+namespace Navpaky.Ui {
   // Picks the culture of the interface from the user's choice and the Windows display language.
   internal static class UiCulture {
     public static IReadOnlyList<CultureInfo> All { get; } =

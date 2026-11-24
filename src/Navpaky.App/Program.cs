@@ -5,6 +5,7 @@ using System.IO;
 using Navpaky.App.Localization;
 using Navpaky.App.Updates;
 using Navpaky.Core;
+using Navpaky.Ui;
 using Navpaky.Win32;
 using Velopack;
 
@@ -21,7 +22,7 @@ namespace Navpaky.App {
     public static int Main(string[] args) {
       if (args.Contains(_checkFonts)) {
         _ = new System.Windows.Application();
-        return Views.BrandFonts.Check() ? 0 : 1;
+        return BrandFonts.Check() ? 0 : 1;
       }
 
       VelopackApp.Build()

@@ -1,5 +1,6 @@
 using System.Windows.Media.Imaging;
 using Navpaky.App.Views;
+using Navpaky.Ui;
 using Xunit;
 
 namespace Navpaky.App.Tests.Views {

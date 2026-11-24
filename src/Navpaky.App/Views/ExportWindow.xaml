@@ -1,10 +1,11 @@
-<ui:FluentWindow x:Class="Navpaky.App.Views.ExportWindow"
+<ui:FluentWindow xmlns:u="clr-namespace:Navpaky.Ui;assembly=Navpaky.Ui"
+        x:Class="Navpaky.App.Views.ExportWindow"
                  x:ClassModifier="internal"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:l="clr-namespace:Navpaky.App.Localization"
-                 Title="{l:Loc ExportTitle}"
+                 Title="{u:Loc ExportTitle}"
                  Width="720"
                  Height="560"
                  MinWidth="480"
@@ -20,13 +21,13 @@
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
-    <ui:TitleBar x:Name="TitleBar" Title="{l:Loc ExportTitle}" />
+    <ui:TitleBar x:Name="TitleBar" Title="{u:Loc ExportTitle}" />
     <StackPanel Grid.Row="1" Margin="24,8,24,8">
-      <TextBlock Text="{l:Loc ExportNote}"
+      <TextBlock Text="{u:Loc ExportNote}"
                  Style="{StaticResource HintText}"
                  Margin="0,0,0,8"
                  Focusable="True" />
-      <CheckBox Content="{l:Loc ExportIncludeLog}"
+      <CheckBox Content="{u:Loc ExportIncludeLog}"
                 IsChecked="{Binding IncludeAnalysisLog}" />
     </StackPanel>
     <!-- The themed text box shows no horizontal scroll bar, so long lines were cut off: it
@@ -43,14 +44,14 @@
                TextWrapping="NoWrap"
                VerticalScrollBarVisibility="Disabled"
                HorizontalScrollBarVisibility="Disabled"
-               AutomationProperties.Name="{l:Loc ExportTitle}" />
+               AutomationProperties.Name="{u:Loc ExportTitle}" />
     </ScrollViewer>
     <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="24,0,24,24">
       <ui:Button x:Name="SaveButton"
-                 Content="{l:Loc ExportSave}"
+                 Content="{u:Loc ExportSave}"
                  Appearance="Primary"
                  Margin="0,0,8,0" />
-      <ui:Button x:Name="CopyButton" Content="{l:Loc ExportCopy}" />
+      <ui:Button x:Name="CopyButton" Content="{u:Loc ExportCopy}" />
       <TextBlock x:Name="Status"
                  VerticalAlignment="Center"
                  Margin="16,0,0,0"

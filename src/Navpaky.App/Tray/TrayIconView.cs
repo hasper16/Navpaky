@@ -7,6 +7,7 @@ using Microsoft.Win32;
 using Navpaky.App.Localization;
 using Navpaky.App.Updates;
 using Navpaky.App.ViewModels;
+using Navpaky.Ui;
 using Navpaky.Win32;
 using SymbolIcon = Wpf.Ui.Controls.SymbolIcon;
 using SymbolRegular = Wpf.Ui.Controls.SymbolRegular;

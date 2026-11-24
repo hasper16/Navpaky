@@ -7,6 +7,7 @@ using Navpaky.App.Localization;
 using Navpaky.App.Onboarding;
 using Navpaky.App.Tray;
 using Navpaky.App.ViewModels;
+using Navpaky.Ui;
 using Wpf.Ui.Appearance;
 using ImageIcon = Wpf.Ui.Controls.ImageIcon;
 

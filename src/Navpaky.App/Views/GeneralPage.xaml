@@ -1,4 +1,5 @@
-<UserControl x:Class="Navpaky.App.Views.GeneralPage"
+<UserControl xmlns:u="clr-namespace:Navpaky.Ui;assembly=Navpaky.Ui"
+        x:Class="Navpaky.App.Views.GeneralPage"
              x:ClassModifier="internal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,42 +10,42 @@
   <StackPanel>
     <Border Style="{StaticResource SettingsCard}">
       <StackPanel>
-        <v:SettingRow Label="{l:Loc LaunchAtSignIn}">
+        <u:SettingRow Label="{u:Loc LaunchAtSignIn}">
           <ui:ToggleSwitch IsChecked="{Binding LaunchAtSignIn}"
-                           AutomationProperties.Name="{l:Loc LaunchAtSignIn}" />
-        </v:SettingRow>
-        <v:SettingRow Label="{l:Loc AutoCheckForUpdates}">
+                           AutomationProperties.Name="{u:Loc LaunchAtSignIn}" />
+        </u:SettingRow>
+        <u:SettingRow Label="{u:Loc AutoCheckForUpdates}">
           <ui:ToggleSwitch IsChecked="{Binding AutoCheckForUpdates}"
-                           AutomationProperties.Name="{l:Loc AutoCheckForUpdates}" />
-        </v:SettingRow>
-        <v:SettingRow Label="{l:Loc UiLanguageChoice}">
+                           AutomationProperties.Name="{u:Loc AutoCheckForUpdates}" />
+        </u:SettingRow>
+        <u:SettingRow Label="{u:Loc UiLanguageChoice}">
           <ComboBox x:Name="Languages"
                     MinWidth="150"
-                    AutomationProperties.Name="{l:Loc UiLanguageChoice}"
+                    AutomationProperties.Name="{u:Loc UiLanguageChoice}"
                     ItemTemplate="{StaticResource LocalizedChoice}"
                     ItemContainerStyle="{StaticResource LocalizedChoiceItem}"
                     SelectedValue="{Binding UiLanguage}"
                     SelectedValuePath="Value" />
-        </v:SettingRow>
+        </u:SettingRow>
       </StackPanel>
     </Border>
     <Border Style="{StaticResource SettingsCard}">
       <StackPanel>
-        <v:SettingRow Label="{l:Loc ShowCursorIndicator}" Hint="{l:Loc ShowCursorIndicatorHint}">
+        <u:SettingRow Label="{u:Loc ShowCursorIndicator}" Hint="{u:Loc ShowCursorIndicatorHint}">
           <ui:ToggleSwitch IsChecked="{Binding ShowCursorIndicator}"
-                           AutomationProperties.Name="{l:Loc ShowCursorIndicator}" />
-        </v:SettingRow>
-        <v:SettingRow Label="{l:Loc CursorIndicatorStyleChoice}">
+                           AutomationProperties.Name="{u:Loc ShowCursorIndicator}" />
+        </u:SettingRow>
+        <u:SettingRow Label="{u:Loc CursorIndicatorStyleChoice}">
           <!-- One choice per style, each with a preview of the mark (built in code). -->
           <StackPanel x:Name="IndicatorStyles"
                       Orientation="Horizontal"
-                      AutomationProperties.Name="{l:Loc CursorIndicatorStyleChoice}" />
-        </v:SettingRow>
-        <v:SettingRow Label="{l:Loc PlaySwitchSound}">
+                      AutomationProperties.Name="{u:Loc CursorIndicatorStyleChoice}" />
+        </u:SettingRow>
+        <u:SettingRow Label="{u:Loc PlaySwitchSound}">
           <StackPanel Orientation="Horizontal">
             <ComboBox x:Name="Sounds"
                       MinWidth="130"
-                      AutomationProperties.Name="{l:Loc SwitchSoundChoice}"
+                      AutomationProperties.Name="{u:Loc SwitchSoundChoice}"
                       ItemTemplate="{StaticResource LocalizedChoice}"
                       ItemContainerStyle="{StaticResource LocalizedChoiceItem}"
                       SelectedValue="{Binding SwitchSound}"
@@ -52,15 +53,15 @@
             <Button x:Name="Preview"
                     MinWidth="40"
                     Margin="8,0"
-                    ToolTip="{l:Loc PreviewSound}"
-                    AutomationProperties.Name="{l:Loc PreviewSound}">
+                    ToolTip="{u:Loc PreviewSound}"
+                    AutomationProperties.Name="{u:Loc PreviewSound}">
               <ui:SymbolIcon Symbol="Play24" />
             </Button>
             <ui:ToggleSwitch x:Name="PlaySound"
                              IsChecked="{Binding PlaySwitchSound}"
-                             AutomationProperties.Name="{l:Loc PlaySwitchSound}" />
+                             AutomationProperties.Name="{u:Loc PlaySwitchSound}" />
           </StackPanel>
-        </v:SettingRow>
+        </u:SettingRow>
       </StackPanel>
     </Border>
   </StackPanel>

@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Navpaky.App/Navpaky.App.csproj" />
     <Project Path="src/Navpaky.Core/Navpaky.Core.csproj" />
+    <Project Path="src/Navpaky.Ui/Navpaky.Ui.csproj" />
     <Project Path="src/Navpaky.Win32/Navpaky.Win32.csproj" />
   </Folder>
   <Folder Name="/tests/">

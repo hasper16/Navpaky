@@ -2,6 +2,7 @@ using System.Reflection;
 using Navpaky.App.Localization;
 using Navpaky.App.Tray;
 using Navpaky.App.ViewModels;
+using Navpaky.Ui;
 
 namespace Navpaky.App.Views {
   // About: the Navpaky mark and the version.

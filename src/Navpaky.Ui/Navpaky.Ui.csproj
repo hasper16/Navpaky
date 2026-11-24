@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The Navpaky look shared by the app and the install wizard (add-install-wizard, design D2):
+       brand theme, fonts and mark, the shared styles in Brand.xaml, and the interface-language
+       switcher. -->
+  <PropertyGroup>
+    <TargetFramework>$(DotNetTargetFramework)-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WPF-UI" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\*.png" LogicalName="Navpaky.Assets.%(Filename).png" />
+  </ItemGroup>
+
+  <!-- Inter for text and Grunt Grotesk for headings; their OFL texts ship next to each
+       executable, outside its single-file bundle (fix-redesign-findings). -->
+  <ItemGroup>
+    <Resource Include="Fonts\*.ttf;Fonts\*.otf" />
+    <None Include="Fonts\OFL-*.txt"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest"
+          ExcludeFromSingleFile="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Navpaky.App" />
+    <InternalsVisibleTo Include="Navpaky.App.Tests" />
+    <InternalsVisibleTo Include="Navpaky.Setup" />
+    <InternalsVisibleTo Include="Navpaky.Setup.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Navpaky.Core\Navpaky.Core.csproj" />
+  </ItemGroup>
+
+</Project>

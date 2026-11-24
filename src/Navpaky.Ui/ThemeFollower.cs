@@ -2,7 +2,7 @@ using System.Windows;
 using Microsoft.Win32;
 using Wpf.Ui.Appearance;
 
-namespace Navpaky.App.Views {
+namespace Navpaky.Ui {
   // Follows the Windows light/dark setting while Navpaky runs (design D1 of
   // fix-redesign-findings). WPF UI follows it only through open, watched windows, and a tray app
   // usually has none, so a change would wait until the next window and look inverted.

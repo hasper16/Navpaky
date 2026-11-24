@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Navpaky.App.Localization;
 using Navpaky.App.Telemetry;
 using Navpaky.App.ViewModels;
+using Navpaky.Ui;
 
 namespace Navpaky.App.Views {
   // Diagnostics and privacy: the watchdogs, statistics, the word-analysis log, the diagnostics

@@ -1,11 +1,12 @@
-<ui:FluentWindow x:Class="Navpaky.App.Views.SettingsWindow"
+<ui:FluentWindow xmlns:u="clr-namespace:Navpaky.Ui;assembly=Navpaky.Ui"
+        x:Class="Navpaky.App.Views.SettingsWindow"
                  x:ClassModifier="internal"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:l="clr-namespace:Navpaky.App.Localization"
                  xmlns:v="clr-namespace:Navpaky.App.Views"
-                 Title="{l:Loc SettingsTitle}"
+                 Title="{u:Loc SettingsTitle}"
                  Width="900"
                  Height="640"
                  MinWidth="560"
@@ -27,7 +28,7 @@
     <ui:TitleBar x:Name="TitleBar"
                  Grid.Row="0"
                  Grid.ColumnSpan="2"
-                 Title="{l:Loc SettingsTitle}" />
+                 Title="{u:Loc SettingsTitle}" />
     <Border Grid.Row="0"
             Grid.ColumnSpan="2"
             BorderBrush="{DynamicResource BrandLine}"
@@ -48,7 +49,7 @@
              Padding="8,12"
              Background="Transparent"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-             AutomationProperties.Name="{l:Loc SettingsTitle}">
+             AutomationProperties.Name="{u:Loc SettingsTitle}">
       <ListBox.ItemTemplate>
         <DataTemplate>
           <DockPanel Margin="4,6">
@@ -57,7 +58,7 @@
               <TextBlock.Text>
                 <MultiBinding Converter="{StaticResource KeyText}">
                   <Binding Path="TitleKey" />
-                  <Binding Source="{x:Static l:Localizer.Instance}" Path="Culture" />
+                  <Binding Source="{x:Static u:Localizer.Instance}" Path="Culture" />
                 </MultiBinding>
               </TextBlock.Text>
             </TextBlock>
@@ -108,7 +109,7 @@
             <Setter.Value>
               <MultiBinding Converter="{StaticResource KeyText}">
                 <Binding Path="TitleKey" />
-                <Binding Source="{x:Static l:Localizer.Instance}" Path="Culture" />
+                <Binding Source="{x:Static u:Localizer.Instance}" Path="Culture" />
               </MultiBinding>
             </Setter.Value>
           </Setter>

@@ -10,6 +10,7 @@ using Navpaky.App.ViewModels;
 using Navpaky.App.Views;
 using Navpaky.Core;
 using Navpaky.Core.Tests;
+using Navpaky.Ui;
 using Navpaky.Win32.Hotkeys;
 using Wpf.Ui.Controls;
 using Xunit;

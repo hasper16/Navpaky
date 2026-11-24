@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using Navpaky.App.Views;
+using Navpaky.Ui;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Xunit;

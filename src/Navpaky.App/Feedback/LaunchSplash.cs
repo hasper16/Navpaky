@@ -9,6 +9,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Navpaky.App.Views;
 using Navpaky.Core;
+using Navpaky.Ui;
 using Navpaky.Win32;
 
 namespace Navpaky.App.Feedback {

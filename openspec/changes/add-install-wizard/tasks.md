@@ -2,10 +2,10 @@
 
 ## 1. Shared look (design D2)
 
-- [ ] 1.1 Create `src/Navpaky.Ui` (WPF class library) and move these into it, with namespaces and resource keys kept:
-  - `BrandTheme`, `BrandFonts`, `BrandMark` and `ThemeFollower`;
-  - the brand fonts and the shared row, card, pill and switch styles;
-  - `Localizer`.
+- [x] 1.1 Create `src/Navpaky.Ui` (WPF class library, namespace `Navpaky.Ui`, XAML prefix `u:`) and move these into it, with every resource key kept:
+  - `BrandTheme`, `BrandFonts`, `BrandMark`, `ThemeFollower` and `SettingRow`;
+  - the brand fonts, the mark and the shared styles (`Brand.xaml`, merged by the app's `Resources.xaml`);
+  - `Localizer`, `LocExtension` and `UiCulture`. `Localizer` serves the strings each executable adds; the app adds its own when its assembly loads.
 
   `Navpaky.App` references it; nothing else changes. Verify: `dotnet build` and `dotnet test` (Core, Win32, App, DesktopChecks) pass; `--check-fonts` passes on a single-file publish of the app.
 
