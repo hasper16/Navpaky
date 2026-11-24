@@ -70,7 +70,7 @@ On Install, the wizard starts the extracted setup with `--silent --log <per-run 
 ### D4. Hand-off file
 Before running setup, the wizard writes `%LOCALAPPDATA%\Navpaky\install-choices.json`, overwriting any earlier one:
 ```json
-{ "version": 1, "attempt": "<guid>", "uiLanguage": "System|English|Ukrainian",
+{ "version": 1, "attempt": "<guid>", "uiLanguage": "system|en|uk",
   "launchAtSignIn": true, "desktopShortcut": false, "data": "new|keep|fresh",
   "installFolder": "<path>" }
 ```
@@ -81,19 +81,16 @@ Before running setup, the wizard writes `%LOCALAPPDATA%\Navpaky\install-choices.
 2. Writes the install marker, as today. It stays for the uninstall data question's reinstall check.
 3. Applies `launchAtSignIn` through `SignInLaunch` (HKCU Run + StartupApproved). The entry points to the root `Navpaky.exe`.
 4. Creates or removes the desktop shortcut (D6).
-5. Writes `UiLanguage`, `InstallFolder` and `DesktopShortcut` into settings, creating `settings.json` with defaults when there is none.
+5. Writes `UiLanguage`, `InstallFolder`, `DesktopShortcut` and `InstallQuestionsAnswered = true` into settings, creating `settings.json` with defaults when there is none. For `keep` it also sets `WelcomeCompleted`, so no Welcome opens; `new` and `fresh` leave it to open.
 6. **Last,** writes the completion acknowledgement `%LOCALAPPDATA%\Navpaky\install-done-<attempt>`.
 
 **The wizard's part.** After setup exits 0 and the acknowledgement exists (the install is complete, including the Installed apps entry), the wizard deletes both `*.fresh-<attempt>` backups. On any failure it restores them: it deletes what the hook wrote and moves the backups back.
 
-**Leftovers.** A backup left behind by a crashed wizard is restored by the next wizard run before it looks for kept data, so the user's data is never lost silently. The app deletes the acknowledgement together with the choices file.
+**Leftovers.** A backup left behind by a crashed wizard is restored by the next wizard run before it looks for kept data, so the user's data is never lost silently. After a confirmed success the wizard also deletes `install-choices.json` and the acknowledgement.
 
-**On first start** the app reads the file:
-- `keep` marks the Welcome as completed, so no Welcome opens;
-- `new` and `fresh` let it open;
-- either way, the app records that the install questions were answered by the wizard, then deletes the file.
+**On first start** the app reads nothing from the wizard: the hook already put everything in settings. Its first-start default of launch at sign-in on applies only when `InstallQuestionsAnswered` is false, so the wizard's answer stands.
 
-**No file at first start** means the plain Velopack setup or a portable copy. The Welcome then asks the install questions itself (spec `onboarding`).
+**No choices file** at install time means the plain Velopack setup or a portable copy: the hook writes only the marker, `InstallQuestionsAnswered` stays false, and the Welcome asks the install questions itself (spec `onboarding`).
 
 *Alternatives:* command-line arguments (F1 rules them out); the wizard writing `settings.json` itself (it would couple the installer to the settings schema and race the app).
 

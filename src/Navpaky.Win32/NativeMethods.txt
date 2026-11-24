@@ -103,3 +103,7 @@ waveOutClose
 WAVE_MAPPER
 WHDR_DONE
 WAVE_FORMAT_PCM
+ShellLink
+IShellLinkW
+IPersistFile
+STGM

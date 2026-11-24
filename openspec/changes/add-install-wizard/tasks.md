@@ -30,7 +30,7 @@
 
 ## 4. Choices reach the app (design D4, D6, D10)
 
-- [ ] 4.1 Test first, in temp folders: for each `data` value the install hook does the following. Then wire it into `OnAfterInstallFastCallback`.
+- [x] 4.1 Test first, in temp folders: for each `data` value the install hook does the following. Then wire it into `OnAfterInstallFastCallback`.
   - `fresh` moves `%APPDATA%\Navpaky` to `%APPDATA%\Navpaky.fresh-<attempt>` and every `%LOCALAPPDATA%\Navpaky` entry except `install-choices.json` into `%LOCALAPPDATA%\Navpaky.fresh-<attempt>`, deleting nothing (design D4).
   - It writes the marker.
   - It applies launch at sign-in to the root `Navpaky.exe`.
@@ -40,13 +40,9 @@
   - No choices file means today's behaviour (marker only).
 
   Verify: `dotnet test tests/Navpaky.App.Tests`.
-- [ ] 4.2 Test first, in a temp folder: `DesktopShortcut.Create` writes a `.lnk` whose target is the given exe and whose working folder is its folder, and `Remove` deletes only a link that targets the install folder. Then implement it in `Navpaky.Win32` with `IShellLinkW` + `IPersistFile` through CsWin32, on an STA thread. Verify: `dotnet test tests/Navpaky.Win32.Tests`.
-- [ ] 4.3 Test first: the uninstall hook also removes our desktop link (Velopack usually already has, design F6). Then add it to `Uninstaller`. Verify: `dotnet test tests/Navpaky.App.Tests`.
-- [ ] 4.4 Test first, through the app's start-up path: the first start reads the choices file. Then implement it.
-  - `keep` marks the Welcome completed, so no Welcome opens.
-  - `new` and `fresh` open it.
-  - Each sets `InstallQuestionsAnswered`, and the file is then deleted.
-  - Without a file, `InstallQuestionsAnswered` stays unknown.
+- [x] 4.2 Test first, in a temp folder: `DesktopShortcut.Create` writes a `.lnk` whose target is the given exe and whose working folder is its folder, and `Remove` deletes only a link that targets the install folder. Then implement it in `Navpaky.Win32` with `IShellLinkW` + `IPersistFile` through CsWin32, on an STA thread. Verify: `dotnet test tests/Navpaky.Win32.Tests`.
+- [x] 4.3 Test first: the uninstall hook also removes our desktop link (Velopack usually already has, design F6). Then add it to `Uninstaller`. Verify: `dotnet test tests/Navpaky.App.Tests`.
+- [x] 4.4 Test first: the hook (4.1) sets `InstallQuestionsAnswered`, and for `keep` also `WelcomeCompleted`, so no Welcome opens; `new` and `fresh` leave the Welcome to open. The first start's "launch at sign-in on" default applies only when `InstallQuestionsAnswered` is false, so the wizard's answer stands. Without a choices file, `InstallQuestionsAnswered` stays false. Then implement it (design D4).
 
   Verify: `dotnet test tests/Navpaky.App.Tests`.
 

@@ -42,6 +42,13 @@ namespace Navpaky.App.Tests.Onboarding {
     }
 
     [Fact]
+    public void TheWizardsSignInChoiceStandsOnTheFirstStart() {
+      var fromWizard = new Settings(LaunchAtSignIn: false, InstallQuestionsAnswered: true);
+
+      Assert.Same(fromWizard, WelcomeViewModel.FirstStartDefaults(fromWizard));
+    }
+
+    [Fact]
     public void LaterStartsKeepTheUsersSignInChoice() {
       var later = new Settings(WelcomeCompleted: true, LaunchAtSignIn: false);
 

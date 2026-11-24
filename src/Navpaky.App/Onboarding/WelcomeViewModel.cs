@@ -64,9 +64,12 @@ namespace Navpaky.App.Onboarding {
       return !settings.WelcomeCompleted;
     }
 
-    // Launch at sign-in is on unless the user turns it off in the welcome window.
+    // Launch at sign-in is on unless the user turns it off in the welcome window. When the
+    // install wizard already asked, its answer stands (add-install-wizard).
     public static Settings FirstStartDefaults(Settings settings) {
-      return OpensAtStart(settings) ? settings with { LaunchAtSignIn = true } : settings;
+      return OpensAtStart(settings) && !settings.InstallQuestionsAnswered
+          ? settings with { LaunchAtSignIn = true }
+          : settings;
     }
 
     public void UseLayouts(IReadOnlyList<LayoutId> layouts) {

@@ -26,7 +26,7 @@ namespace Navpaky.App {
       }
 
       VelopackApp.Build()
-          .OnAfterInstallFastCallback(_ => MarkInstall())
+          .OnAfterInstallFastCallback(_ => ApplyInstall())
           .OnBeforeUninstallFastCallback(_ => Uninstall())
           .Run();
       var app = new App();
@@ -34,14 +34,25 @@ namespace Navpaky.App {
       return app.Run();
     }
 
-    // Without the marker only a reinstall made while an old data question is open goes unseen,
-    // so a failed write must not fail the install.
-    private static void MarkInstall() {
+    // Applies the install wizard's choices (design D4 of add-install-wizard). A step that fails
+    // leaves no acknowledgement, so the wizard reports the install as failed; without the wizard
+    // only the install marker is written, and its failure must not fail the install.
+    private static void ApplyInstall() {
       try {
-        InstallMarker.Write(DataFolders.ForCurrentUser(null).Local);
-      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-        Trace.WriteLine($"Navpaky could not mark its installation: {e.GetType().Name}");
+        new InstallHook(
+            DataFolders.ForCurrentUser(null),
+            InstallRoot(),
+            (on, exe) => new SignInLaunch().Set(on, exe),
+            new UserDesktopShortcut()).Run();
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException
+          or System.Runtime.InteropServices.COMException) {
+        Trace.WriteLine($"Navpaky could not apply its installation: {e.GetType().Name}");
       }
+    }
+
+    // Velopack runs the hooks from <root>\current; the root holds the Navpaky.exe launcher.
+    private static string InstallRoot() {
+      return Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory))!;
     }
 
     private static void Uninstall() {
@@ -51,6 +62,7 @@ namespace Navpaky.App {
       new Uninstaller(
           DataFolders.ForCurrentUser(null),
           () => new SignInLaunch().Set(false, string.Empty),
+          () => new UserDesktopShortcut().Remove(InstallRoot()),
           AskDeleteData).Run();
     }
 
