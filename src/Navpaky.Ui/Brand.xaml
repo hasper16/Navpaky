@@ -1,15 +1,12 @@
 <!-- The Navpaky look shared by the app and the install wizard (add-install-wizard, design D2):
-     WPF UI's theme and controls, the brand surfaces, fonts and the shared row, card, pill, keycap
-     and segment styles. Each executable merges it into its own resources. -->
+     the brand surfaces, fonts and the shared row, card, pill, keycap and segment styles. Each
+     executable merges WPF UI's ThemesDictionary and ControlsDictionary straight into its
+     application resources, then this: WPF UI takes the application as its own only by them, and
+     theme and accent changes otherwise never reach a window. -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                     xmlns:u="clr-namespace:Navpaky.Ui">
-  <ResourceDictionary.MergedDictionaries>
-    <!-- Each executable follows the Windows theme from start (ThemeFollower). -->
-    <ui:ThemesDictionary Theme="Light" />
-    <ui:ControlsDictionary />
-  </ResourceDictionary.MergedDictionaries>
 
   <!-- Grunt Grotesk for headings; Inter for other text is set on every window (BrandFonts). The
        system face stands in when a font cannot load. -->
