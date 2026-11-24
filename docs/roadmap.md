@@ -41,6 +41,13 @@ Design changes reshape the look and feel after the product is complete.
 | D1 | `redesign-visual-identity` | tray-and-settings, onboarding, app-lifecycle (new mark, palette, quick panel, one-page settings, splash) | 1–15, P1 |
 | D2 | `fix-redesign-findings` | tray-and-settings (theme following, accent, fonts, licences, quick panel Language key) | D1 |
 
+Installer changes replace Velopack's one-click setup with Navpaky's own wizard (owner decision, 2026-11-24; approved prototype v3.1). They run in order, one at a time.
+
+| # | Change | Capability | Depends on |
+|---|---|---|---|
+| I1 | `add-install-wizard` | install-wizard (new), auto-update, onboarding, telemetry: branded per-user wizard (language, licence, folder, shortcut, sign-in, Welcome back / Start fresh), hand-off of choices to the install hook, slimmer Welcome with one telemetry consent, single signed `NavpakySetup.exe` | D2 |
+| I2 | `add-machine-wide-install` (not yet proposed) | install-wizard, auto-update: "All users" into Program Files, with the 2026-11-24 live-run workarounds (HKLM entry and elevating uninstall, shared Start-menu link, per-user autostart through Active Setup, no apply-on-start, closing Navpaky in every session before an update, cleanup of the per-admin Installed apps entry) | I1 |
+
 T1 can run in parallel with changes 12–15: it touches no file under `src/`, `tests/` or `tools/Navpaky.DesktopChecks/`. Its global installs reach only sessions started after them, so implementers already at work keep their tools until their change ends.
 
 By-hand checks are not a merge gate for changes 1–14: each change appends them to `docs/manual-tests/deferred-by-hand.md`, and change 15 is the owner's single pass over that file plus the fixes for what fails (owner decision, 2026-11-14).

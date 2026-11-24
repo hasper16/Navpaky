@@ -1,0 +1,156 @@
+# Design
+
+## Context
+
+Navpaky ships as Velopack 1.2.161 packages. Installing means running Velopack's one-click `Setup.exe` (`navpaky-app-win-Setup.exe`), which installs into `%LOCALAPPDATA%\navpaky-app`, creates a Start-menu link and starts the app. Our hooks run inside it:
+- `OnAfterInstallFastCallback` writes the install marker;
+- `OnBeforeUninstallFastCallback` turns sign-in off and asks the data question (`Updates/Uninstaller`, `DataQuestion`).
+
+The Welcome asks the hotkey and crash reports, and the app turns launch at sign-in on at the first start.
+
+The owner approved the branded wizard flow in prototype v3.1 (https://claude.ai/artifact/PVqBHe6vAHB1eWrg5fyp8e). Its "All users" option is out of scope here; the change `add-machine-wide-install` owns it.
+
+On 2026-11-24 we checked Velopack's behaviour live in a throwaway Windows 11 (uk-UA, build 26300) Hyper-V VM, using Debug builds of main 025783e signed with a test certificate. The findings that shape this change, with the evidence in Velopack 1.2.161's source (`src/bins/src/setup.rs`, `commands/install.rs`, `commands/uninstall.rs`, `windows/registry.rs`, `windows/shortcuts.rs`):
+
+| # | Finding | Consequence here |
+|---|---|---|
+| F1 | `Setup.exe … -- <args>` **panics** (clap: "Mismatch between definition and access of `EXE_ARGS`") and hangs. Under `--silent`, the source also drops the arguments, because the app is started only when not silent. | Choices go through a hand-off file (D4). |
+| F2 | `Setup.exe --silent --installto <dir>` works in 7–24 s, starts nothing and shows no window. It writes the HKCU Installed apps entry (`InstallLocation` = dir), a Start-menu link to `current\Navpaky.App.exe` and the root launcher **`Navpaky.exe`**. Our install hook runs before the entry is written, with a 30 s budget. | The wizard runs Setup silently and starts the app itself (D3). |
+| F3 | With a **non-empty** `--installto` folder, silent setup answers its overwrite question with yes, renames the folder and deletes it after the install, so a user file was lost. | Folder safety (D5). |
+| F4 | Installing into a **second folder** moves the Installed apps entry (one key per pack id) to it and leaves the first copy orphaned. | Reuse the existing install's folder (D5). |
+| F5 | Updates in a user-writable folder apply with **no UAC**. | No elevation anywhere in this change. |
+| F6 | Velopack's uninstall removes **every** `.lnk` under the user's Desktop, Startup, Start menu and pinned folders that targets the install root, including a desktop link we created to the root `Navpaky.exe`. | The desktop shortcut needs no extra uninstall code (D6). |
+| F7 | Our uninstall data question stays open until it's answered, and a parent that waits for the whole process tree waits for it too. | Nothing in the wizard waits on uninstall processes. |
+| F8 | A blank self-contained WPF .NET 11 single-file app (compressed, all content extracted, as WPF 11 needs) is 67 MB and starts in 7.7 s cold and 0.6 s warm. Velopack's `Setup.exe` is about 82 MB (Debug). | Download size and start-up (D8, risks). |
+| F9 | On a uk-UA Windows the group names (`Administrators`) and tool output are translated. | Never parse localized output; use SIDs and APIs. |
+
+## Goals / Non-Goals
+
+**Goals:**
+- One branded, signed `NavpakySetup.exe` that asks every install question before copying anything, then installs through Velopack without showing Velopack.
+- Choices that take effect even if the app is not started after the install.
+- Safe folder handling, so no data loss and no orphaned copies.
+- Reinstall with kept data: keep it, or start fresh after a confirmation.
+- A Welcome that asks only what the running app needs, and still asks the install questions when the wizard wasn't used.
+
+**Non-Goals:**
+- Installing for all users, Program Files, or any elevation. That is `add-machine-wide-install`.
+- Replacing Velopack's uninstall. It stays: Installed apps runs `Update.exe --uninstall`, and every update rewrites that entry.
+- An MSI.
+- Changing how updates are found, verified or applied.
+
+## Decisions
+
+### D1. A separate wizard project, `src/Navpaky.Setup`
+The wizard is a new WPF .NET 11 executable, published self-contained single-file like the app (`IncludeAllContentForSelfExtract`, compression on). It holds Velopack's `Setup.exe` as an embedded resource. At install time it extracts that to a per-run folder under `%TEMP%`, runs it, then deletes it.
+
+It references `Navpaky.Core` for the settings model and `UiLanguage`. It never loads the keyboard hook or any `Navpaky.Win32` capture code.
+
+*Alternative:* a mode of `Navpaky.App.exe`. Rejected: the app would have to ship Setup.exe inside itself, and the installer would carry the hook code.
+
+### D2. Shared look: a `Navpaky.Ui` class library
+These move from `Navpaky.App/Views` and `Localization` into a new WPF class library `src/Navpaky.Ui`, referenced by both the app and the wizard:
+- `BrandTheme`, `BrandFonts`, `BrandMark` and `ThemeFollower`;
+- the fonts and the row, card, pill and switch styles;
+- `Localizer`.
+
+The app's behaviour doesn't change: same resources, same keys. Each executable keeps its own `Strings.resx`; the wizard has its own en/uk strings.
+
+*Alternative:* linking the source files into both projects. Rejected: two copies of the XAML dictionaries to keep in step.
+
+### D3. Running Velopack's setup
+On Install, the wizard starts the extracted setup with `--silent --log <per-run log> --installto <folder>`, and **no `--` arguments** (F1). It runs on a background `Task`; the UI thread only shows progress.
+
+- **Progress:** Velopack reports none under `--silent`, so the Installing page shows an indeterminate bar. It moves to the next phase when the log file shows "Extracting", "Starting process install hook" and "Installation completed".
+- **Result:** the wizard waits for **the setup process only**, never its descendants (F7). Exit code 0 is success. Any other code, or no exit after 5 minutes (design decision), is a failure: the wizard shows Retry and Close and keeps the per-run log for diagnostics. The log holds no typed text, but it does hold paths, so it isn't sent anywhere.
+- **Finish:** when "Start Navpaky now" is checked, the wizard starts `<folder>\Navpaky.exe` (the root launcher, F2) with `Process.Start` (`UseShellExecute = true`) and exits.
+
+### D4. Hand-off file
+Before running setup, the wizard writes `%LOCALAPPDATA%\Navpaky\install-choices.json`, overwriting any earlier one:
+```json
+{ "version": 1, "uiLanguage": "System|English|Ukrainian", "launchAtSignIn": true,
+  "desktopShortcut": false, "data": "new|keep|fresh", "installFolder": "<path>" }
+```
+
+**The install hook** (`OnAfterInstallFastCallback`, which runs as the installing user inside setup, F2) reads the file and, within its 30 s budget:
+1. If `data` is `fresh`, deletes `%APPDATA%\Navpaky` and every entry of `%LOCALAPPDATA%\Navpaky` except `install-choices.json`, with retries like `DataQuestion`. The deletion happens only after the files were copied, so a failed install keeps the data. It counts as "after a successful copy", not strictly after success, because Velopack writes the Installed apps entry after the hook.
+2. Writes the install marker, as today.
+3. Applies `launchAtSignIn` through `SignInLaunch` (HKCU Run + StartupApproved). The entry points to the root `Navpaky.exe`.
+4. Creates or removes the desktop shortcut (D6).
+5. Writes `UiLanguage` and `InstallFolder` into settings, creating `settings.json` with defaults when there is none.
+
+**On first start** the app reads the file:
+- `keep` marks the Welcome as completed, so no Welcome opens;
+- `new` and `fresh` let it open;
+- either way, the app records that the install questions were answered by the wizard, then deletes the file.
+
+**No file at first start** means the plain Velopack setup or a portable copy. The Welcome then asks the install questions itself (spec `onboarding`).
+
+*Alternatives:* command-line arguments (F1 rules them out); the wizard writing `settings.json` itself (it would couple the installer to the settings schema and race the app).
+
+### D5. Folder rules
+The folder logic lives in a pure, unit-tested class in `Navpaky.Setup` (`InstallTarget`). It takes:
+- the user's pick;
+- the existing install's folder (from HKCU `Software\Microsoft\Windows\CurrentVersion\Uninstall\navpaky-app` → `InstallLocation`, else `InstallFolder` from kept settings);
+- a file-system port.
+
+It returns the target folder and a verdict:
+- **Ok.**
+- **NotEmpty:** the folder exists, has entries, and has no `Update.exe` plus `current\Navpaky.App.exe`.
+- **NotWritable:** creating and deleting a probe file under the nearest existing parent fails.
+- **NotEnoughSpace:** compared with the package size plus 50 MB, the same margin Velopack uses.
+- **Locked to the existing install.**
+
+A pick whose last segment isn't `Navpaky` (case-insensitive) gets `\Navpaky` appended. An existing install always wins: the folder field is read-only with a one-line reason. Moving an install means uninstalling it first.
+
+The default for new installs is `%LOCALAPPDATA%\Programs\Navpaky`, Windows' place for per-user apps (`FOLDERID_UserProgramFiles`). Installs from before this change stay in `navpaky-app` through the existing-install rule.
+
+### D6. Desktop shortcut
+The pack keeps `--shortcuts StartMenuRoot`, so Velopack makes no desktop link.
+
+On "yes", the hook creates `Navpaky.lnk` on the user's desktop (`SHGetKnownFolderPath(FOLDERID_Desktop)`) through `IShellLinkW` + `IPersistFile` (CsWin32). The target is the root `Navpaky.exe`, the working folder is the install folder, and the icon is the app's. On "no" it removes a `Navpaky.lnk` that targets the install folder. The calls run on the hook's thread, an STA created for the call.
+
+Uninstall needs no new code: Velopack removes links into the install root (F6). The uninstall hook still removes ours, in case Velopack's search misses it.
+
+### D7. Welcome back and Start fresh
+**Detecting kept data.** The wizard treats data as kept when `%APPDATA%\Navpaky\settings.json` exists, or `%LOCALAPPDATA%\Navpaky` has entries other than `install-choices.json`.
+
+**What it shows.** It reads `settings.json` with `Navpaky.Core`'s settings reader (read-only) to:
+- preset launch at sign-in and the interface language;
+- show the kept items: the hotkey, the number of learned words and apps, and whether statistics exist.
+
+A corrupt or unreadable file still counts as kept data, but without details.
+
+**Shortcut preset.** Velopack's uninstall removed the old desktop link (F6), so its state comes from settings (`DesktopShortcut`, written by the hook). It's off when unknown.
+
+**Confirmation.** It's an in-page view (prototype v3.1), not a modal dialog. Cancel returns to the choice; "Delete and continue" moves on with `data = fresh`.
+
+### D8. Release pipeline
+`release.yml` changes after `vpk pack`:
+1. `dotnet publish src/Navpaky.Setup` with `-p:EmbeddedSetupPath=<releases>/navpaky-app-win-Setup.exe -p:Version=<v>`.
+2. Sign `NavpakySetup.exe` with signtool, using the same `VPK_SIGN_PARAMS` (Windows SDK signtool on the runner).
+3. `Get-AuthenticodeSignature` must be `Valid` with the pinned publisher subject, otherwise the run fails.
+4. `gh release upload <tag> NavpakySetup.exe` after `vpk upload`.
+
+A dry run builds the wizard unsigned and keeps it as an artifact. Velopack's own `Setup.exe` stays in the release, because updates and the plain-setup fallback need it. The README and `docs/release.md` point to `NavpakySetup.exe`.
+
+### D9. Threads and Win32 calls
+- **Wizard:** all UI on the WPF dispatcher. Setup runs and the log is tailed on a `Task`, marshalled back with `Dispatcher.InvokeAsync`. The folder picker is WPF's `OpenFolderDialog` (.NET 8+). Free space comes from `DriveInfo`. Registry reads use `Microsoft.Win32.Registry` (HKCU).
+- **App hook:** `SignInLaunch` (registry) and `IShellLinkW` on the hook thread, which runs before the app's UI starts.
+
+### D10. Telemetry consent in the Welcome
+The Welcome's one switch sets both `DiagnosticsConsent.CrashReports` and the Usage Digest consent. Turning it off clears both. Settings keeps its two switches. The setup signal stays in Settings.
+
+## Risks / Trade-offs
+
+- **Download about 150 MB** (F8 plus Setup.exe), roughly 1.8× today → accepted by the owner. A native wizard would be smaller but loses the WPF look.
+- **Cold start of the wizard about 8 s** while the single-file bundle extracts (F8). Nothing is shown before the WPF window, so the user may double-click again → the wizard is single-instance (named mutex). The README says it can take a few seconds.
+- **The 30 s hook budget** must cover the Start-fresh deletion, the marker, the Run entry and the shortcut → keep it fast. A timeout shows Velopack's warning, which is hidden under `--silent`. The wizard then checks the marker and reports a partial install.
+- **The plain Setup.exe stays downloadable** and bypasses the wizard → the Welcome fallback asks the install questions (spec `onboarding`).
+- **Velopack upgrades** can change `--silent`, `--installto` or the panic in F1 → Velopack is pinned (`Directory.Packages.props`, `VPK_VERSION`); one live install run per Velopack bump (deferred by-hand checklist).
+- **SmartScreen:** a new signed exe needs reputation like `Setup.exe` does. No change in kind.
+- **Existing users** (0.4.x in `navpaky-app`) never see the wizard on update. A reinstall through the wizard keeps their folder.
+
+## Migration Plan
+
+Nothing migrates on update. The first wizard install of an existing user reuses `navpaky-app` (D5). Settings gain `InstallFolder` and `DesktopShortcut`, both optional, so older settings files read as unknown.
