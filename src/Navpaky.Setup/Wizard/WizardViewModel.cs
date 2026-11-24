@@ -222,11 +222,15 @@ namespace Navpaky.Setup.Wizard {
       Finished?.Invoke(this, EventArgs.Empty);
     }
 
+    // The GPL, then the fonts' licences.
     private static string ReadLicence() {
-      using Stream stream = typeof(WizardViewModel).Assembly
-          .GetManifestResourceStream("Navpaky.Setup.LICENSE")!;
-      using var reader = new StreamReader(stream);
-      return reader.ReadToEnd();
+      string[] names = ["LICENSE", "OFL-Inter.txt", "OFL-GruntGrotesk.txt"];
+      return string.Join(Environment.NewLine + Environment.NewLine, names.Select(name => {
+        using Stream stream = typeof(WizardViewModel).Assembly
+            .GetManifestResourceStream($"Navpaky.Setup.{name}")!;
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
+      }));
     }
 
     private static void TryDelete(string file) {

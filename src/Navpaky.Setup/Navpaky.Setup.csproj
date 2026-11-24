@@ -18,9 +18,35 @@
     <InternalsVisibleTo Include="Navpaky.Setup.Tests" />
   </ItemGroup>
 
+  <!-- Single-file like the app: WPF 11's mixed-mode assemblies cannot load from inside the bundle
+       (dotnet/wpf#11842), so everything extracts at first start; compression keeps the download
+       smaller (design D1). -->
+  <PropertyGroup Condition="'$(PublishSingleFile)' == 'true'">
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <NoWarn>$(NoWarn);NETSDK1244</NoWarn>
+  </PropertyGroup>
+
+  <!-- Velopack's Setup.exe of the same release (design D8): release.yml passes the freshly packed
+       one as -p:EmbeddedSetupPath. Builds and tests run without it; a Release publish without it
+       would ship a wizard that cannot install, so it fails. -->
+  <ItemGroup Condition="'$(EmbeddedSetupPath)' != ''">
+    <EmbeddedResource Include="$(EmbeddedSetupPath)" LogicalName="Navpaky.Setup.Payload.exe" />
+  </ItemGroup>
+
+  <Target Name="RequireEmbeddedSetup"
+          BeforeTargets="PrepareForPublish"
+          Condition="'$(Configuration)' == 'Release'">
+    <Error Condition="'$(EmbeddedSetupPath)' == '' Or !Exists('$(EmbeddedSetupPath)')"
+           Text="A Release publish of the wizard needs -p:EmbeddedSetupPath=&lt;Velopack Setup.exe&gt;." />
+  </Target>
+
   <!-- The Licence page shows the repository's own licence text. -->
   <ItemGroup>
     <EmbeddedResource Include="..\..\LICENSE" LogicalName="Navpaky.Setup.LICENSE" />
+    <!-- The wizard ships as one file, so the fonts' OFL texts travel inside it. -->
+    <EmbeddedResource Include="..\Navpaky.Ui\Fonts\OFL-*.txt"
+                      LogicalName="Navpaky.Setup.%(Filename).txt" />
   </ItemGroup>
 
   <ItemGroup>

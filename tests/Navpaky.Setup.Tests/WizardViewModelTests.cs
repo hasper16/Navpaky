@@ -81,6 +81,13 @@ namespace Navpaky.Setup.Tests {
       Assert.Contains("GNU GENERAL PUBLIC LICENSE", WizardViewModel.LicenceText);
     }
 
+    // The wizard ships as one file, so the fonts' licences travel inside it and show here.
+    [Fact]
+    public void TheLicenceTextNamesTheFontLicences() {
+      Assert.Contains("Inter Project Authors", WizardViewModel.LicenceText);
+      Assert.Contains("Grunt Grotesk", WizardViewModel.LicenceText);
+    }
+
     [Fact]
     public async Task KeptDataShowsWelcomeBackWithPreviousSettingsSelected() {
       WizardViewModel model = Wizard(Kept(new Settings()));
