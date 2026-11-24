@@ -18,6 +18,11 @@
     <InternalsVisibleTo Include="Navpaky.Setup.Tests" />
   </ItemGroup>
 
+  <!-- The Licence page shows the repository's own licence text. -->
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\LICENSE" LogicalName="Navpaky.Setup.LICENSE" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Navpaky.Core\Navpaky.Core.csproj" />
     <ProjectReference Include="..\Navpaky.Ui\Navpaky.Ui.csproj" />

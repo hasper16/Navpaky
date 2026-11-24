@@ -58,18 +58,18 @@
 
 ## 6. The wizard (spec install-wizard, design D1, D3, D7)
 
-- [ ] 6.1 Create `src/Navpaky.Setup` and `tests/Navpaky.Setup.Tests`. The wizard window has the brand header, step bar, step counter and Back/Next, follows the Windows theme, and is single-instance (named mutex). Test first: a second start exits and brings the first window to the front. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 6.2 Test first: the Language page's choice switches every wizard text at once (en/uk) and becomes `uiLanguage`; "Same as Windows" is the default. Then build the page. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 6.3 Test first: Next on the Licence page stays disabled until "I accept the licence" is checked; the text comes from the repository `LICENSE`, embedded at build. Then build the page. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 6.4 Test first:
+- [x] 6.1 Create `src/Navpaky.Setup` and `tests/Navpaky.Setup.Tests`. The wizard window has the brand header, step bar, step counter and Back/Next, follows the Windows theme, and is single-instance (named mutex). Test first: a second start exits and brings the first window to the front. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 6.2 Test first: the Language page's choice switches every wizard text at once (en/uk) and becomes `uiLanguage`; "Same as Windows" is the default. Then build the page. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 6.3 Test first: Next on the Licence page stays disabled until "I accept the licence" is checked; the text comes from the repository `LICENSE`, embedded at build. Then build the page. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 6.4 Test first:
   - Kept data (a `settings.json`, or local entries other than the choices file) shows Welcome back with "Use previous settings" selected and the kept items listed.
   - A corrupt `settings.json` still counts as kept, without details.
   - "Start fresh" then Next shows the confirmation; Cancel returns to the choice; "Delete and continue" sets `data = fresh`.
 
   Then build the page. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 6.5 Test first: the Folder page shows `InstallTarget`'s folder and verdict, disables Next for each refusal with its reason, shows needed and free space, and is read-only when locked. The picker is `OpenFolderDialog`. Then build the page. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 6.6 Test first: the Options page defaults (sign-in on, shortcut off) and its presets plus "was on/off" hints after "Use previous settings". Then build the page. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 6.7 Test first, with a stub setup executable built for the test: `SetupRunner` does the following. Then implement it.
+- [x] 6.5 Test first: the Folder page shows `InstallTarget`'s folder and verdict, disables Next for each refusal with its reason, shows needed and free space, and is read-only when locked. The picker is `OpenFolderDialog`. Then build the page. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 6.6 Test first: the Options page defaults (sign-in on, shortcut off) and its presets plus "was on/off" hints after "Use previous settings". Then build the page. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 6.7 Test first, with a stub setup executable built for the test: `SetupRunner` does the following. Then implement it.
   - It writes the choices file before starting setup.
   - It extracts the embedded setup to a per-run temp folder.
   - It runs it with `--silent --log <file> --installto <folder>` and no `--` arguments.
@@ -80,9 +80,9 @@
   - It deletes the temp copy.
 
   Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 6.8 Test first: the Installing page has no Back; a failure shows Retry and Close and keeps the log path, and only Close (with the "may still be running" text) when the setup could not be confirmed stopped; Done offers "Start Navpaky now" (on), and Finish starts `<folder>\Navpaky.exe` when it's checked. Then build the pages. Verify: `dotnet test tests/Navpaky.Setup.Tests`; offscreen renders of every page in light and dark, en and uk, compared with prototype v3.1.
+- [x] 6.8 Test first: the Installing page has no Back; a failure shows Retry and Close and keeps the log path, and only Close (with the "may still be running" text) when the setup could not be confirmed stopped; Done offers "Start Navpaky now" (on), and Finish starts `<folder>\Navpaky.exe` when it's checked. Then build the pages. Verify: `dotnet test tests/Navpaky.Setup.Tests`; offscreen renders of every page in light and dark, en and uk, compared with prototype v3.1.
 
-- [ ] 6.9 Test first, in temp folders: after a successful attempt the wizard deletes both `*.fresh-<attempt>` backups. After a failed one it removes what the hook wrote and moves the backups back, so the data is byte-for-byte as before. A wizard start finding a leftover backup restores it before looking for kept data. Then implement it (design D4, D7). Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 6.9 Test first, in temp folders: after a successful attempt the wizard deletes both `*.fresh-<attempt>` backups. After a failed one it removes what the hook wrote and moves the backups back, so the data is byte-for-byte as before. A wizard start finding a leftover backup restores it before looking for kept data. Then implement it (design D4, D7). Verify: `dotnet test tests/Navpaky.Setup.Tests`.
 
 ## 7. Release (design D8, spec install-wizard)
 
