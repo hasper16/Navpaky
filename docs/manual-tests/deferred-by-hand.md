@@ -260,3 +260,39 @@ Written against the head of the `redesign-visual-identity` PR. Unit tests cover 
 - [ ] **Cursor indicator:** pill (default), tag and underline each appear next to the caret after a Correction and fade; the choice in General shows a preview of each.
 - [ ] **Sounds:** each of the twelve sounds previews from General; with "Navpaky" chosen, a Correction into Ukrainian plays a rising pair and one into English a falling pair.
 - [ ] **Licences:** the install folder holds `Fonts/OFL-Inter.txt` and `Fonts/OFL-GruntGrotesk.txt`.
+
+## add-install-wizard
+
+Written against the head of the `add-install-wizard` PR. Unit tests cover the folder rules, kept-data detection, the hand-off file, the install hook, the setup runner against a stub setup, Start-fresh backups and every page's buttons; these steps need a real install. Use a throwaway Windows 11 VM (Hyper-V, checkpoint `clean-os`, and the scripts of the 2026-11-24 run) with a standard user account, and a wizard built and test-signed as `docs/release.md` "Local test build" describes. Revert to `clean-os` between scenarios unless a step builds on the one before.
+
+- [ ] **New install with defaults.** Run `NavpakySetup.exe`, keep every default, Finish.
+  Expected: no UAC prompt and no Velopack window; the pages are Language, Licence, Folder, Options, Installing, Done (step counter "of 6"); Next on Licence is off until the box is checked; Navpaky starts from `%LOCALAPPDATA%\Programs\Navpaky`, appears in Installed apps and the Start menu, starts at the next sign-in, and opens the Welcome with no language, sign-in or shortcut questions.
+- [ ] **Language.** On a uk-UA Windows pick English on the first page.
+  Expected: every wizard text switches at once; after the install Navpaky's interface is English.
+- [ ] **Custom folder and shortcut.** Pick `D:\Tools` (or another drive), turn the shortcut on, uncheck "Start Navpaky now", Finish.
+  Expected: the Folder page shows `D:\Tools\Navpaky`, the space needed and free; Navpaky is not running, yet the desktop shortcut starts it, sign-in start is on and the chosen language applies.
+- [ ] **Refused folders.** Pick a folder holding a text file, then `%LOCALAPPDATA%\Navpaky\Tools`, then a folder under `C:\Program Files`.
+  Expected: Next is off with "not empty", "Navpaky's data folder" and "administrator rights" in turn; the text file is unchanged.
+- [ ] **Remembered folder.** After the custom-folder install, uninstall keeping data and run the wizard again.
+  Expected: the Folder page proposes `D:\Tools\Navpaky`, and Change… still works.
+- [ ] **Not enough space.** Attach a small virtual disk (for example 100 MB) and pick a folder on it.
+  Expected: Next is off and the page shows the space needed.
+- [ ] **Reinstall over an existing install.** Install with the plain `navpaky-app-win-Setup.exe` (folder `%LOCALAPPDATA%\navpaky-app`), then run the wizard.
+  Expected: the Folder page shows `navpaky-app`, Change… is off and the page says why; afterwards one Installed apps entry, one copy.
+- [ ] **Use previous settings.** Change the Hotkey and add an Excluded App, uninstall keeping data, run the wizard and keep "Use previous settings".
+  Expected: Welcome back lists the Hotkey, words, apps and statistics; Options show the earlier sign-in and shortcut with "was on/off before"; Navpaky starts with the earlier settings and no Welcome.
+- [ ] **Start fresh.** As above, choose Start fresh, Next, Cancel; then Start fresh, Next, Delete and continue.
+  Expected: Cancel returns to the choice and nothing is deleted; after the install no earlier settings, words, statistics or logs remain, no `*.fresh-*` folder is left, and the Welcome opens at step 1.
+- [ ] **Install failure.** Start fresh again, and make the install fail (for example lock the install folder with a file open in another process, or end `Setup.exe` in Task Manager while Installing).
+  Expected: the page says the install failed, shows the log path, offers Retry and Close; the kept data is back byte for byte; Retry succeeds once the cause is gone.
+- [ ] **Plain Setup.exe fallback.** On `clean-os` run `navpaky-app-win-Setup.exe` instead of the wizard.
+  Expected: the Welcome asks the language on step 1 and sign-in and the shortcut on step 3.
+- [ ] **Uninstall removes the shortcut.** With the shortcut on, uninstall from Installed apps.
+  Expected: the desktop shortcut is gone.
+- [ ] **Second start.** Double-click `NavpakySetup.exe` twice quickly.
+  Expected: one wizard window, brought to the front.
+- [ ] **Cold start time.** On a fresh VM, time from double-click to the first wizard window.
+  Expected: about 8 s cold, under 1 s warm; note the numbers.
+- [ ] **Licences.** The Licence page shows the GPL followed by the Inter and Grunt Grotesk font licences.
+- [ ] **Release dry run.** Run **Release** with **Run workflow**.
+  Expected: the artifact holds `NavpakySetup.exe`; the "Sign the install wizard" step is skipped.

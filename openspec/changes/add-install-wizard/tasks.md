@@ -97,8 +97,8 @@
 
 ## 8. Docs and checks
 
-- [ ] 8.1 Update `docs/release.md` (the wizard asset, the local test build), `docs/user-guide.md` (installing, Welcome back, Start fresh) and the README download link. Verify: the docs name `NavpakySetup.exe` and no step still tells users to run `navpaky-app-win-Setup.exe`.
-- [ ] 8.2 Append a section for this change to `docs/manual-tests/deferred-by-hand.md`, for a Windows VM (Hyper-V and the scripts of the 2026-11-24 run). It covers:
+- [x] 8.1 Update `docs/release.md` (the wizard asset, the local test build), `docs/user-guide.md` (installing, Welcome back, Start fresh) and the README download link. Verify: the docs name `NavpakySetup.exe` and no step still tells users to run `navpaky-app-win-Setup.exe`.
+- [x] 8.2 Append a section for this change to `docs/manual-tests/deferred-by-hand.md`, for a Windows VM (Hyper-V and the scripts of the 2026-11-24 run). It covers:
   - a new install with defaults and with a custom folder and shortcut;
   - a non-empty folder refused;
   - a reinstall over an existing `navpaky-app` install;

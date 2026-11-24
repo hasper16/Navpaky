@@ -8,6 +8,13 @@ app. It is a Windows analog of the macOS app Rekey, written from scratch in C# /
 > user session and stores its settings, but it does not correct text yet. The plan is in
 > [docs/roadmap.md](docs/roadmap.md).
 
+## Install
+
+Download `NavpakySetup.exe` from the latest
+[release](https://github.com/hasper16/Navpaky/releases/latest) and run it. It installs Navpaky
+for your account only, without administrator rights; the first start of the wizard can take a few
+seconds. The [user guide](docs/user-guide.md#installing) explains its pages.
+
 ## Prerequisites
 
 - Windows 10 or 11
