@@ -21,9 +21,11 @@ namespace Navpaky.Setup {
         return new SingleInstance(claim, wake, woken);
       }
 
-      wake.Set();
-      wake.Dispose();
-      claim.Dispose();
+      using (claim)
+      using (wake) {
+        wake.Set();
+      }
+
       return null;
     }
 

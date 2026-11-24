@@ -70,11 +70,11 @@ namespace Navpaky.Setup.Wizard {
     }
 
     private static string? Was(bool? before) {
-      return before switch {
-        true => Text("WasOn"),
-        false => Text("WasOff"),
-        null => null,
-      };
+      if (before is not { } was) {
+        return null;
+      }
+
+      return Text(was ? "WasOn" : "WasOff");
     }
 
     private void OnModelChanged(object? sender, PropertyChangedEventArgs e) {

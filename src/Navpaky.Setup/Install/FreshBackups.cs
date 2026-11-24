@@ -60,10 +60,9 @@ namespace Navpaky.Setup.Install {
 
       // What the failed install wrote goes; the hand-off file stays for the wizard to remove.
       Directory.CreateDirectory(data.Local);
-      foreach (string entry in Directory.EnumerateFileSystemEntries(data.Local)) {
-        if (Path.GetFileName(entry) != InstallChoices.FileName) {
-          Delete(entry);
-        }
+      foreach (string entry in Directory.EnumerateFileSystemEntries(data.Local)
+          .Where(entry => Path.GetFileName(entry) != InstallChoices.FileName)) {
+        Delete(entry);
       }
 
       foreach (string entry in Directory.EnumerateFileSystemEntries(localBackup)) {
