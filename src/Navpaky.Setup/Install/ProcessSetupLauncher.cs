@@ -28,11 +28,7 @@ namespace Navpaky.Setup.Install {
       }
 
       public void KillTree() {
-        try {
-          process.Kill(entireProcessTree: true);
-        } catch (InvalidOperationException) {
-          // It exited meanwhile.
-        }
+        process.Kill(entireProcessTree: true);
       }
 
       public void Dispose() {

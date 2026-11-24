@@ -297,6 +297,36 @@ namespace Navpaky.Setup.Tests {
       Assert.False(Directory.Exists(_data.Roaming + FreshBackups.Suffix(_ran[0].Attempt)));
     }
 
+    [Fact]
+    public async Task ABackupThatCannotBeDeletedKeepsTheAcknowledgement() {
+      KeepSettingsFile();
+      FileStream? locked = null;
+      WizardViewModel model = Wizard(Kept(new Settings()), hook: choices => {
+        MoveAside(choices);
+        File.WriteAllText(Path.Join(_data.Local, choices.AcknowledgementName), string.Empty);
+        locked = File.Open(
+            Path.Join(_data.Roaming + FreshBackups.Suffix(choices.Attempt), "settings.json"),
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.None);
+      });
+      await ToPage(model, WizardPage.WelcomeBack);
+      model.StartsFresh = true;
+      await model.Next();
+      model.ConfirmFresh();
+
+      try {
+        await ToPage(model, WizardPage.Done);
+      } finally {
+        if (locked is not null) {
+          await locked.DisposeAsync();
+        }
+      }
+
+      Assert.True(File.Exists(Path.Join(_data.Local, _ran[0].AcknowledgementName)));
+      Assert.False(File.Exists(Path.Join(_data.Local, InstallChoices.FileName)));
+    }
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]

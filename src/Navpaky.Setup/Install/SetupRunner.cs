@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.IO;
 using Navpaky.Core;
 
@@ -41,7 +42,7 @@ namespace Navpaky.Setup.Install {
             exe, ["--silent", "--log", logPath, "--installto", choices.InstallFolder]);
         bool exited = await WaitWhileReporting(setup, logPath, progress).ConfigureAwait(false);
         if (!exited) {
-          setup.KillTree();
+          TryStop(setup);
           return await setup.WaitForExitAsync(KillWait).ConfigureAwait(false)
               ? SetupOutcome.Failed
               : SetupOutcome.MayStillRun;
@@ -76,6 +77,17 @@ namespace Navpaky.Setup.Install {
         return reader.ReadToEnd();
       } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
         return null;
+      }
+    }
+
+    // Stopping can fail (access denied, part of the tree already gone); the wait that follows
+    // decides whether the setup is gone.
+    private static void TryStop(ISetupProcess setup) {
+      try {
+        setup.KillTree();
+      } catch (Exception e) when (e is Win32Exception or AggregateException
+          or InvalidOperationException) {
+        System.Diagnostics.Trace.WriteLine($"Setup not stopped: {e.GetType().Name}");
       }
     }
 

@@ -23,7 +23,7 @@ namespace Navpaky.App.Updates {
     }
 
     public void Run() {
-      InstallChoices? choices = InstallChoices.ReadFrom(_data.Local);
+      InstallChoices? choices = CurrentChoices();
       if (choices?.Data == KeptData.Fresh) {
         MoveAside(choices.Attempt);
       }
@@ -43,6 +43,19 @@ namespace Navpaky.App.Updates {
 
       Remember(choices);
       File.WriteAllText(Path.Join(_data.Local, choices.AcknowledgementName), string.Empty);
+    }
+
+    // The wizard starts the setup right after writing its choices and gives it 5 minutes. An
+    // older file was left by a wizard that crashed or was killed: it must not steer this install.
+    private InstallChoices? CurrentChoices() {
+      string file = Path.Join(_data.Local, InstallChoices.FileName);
+      if (File.Exists(file)
+          && DateTime.UtcNow - File.GetLastWriteTimeUtc(file) > TimeSpan.FromMinutes(10)) {
+        File.Delete(file);
+        return null;
+      }
+
+      return InstallChoices.ReadFrom(_data.Local);
     }
 
     private void Remember(InstallChoices choices) {

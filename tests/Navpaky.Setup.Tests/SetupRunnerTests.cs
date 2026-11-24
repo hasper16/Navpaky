@@ -102,6 +102,20 @@ namespace Navpaky.Setup.Tests {
       Assert.True(stubborn.Killed);
     }
 
+    // Stopping can fail (access denied, part of the tree gone); the wait afterwards decides.
+    [Fact]
+    public async Task AStopThatThrowsStillEndsAsMayStillRun() {
+      var stubborn = new StubbornLauncher { KillFails = true };
+      var runner = new SetupRunner(Extract(Stub(0, acknowledge: true)), stubborn) {
+        Timeout = TimeSpan.FromMilliseconds(200),
+        KillWait = TimeSpan.FromMilliseconds(200),
+      };
+
+      SetupOutcome outcome = await runner.RunAsync(_choices, _data, _log, progress: null);
+
+      Assert.Equal(SetupOutcome.MayStillRun, outcome);
+    }
+
     [Fact]
     public async Task TheTemporaryCopyOfSetupIsDeleted() {
       SetupRunner runner = Runner(Stub(exitCode: 0, acknowledge: true));
@@ -162,6 +176,8 @@ namespace Navpaky.Setup.Tests {
     private sealed class StubbornLauncher : ISetupLauncher {
       public bool Killed { get; private set; }
 
+      public bool KillFails { get; init; }
+
       public ISetupProcess Start(string exe, IReadOnlyList<string> args) {
         return new Stubborn(this);
       }
@@ -176,6 +192,9 @@ namespace Navpaky.Setup.Tests {
 
         public void KillTree() {
           owner.Killed = true;
+          if (owner.KillFails) {
+            throw new AggregateException(new System.ComponentModel.Win32Exception(5));
+          }
         }
 
         public void Dispose() {

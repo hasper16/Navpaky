@@ -63,6 +63,20 @@ namespace Navpaky.Setup.Tests {
       Assert.Empty(Directory.EnumerateDirectories(_root, "*.fresh-*", SearchOption.AllDirectories));
     }
 
+    // The install completed (its acknowledgement is there) but deleting the backup failed: the
+    // next start finishes the deletion instead of putting old data over newer.
+    [Fact]
+    public void ALeftoverOfACompletedInstallIsDiscarded() {
+      MoveAsideLikeTheHook();
+      Write(Path.Join(_data.Local, $"install-done-{_attempt:N}"), string.Empty);
+
+      FreshBackups.RestoreLeftovers(_data);
+
+      Assert.Equal("new", File.ReadAllText(Path.Join(_data.Roaming, "settings.json")));
+      Assert.False(File.Exists(Path.Join(_data.Local, $"install-done-{_attempt:N}")));
+      Assert.Empty(Directory.EnumerateDirectories(_root, "*.fresh-*", SearchOption.AllDirectories));
+    }
+
     private static void Write(string path, string text) {
       Directory.CreateDirectory(Path.GetDirectoryName(path)!);
       File.WriteAllText(path, text);

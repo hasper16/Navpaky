@@ -21,14 +21,25 @@ namespace Navpaky.Setup.Install {
       Restore(data, Suffix(attempt));
     }
 
-    // Before the wizard looks for kept data, so a crash never loses it silently.
+    // Before the wizard looks for kept data, so a crash never loses it silently. A backup whose
+    // install completed (its acknowledgement is still there) is deleted instead: putting it back
+    // would replace data the user has had since.
     public static void RestoreLeftovers(DataFolderPair data) {
       IEnumerable<string> suffixes = new[] { data.Roaming, data.Local }
           .SelectMany(folder => Leftovers(folder))
           .Distinct(StringComparer.OrdinalIgnoreCase)
           .ToList();
       foreach (string suffix in suffixes) {
-        Restore(data, suffix);
+        string done = Path.Join(data.Local, "install-done-" + suffix[_marker.Length..]);
+        if (File.Exists(done)) {
+          foreach (string backup in BackupsOf(data, suffix)) {
+            Directory.Delete(backup, recursive: true);
+          }
+
+          File.Delete(done);
+        } else {
+          Restore(data, suffix);
+        }
       }
     }
 

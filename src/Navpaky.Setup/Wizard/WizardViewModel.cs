@@ -40,6 +40,7 @@ namespace Navpaky.Setup.Wizard {
               WizardPage.Options, WizardPage.Installing, WizardPage.Done];
       _folder = Check(InstallLookup.Proposed(
           folders.ExistingInstall, kept?.Settings?.InstallFolder, folders.DefaultFolder));
+      FreeBytes = folders.Probe.FreeBytes(_folder.Folder);
       Language = kept?.Settings?.UiLanguage ?? UiLanguage.System;
       PresetOptions();
     }
@@ -137,7 +138,7 @@ namespace Navpaky.Setup.Wizard {
 
     public long NeededBytes => _folders.NeededBytes;
 
-    public long FreeBytes => _folders.Probe.FreeBytes(Folder.Folder);
+    public long FreeBytes { get; private set; }
 
     public bool LaunchAtSignIn {
       get => _launchAtSignIn;
@@ -206,6 +207,7 @@ namespace Navpaky.Setup.Wizard {
     public void Pick(string folder) {
       if (!Folder.Locked) {
         _folder = Check(folder);
+        FreeBytes = _folders.Probe.FreeBytes(_folder.Folder);
         Changed();
       }
     }
@@ -264,8 +266,11 @@ namespace Navpaky.Setup.Wizard {
 
     // Design D4: the Start-fresh backup goes only after a confirmed install and comes back after
     // a failed one. A setup that may still run keeps everything; the next wizard start restores.
+    // A backup that could not be deleted keeps the acknowledgement, so the next start deletes it
+    // rather than putting it back.
     private void Settle(InstallChoices choices, SetupOutcome outcome) {
       DataFolderPair data = _folders.Data;
+      bool settled = true;
       try {
         if (outcome == SetupOutcome.Succeeded) {
           FreshBackups.Discard(data, choices.Attempt);
@@ -273,12 +278,15 @@ namespace Navpaky.Setup.Wizard {
           FreshBackups.Restore(data, choices.Attempt);
         }
       } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        settled = false;
         outcome = outcome == SetupOutcome.Succeeded ? outcome : SetupOutcome.MayStillRun;
       }
 
       if (outcome != SetupOutcome.MayStillRun) {
         TryDelete(Path.Join(data.Local, InstallChoices.FileName));
-        TryDelete(Path.Join(data.Local, choices.AcknowledgementName));
+        if (settled) {
+          TryDelete(Path.Join(data.Local, choices.AcknowledgementName));
+        }
       }
 
       _outcome = outcome;

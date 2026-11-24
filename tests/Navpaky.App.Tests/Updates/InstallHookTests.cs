@@ -103,6 +103,23 @@ namespace Navpaky.App.Tests.Updates {
       Assert.False(File.Exists(Path.Join(_data.Local, choices.AcknowledgementName)));
     }
 
+    // A choices file a crashed or killed wizard left behind must not steer a later plain install.
+    [Fact]
+    public void AStaleChoicesFileIsDeletedAndIgnored() {
+      KeepSomeData(new Settings(Hotkey: Hotkey.DoubleCtrl));
+      InstallChoices choices = Write(KeptData.Fresh, signIn: true, shortcut: true);
+      string file = Path.Join(_data.Local, InstallChoices.FileName);
+      File.SetLastWriteTimeUtc(file, DateTime.UtcNow - TimeSpan.FromHours(1));
+
+      Hook().Run();
+
+      Assert.False(File.Exists(file));
+      Assert.Equal(Hotkey.DoubleCtrl, new SettingsStore(_data.Settings).Load().Hotkey);
+      Assert.Empty(_signIn);
+      Assert.Empty(_shortcut.Calls);
+      Assert.False(File.Exists(Path.Join(_data.Local, choices.AcknowledgementName)));
+    }
+
     private InstallHook Hook() {
       return new InstallHook(_data, _install, (on, exe) => _signIn.Add((on, exe)), _shortcut);
     }
