@@ -35,34 +35,38 @@ The Licence page SHALL show the licence text in a scrollable box and an "I accep
 - **THEN** Next on the Licence page is disabled
 
 ### Requirement: Install folder for the current user
-The Folder page SHALL propose a folder and let the user pick another one through a folder picker. The proposed folder is:
-- for a new install, `%LOCALAPPDATA%\Programs\Navpaky` (design decision);
-- for a reinstall, the folder recorded by the earlier install.
-
-The page SHALL say that Navpaky installs for the current account only, needs no administrator rights and updates quietly. The space needed and the space free on the chosen drive SHALL be shown.
+The Folder page SHALL propose a folder and let the user pick another one through a folder picker. It proposes the folder kept settings remember from an earlier, since uninstalled install, and otherwise `%LOCALAPPDATA%\Programs\Navpaky` (design decision). The page SHALL say that Navpaky installs for the current account only, needs no administrator rights and updates quietly, and SHALL show the space needed and the space free on the chosen drive.
 
 #### Scenario: Default folder
 - **WHEN** a user with no earlier install reaches the Folder page
 - **THEN** the proposed folder is `%LOCALAPPDATA%\Programs\Navpaky`
+
+#### Scenario: Remembered folder after uninstall
+- **WHEN** an earlier install in `D:\Apps\Navpaky` was uninstalled with its data kept, and the user runs the wizard
+- **THEN** the proposed folder is `D:\Apps\Navpaky` and the user can pick another one
 
 #### Scenario: Not enough space
 - **WHEN** the chosen drive has less free space than the install needs
 - **THEN** Next is disabled and the page says how much space is needed
 
 ### Requirement: Install into a Navpaky folder
-The wizard SHALL install only into a folder named `Navpaky`. When the user picks a folder with any other name, the wizard SHALL use a `Navpaky` subfolder of it and show the resulting path.
+When Navpaky is not installed for the user, the wizard SHALL install only into a folder named `Navpaky`. When the user picks a folder with any other name, the wizard SHALL use a `Navpaky` subfolder of it and show the resulting path. An existing install's folder SHALL be used exactly as it is, whatever its name.
 
 #### Scenario: Folder with another name
 - **WHEN** the user picks `D:\Tools`
 - **THEN** the wizard shows and uses `D:\Tools\Navpaky`
 
 ### Requirement: Refuse unsafe folders
-The wizard SHALL refuse a target folder that exists, is not empty and does not hold a Navpaky install. Velopack's silent setup deletes the existing contents of its target (observed in the 2026-11-24 live run). The wizard SHALL also refuse a folder the user cannot write to.
+The wizard SHALL refuse a target folder that exists, is not empty and does not hold a Navpaky install. Velopack's silent setup deletes the existing contents of its target (observed in the 2026-11-24 live run). The wizard SHALL also refuse a folder the user cannot write to, and a folder that is, lies inside, or contains either of Navpaky's data folders (`%APPDATA%\Navpaky`, `%LOCALAPPDATA%\Navpaky`).
 
 #### Scenario: Non-empty folder
 - **WHEN** the resulting folder exists and holds files that are not a Navpaky install
 - **THEN** Next is disabled and the page says the folder is not empty
 - **AND** none of those files are changed
+
+#### Scenario: Folder overlaps the data folder
+- **WHEN** the user picks `%LOCALAPPDATA%\Navpaky\Tools`
+- **THEN** Next is disabled and the page says the folder is Navpaky's data folder
 
 #### Scenario: Folder not writable
 - **WHEN** the user picks a folder under `C:\Program Files`
@@ -124,7 +128,7 @@ When the wizard finds Navpaky data kept from an earlier install, it SHALL show a
 ### Requirement: Start fresh after a confirmation
 Choosing "Start fresh" and pressing Next SHALL first ask for confirmation. The confirmation names what is deleted (settings, learned and protected words, the app list, statistics, logs) and says it cannot be undone. It offers Cancel, which returns to the choice, and "Delete and continue".
 
-The data SHALL be deleted only after the app files are installed, never when the install fails. Navpaky's first start after Start fresh SHALL show the Welcome window.
+Navpaky's first start after Start fresh SHALL show the Welcome window.
 
 #### Scenario: Cancel
 - **WHEN** the user presses Cancel on the confirmation
@@ -135,17 +139,32 @@ The data SHALL be deleted only after the app files are installed, never when the
 - **THEN** no settings, word lists, statistics or logs of the earlier install remain
 - **AND** Navpaky's first start opens the Welcome window at step 1
 
+### Requirement: Start fresh deletes only after a complete install
+After Start fresh, the kept data SHALL be deleted only after the whole install has completed, including its Installed apps entry and the application of the wizard's choices. When the install fails at any point, the kept data SHALL be as it was before.
+
 #### Scenario: Install fails after confirmation
 - **WHEN** the user confirms Start fresh and the install fails
 - **THEN** the kept data is still there
 
 ### Requirement: Install progress and errors
-The Installing page SHALL show progress while the files are copied, and SHALL NOT allow going back. When the install fails, the wizard SHALL say so in the chosen language, keep the earlier state, and offer to retry or close. Velopack's own windows SHALL NOT appear during the install.
+The Installing page SHALL show progress while the files are copied, and SHALL NOT allow going back. The install SHALL count as successful only when the setup succeeded and every choice was applied. When the install fails, the wizard SHALL say so in the chosen language, keep the earlier state, and offer to retry or close. Velopack's own windows SHALL NOT appear during the install.
 
 #### Scenario: Setup fails
 - **WHEN** the embedded setup ends with an error
 - **THEN** the wizard shows that the install failed and offers Retry and Close
 - **AND** the earlier install, if any, still works
+
+### Requirement: Retry only after the setup stopped
+The wizard SHALL offer Retry only once the failed setup is known to have stopped. Otherwise it SHALL offer only Close and say that a setup may still be running, so two setups never write the same folder.
+
+#### Scenario: Setup does not finish
+- **WHEN** the embedded setup is still running after the time limit
+- **THEN** the wizard stops it and offers Retry only after it has stopped
+- **AND** no second setup starts while the first one may still be running
+
+#### Scenario: Choices not applied
+- **WHEN** the setup reports success but the choices were not all applied
+- **THEN** the wizard reports the install as failed and offers Retry and Close
 
 ### Requirement: Done page
 The Done page SHALL say that Navpaky is installed and where to find it (tray and Start menu), and SHALL offer "Start Navpaky now", on by default. Finish SHALL close the wizard and start Navpaky when that box is checked.

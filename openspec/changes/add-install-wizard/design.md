@@ -62,22 +62,31 @@ The app's behaviour doesn't change: same resources, same keys. Each executable k
 On Install, the wizard starts the extracted setup with `--silent --log <per-run log> --installto <folder>`, and **no `--` arguments** (F1). It runs on a background `Task`; the UI thread only shows progress.
 
 - **Progress:** Velopack reports none under `--silent`, so the Installing page shows an indeterminate bar. It moves to the next phase when the log file shows "Extracting", "Starting process install hook" and "Installation completed".
-- **Result:** the wizard waits for **the setup process only**, never its descendants (F7). Exit code 0 is success. Any other code, or no exit after 5 minutes (design decision), is a failure: the wizard shows Retry and Close and keeps the per-run log for diagnostics. The log holds no typed text, but it does hold paths, so it isn't sent anywhere.
+- **Result:** the wizard waits for **the setup process only**, never its descendants (F7). Success needs both: exit code 0, **and** the hook's completion acknowledgement for this attempt (D4). Exit 0 alone isn't enough: Velopack 1.2.161 kills a hook that overruns its 30 s and still exits 0. Anything else is a failure. The wizard keeps the per-run log for diagnostics. The log holds no typed text, but it does hold paths, so it isn't sent anywhere.
+- **Timeout:** no exit after 5 minutes (design decision) is a failure too. The wizard first stops the setup it started (`Process.Kill(entireProcessTree: true)`, then up to 30 s for it to exit). **Retry is offered only once that process is confirmed gone.** If the wizard can't confirm it, it offers only Close and says a setup may still be running, so two setups never write the same folder.
+- **On failure:** the wizard restores the Start-fresh backup if there is one (D4) and leaves any earlier install as Velopack left it.
 - **Finish:** when "Start Navpaky now" is checked, the wizard starts `<folder>\Navpaky.exe` (the root launcher, F2) with `Process.Start` (`UseShellExecute = true`) and exits.
 
 ### D4. Hand-off file
 Before running setup, the wizard writes `%LOCALAPPDATA%\Navpaky\install-choices.json`, overwriting any earlier one:
 ```json
-{ "version": 1, "uiLanguage": "System|English|Ukrainian", "launchAtSignIn": true,
-  "desktopShortcut": false, "data": "new|keep|fresh", "installFolder": "<path>" }
+{ "version": 1, "attempt": "<guid>", "uiLanguage": "System|English|Ukrainian",
+  "launchAtSignIn": true, "desktopShortcut": false, "data": "new|keep|fresh",
+  "installFolder": "<path>" }
 ```
+`attempt` is new for every press of Install.
 
 **The install hook** (`OnAfterInstallFastCallback`, which runs as the installing user inside setup, F2) reads the file and, within its 30 s budget:
-1. If `data` is `fresh`, deletes `%APPDATA%\Navpaky` and every entry of `%LOCALAPPDATA%\Navpaky` except `install-choices.json`, with retries like `DataQuestion`. The deletion happens only after the files were copied, so a failed install keeps the data. It counts as "after a successful copy", not strictly after success, because Velopack writes the Installed apps entry after the hook.
-2. Writes the install marker, as today.
+1. **If `data` is `fresh`,** it **moves** the kept data aside instead of deleting it. `%APPDATA%\Navpaky` is renamed to `%APPDATA%\Navpaky.fresh-<attempt>`, and every entry of `%LOCALAPPDATA%\Navpaky` except `install-choices.json` moves into `%LOCALAPPDATA%\Navpaky.fresh-<attempt>`. Renames within one volume are quick and can be undone. Nothing is deleted yet.
+2. Writes the install marker, as today. It stays for the uninstall data question's reinstall check.
 3. Applies `launchAtSignIn` through `SignInLaunch` (HKCU Run + StartupApproved). The entry points to the root `Navpaky.exe`.
 4. Creates or removes the desktop shortcut (D6).
-5. Writes `UiLanguage` and `InstallFolder` into settings, creating `settings.json` with defaults when there is none.
+5. Writes `UiLanguage`, `InstallFolder` and `DesktopShortcut` into settings, creating `settings.json` with defaults when there is none.
+6. **Last,** writes the completion acknowledgement `%LOCALAPPDATA%\Navpaky\install-done-<attempt>`.
+
+**The wizard's part.** After setup exits 0 and the acknowledgement exists (the install is complete, including the Installed apps entry), the wizard deletes both `*.fresh-<attempt>` backups. On any failure it restores them: it deletes what the hook wrote and moves the backups back.
+
+**Leftovers.** A backup left behind by a crashed wizard is restored by the next wizard run before it looks for kept data, so the user's data is never lost silently. The app deletes the acknowledgement together with the choices file.
 
 **On first start** the app reads the file:
 - `keep` marks the Welcome as completed, so no Welcome opens;
@@ -91,19 +100,24 @@ Before running setup, the wizard writes `%LOCALAPPDATA%\Navpaky\install-choices.
 ### D5. Folder rules
 The folder logic lives in a pure, unit-tested class in `Navpaky.Setup` (`InstallTarget`). It takes:
 - the user's pick;
-- the existing install's folder (from HKCU `Software\Microsoft\Windows\CurrentVersion\Uninstall\navpaky-app` → `InstallLocation`, else `InstallFolder` from kept settings);
+- the **existing install**: only a real one, meaning HKCU `Software\Microsoft\Windows\CurrentVersion\Uninstall\navpaky-app` → `InstallLocation` whose folder still holds `Update.exe`;
+- the **remembered folder**: `InstallFolder` from kept settings. It's only an editable default, because after an uninstall it names a folder that no longer holds Navpaky;
+- the two data folders (`%APPDATA%\Navpaky`, `%LOCALAPPDATA%\Navpaky`);
 - a file-system port.
 
 It returns the target folder and a verdict:
 - **Ok.**
 - **NotEmpty:** the folder exists, has entries, and has no `Update.exe` plus `current\Navpaky.App.exe`.
+- **OverlapsData:** the target equals, lies inside, or contains either data folder. Velopack would rename a non-empty `%LOCALAPPDATA%\Navpaky` before the hook runs, and Start fresh moves everything in it. The default `%LOCALAPPDATA%\Programs\Navpaky` doesn't overlap.
 - **NotWritable:** creating and deleting a probe file under the nearest existing parent fails.
 - **NotEnoughSpace:** compared with the package size plus 50 MB, the same margin Velopack uses.
 - **Locked to the existing install.**
 
-A pick whose last segment isn't `Navpaky` (case-insensitive) gets `\Navpaky` appended. An existing install always wins: the folder field is read-only with a one-line reason. Moving an install means uninstalling it first.
+**Folder name.** A pick whose last segment isn't `Navpaky` (case-insensitive) gets `\Navpaky` appended. This applies only when there is no existing install: an existing install's folder is used exactly as it is, for example `%LOCALAPPDATA%\navpaky-app`.
 
-The default for new installs is `%LOCALAPPDATA%\Programs\Navpaky`, Windows' place for per-user apps (`FOLDERID_UserProgramFiles`). Installs from before this change stay in `navpaky-app` through the existing-install rule.
+**Existing install.** It always wins: the folder field is read-only with a one-line reason. Moving an install means uninstalling it first; after that, the remembered folder is proposed but can be changed.
+
+**Default.** For new installs it is `%LOCALAPPDATA%\Programs\Navpaky`, Windows' place for per-user apps (`FOLDERID_UserProgramFiles`). Installs from before this change stay in `navpaky-app` through the existing-install rule.
 
 ### D6. Desktop shortcut
 The pack keeps `--shortcuts StartMenuRoot`, so Velopack makes no desktop link.
@@ -113,7 +127,7 @@ On "yes", the hook creates `Navpaky.lnk` on the user's desktop (`SHGetKnownFolde
 Uninstall needs no new code: Velopack removes links into the install root (F6). The uninstall hook still removes ours, in case Velopack's search misses it.
 
 ### D7. Welcome back and Start fresh
-**Detecting kept data.** The wizard treats data as kept when `%APPDATA%\Navpaky\settings.json` exists, or `%LOCALAPPDATA%\Navpaky` has entries other than `install-choices.json`.
+**Detecting kept data.** The wizard treats data as kept when `%APPDATA%\Navpaky\settings.json` exists, or `%LOCALAPPDATA%\Navpaky` has entries other than `install-choices.json` and `install-done-*`. Before it looks, it restores any `*.fresh-*` backup a crashed earlier run left (D4).
 
 **What it shows.** It reads `settings.json` with `Navpaky.Core`'s settings reader (read-only) to:
 - preset launch at sign-in and the interface language;
@@ -145,7 +159,7 @@ The Welcome's one switch sets both `DiagnosticsConsent.CrashReports` and the Usa
 
 - **Download about 150 MB** (F8 plus Setup.exe), roughly 1.8× today → accepted by the owner. A native wizard would be smaller but loses the WPF look.
 - **Cold start of the wizard about 8 s** while the single-file bundle extracts (F8). Nothing is shown before the WPF window, so the user may double-click again → the wizard is single-instance (named mutex). The README says it can take a few seconds.
-- **The 30 s hook budget** must cover the Start-fresh deletion, the marker, the Run entry and the shortcut → keep it fast. A timeout shows Velopack's warning, which is hidden under `--silent`. The wizard then checks the marker and reports a partial install.
+- **The 30 s hook budget** must cover the Start-fresh renames, the marker, the Run entry, the shortcut and settings → keep it fast; renames, not deletions. Velopack 1.2.161 kills an overrunning hook and still exits 0, so the wizard relies on the per-attempt acknowledgement (D3, D4): no acknowledgement is a failed, partial install, and the Start-fresh backup is restored.
 - **The plain Setup.exe stays downloadable** and bypasses the wizard → the Welcome fallback asks the install questions (spec `onboarding`).
 - **Velopack upgrades** can change `--silent`, `--installto` or the panic in F1 → Velopack is pinned (`Directory.Packages.props`, `VPK_VERSION`); one live install run per Velopack bump (deferred by-hand checklist).
 - **SmartScreen:** a new signed exe needs reputation like `Setup.exe` does. No change in kind.

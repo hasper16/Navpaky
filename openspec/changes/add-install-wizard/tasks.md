@@ -17,24 +17,26 @@
 ## 3. Folder rules (design D5)
 
 - [ ] 3.1 Test first, through a fake file-system port: `InstallTarget` covers each of these cases. Then implement it in `src/Navpaky.Setup`.
-  - It appends `\Navpaky` to a pick with another name, case-insensitive.
+  - It appends `\Navpaky` to a pick with another name, case-insensitive, but uses an existing install's folder as it is (for example `navpaky-app`).
   - It returns NotEmpty for a folder with foreign files.
+  - It returns OverlapsData for a target equal to, inside or containing `%APPDATA%\Navpaky` or `%LOCALAPPDATA%\Navpaky`, and accepts `%LOCALAPPDATA%\Programs\Navpaky`.
   - It accepts an empty folder and an existing Navpaky install (`Update.exe` + `current\Navpaky.App.exe`).
   - It returns NotWritable when the probe fails.
   - It returns NotEnoughSpace below package size + 50 MB.
   - It locks to an existing install's folder.
 
   Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 3.2 Test first: the existing-install lookup prefers HKCU `Uninstall\navpaky-app` → `InstallLocation`, falls back to `InstallFolder` from kept settings, and returns none when neither exists. Registry and file reads go through ports. Then implement it. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [ ] 3.2 Test first: the existing install is HKCU `Uninstall\navpaky-app` → `InstallLocation` only while that folder holds `Update.exe`, and it locks the folder. `InstallFolder` from kept settings is only the proposed, editable default. With neither, the default is `%LOCALAPPDATA%\Programs\Navpaky`. Registry and file reads go through ports. Then implement it. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
 
 ## 4. Choices reach the app (design D4, D6, D10)
 
 - [ ] 4.1 Test first, in temp folders: for each `data` value the install hook does the following. Then wire it into `OnAfterInstallFastCallback`.
-  - `fresh` deletes `%APPDATA%\Navpaky` and every `%LOCALAPPDATA%\Navpaky` entry except `install-choices.json`.
+  - `fresh` moves `%APPDATA%\Navpaky` to `%APPDATA%\Navpaky.fresh-<attempt>` and every `%LOCALAPPDATA%\Navpaky` entry except `install-choices.json` into `%LOCALAPPDATA%\Navpaky.fresh-<attempt>`, deleting nothing (design D4).
   - It writes the marker.
   - It applies launch at sign-in to the root `Navpaky.exe`.
   - It writes `UiLanguage`, `InstallFolder` and `DesktopShortcut` into settings, creating them with defaults when absent.
-  - `keep` and `new` delete nothing.
+  - `keep` and `new` move nothing.
+  - The last step writes `install-done-<attempt>`; a step that throws leaves no acknowledgement.
   - No choices file means today's behaviour (marker only).
 
   Verify: `dotnet test tests/Navpaky.App.Tests`.
@@ -77,11 +79,14 @@
   - It runs it with `--silent --log <file> --installto <folder>` and no `--` arguments.
   - It moves through the phases as the log grows.
   - It waits for the setup process only.
-  - It treats exit 0 as success, and any other code or a 5-minute timeout as failure.
+  - It reports success only for exit 0 **and** `install-done-<attempt>`; exit 0 without the acknowledgement is a failure.
+  - On a 5-minute timeout it kills the setup's process tree and waits up to 30 s. It reports whether the process is confirmed gone, and Retry is allowed only then. A stub that ignores the kill reports "may still be running".
   - It deletes the temp copy.
 
   Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 6.8 Test first: the Installing page has no Back; a failure shows Retry and Close and keeps the log path; Done offers "Start Navpaky now" (on), and Finish starts `<folder>\Navpaky.exe` when it's checked. Then build the pages. Verify: `dotnet test tests/Navpaky.Setup.Tests`; offscreen renders of every page in light and dark, en and uk, compared with prototype v3.1.
+- [ ] 6.8 Test first: the Installing page has no Back; a failure shows Retry and Close and keeps the log path, and only Close (with the "may still be running" text) when the setup could not be confirmed stopped; Done offers "Start Navpaky now" (on), and Finish starts `<folder>\Navpaky.exe` when it's checked. Then build the pages. Verify: `dotnet test tests/Navpaky.Setup.Tests`; offscreen renders of every page in light and dark, en and uk, compared with prototype v3.1.
+
+- [ ] 6.9 Test first, in temp folders: after a successful attempt the wizard deletes both `*.fresh-<attempt>` backups. After a failed one it removes what the hook wrote and moves the backups back, so the data is byte-for-byte as before. A wizard start finding a leftover backup restores it before looking for kept data. Then implement it (design D4, D7). Verify: `dotnet test tests/Navpaky.Setup.Tests`.
 
 ## 7. Release (design D8, spec install-wizard)
 
