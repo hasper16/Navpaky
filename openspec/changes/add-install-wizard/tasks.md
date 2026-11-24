@@ -11,8 +11,8 @@
 
 ## 2. Data shapes (design D4, D7)
 
-- [ ] 2.1 Test first: `InstallChoices` (in `Navpaky.Core`) round-trips the version-1 JSON of design D4. An unknown `version`, a missing file or malformed JSON reads as "no choices", without throwing. Then implement it. Verify: `dotnet test tests/Navpaky.Core.Tests`.
-- [ ] 2.2 Test first: settings gain optional `InstallFolder`, `DesktopShortcut` and `InstallQuestionsAnswered`, and a settings file from 0.4 (without them) reads with all three unknown. Then add them. Verify: `dotnet test tests/Navpaky.Core.Tests`.
+- [x] 2.1 Test first: `InstallChoices` (in `Navpaky.Core`) round-trips the version-1 JSON of design D4. An unknown `version`, a missing file or malformed JSON reads as "no choices", without throwing. Then implement it. Verify: `dotnet test tests/Navpaky.Core.Tests`.
+- [x] 2.2 Test first: settings gain optional `InstallFolder`, `DesktopShortcut` and `InstallQuestionsAnswered`, and a settings file from 0.4 (without them) reads with all three unknown. Then add them. Verify: `dotnet test tests/Navpaky.Core.Tests`.
 
 ## 3. Folder rules (design D5)
 

@@ -104,6 +104,20 @@ namespace Navpaky.Core {
   /// One of the enumeration values that specifies how the cursor indicator looks. The default is
   /// <see cref="Core.CursorIndicatorStyle.Pill" />.
   /// </param>
+  /// <param name="InstallFolder">
+  /// The folder the install wizard last installed Navpaky into, which it proposes again after an
+  /// uninstall that kept the data, or <see langword="null" /> when unknown. The default is
+  /// <see langword="null" />.
+  /// </param>
+  /// <param name="DesktopShortcut">
+  /// Whether the user asked for a desktop shortcut when installing, or <see langword="null" />
+  /// when unknown. The default is <see langword="null" />.
+  /// </param>
+  /// <param name="InstallQuestionsAnswered">
+  /// <see langword="true" /> once the install wizard asked the interface language, launch at
+  /// sign-in and the desktop shortcut, so the welcome window need not; otherwise,
+  /// <see langword="false" />. The default is <see langword="false" />.
+  /// </param>
   // Each setting is a constructor parameter with a default: since .NET 10, source-generated JSON
   // gives an init-only property that the file omits its type default, not its initializer.
   public sealed record Settings(
@@ -130,7 +144,10 @@ namespace Navpaky.Core {
       DateOnly? LastDigestDay = null,
       bool SetupSignalSent = false,
       UiLanguage UiLanguage = UiLanguage.System,
-      CursorIndicatorStyle CursorIndicatorStyle = CursorIndicatorStyle.Pill) {
+      CursorIndicatorStyle CursorIndicatorStyle = CursorIndicatorStyle.Pill,
+      string? InstallFolder = null,
+      bool? DesktopShortcut = null,
+      bool InstallQuestionsAnswered = false) {
     /// <summary>
     /// The <see cref="PausedUntil" /> value of a Pause that lasts until Navpaky restarts.
     /// </summary>
