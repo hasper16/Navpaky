@@ -48,12 +48,16 @@ Installer changes replace Velopack's one-click setup with Navpaky's own wizard (
 | I1 | `add-install-wizard` | install-wizard (new), auto-update, onboarding, telemetry: branded per-user wizard (language, licence, folder, shortcut, sign-in, Welcome back / Start fresh), hand-off of choices to the install hook, slimmer Welcome with one telemetry consent, single signed `NavpakySetup.exe` | D2 |
 | I2 | `add-machine-wide-install` (not yet proposed) | install-wizard, auto-update: "All users" into Program Files, with the 2026-11-24 live-run workarounds (HKLM entry and elevating uninstall, shared Start-menu link, per-user autostart through Active Setup, no apply-on-start, closing Navpaky in every session before an update, cleanup of the per-admin Installed apps entry) | I1 |
 
-Initiative after I2, **analysis pending** (owner, 2026-11-24): **distribution variants**. It has no OpenSpec change yet; changes are proposed once the owner picks options from the analysis.
+Initiative after I2, **analysis pending** (owner, 2026-11-24): **Portable and use without admin rights**. The goal: a user can run Navpaky on a PC they don't administer, such as a corporate PC, without asking IT. It has no OpenSpec change yet; changes are proposed once the owner settles the open choice (portable data in the profile or next to the exe).
 
-| # | Variant | Scope | Depends on |
+| # | Item | Scope | Depends on |
 |---|---|---|---|
-| V1 | Portable | Run without installing (Velopack's portable package): data next to the app or in the profile, no autostart or uninstall entry, update behaviour, removable media | I1 |
-| V2 | Managed / corporate PCs | IT deployment and restricted environments: deployment channels (MSI, Intune/SCCM/GPO, winget, silent switches), AppLocker/WDAC, signing and SmartScreen, proxies, EDR and the keyboard hook, IT-controlled updates and policy-driven settings | I2 |
+| V1 | Portable zip | Run without installing (Velopack's portable package): data in the profile or next to the exe (open), no autostart or uninstall entry by default, update behaviour, "remove data from this PC" | I1 |
+| V2 | Folder build | Publish a self-contained folder instead of a single file, so nothing is extracted to `%TEMP%` at start | — |
+| V3 | Code signing | A real code-signing certificate for every executable, including the wizard | — |
+| V4 | Blocked by policy | A clear "blocked by your organization's policy, contact IT" message where Navpaky can detect it, and an IT page explaining how to allow Navpaky by publisher | V3 |
+
+Out of scope: any workaround that bypasses application control (AppLocker/WDAC), removable-media blocking or EDR/antivirus, and IT deployment tooling (Intune/SCCM/GPO, ADMX policies, silent IT installs).
 
 T1 can run in parallel with changes 12–15: it touches no file under `src/`, `tests/` or `tools/Navpaky.DesktopChecks/`. Its global installs reach only sessions started after them, so implementers already at work keep their tools until their change ends.
 
