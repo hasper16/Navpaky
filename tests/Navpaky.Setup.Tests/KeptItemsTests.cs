@@ -64,11 +64,14 @@ namespace Navpaky.Setup.Tests {
 
       Assert.NotNull(kept);
       Assert.Null(kept.Settings);
+      Assert.True(kept.SettingsUnreadable);
       Assert.Equal(["settings.json"], Directory.GetFiles(_data.Roaming).Select(Path.GetFileName));
     }
 
+    // Found in the 2026-11-25 VM run: a lone folder in the local data folder read as an
+    // unreadable settings file.
     [Fact]
-    public void LocalStateAloneIsKept() {
+    public void LocalStateAloneIsKeptWithoutClaimingUnreadableSettings() {
       Directory.CreateDirectory(_data.Local);
       File.WriteAllText(Path.Join(_data.Local, "incidents.jsonl"), string.Empty);
 
@@ -76,6 +79,7 @@ namespace Navpaky.Setup.Tests {
 
       Assert.NotNull(kept);
       Assert.False(kept.Statistics);
+      Assert.False(kept.SettingsUnreadable);
     }
   }
 }

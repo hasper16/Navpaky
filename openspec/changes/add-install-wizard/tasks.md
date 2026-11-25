@@ -119,4 +119,4 @@
 - [ ] 9.2 Test first: the space needed is the embedded package's compressed size plus its extracted size plus 50 MB, read through Velopack's bundle header, and the Folder page shows and checks that figure. Verify: `dotnet test tests/Navpaky.Setup.Tests`; in the VM the page shows about 298 MB.
 - [ ] 9.3 `release.yml` and `docs/release.md` pack with `--shortcuts StartMenuRoot`. Verify: in the VM the plain setup leaves no desktop link.
 - [ ] 9.4 The welcome window's step 3 fits a 1024×768 work area after an install without the wizard. Verify: in the VM at 1024×768 the Done button lies inside the work area.
-- [ ] 9.5 Test first: Welcome back says the settings could not be read only when `settings.json` exists and cannot be read. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 9.5 Test first: Welcome back says the settings could not be read only when `settings.json` exists and cannot be read. Verify: `dotnet test tests/Navpaky.Setup.Tests`.

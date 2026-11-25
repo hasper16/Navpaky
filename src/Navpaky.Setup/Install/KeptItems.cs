@@ -4,8 +4,10 @@ using Navpaky.Core.Words;
 
 namespace Navpaky.Setup.Install {
   // Navpaky data kept from an earlier install, read without changing it (design D7 of
-  // add-install-wizard). Settings is null when settings.json is missing or unreadable.
-  internal sealed record KeptItems(Settings? Settings, int? LearnedWords, bool Statistics) {
+  // add-install-wizard). Settings is null when settings.json is missing or unreadable;
+  // SettingsUnreadable tells the two apart.
+  internal sealed record KeptItems(
+      Settings? Settings, int? LearnedWords, bool Statistics, bool SettingsUnreadable = false) {
     private const string _settingsFile = "settings.json";
     private const string _statisticsFile = "stats.json";
 
@@ -15,10 +17,12 @@ namespace Navpaky.Setup.Install {
         return null;
       }
 
+      Settings? kept = new SettingsStore(data.Roaming).Peek();
       return new KeptItems(
-          new SettingsStore(data.Roaming).Peek(),
+          kept,
           new WordListsStore(data.Roaming).Peek()?.Learned.Count,
-          File.Exists(Path.Join(data.Local, _statisticsFile)));
+          File.Exists(Path.Join(data.Local, _statisticsFile)),
+          settings && kept is null);
     }
 
     // The wizard's own hand-off files are not the user's data.

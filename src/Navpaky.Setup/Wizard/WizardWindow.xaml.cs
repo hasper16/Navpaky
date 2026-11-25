@@ -146,7 +146,7 @@ namespace Navpaky.Setup.Wizard {
       if (kept.Settings is { } settings) {
         lines.Add(Text("KeptHotkey", Text($"Hotkey{settings.Hotkey.Kind}")));
         lines.Add(Text("KeptApps", settings.ExcludedApps.Entries.Count));
-      } else {
+      } else if (kept.SettingsUnreadable) {
         lines.Add(Text("KeptNoDetails"));
       }
 
