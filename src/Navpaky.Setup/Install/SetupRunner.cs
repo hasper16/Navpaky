@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Navpaky.Core;
 
 namespace Navpaky.Setup.Install {
@@ -73,16 +74,24 @@ namespace Navpaky.Setup.Install {
       return line?[(line.IndexOf(label, StringComparison.Ordinal) + label.Length)..].Trim();
     }
 
-    private static void Report(string logPath, IProgress<SetupPhase>? progress) {
+    // Reports the phases the log shows that were not reported yet, in order: the log only grows,
+    // and every poll reads it whole.
+    private static int Report(string logPath, IProgress<SetupPhase>? progress, int reported) {
       if (progress is null || ReadShared(logPath) is not { } log) {
-        return;
+        return reported;
       }
 
-      foreach ((string line, SetupPhase phase) in _phases) {
-        if (log.Contains(line, StringComparison.Ordinal)) {
-          progress.Report(phase);
+      for (int next = reported; next < _phases.Length; next++) {
+        (string line, SetupPhase phase) = _phases[next];
+        if (!log.Contains(line, StringComparison.Ordinal)) {
+          break;
         }
+
+        progress.Report(phase);
+        reported = next + 1;
       }
+
+      return reported;
     }
 
     // Velopack keeps the log open while it writes.
@@ -139,7 +148,9 @@ namespace Navpaky.Setup.Install {
         DataFolderPair data,
         string logPath,
         IProgress<SetupPhase>? progress) {
-      bool exited = await WaitWhileReporting(setup, logPath, progress).ConfigureAwait(false);
+      var reported = new StrongBox<int>();
+      bool exited = await WaitWhileReporting(setup, logPath, progress, reported)
+          .ConfigureAwait(false);
       if (!exited) {
         TryStop(setup);
         return await setup.WaitForExitAsync(KillWait).ConfigureAwait(false)
@@ -147,7 +158,7 @@ namespace Navpaky.Setup.Install {
             : SetupOutcome.MayStillRun;
       }
 
-      Report(logPath, progress);
+      Report(logPath, progress, reported.Value);
       if (setup.ExitCode != 0) {
         return SetupOutcome.Failed;
       }
@@ -161,7 +172,10 @@ namespace Navpaky.Setup.Install {
     }
 
     private async Task<bool> WaitWhileReporting(
-        ISetupProcess setup, string logPath, IProgress<SetupPhase>? progress) {
+        ISetupProcess setup,
+        string logPath,
+        IProgress<SetupPhase>? progress,
+        StrongBox<int> reported) {
       DateTime deadline = DateTime.UtcNow + Timeout;
       while (DateTime.UtcNow < deadline) {
         TimeSpan left = deadline - DateTime.UtcNow;
@@ -169,7 +183,7 @@ namespace Navpaky.Setup.Install {
           return true;
         }
 
-        Report(logPath, progress);
+        reported.Value = Report(logPath, progress, reported.Value);
       }
 
       return false;

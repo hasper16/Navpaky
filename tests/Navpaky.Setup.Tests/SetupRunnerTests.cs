@@ -189,6 +189,25 @@ namespace Navpaky.Setup.Tests {
       Assert.Empty(hook.Runs);
     }
 
+    // A poll after the log is complete must not report the phases a second time (a CI flake).
+    [Fact]
+    public async Task EachPhaseIsReportedOnceInOrder() {
+      CancellationToken cancel = TestContext.Current.CancellationToken;
+      string[] log = [
+          "[INFO] Extracting Update.exe...",
+          "[INFO] Starting process install hook",
+          "[INFO] Installation completed successfully!"];
+      await File.WriteAllLinesAsync(_log, log, cancel);
+      Directory.CreateDirectory(_data.Local);
+      await File.WriteAllTextAsync(Acknowledgement(), string.Empty, cancel);
+      SetupRunner runner = new(Extract(Stub(0, acknowledge: true)), new LateExit());
+      var phases = new Recorded();
+
+      await runner.RunAsync(_choices, forAllUsers: false, _data, _log, phases);
+
+      Assert.Equal([SetupPhase.Copying, SetupPhase.Applying, SetupPhase.Finishing], phases.All);
+    }
+
     // Task 5.1 of add-machine-wide-install: only the attempt and a flag cross the elevation.
     [Fact]
     public async Task ForAllUsersTheWizardStartsItselfElevated() {
@@ -345,6 +364,38 @@ namespace Navpaky.Setup.Tests {
 
         public Task<bool> WaitForExitAsync(TimeSpan timeout) {
           return Task.FromResult(true);
+        }
+
+        public void KillTree() {
+        }
+
+        public void Dispose() {
+        }
+      }
+    }
+
+    // Every phase as reported, without dropping repeats.
+    private sealed class Recorded : IProgress<SetupPhase> {
+      public List<SetupPhase> All { get; } = [];
+
+      public void Report(SetupPhase value) {
+        All.Add(value);
+      }
+    }
+
+    // A setup that exits only after two more polls of its finished log.
+    private sealed class LateExit : ISetupLauncher {
+      public ISetupProcess Start(string exe, IReadOnlyList<string> args) {
+        return new Process();
+      }
+
+      private sealed class Process : ISetupProcess {
+        private int _waits;
+
+        public int ExitCode => 0;
+
+        public Task<bool> WaitForExitAsync(TimeSpan timeout) {
+          return Task.FromResult(++_waits > 2);
         }
 
         public void KillTree() {
