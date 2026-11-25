@@ -88,16 +88,48 @@ namespace Navpaky.Setup.Tests {
           _launcher,
           (root, version, signIn) => _registered.Add((root, version, signIn)),
           _machine,
-          _temp);
+          _temp) { CreateWorkFolder = PlainFolder };
 
       Assert.Equal(1, await setup.RunAsync(_attempt, signIn: true));
       Assert.Empty(_launcher.Runs);
+    }
+
+    // Same-account elevation: the user's unelevated programs could swap Setup.exe in a folder
+    // they can write to.
+    [Fact]
+    public async Task RefusesAWorkFolderThatIsNotAdministratorsOnly() {
+      var refusing = new MachineSetup(
+          elevated: true,
+          _ => throw new InvalidOperationException("must not extract"),
+          _launcher,
+          (root, version, signIn) => _registered.Add((root, version, signIn)),
+          _machine,
+          _temp) { CreateWorkFolder = _ => false };
+
+      Assert.Equal(1, await refusing.RunAsync(_attempt, signIn: true));
+      Assert.Empty(_launcher.Runs);
+    }
+
+    // Retry must not start a second setup while the first may still write Program Files.
+    [Fact]
+    public async Task ASetupThatDoesNotStopReportsThatItMayStillRun() {
+      _launcher.NeverExits = true;
+
+      Assert.Equal(
+          MachineSetup.MayStillRunExitCode, await Setup().RunAsync(_attempt, signIn: true));
+      Assert.Empty(_registered);
     }
 
     [Fact]
     public async Task ASetupThatLeftNoVersionFails() {
       Assert.Equal(1, await Setup().RunAsync(_attempt, signIn: true));
       Assert.Empty(_registered);
+    }
+
+    // Tests run unelevated: a plain folder stands in for the administrators-only one.
+    private static bool PlainFolder(string path) {
+      Directory.CreateDirectory(path);
+      return true;
     }
 
     private MachineSetup Setup(bool elevated = true) {
@@ -111,7 +143,11 @@ namespace Navpaky.Setup.Tests {
           _launcher,
           (root, version, signIn) => _registered.Add((root, version, signIn)),
           _machine,
-          _temp);
+          _temp) {
+        CreateWorkFolder = PlainFolder,
+        Timeout = TimeSpan.FromMilliseconds(10),
+        KillWait = TimeSpan.FromMilliseconds(10),
+      };
     }
 
     private void Installed(string version) {
@@ -126,19 +162,21 @@ namespace Navpaky.Setup.Tests {
 
       public int ExitCode { get; set; }
 
+      public bool NeverExits { get; set; }
+
       public Action Install { get; set; } = () => { };
 
       public ISetupProcess Start(string exe, IReadOnlyList<string> args) {
         Runs.Add((exe, args));
         Install();
-        return new Done(ExitCode);
+        return new Done(ExitCode, NeverExits);
       }
 
-      private sealed class Done(int exitCode) : ISetupProcess {
+      private sealed class Done(int exitCode, bool neverExits) : ISetupProcess {
         public int ExitCode => exitCode;
 
         public Task<bool> WaitForExitAsync(TimeSpan timeout) {
-          return Task.FromResult(true);
+          return Task.FromResult(!neverExits);
         }
 
         public void KillTree() {

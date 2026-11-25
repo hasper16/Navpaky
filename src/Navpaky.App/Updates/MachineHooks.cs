@@ -5,6 +5,9 @@ namespace Navpaky.App.Updates {
     // Design decision: inside the 15 s Velopack gives the obsolete hook.
     public static readonly TimeSpan CloseWait = TimeSpan.FromSeconds(10);
 
+    // Kill returns before the process is gone; 10 s + 3 s stays inside the 15 s limit.
+    public static readonly TimeSpan StopWait = TimeSpan.FromSeconds(3);
+
     private readonly Action<string> _refreshEntry;
     private readonly Action _unregister;
     private readonly Func<IDisposable> _raiseClose;
@@ -37,10 +40,24 @@ namespace Navpaky.App.Updates {
     }
 
     // Each Navpaky saves its data as it closes; only the ones still running after the wait stop.
+    // When the signal can't be raised (someone else holds the name), they are stopped at once.
     private void CloseOthers() {
-      using IDisposable raised = _raiseClose();
-      if (!_others.WaitForExit(CloseWait)) {
-        _others.Stop();
+      IDisposable? raised = TryRaise();
+      using (raised) {
+        if (raised is null || !_others.WaitForExit(CloseWait)) {
+          _others.Stop();
+          _others.WaitForExit(StopWait);
+        }
+      }
+    }
+
+    private IDisposable? TryRaise() {
+      try {
+        return _raiseClose();
+      } catch (Exception e) when (e is UnauthorizedAccessException
+          or WaitHandleCannotBeOpenedException or System.IO.IOException) {
+        System.Diagnostics.Trace.WriteLine($"Navpaky close request not raised: {e.GetType().Name}");
+        return null;
       }
     }
   }

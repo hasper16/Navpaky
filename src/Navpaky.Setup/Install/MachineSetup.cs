@@ -10,6 +10,10 @@ namespace Navpaky.Setup.Install {
   internal sealed class MachineSetup {
     public const string Argument = "--all-users-setup";
 
+    // The elevated step could not confirm that the setup it stopped is gone (design D2): the
+    // wizard then offers no Retry, as for a per-user setup that may still run.
+    public const int MayStillRunExitCode = 2;
+
     private readonly bool _elevated;
     private readonly Func<string, string> _extractSetup;
     private readonly ISetupLauncher _launcher;
@@ -35,6 +39,12 @@ namespace Navpaky.Setup.Install {
 
     // The same limit the unelevated wizard gives the whole setup.
     public TimeSpan Timeout { get; init; } = TimeSpan.FromMinutes(5);
+
+    public TimeSpan KillWait { get; init; } = TimeSpan.FromSeconds(30);
+
+    // Creates the work folder so that only administrators can write to it, or says it couldn't;
+    // tests replace it, since they run unelevated.
+    public Func<string, bool> CreateWorkFolder { get; init; } = AdminFolder.TryCreate;
 
     public static string[] Arguments(Guid attempt, bool signIn) {
       return [Argument, attempt.ToString("N"), signIn ? "on" : "off"];
@@ -69,14 +79,18 @@ namespace Navpaky.Setup.Install {
 
       string? exe = null;
       try {
-        Directory.CreateDirectory(work);
+        // With the same account elevated, its unelevated programs can write to its temp folder
+        // and could swap the setup before it starts.
+        if (!CreateWorkFolder(work)) {
+          return 1;
+        }
+
         exe = _extractSetup(work);
         using ISetupProcess setup = _launcher.Start(
             exe,
             ["--silent", "--log", LogOf(_tempRoot, attempt), "--installto", _machineRoot]);
         if (!await setup.WaitForExitAsync(Timeout).ConfigureAwait(false)) {
-          setup.KillTree();
-          return 1;
+          return await Stop(setup).ConfigureAwait(false);
         }
 
         if (setup.ExitCode != 0 || PackageManifest.VersionIn(_machineRoot) is not { } version) {
@@ -102,6 +116,18 @@ namespace Navpaky.Setup.Install {
       } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
         Trace.WriteLine($"Setup copy not deleted: {e.GetType().Name}");
       }
+    }
+
+    // Kill returns before the process is gone, and may fail; only a confirmed exit allows Retry.
+    private async Task<int> Stop(ISetupProcess setup) {
+      try {
+        setup.KillTree();
+      } catch (Exception e) when (e is Win32Exception or AggregateException
+          or InvalidOperationException) {
+        Trace.WriteLine($"All-users setup not stopped: {e.GetType().Name}");
+      }
+
+      return await setup.WaitForExitAsync(KillWait).ConfigureAwait(false) ? 1 : MayStillRunExitCode;
     }
   }
 }

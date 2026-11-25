@@ -5,6 +5,7 @@ namespace Navpaky.App.Tests.Updates {
   public sealed class MachineHooksTests {
     private readonly List<string> _steps = [];
     private bool _othersExit;
+    private Exception? _raiseFails;
 
     [Fact]
     public void AfterUpdateRefreshesTheEntryWithTheNewVersion() {
@@ -19,14 +20,15 @@ namespace Navpaky.App.Tests.Updates {
 
       Hooks().BeforeUpdate();
 
-      Assert.Equal(["raise", "wait", "lower"], _steps);
+      Assert.Equal(["raise", "wait 10", "lower"], _steps);
     }
 
+    // Kill returns before the process is gone; the update must not start on a locked folder.
     [Fact]
-    public void StopsTheOnesThatDidNotClose() {
+    public void StopsTheOnesThatDidNotCloseAndWaitsForThemToGo() {
       Hooks().BeforeUpdate();
 
-      Assert.Equal(["raise", "wait", "stop", "lower"], _steps);
+      Assert.Equal(["raise", "wait 10", "stop", "wait 3", "lower"], _steps);
     }
 
     [Fact]
@@ -35,7 +37,17 @@ namespace Navpaky.App.Tests.Updates {
 
       Hooks().BeforeUninstall();
 
-      Assert.Equal(["raise", "wait", "lower", "unregister"], _steps);
+      Assert.Equal(["raise", "wait 10", "lower", "unregister"], _steps);
+    }
+
+    // Someone else holds the event name: no graceful close, but the rest still happens.
+    [Fact]
+    public void ASignalThatCannotBeRaisedStillStopsOthersAndUnregisters() {
+      _raiseFails = new UnauthorizedAccessException();
+
+      Hooks().BeforeUninstall();
+
+      Assert.Equal(["stop", "wait 3", "unregister"], _steps);
     }
 
     private MachineHooks Hooks() {
@@ -43,6 +55,10 @@ namespace Navpaky.App.Tests.Updates {
           version => _steps.Add($"entry {version}"),
           () => _steps.Add("unregister"),
           () => {
+            if (_raiseFails is not null) {
+              throw _raiseFails;
+            }
+
             _steps.Add("raise");
             return new Lowered(_steps);
           },
@@ -57,8 +73,7 @@ namespace Navpaky.App.Tests.Updates {
 
     private sealed class FakeOthers(List<string> steps, Func<bool> exit) : IOtherSessions {
       public bool WaitForExit(TimeSpan timeout) {
-        Assert.Equal(MachineHooks.CloseWait, timeout);
-        steps.Add("wait");
+        steps.Add($"wait {timeout.TotalSeconds}");
         return exit();
       }
 

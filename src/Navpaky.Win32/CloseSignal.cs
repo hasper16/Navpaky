@@ -17,12 +17,13 @@ namespace Navpaky.Win32 {
         EventWaitHandleRights.Synchronize | EventWaitHandleRights.ReadPermissions;
 
     /// <summary>
-    /// Creates the event, owned by Administrators, which only an elevated process can do. It
-    /// stays raised until the returned handle is disposed.
+    /// Creates the event, owned by Administrators, which only an elevated process can do, and
+    /// sets it. The request ends when the returned object is disposed, even while other handles
+    /// to the event stay open: only its set state counts, which only administrators can change.
     /// </summary>
     /// <param name="name">The event's name; tests pass their own.</param>
-    /// <returns>The handle that keeps the request alive.</returns>
-    public static EventWaitHandle Raise(string name) {
+    /// <returns>The object that ends the request when disposed.</returns>
+    public static IDisposable Raise(string name) {
       var security = new EventWaitHandleSecurity();
       security.SetOwner(Sid(WellKnownSidType.BuiltinAdministratorsSid));
       security.SetAccessRuleProtection(isProtected: true, preserveInheritance: false);
@@ -31,8 +32,10 @@ namespace Navpaky.Win32 {
       security.AddAccessRule(
           Rule(WellKnownSidType.BuiltinAdministratorsSid, EventWaitHandleRights.FullControl));
       security.AddAccessRule(Rule(WellKnownSidType.AuthenticatedUserSid, _readRights));
-      return EventWaitHandleAcl.Create(
-          true, EventResetMode.ManualReset, name, out _, security);
+      EventWaitHandle signal = EventWaitHandleAcl.Create(
+          false, EventResetMode.ManualReset, name, out _, security);
+      signal.Set();
+      return new Raised(signal);
     }
 
     /// <summary>
@@ -42,15 +45,22 @@ namespace Navpaky.Win32 {
     /// <param name="name">The event's name; tests pass their own.</param>
     /// <returns><see langword="true" /> when the request is raised.</returns>
     public static bool IsRaised(string name) {
-      if (!EventWaitHandleAcl.TryOpenExisting(name, _readRights, out EventWaitHandle? signal)) {
+      EventWaitHandle? signal;
+      try {
+        if (!EventWaitHandleAcl.TryOpenExisting(name, _readRights, out signal)) {
+          return false;
+        }
+      } catch (UnauthorizedAccessException) {
+        // Someone else's event that denies us the check: not an administrator's request.
         return false;
       }
 
       using (signal) {
         IdentityReference? owner = signal.GetAccessControl().GetOwner(typeof(SecurityIdentifier));
-        return owner is SecurityIdentifier sid
+        bool trusted = owner is SecurityIdentifier sid
             && (sid.IsWellKnown(WellKnownSidType.BuiltinAdministratorsSid)
                 || sid.IsWellKnown(WellKnownSidType.LocalSystemSid));
+        return trusted && signal.WaitOne(0);
       }
     }
 
@@ -61,6 +71,15 @@ namespace Navpaky.Win32 {
     private static EventWaitHandleAccessRule Rule(
         WellKnownSidType type, EventWaitHandleRights rights) {
       return new EventWaitHandleAccessRule(Sid(type), rights, AccessControlType.Allow);
+    }
+
+    // Ends the request before closing this handle: a handle another process keeps open must not
+    // extend it.
+    private sealed class Raised(EventWaitHandle signal) : IDisposable {
+      public void Dispose() {
+        signal.Reset();
+        signal.Dispose();
+      }
     }
   }
 }

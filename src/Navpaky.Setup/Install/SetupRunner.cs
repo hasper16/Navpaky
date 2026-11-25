@@ -52,7 +52,11 @@ namespace Navpaky.Setup.Install {
 
         // The administrator's own account may have run the install hook: the wizard user's
         // choices then come from running it again below.
-        return await Finish(elevated, choices, data, logPath, progress).ConfigureAwait(false);
+        SetupOutcome outcome =
+            await Finish(elevated, choices, data, logPath, progress).ConfigureAwait(false);
+        return elevated.ExitCode == MachineSetup.MayStillRunExitCode
+            ? SetupOutcome.MayStillRun
+            : outcome;
       }
 
       DirectoryInfo temp = Directory.CreateTempSubdirectory("navpaky-setup-");

@@ -17,7 +17,7 @@ namespace Navpaky.Win32.Tests {
     public void RaisedByAnAdministrator() {
       Assert.SkipUnless(IsElevated(), "Raising needs an elevated test run.");
 
-      using EventWaitHandle signal = CloseSignal.Raise(_name);
+      using IDisposable signal = CloseSignal.Raise(_name);
 
       Assert.True(CloseSignal.IsRaised(_name));
     }
@@ -27,6 +27,34 @@ namespace Navpaky.Win32.Tests {
       Assert.SkipUnless(IsElevated(), "Raising needs an elevated test run.");
 
       CloseSignal.Raise(_name).Dispose();
+
+      Assert.False(CloseSignal.IsRaised(_name));
+    }
+
+    // A handle someone keeps open must not keep the request alive after the hook ends it.
+    [Fact]
+    public void EndsWhenTheRaiserIsDoneEvenIfAnotherHandleStaysOpen() {
+      Assert.SkipUnless(IsElevated(), "Raising needs an elevated test run.");
+      IDisposable raised = CloseSignal.Raise(_name);
+      Assert.True(EventWaitHandle.TryOpenExisting(_name, out EventWaitHandle? kept));
+
+      using (kept) {
+        raised.Dispose();
+
+        Assert.False(CloseSignal.IsRaised(_name));
+      }
+    }
+
+    // A squatter can deny everyone the rights the check needs; that must not crash Navpaky.
+    [Fact]
+    public void IgnoresAnEventItCannotRead() {
+      var security = new EventWaitHandleSecurity();
+      security.AddAccessRule(new EventWaitHandleAccessRule(
+          new SecurityIdentifier("S-1-3-4"),
+          EventWaitHandleRights.Synchronize,
+          AccessControlType.Allow));
+      using EventWaitHandle squatter = EventWaitHandleAcl.Create(
+          true, EventResetMode.ManualReset, _name, out _, security);
 
       Assert.False(CloseSignal.IsRaised(_name));
     }

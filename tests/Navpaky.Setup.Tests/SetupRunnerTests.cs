@@ -239,6 +239,18 @@ namespace Navpaky.Setup.Tests {
           await runner.RunAsync(_choices, forAllUsers: true, _data, _log, progress: null));
     }
 
+    [Fact]
+    public async Task ForAllUsersASetupThatMayStillRunIsNotRetried() {
+      SetupRunner runner = new(Extract(Stub(0, acknowledge: true)), new ProcessSetupLauncher()) {
+        Elevated = new ElevatedFake(MachineSetup.MayStillRunExitCode, Acknowledgement()),
+        Self = _self,
+      };
+
+      Assert.Equal(
+          SetupOutcome.MayStillRun,
+          await runner.RunAsync(_choices, forAllUsers: true, _data, _log, progress: null));
+    }
+
     // An administrator's own account ran the elevated hook without this user's choices.
     [Fact]
     public async Task ForAllUsersTheHookRunsAgainAsThisUserWithTheInstalledVersion() {
