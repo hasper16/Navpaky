@@ -36,7 +36,12 @@ namespace Navpaky.Setup.Tests {
       _readOnly.Add(root);
     }
 
+    // Like Directory.EnumerateFileSystemEntries on a folder that denies listing.
     public bool HasEntries(string folder) {
+      if (_unlistable.Contains(folder)) {
+        throw new UnauthorizedAccessException();
+      }
+
       string prefix = folder.TrimEnd('\\') + '\\';
       return _files.Any(f => f.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
           || _folders.Any(f => f.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));

@@ -48,11 +48,16 @@ namespace Navpaky.Setup.Install {
         return FolderVerdict.OverlapsData;
       }
 
+      // Before HasEntries, which would throw on a folder that denies listing.
+      if (!listed) {
+        return FolderVerdict.NotWritable;
+      }
+
       if (folders.HasEntries(folder) && !HoldsNavpaky(folder, folders)) {
         return FolderVerdict.NotEmpty;
       }
 
-      if (!listed || !folders.CanWrite(folder)) {
+      if (!folders.CanWrite(folder)) {
         return FolderVerdict.NotWritable;
       }
 
