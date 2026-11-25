@@ -86,7 +86,7 @@
 
 ## 7. Release (design D8, spec install-wizard)
 
-- [ ] 7.1 `Navpaky.Setup.csproj` embeds `$(EmbeddedSetupPath)` as a resource and fails the build when it is missing in Release. Verify: a local Release publish with a test-signed pack produces `NavpakySetup.exe` that installs per `docs/release.md` "Local test build".
+- [x] 7.1 `Navpaky.Setup.csproj` embeds `$(EmbeddedSetupPath)` as a resource and fails the build when it is missing in Release. Verify: a local Release publish with a test-signed pack produces `NavpakySetup.exe` that installs per `docs/release.md` "Local test build".
 - [x] 7.2 `release.yml` does the following after `vpk pack`:
   - publishes the wizard with the fresh `Setup.exe`;
   - signs it with `VPK_SIGN_PARAMS`;
