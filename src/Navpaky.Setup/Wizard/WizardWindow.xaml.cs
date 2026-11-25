@@ -11,6 +11,9 @@ namespace Navpaky.Setup.Wizard {
   // The install wizard's window (spec install-wizard): one page at a time, texts in the chosen
   // language, and no closing while a setup runs.
   internal sealed partial class WizardWindow {
+    // A design decision: keeps the Folder page within the window at 1024x768.
+    private const int _extrasShown = 8;
+
     private readonly WizardViewModel _model;
 
     public WizardWindow(WizardViewModel model) {
@@ -63,6 +66,14 @@ namespace Navpaky.Setup.Wizard {
       return bytes >= 1_000_000_000
           ? Text("SizeGigabytes", bytes / 1e9)
           : Text("SizeMegabytes", Math.Ceiling(bytes / 1e6));
+    }
+
+    private static TextBlock ExtraLine(string text) {
+      return new TextBlock {
+        Text = text,
+        TextTrimming = TextTrimming.CharacterEllipsis,
+        Focusable = true,
+      };
     }
 
     private static Visibility Shown(bool shown) {
@@ -170,6 +181,22 @@ namespace Navpaky.Setup.Wizard {
       FolderProblem.Text = _model.FolderProblem is { } problem ? Text(problem) : string.Empty;
       FolderProblem.Visibility = Shown(_model.FolderProblem is not null);
       FolderSpace.Text = Text("FolderSpace", Size(_model.NeededBytes), Size(_model.FreeBytes));
+      ShowExtras(folder.Extras);
+    }
+
+    // The entries a reinstall would delete, bounded so the page keeps its layout (design D3 of
+    // warn-reinstall-extra-files).
+    private void ShowExtras(IReadOnlyList<string> extras) {
+      FolderExtras.Visibility = Shown(extras.Count > 0);
+      FolderExtrasList.Children.Clear();
+      foreach (string name in extras.Take(_extrasShown)) {
+        FolderExtrasList.Children.Add(ExtraLine(name));
+      }
+
+      if (extras.Count > _extrasShown) {
+        int more = extras.Count - _extrasShown;
+        FolderExtrasList.Children.Add(ExtraLine(Text("FolderExtrasMore", more)));
+      }
     }
 
     private void ShowInstalling() {

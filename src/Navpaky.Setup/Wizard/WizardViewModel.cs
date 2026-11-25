@@ -18,6 +18,7 @@ namespace Navpaky.Setup.Wizard {
 
     private UiLanguage _language;
     private bool _licenceAccepted;
+    private bool _extrasConfirmed;
     private bool _keepsData = true;
     private bool _confirmingFresh;
     private bool _freshConfirmed;
@@ -65,7 +66,8 @@ namespace Navpaky.Setup.Wizard {
     public bool CanGoNext => Page switch {
       WizardPage.Licence => LicenceAccepted,
       WizardPage.WelcomeBack => !ConfirmingFresh,
-      WizardPage.Folder => Folder.Verdict == FolderVerdict.Ok,
+      WizardPage.Folder => Folder.Verdict == FolderVerdict.Ok
+          && (Folder.Extras.Count == 0 || ExtrasConfirmed),
       WizardPage.Installing => false,
       _ => true,
     };
@@ -127,6 +129,12 @@ namespace Navpaky.Setup.Wizard {
     public bool ConfirmingFresh => _confirmingFresh;
 
     public FolderCheck Folder => _folder;
+
+    // The user's yes to the setup deleting the folder's extra entries (warn-reinstall-extra-files).
+    public bool ExtrasConfirmed {
+      get => _extrasConfirmed;
+      set => Set(ref _extrasConfirmed, value);
+    }
 
     public string? FolderProblem => Folder.Verdict switch {
       FolderVerdict.Ok => null,
@@ -207,6 +215,7 @@ namespace Navpaky.Setup.Wizard {
     public void Pick(string folder) {
       if (!Folder.Locked) {
         _folder = Check(folder);
+        _extrasConfirmed = false;
         FreeBytes = _folders.Probe.FreeBytes(_folder.Folder);
         Changed();
       }

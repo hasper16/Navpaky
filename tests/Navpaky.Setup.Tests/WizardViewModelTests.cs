@@ -187,6 +187,56 @@ namespace Navpaky.Setup.Tests {
       Assert.True(model.Folder.Locked);
     }
 
+    // Task 2.1 of warn-reinstall-extra-files: the setup would delete the listed entries.
+    [Fact]
+    public async Task ExtraEntriesHoldNextUntilConfirmed() {
+      string existing = Path.Join(_root, "navpaky-app");
+      _folders.Install(existing);
+      _folders.Add(Path.Join(existing, "notes.txt"));
+      WizardViewModel model = Wizard(existing: existing);
+      await ToPage(model, WizardPage.Folder);
+
+      Assert.Equal(["notes.txt"], model.Folder.Extras);
+      Assert.False(model.CanGoNext);
+
+      model.ExtrasConfirmed = true;
+
+      Assert.True(model.CanGoNext);
+    }
+
+    [Fact]
+    public async Task PickingAnotherFolderAsksAgain() {
+      string first = Path.Join(_root, "First", "Navpaky");
+      string second = Path.Join(_root, "Second", "Navpaky");
+      foreach (string folder in new[] { first, second }) {
+        _folders.Install(folder);
+        _folders.Add(Path.Join(folder, "notes.txt"));
+      }
+
+      WizardViewModel model = Wizard();
+      await ToPage(model, WizardPage.Folder);
+      model.Pick(first);
+      model.ExtrasConfirmed = true;
+
+      model.Pick(second);
+
+      Assert.False(model.ExtrasConfirmed);
+      Assert.False(model.CanGoNext);
+    }
+
+    [Fact]
+    public async Task WithoutExtrasNextFollowsTheVerdictAlone() {
+      string existing = Path.Join(_root, "navpaky-app");
+      _folders.Install(existing);
+      WizardViewModel model = Wizard(existing: existing);
+
+      await ToPage(model, WizardPage.Folder);
+
+      Assert.Empty(model.Folder.Extras);
+      Assert.False(model.ExtrasConfirmed);
+      Assert.True(model.CanGoNext);
+    }
+
     [Fact]
     public async Task OptionsDefaultToSignInOnAndShortcutOff() {
       WizardViewModel model = Wizard();

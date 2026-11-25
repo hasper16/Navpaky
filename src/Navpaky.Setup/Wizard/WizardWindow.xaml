@@ -189,6 +189,14 @@
                      Style="{StaticResource PageHint}"
                      Margin="0,8,0,0" />
           <TextBlock x:Name="FolderProblem" Style="{StaticResource Problem}" />
+          <StackPanel x:Name="FolderExtras">
+            <TextBlock Text="{u:Loc FolderExtras}" Style="{StaticResource Problem}" />
+            <StackPanel x:Name="FolderExtrasList" Margin="12,4,0,0" />
+            <CheckBox x:Name="FolderExtrasConfirm"
+                      Content="{u:Loc FolderExtrasConfirm}"
+                      IsChecked="{Binding ExtrasConfirmed}"
+                      Margin="0,6,0,0" />
+          </StackPanel>
           <TextBlock Text="{u:Loc FolderQuiet}" Style="{StaticResource PageHint}" Margin="0,8,0,0" />
           <TextBlock x:Name="FolderSpace"
                      Margin="0,8,0,0"

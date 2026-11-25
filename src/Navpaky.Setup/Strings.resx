@@ -163,6 +163,15 @@
   <data name="FolderNotEmpty" xml:space="preserve">
     <value>This folder isn't empty. Pick an empty or a new folder.</value>
   </data>
+  <data name="FolderExtras" xml:space="preserve">
+    <value>This folder also holds files and folders that aren't part of Navpaky. Reinstalling deletes them:</value>
+  </data>
+  <data name="FolderExtrasConfirm" xml:space="preserve">
+    <value>Delete them and reinstall</value>
+  </data>
+  <data name="FolderExtrasMore" xml:space="preserve">
+    <value>and {0} more</value>
+  </data>
   <data name="FolderOverlapsData" xml:space="preserve">
     <value>This is Navpaky's data folder. Pick another folder.</value>
   </data>

@@ -8,8 +8,8 @@
 
 ## 2. Confirmation in the wizard (design D3)
 
-- [ ] 2.1 Test first: on the Folder page with extras, Next is disabled until `ExtrasConfirmed` is set. The confirmation resets when another folder is picked. Without extras, Next follows the verdict alone. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 2.2 Add the warning, at most 8 names, the "and N more" line and the "Delete them and reinstall" check box to the Folder page, with English and Ukrainian texts. The window test checks the names shown, the more line and the check box for 12 extras, and that none of it shows without extras. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 2.1 Test first: on the Folder page with extras, Next is disabled until `ExtrasConfirmed` is set. The confirmation resets when another folder is picked. Without extras, Next follows the verdict alone. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 2.2 Add the warning, at most 8 names, the "and N more" line and the "Delete them and reinstall" check box to the Folder page, with English and Ukrainian texts. The window test checks the names shown, the more line and the check box for 12 extras, and that none of it shows without extras. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
 
 ## 3. Test cleanup (design D5)
 
