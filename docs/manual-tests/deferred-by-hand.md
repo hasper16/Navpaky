@@ -321,3 +321,14 @@ Written against the head of the `add-install-wizard` PR. Unit tests cover the fo
 - [x] **Release dry run.** Run **Release** with **Run workflow**.
   Expected: the artifact holds `NavpakySetup.exe`; the "Sign the install wizard" step is skipped.
   2026-11-24: pass (run 45479093919).
+
+## warn-reinstall-extra-files
+
+Use the same VM, scripts and test-signed builds as add-install-wizard.
+
+- [x] **Reinstall with extra files.** Install Navpaky with the wizard, put a file and a folder into its install folder, and run the wizard again up to the Folder page. Close the wizard; then run it again, check the box and install.
+  Expected: the Folder page lists the file and the folder, says the reinstall deletes them, and keeps Next off until "Delete them and reinstall" is checked. Closing keeps both; the confirmed reinstall removes them and installs.
+  2026-11-25: pass with the wizard of c15c053 (Hyper-V NavpakyLab, standard user, uk-UA).
+  - The Folder page listed `backup` and `notes.txt` with the box off and Next disabled.
+  - After closing, both were still there.
+  - After confirming, Next was enabled and the reinstall reached Done in 16 s, leaving only `current`, `packages`, `Navpaky.exe` and `Update.exe`.

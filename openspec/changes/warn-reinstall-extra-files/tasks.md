@@ -17,7 +17,7 @@
 
 ## 4. Checks and docs
 
-- [ ] 4.1 Add a "Reinstall with extra files" item to `docs/manual-tests/deferred-by-hand.md` and run it in the NavpakyLab VM. With a file and a folder added to the existing install's folder, the Folder page lists them and Next stays off until the box is checked. Closing then keeps both; confirming and installing deletes them and installs. Verify: the item is ticked with the run's date.
+- [x] 4.1 Add a "Reinstall with extra files" item to `docs/manual-tests/deferred-by-hand.md` and run it in the NavpakyLab VM. With a file and a folder added to the existing install's folder, the Folder page lists them and Next stays off until the box is checked. Closing then keeps both; confirming and installing deletes them and installs. Verify: the item is ticked with the run's date.
 - [ ] 4.2 Run the ponytail review of the branch and the `security-audit` review in guidance mode (area: installer). Record the review in the PR body and fix or defer each finding. Verify: the PR body has the `## Security review` section with the reviewed commit.
 
 ## Workflow follow-up
