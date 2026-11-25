@@ -10,16 +10,19 @@ namespace Navpaky.App.Updates {
     private readonly string _installFolder;
     private readonly Action<bool, string> _setSignIn;
     private readonly IDesktopShortcut _shortcut;
+    private readonly Action? _markActiveSetupDone;
 
     public InstallHook(
         DataFolders data,
         string installFolder,
         Action<bool, string> setSignIn,
-        IDesktopShortcut shortcut) {
+        IDesktopShortcut shortcut,
+        Action? markActiveSetupDone) {
       _data = data;
       _installFolder = installFolder;
       _setSignIn = setSignIn;
       _shortcut = shortcut;
+      _markActiveSetupDone = markActiveSetupDone;
     }
 
     public void Run() {
@@ -35,6 +38,10 @@ namespace Navpaky.App.Updates {
       }
 
       _setSignIn(choices.LaunchAtSignIn, Path.Join(_installFolder, "Navpaky.exe"));
+
+      // All users: this user's choice is made, so Active Setup must not redo it at the next
+      // sign-in (design D3 of add-machine-wide-install).
+      _markActiveSetupDone?.Invoke();
       if (choices.DesktopShortcut) {
         _shortcut.Create(_installFolder);
       } else {

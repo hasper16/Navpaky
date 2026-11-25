@@ -12,9 +12,9 @@
 
 ## 3. App hooks for machine mode (design D4, D5)
 
-- [ ] 3.1 Test first: `MachineHooks`, with fakes for registration, signal and processes. After update, it re-registers with the hook's version. Before update, it raises the signal, waits, and stops the processes left under the root, not others. Before uninstall, it closes them and unregisters. Per-user roots do nothing. Wire them into `Program.Main` with `SetAutoApplyOnStartup(!machine)`. Verify: `dotnet test tests/Navpaky.App.Tests --filter MachineHooks` and `dotnet build -c Release` with no warnings.
-- [ ] 3.2 Test first: in machine mode, `InstallHook` marks Active Setup done for the current user, and not in per-user mode. Verify: `dotnet test tests/Navpaky.App.Tests --filter InstallHook`.
-- [ ] 3.3 Test first: `--uninstall-all-users`. Unelevated, it asks to re-start itself elevated with the same argument. Elevated, it starts `<root>\Update.exe --uninstall` without waiting. Both through a fake starter. Verify: `dotnet test tests/Navpaky.App.Tests --filter AllUsersUninstall`.
+- [x] 3.1 Test first: `MachineHooks`, with fakes for registration, signal and processes. After update, it re-registers with the hook's version. Before update, it raises the signal, waits, and stops the processes left under the root, not others. Before uninstall, it closes them and unregisters. Per-user roots do nothing. Wire them into `Program.Main` with `SetAutoApplyOnStartup(!machine)`. Verify: `dotnet test tests/Navpaky.App.Tests --filter MachineHooks` and `dotnet build -c Release` with no warnings.
+- [x] 3.2 Test first: in machine mode, `InstallHook` marks Active Setup done for the current user, and not in per-user mode. Verify: `dotnet test tests/Navpaky.App.Tests --filter InstallHook`.
+- [x] 3.3 Test first: `--uninstall-all-users`. Unelevated, it asks to re-start itself elevated with the same argument. Elevated, it starts `<root>\Update.exe --uninstall` without waiting. Both through a fake starter. Verify: `dotnet test tests/Navpaky.App.Tests --filter AllUsersUninstall`.
 
 ## 4. Wizard mode and folder (design D1, D7)
 

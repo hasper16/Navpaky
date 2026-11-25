@@ -25,9 +25,20 @@ namespace Navpaky.App {
         return BrandFonts.Check() ? 0 : 1;
       }
 
+      bool machine = MachineInstall.IsMachineRoot(InstallRoot());
+      if (args is [AllUsersUninstall.Argument]) {
+        return StartAllUsersUninstall();
+      }
+
+      // All users: a pending update is applied only from the tray, never at start or sign-in,
+      // where it would ask every user for an administrator's approval.
       VelopackApp.Build()
-          .OnAfterInstallFastCallback(_ => ApplyInstall())
-          .OnBeforeUninstallFastCallback(_ => Uninstall())
+          .SetAutoApplyOnStartup(!machine)
+          .OnAfterInstallFastCallback(_ => ApplyInstall(machine))
+          .OnBeforeUpdateFastCallback(_ => InMachineMode(machine, hooks => hooks.BeforeUpdate()))
+          .OnAfterUpdateFastCallback(version => InMachineMode(
+              machine, hooks => hooks.AfterUpdate(version.ToString())))
+          .OnBeforeUninstallFastCallback(_ => Uninstall(machine))
           .Run();
       var app = new App();
       app.InitializeComponent();
@@ -47,20 +58,57 @@ namespace Navpaky.App {
     // Applies the install wizard's choices (design D4 of add-install-wizard). A step that fails
     // leaves no acknowledgement, so the wizard reports the install as failed; without the wizard
     // only the install marker is written, and its failure must not fail the install.
-    private static void ApplyInstall() {
+    private static void ApplyInstall(bool machine) {
       try {
         new InstallHook(
             DataFolders.ForCurrentUser(null),
             InstallRoot(),
             (on, exe) => new SignInLaunch().Set(on, exe),
-            new UserDesktopShortcut()).Run();
+            new UserDesktopShortcut(),
+            machine ? () => MachineInstall.ForThisPc().MarkActiveSetupDone() : null).Run();
       } catch (Exception e) when (e is IOException or UnauthorizedAccessException
           or System.Runtime.InteropServices.COMException) {
         Trace.WriteLine($"Navpaky could not apply its installation: {e.GetType().Name}");
       }
     }
 
-    private static void Uninstall() {
+    // Runs an elevated hook step of an all-users install; a per-user install has none. A step
+    // that fails leaves the rest of the update or uninstall to go on, as it did before.
+    private static void InMachineMode(bool machine, Action<MachineHooks> step) {
+      if (!machine) {
+        return;
+      }
+
+      string root = InstallRoot();
+      MachineInstall install = MachineInstall.ForThisPc();
+      try {
+        step(new MachineHooks(
+            version => install.RefreshEntry(root, version),
+            () => install.Unregister(root),
+            () => CloseSignal.Raise(CloseSignal.Name),
+            new OtherSessions(root)));
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException
+          or System.Security.SecurityException or WaitHandleCannotBeOpenedException
+          or System.Runtime.InteropServices.COMException) {
+        Trace.WriteLine($"Navpaky could not finish an all-users step: {e.GetType().Name}");
+      }
+    }
+
+    private static int StartAllUsersUninstall() {
+      try {
+        Process.Start(AllUsersUninstall.Next(
+            Environment.IsPrivilegedProcess, Environment.ProcessPath!, InstallRoot()))?.Dispose();
+        return 0;
+      } catch (Win32Exception e) {
+        // 1223: the administrator's approval was declined; nothing changed.
+        Trace.WriteLine($"Navpaky uninstall not started: {e.NativeErrorCode}");
+        return e.NativeErrorCode;
+      }
+    }
+
+    private static void Uninstall(bool machine) {
+      InMachineMode(machine, hooks => hooks.BeforeUninstall());
+
       // The uninstall questions follow the Windows display language, mapped as the "system"
       // choice is; settings are not read, so uninstalling never writes to the data folder.
       Strings.Culture = UiCulture.For(UiLanguage.System, CultureInfo.CurrentUICulture);
