@@ -67,9 +67,10 @@ namespace Navpaky.Setup.Install {
         return 1;
       }
 
-      Directory.CreateDirectory(work);
-      string exe = _extractSetup(work);
+      string? exe = null;
       try {
+        Directory.CreateDirectory(work);
+        exe = _extractSetup(work);
         using ISetupProcess setup = _launcher.Start(
             exe,
             ["--silent", "--log", LogOf(_tempRoot, attempt), "--installto", _machineRoot]);
@@ -89,7 +90,9 @@ namespace Navpaky.Setup.Install {
         Trace.WriteLine($"All-users setup failed: {e.GetType().Name}");
         return 1;
       } finally {
-        TryDelete(exe);
+        if (exe is not null) {
+          TryDelete(exe);
+        }
       }
     }
 

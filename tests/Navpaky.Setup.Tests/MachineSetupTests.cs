@@ -81,6 +81,20 @@ namespace Navpaky.Setup.Tests {
     }
 
     [Fact]
+    public async Task AnExtractionThatFailsFailsWithoutCrashing() {
+      var setup = new MachineSetup(
+          elevated: true,
+          _ => throw new IOException("disk full"),
+          _launcher,
+          (root, version, signIn) => _registered.Add((root, version, signIn)),
+          _machine,
+          _temp);
+
+      Assert.Equal(1, await setup.RunAsync(_attempt, signIn: true));
+      Assert.Empty(_launcher.Runs);
+    }
+
+    [Fact]
     public async Task ASetupThatLeftNoVersionFails() {
       Assert.Equal(1, await Setup().RunAsync(_attempt, signIn: true));
       Assert.Empty(_registered);
