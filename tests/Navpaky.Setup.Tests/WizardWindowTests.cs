@@ -109,6 +109,55 @@ namespace Navpaky.Setup.Tests {
       });
     }
 
+    // Task 2.2 of warn-reinstall-extra-files: the list stays bounded.
+    [Fact]
+    public void TheFolderPageListsEightExtrasAndCountsTheRest() {
+      string existing = Path.Join(_root, "navpaky-app");
+      var probe = new FakeFolders { Free = 40_000_000_000 };
+      probe.Install(existing);
+      for (int extra = 1; extra <= 12; extra++) {
+        probe.Add(Path.Join(existing, $"extra-{extra:D2}.txt"));
+      }
+
+      Sta.Run(() => {
+        (WizardWindow window, WizardViewModel model) = Open(kept: null, probe, existing);
+        try {
+          model.Language = UiLanguage.English;
+          Walk(model, WizardPage.Folder);
+          Sta.Flush();
+
+          Assert.Equal(Visibility.Visible, window.FolderExtras.Visibility);
+          Assert.Equal(
+              [.. Enumerable.Range(1, 8).Select(extra => $"extra-{extra:D2}.txt"), "and 4 more"],
+              window.FolderExtrasList.Children.OfType<TextBlock>().Select(line => line.Text));
+          Assert.False(window.Next.IsEnabled);
+
+          window.FolderExtrasConfirm.IsChecked = true;
+          Sta.Flush();
+
+          Assert.True(window.Next.IsEnabled);
+        } finally {
+          window.Close();
+        }
+      });
+    }
+
+    [Fact]
+    public void AFolderWithoutExtrasShowsNoWarning() {
+      Sta.Run(() => {
+        (WizardWindow window, WizardViewModel model) = Open(kept: null);
+        try {
+          Walk(model, WizardPage.Folder);
+          Sta.Flush();
+
+          Assert.Equal(Visibility.Collapsed, window.FolderExtras.Visibility);
+          Assert.True(window.Next.IsEnabled);
+        } finally {
+          window.Close();
+        }
+      });
+    }
+
     private static void Walk(WizardViewModel model, WizardPage page) {
       while (model.Page != page && (model.CanGoNext || model.Page == WizardPage.Licence)) {
         model.LicenceAccepted |= model.Page == WizardPage.Licence;
@@ -175,11 +224,14 @@ namespace Navpaky.Setup.Tests {
       }
     }
 
-    private (WizardWindow Window, WizardViewModel Model) Open(KeptItems? kept) {
+    private (WizardWindow Window, WizardViewModel Model) Open(
+        KeptItems? kept, FakeFolders? probe = null, string? existing = null) {
       var folders = new WizardFolders(
-          null, Path.Join(_root, "Programs", "Navpaky"), _data, 230_000_000, new FakeFolders {
-            Free = 40_000_000_000,
-          });
+          existing,
+          Path.Join(_root, "Programs", "Navpaky"),
+          _data,
+          230_000_000,
+          probe ?? new FakeFolders { Free = 40_000_000_000 });
       var model = new WizardViewModel(
           kept, folders, (_, _, _) => Task.FromResult(_outcome), _ => { });
       var window = new WizardWindow(model) {

@@ -50,7 +50,54 @@ namespace Navpaky.Setup.Tests {
     public void AFolderHoldingANavpakyInstallIsAccepted() {
       _folders.Install(@"D:\Tools\Navpaky");
 
-      Assert.Equal(FolderVerdict.Ok, Check(@"D:\Tools").Verdict);
+      FolderCheck check = Check(@"D:\Tools");
+
+      Assert.Equal(FolderVerdict.Ok, check.Verdict);
+      Assert.Empty(check.Extras);
+    }
+
+    // Task 1.2 of warn-reinstall-extra-files: the setup replaces the whole folder.
+    [Fact]
+    public void EntriesBesideTheInstallAreListedSorted() {
+      _folders.Install(@"D:\Tools\Navpaky");
+      _folders.Add(@"D:\Tools\Navpaky\notes.txt");
+      _folders.Add(@"D:\Tools\Navpaky\backup\old.zip");
+      _folders.AddFolder(@"D:\Tools\Navpaky\.hidden");
+
+      FolderCheck check = Check(@"D:\Tools");
+
+      Assert.Equal(FolderVerdict.Ok, check.Verdict);
+      Assert.Equal([".hidden", "backup", "notes.txt"], check.Extras);
+    }
+
+    [Fact]
+    public void TheExistingInstallsFolderListsItsExtrasToo() {
+      const string existing = @"C:\Users\olena\AppData\Local\navpaky-app";
+      _folders.Install(existing);
+      _folders.Add(existing + @"\zorbel.ini");
+
+      FolderCheck check = InstallTarget.Check(
+          @"D:\Tools", existing, Data(), _needed, _folders);
+
+      Assert.Equal(["zorbel.ini"], check.Extras);
+    }
+
+    [Fact]
+    public void TheInstallsOwnNamesCountInAnyCase() {
+      _folders.Add(@"D:\Apps\Navpaky\update.exe");
+      _folders.Add(@"D:\Apps\Navpaky\NAVPAKY.EXE");
+      _folders.Add(@"D:\Apps\Navpaky\Current\Navpaky.App.exe");
+      _folders.AddFolder(@"D:\Apps\Navpaky\PACKAGES");
+
+      Assert.Empty(Check(@"D:\Apps\Navpaky").Extras);
+    }
+
+    [Fact]
+    public void AnInstallFolderThatCannotBeListedIsRefused() {
+      _folders.Install(@"D:\Tools\Navpaky");
+      _folders.Unlistable(@"D:\Tools\Navpaky");
+
+      Assert.Equal(FolderVerdict.NotWritable, Check(@"D:\Tools").Verdict);
     }
 
     [Theory]

@@ -22,7 +22,17 @@ namespace Navpaky.Setup.Tests {
       _log = Path.Join(_root, "setup.log");
     }
 
+    // A stopped cmd.exe child can hold seen-args.txt for a moment after the kill (a CI flake).
     public void Dispose() {
+      for (int attempt = 1; attempt < 10; attempt++) {
+        try {
+          Directory.Delete(_root, recursive: true);
+          return;
+        } catch (IOException) {
+          Thread.Sleep(200);
+        }
+      }
+
       Directory.Delete(_root, recursive: true);
     }
 

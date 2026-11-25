@@ -7,6 +7,17 @@ namespace Navpaky.Setup.Install {
       return Directory.Exists(folder) && Directory.EnumerateFileSystemEntries(folder).Any();
     }
 
+    public IReadOnlyList<string>? Entries(string folder) {
+      try {
+        return Directory.EnumerateFileSystemEntries(folder)
+            .Select(Path.GetFileName)
+            .OfType<string>()
+            .ToList();
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        return null;
+      }
+    }
+
     public bool FileExists(string path) {
       return File.Exists(path);
     }

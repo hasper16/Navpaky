@@ -163,6 +163,15 @@
   <data name="FolderNotEmpty" xml:space="preserve">
     <value>Ця тека не порожня. Виберіть порожню або нову теку.</value>
   </data>
+  <data name="FolderExtras" xml:space="preserve">
+    <value>У цій теці є також файли й теки, що не належать Navpaky. Перевстановлення їх видалить:</value>
+  </data>
+  <data name="FolderExtrasConfirm" xml:space="preserve">
+    <value>Видалити їх і перевстановити</value>
+  </data>
+  <data name="FolderExtrasMore" xml:space="preserve">
+    <value>і ще {0}</value>
+  </data>
   <data name="FolderOverlapsData" xml:space="preserve">
     <value>Це тека даних Navpaky. Виберіть іншу теку.</value>
   </data>
