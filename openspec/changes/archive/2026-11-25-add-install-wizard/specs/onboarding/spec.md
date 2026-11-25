@@ -35,7 +35,7 @@ Closing the window at any step SHALL count as completing it. The window SHALL NO
 ### Requirement: Main choices up front
 The welcome window's last step SHALL do three things:
 - let the user choose the Hotkey from the same options as Settings, drawn the same way (owner decision);
-- offer one switch, "Send anonymous usage counters and crash reports", off by default, which replaces the crash-report switch (owner decision);
+- offer one switch, "Send anonymous usage counters and crash reports", off by default, which replaces the crash-report switch (owner decision). The switch reads on only when both crash reports and Usage Digests are on, so mixed consents set in Settings read off. Only turning the switch changes consent: on turns both on and off turns both off;
 - show how to keep the tray icon visible.
 
 The interface language, launch at sign-in and the desktop shortcut are chosen in the install wizard. When Navpaky was installed without the wizard, the welcome window SHALL ask them itself, so none goes unasked:
@@ -55,6 +55,10 @@ This covers the plain Velopack setup, for example.
 #### Scenario: Launch at sign-in default
 - **WHEN** Navpaky was installed without the wizard and the user closes the welcome window without changing anything
 - **THEN** launch at sign-in is on
+
+#### Scenario: Mixed consents on reopening
+- **WHEN** crash reports are on and Usage Digests off in Settings, and the user reopens the welcome window and closes it without touching the switch
+- **THEN** the switch reads off and both consents are as they were
 
 #### Scenario: Hotkey from the welcome window
 - **WHEN** the user picks Ctrl twice, or any other option Settings offers, on the last step

@@ -16,7 +16,7 @@ Navpaky SHALL be installed through its own wizard, `NavpakySetup.exe`, drawn in 
 - **THEN** no UAC prompt appears and Navpaky is installed for that user
 
 ### Requirement: Wizard language
-The Language page SHALL offer "Same as Windows", English and Українська. The choice SHALL switch the wizard's texts at once, without restarting it, and SHALL become the app's interface language. "Same as Windows" SHALL be selected by default.
+The Language page SHALL offer "Same as Windows", English and Українська. The choice SHALL switch the wizard's texts at once, without restarting it, and SHALL become the app's interface language. "Same as Windows" SHALL be selected by default. When the wizard finds kept settings, their interface language SHALL be selected instead, so "Use previous settings" with every other default keeps it.
 
 #### Scenario: Switch to English
 - **WHEN** the wizard starts on a Ukrainian Windows and the user picks English on the first page
@@ -26,6 +26,10 @@ The Language page SHALL offer "Same as Windows", English and Українськ�
 #### Scenario: Keep the default
 - **WHEN** the user leaves "Same as Windows" selected
 - **THEN** Navpaky's interface language setting after the install is "Same as Windows"
+
+#### Scenario: Language from kept settings
+- **WHEN** kept settings from an earlier install chose English and the user runs the wizard on a Ukrainian Windows
+- **THEN** English is selected on the Language page, and after the install Navpaky's interface language is English unless the user picked another
 
 ### Requirement: Licence acceptance
 The Licence page SHALL show the licence text in a scrollable box and an "I accept the licence" check box, off by default. Next SHALL be disabled until the box is checked.
