@@ -26,7 +26,7 @@
   - an existing machine install forces it.
 
   Verify: `dotnet test tests/Navpaky.Setup.Tests --filter WizardViewModel`.
-- [ ] 4.3 Add the two radio buttons, the warning and the reasons to the Folder page, with English and Ukrainian texts. The window test checks that the warning shows only for all users. Verify: `dotnet test tests/Navpaky.Setup.Tests --filter WizardWindow`.
+- [x] 4.3 Add the two radio buttons, the warning and the reasons to the Folder page, with English and Ukrainian texts. The window test checks that the warning shows only for all users. Verify: `dotnet test tests/Navpaky.Setup.Tests --filter WizardWindow`.
 
 ## 5. Elevated setup (design D2, D5)
 

@@ -142,6 +142,56 @@ namespace Navpaky.Setup.Tests {
       });
     }
 
+    // Task 4.3 of add-machine-wide-install.
+    [Fact]
+    public void TheAdministratorWarningShowsOnlyForAllUsers() {
+      Sta.Run(() => {
+        (WizardWindow window, WizardViewModel model) = Open(kept: null);
+        try {
+          Walk(model, WizardPage.Folder);
+          Sta.Flush();
+
+          Assert.Equal(Visibility.Collapsed, window.FolderAllUsers.Visibility);
+          Assert.Equal(Visibility.Visible, window.FolderHint.Visibility);
+          Assert.True(window.Browse.IsEnabled);
+
+          window.ModeAllUsers.IsChecked = true;
+          Sta.Flush();
+
+          Assert.True(model.ForAllUsers);
+          Assert.Equal(Visibility.Visible, window.FolderAllUsers.Visibility);
+          Assert.Equal(Visibility.Collapsed, window.FolderHint.Visibility);
+          Assert.Equal(Visibility.Collapsed, window.FolderModeLocked.Visibility);
+          Assert.False(window.Browse.IsEnabled);
+        } finally {
+          window.Close();
+        }
+      });
+    }
+
+    [Fact]
+    public void AnExistingInstallDisablesTheModeAndSaysWhy() {
+      string existing = Path.Join(_root, "navpaky-app");
+      var probe = new FakeFolders { Free = 40_000_000_000 };
+      probe.Install(existing);
+
+      Sta.Run(() => {
+        (WizardWindow window, WizardViewModel model) = Open(kept: null, probe, existing);
+        try {
+          model.Language = UiLanguage.English;
+          Walk(model, WizardPage.Folder);
+          Sta.Flush();
+
+          Assert.False(window.FolderModes.IsEnabled);
+          Assert.Equal(Visibility.Visible, window.FolderModeLocked.Visibility);
+          Assert.StartsWith(
+              "Navpaky is already installed for your account", window.FolderModeLocked.Text);
+        } finally {
+          window.Close();
+        }
+      });
+    }
+
     [Fact]
     public void AFolderWithoutExtrasShowsNoWarning() {
       Sta.Run(() => {
