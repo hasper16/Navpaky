@@ -34,9 +34,14 @@ namespace Navpaky.App {
       return app.Run();
     }
 
-    // Velopack runs the hooks from <root>\current; the root holds the Navpaky.exe launcher.
+    // Velopack runs Navpaky from <root>\current; the root holds the Navpaky.exe launcher.
+    // AppContext.BaseDirectory would be the %TEMP% folder native libraries are extracted to.
     internal static string InstallRoot() {
-      return Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory))!;
+      return InstallRoot(Environment.ProcessPath!);
+    }
+
+    internal static string InstallRoot(string processPath) {
+      return Path.GetDirectoryName(Path.GetDirectoryName(processPath))!;
     }
 
     // Applies the install wizard's choices (design D4 of add-install-wizard). A step that fails
