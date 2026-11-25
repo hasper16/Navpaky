@@ -11,6 +11,20 @@ namespace Navpaky.Setup.Tests {
       Directory.Delete(_root, recursive: true);
     }
 
+    // Task 1.3 of warn-reinstall-extra-files.
+    [Fact]
+    public void EntriesAreTheTopLevelNames() {
+      File.WriteAllText(Path.Join(_root, "notes.txt"), string.Empty);
+      Directory.CreateDirectory(Path.Join(_root, "backup", "deeper"));
+
+      Assert.Equal(["backup", "notes.txt"], _disk.Entries(_root)!.Order());
+    }
+
+    [Fact]
+    public void AFolderThatCannotBeListedHasNoEntries() {
+      Assert.Null(_disk.Entries(Path.Join(_root, "missing")));
+    }
+
     [Fact]
     public void AMissingFolderIsWritableThroughItsParentAndLeavesNoProbe() {
       Assert.True(_disk.CanWrite(Path.Join(_root, "Tools", "Navpaky")));

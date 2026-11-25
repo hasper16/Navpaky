@@ -2,9 +2,9 @@
 
 ## 1. Folder data (design D1, D2)
 
-- [ ] 1.1 Add `IReadOnlyList<string> Extras` to `FolderCheck` and `Entries(folder)` to `IFolderProbe`, plus the in-memory probe in the tests. Verify: `dotnet build` passes with warnings as errors.
-- [ ] 1.2 Test first: for a folder holding a Navpaky install, `InstallTarget.Check` lists the top-level entries other than `current`, `packages`, `Update.exe` and `Navpaky.exe`. The comparison ignores case and the list is sorted. A folder with only the install lists nothing, and a folder that can't be listed is NotWritable. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
-- [ ] 1.3 Test first: `DiskFolders.Entries` returns the top-level names of a real temporary folder, and `null` for a folder it can't list. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 1.1 Add `IReadOnlyList<string> Extras` to `FolderCheck` and `Entries(folder)` to `IFolderProbe`, plus the in-memory probe in the tests. Verify: `dotnet build` passes with warnings as errors.
+- [x] 1.2 Test first: for a folder holding a Navpaky install, `InstallTarget.Check` lists the top-level entries other than `current`, `packages`, `Update.exe` and `Navpaky.exe`. The comparison ignores case and the list is sorted. A folder with only the install lists nothing, and a folder that can't be listed is NotWritable. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
+- [x] 1.3 Test first: `DiskFolders.Entries` returns the top-level names of a real temporary folder, and `null` for a folder it can't list. Verify: `dotnet test tests/Navpaky.Setup.Tests`.
 
 ## 2. Confirmation in the wizard (design D3)
 

@@ -8,6 +8,11 @@ namespace Navpaky.Setup.Install {
     /// <returns><see langword="true" /> when it has entries.</returns>
     bool HasEntries(string folder);
 
+    /// <summary>Returns the names of the folder's top-level files and folders.</summary>
+    /// <param name="folder">The folder to list.</param>
+    /// <returns>The names, or <see langword="null" /> when the folder can't be listed.</returns>
+    IReadOnlyList<string>? Entries(string folder);
+
     /// <summary>Returns whether a file exists.</summary>
     /// <param name="path">The file's full path.</param>
     /// <returns><see langword="true" /> when it exists.</returns>

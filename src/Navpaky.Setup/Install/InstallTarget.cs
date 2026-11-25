@@ -5,6 +5,10 @@ namespace Navpaky.Setup.Install {
   internal static class InstallTarget {
     private const string _folderName = "Navpaky";
 
+    // Velopack's layout plus our root launcher (design D1 of warn-reinstall-extra-files).
+    private static readonly HashSet<string> _installNames = new(
+        ["current", "packages", "Update.exe", "Navpaky.exe"], StringComparer.OrdinalIgnoreCase);
+
     public static FolderCheck Check(
         string pick,
         string? existingInstall,
@@ -15,12 +19,31 @@ namespace Navpaky.Setup.Install {
       string folder = existingInstall is not null
           ? Normalize(existingInstall)
           : OwnFolder(Normalize(pick));
+      IReadOnlyList<string>? extras = HoldsNavpaky(folder, folders)
+          ? Extras(folders.Entries(folder))
+          : [];
       return new FolderCheck(
-          folder, Verdict(folder, data, neededBytes, folders), existingInstall is not null);
+          folder,
+          Verdict(folder, data, neededBytes, folders, listed: extras is not null),
+          existingInstall is not null,
+          extras ?? []);
     }
 
+    // The entries the setup would delete with the install it replaces; null when unlisted.
+    private static List<string>? Extras(IReadOnlyList<string>? entries) {
+      return entries?
+          .Where(name => !_installNames.Contains(name))
+          .Order(StringComparer.OrdinalIgnoreCase)
+          .ToList();
+    }
+
+    // A folder that can't be listed can't be checked for what the setup would delete.
     private static FolderVerdict Verdict(
-        string folder, DataFolderPair data, long neededBytes, IFolderProbe folders) {
+        string folder,
+        DataFolderPair data,
+        long neededBytes,
+        IFolderProbe folders,
+        bool listed) {
       if (Overlaps(folder, Normalize(data.Roaming)) || Overlaps(folder, Normalize(data.Local))) {
         return FolderVerdict.OverlapsData;
       }
@@ -29,7 +52,7 @@ namespace Navpaky.Setup.Install {
         return FolderVerdict.NotEmpty;
       }
 
-      if (!folders.CanWrite(folder)) {
+      if (!listed || !folders.CanWrite(folder)) {
         return FolderVerdict.NotWritable;
       }
 
