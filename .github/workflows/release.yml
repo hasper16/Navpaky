@@ -88,7 +88,7 @@ jobs:
             'pack', '--packId', 'navpaky-app', '--packVersion', $env:VERSION,
             '--packDir', 'publish', '--mainExe', 'Navpaky.App.exe', '--packTitle', 'Navpaky',
             '--packAuthors', 'Pavlo Yeremenko', '--icon', 'src/Navpaky.App/Navpaky.ico',
-            '--runtime', 'win-x64',
+            '--runtime', 'win-x64', '--shortcuts', 'StartMenuRoot',
             '--delta', 'None', '--exclude', '\.(pdb|xml)$', '--outputDir', 'releases')
           # A dry run never signs, even if a secret of that name exists outside the environment.
           if ($env:EVENT_NAME -eq 'push') {
