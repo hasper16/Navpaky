@@ -7,15 +7,25 @@ Defines how Navpaky is installed for a Windows user, how it finds, verifies and 
 ## Requirements
 
 ### Requirement: Per-user installation
-The installer SHALL install Navpaky for the current Windows user without administrator rights, add a Start menu entry and an entry in Windows "Installed apps", and start Navpaky when done.
+The install wizard SHALL install Navpaky for the current Windows user without administrator rights. It installs into the folder the user confirmed (spec `install-wizard`) and adds a Start menu entry and an entry in Windows "Installed apps". It then starts Navpaky if the user asked for it. Updates SHALL keep using the folder of the install. An install made before this change (in `%LOCALAPPDATA%\navpaky-app`) SHALL keep its folder, and a reinstall over it SHALL use that folder.
 
 #### Scenario: Standard user installs
-- **WHEN** a user without administrator rights runs the installer
+- **WHEN** a user without administrator rights runs the wizard and finishes with "Start Navpaky now" checked
 - **THEN** Navpaky is installed, appears in the Start menu and Installed apps, and is running
 
 #### Scenario: Installed under the product name
-- **WHEN** the installer finishes
-- **THEN** the app files are under `%LOCALAPPDATA%\navpaky-app`, the Start menu and Installed apps entries read "Navpaky", settings are kept under `%APPDATA%\Navpaky` and machine-local state under `%LOCALAPPDATA%\Navpaky`
+- **WHEN** the wizard finishes with the proposed folder
+- **THEN** the app files are under `%LOCALAPPDATA%\Programs\Navpaky`
+- **AND** the Start menu and Installed apps entries read "Navpaky"
+- **AND** settings are kept under `%APPDATA%\Navpaky` and machine-local state under `%LOCALAPPDATA%\Navpaky`
+
+#### Scenario: Chosen folder
+- **WHEN** the user installs into `D:\Apps\Navpaky`
+- **THEN** the Installed apps entry points to `D:\Apps\Navpaky`, and later updates are applied there without a UAC prompt
+
+#### Scenario: Earlier install kept in place
+- **WHEN** Navpaky 0.4 is installed in `%LOCALAPPDATA%\navpaky-app` and the user runs the wizard
+- **THEN** Navpaky is installed again into `%LOCALAPPDATA%\navpaky-app` and keeps one Installed apps entry
 
 ### Requirement: Automatic update checks
 When automatic checks are on (default), Navpaky SHALL check for updates at start and every 24 hours (design decision). The tray menu item "Check for updates" SHALL check immediately and report the result.
@@ -54,7 +64,13 @@ Applying an update SHALL keep settings, word lists, statistics and launch-at-sig
 - **THEN** all settings and Protected Words are unchanged
 
 ### Requirement: Clean uninstall
-Uninstalling SHALL remove the app files, the Start menu entry and the sign-in entry, and SHALL ask once whether to delete Navpaky's data (settings, word lists, statistics, logs, in both data folders); both folders are kept if the user declines and deleted only on an explicit yes. The uninstaller SHALL wait for the answer before it reports the removal as complete, for at most 50 seconds (design decision: Velopack 1.2.161 ends its uninstall hook after 60 seconds); if the wait runs out the question stays open and data is deleted only after an explicit yes. Data SHALL be kept when Navpaky was installed again while the question was open; every installation records a new install marker in `%LOCALAPPDATA%\Navpaky`, and a marker that changed since the question appeared shows the reinstall. A yes given while the uninstall is still running SHALL delete the data at once (design decision of rename-to-navpaky: waiting for the install root to go deadlocked with the uninstall hook that waits for the answer).
+Uninstalling SHALL remove the app files, the Start menu entry, the desktop shortcut Navpaky created and the sign-in entry. It SHALL ask once whether to delete Navpaky's data (settings, word lists, statistics, logs, in both data folders): both folders are kept if the user declines and deleted only on an explicit yes.
+
+The uninstaller SHALL wait for the answer before it reports the removal as complete, for at most 50 seconds (design decision: Velopack 1.2.161 ends its uninstall hook after 60 seconds). If the wait runs out, the question stays open and data is deleted only after an explicit yes.
+
+Data SHALL be kept when Navpaky was installed again while the question was open. Every installation records a new install marker in `%LOCALAPPDATA%\Navpaky`, and a marker that changed since the question appeared shows the reinstall.
+
+A yes given while the uninstall is still running SHALL delete the data at once (design decision of rename-to-navpaky: waiting for the install root to go deadlocked with the uninstall hook that waits for the answer).
 
 #### Scenario: Uninstall with data removal
 - **WHEN** the user uninstalls and chooses to delete data
@@ -62,7 +78,12 @@ Uninstalling SHALL remove the app files, the Start menu entry and the sign-in en
 
 #### Scenario: Uninstall keeping data
 - **WHEN** the user uninstalls and declines to delete data
-- **THEN** settings and word lists are still in `%APPDATA%\Navpaky`, statistics and logs in `%LOCALAPPDATA%\Navpaky`, and a later reinstall uses them
+- **THEN** settings and word lists are still in `%APPDATA%\Navpaky`, statistics and logs in `%LOCALAPPDATA%\Navpaky`
+- **AND** a later run of the wizard offers to use them (Welcome back)
+
+#### Scenario: Desktop shortcut removed
+- **WHEN** the user installed with a desktop shortcut and then uninstalls
+- **THEN** the desktop has no Navpaky shortcut
 
 #### Scenario: Delete while the uninstall is still running
 - **WHEN** the user answers the data question with delete before the uninstaller has removed the app files, and Navpaky was not installed again

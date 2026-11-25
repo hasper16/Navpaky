@@ -7,7 +7,12 @@ Defines the first-run experience: explaining what Navpaky does and how it treats
 ## Requirements
 
 ### Requirement: Welcome window on first run
-On the first start for a Windows user, Navpaky SHALL open a welcome window that leads through three steps with Back, Next and Done: what Navpaky does (with a before/after example and how to undo a Correction), try it (with the statement that what is typed there is sent nowhere), and your choices. Closing the window at any step SHALL count as completing it.
+On the first start for a Windows user, Navpaky SHALL open a welcome window that leads through three steps with Back, Next and Done:
+1. What Navpaky does, with a before/after example and how to undo a Correction.
+2. Try it, with the statement that what is typed there is sent nowhere.
+3. Your choices.
+
+Closing the window at any step SHALL count as completing it. The window SHALL NOT open after an install that chose "Use previous settings" in the install wizard. It SHALL open after a first install and after "Start fresh".
 
 #### Scenario: First start
 - **WHEN** Navpaky starts for the first time for this user
@@ -20,6 +25,18 @@ On the first start for a Windows user, Navpaky SHALL open a welcome window that 
 #### Scenario: Step through
 - **WHEN** the user presses Next twice
 - **THEN** the window shows step 3 of 3 with a Done button
+
+#### Scenario: Small screen
+- **WHEN** the screen is 1024×768 and the welcome window shows its tallest step, step 3 after an install without the wizard
+- **THEN** the whole window, its Done button included, lies inside the screen's work area
+
+#### Scenario: Reinstall keeping settings
+- **WHEN** the user reinstalled with "Use previous settings" and Navpaky starts for the first time after that install
+- **THEN** no welcome window opens
+
+#### Scenario: Reinstall starting fresh
+- **WHEN** the user reinstalled with "Start fresh" and Navpaky starts for the first time after that install
+- **THEN** the welcome window opens at step 1 of 3
 
 ### Requirement: Try it
 The welcome window SHALL contain a text field where the user can type a word in the wrong Layout and see Navpaky correct it, with a short instruction naming their installed Layouts.
@@ -34,11 +51,32 @@ The welcome window SHALL contain a text field where the user can type a word in 
 - **THEN** the welcome window explains that Navpaky needs at least two Layouts and links to Windows language settings
 
 ### Requirement: Main choices up front
-The welcome window's last step SHALL let the user choose the Hotkey from the same options as Settings, drawn the same way (owner decision), SHALL show how to keep the tray icon visible, and SHALL offer crash reports, as in the approved prototype (owner decision). Launch at sign-in SHALL be on after the first start (design decision); Auto Correction, launch at sign-in and the other Hotkeys are set in Settings.
+The welcome window's last step SHALL do three things:
+- let the user choose the Hotkey from the same options as Settings, drawn the same way (owner decision);
+- offer one switch, "Send anonymous usage counters and crash reports", off by default, which replaces the crash-report switch (owner decision). The switch reads on only when both crash reports and Usage Digests are on, so mixed consents set in Settings read off. Only turning the switch changes consent: on turns both on and off turns both off;
+- show how to keep the tray icon visible.
+
+The interface language, launch at sign-in and the desktop shortcut are chosen in the install wizard. When Navpaky was installed without the wizard, the welcome window SHALL ask them itself, so none goes unasked:
+- the interface language on step 1;
+- launch at sign-in, on by default (design decision), and the desktop shortcut, off by default, on step 3.
+
+This covers the plain Velopack setup, for example.
+
+#### Scenario: Installed with the wizard
+- **WHEN** Navpaky was installed with the wizard and the welcome window opens
+- **THEN** step 3 shows the Hotkey, the one telemetry switch and the tray tip, and no language, sign-in or shortcut choice
+
+#### Scenario: Installed without the wizard
+- **WHEN** Navpaky was installed with the plain Velopack setup and the welcome window opens
+- **THEN** step 1 offers the interface language, and step 3 also offers launch at sign-in (on) and the desktop shortcut (off)
 
 #### Scenario: Launch at sign-in default
-- **WHEN** the user closes the welcome window opened at the first start without changing anything
+- **WHEN** Navpaky was installed without the wizard and the user closes the welcome window without changing anything
 - **THEN** launch at sign-in is on
+
+#### Scenario: Mixed consents on reopening
+- **WHEN** crash reports are on and Usage Digests off in Settings, and the user reopens the welcome window and closes it without touching the switch
+- **THEN** the switch reads off and both consents are as they were
 
 #### Scenario: Hotkey from the welcome window
 - **WHEN** the user picks Ctrl twice, or any other option Settings offers, on the last step
