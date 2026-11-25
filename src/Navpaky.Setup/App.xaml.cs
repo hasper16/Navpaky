@@ -6,6 +6,7 @@ using System.Windows;
 using Navpaky.Setup.Install;
 using Navpaky.Setup.Wizard;
 using Navpaky.Ui;
+using Navpaky.Win32;
 using Wpf.Ui.Appearance;
 
 namespace Navpaky.Setup {
@@ -59,12 +60,14 @@ namespace Navpaky.Setup {
           Path.Join(local, "Programs", "Navpaky"),
           data,
           SetupPayload.RequiredBytes(),
-          probe);
+          probe,
+          MachineInstall.MachineRoot);
       var runner = new SetupRunner(SetupPayload.ExtractTo, new ProcessSetupLauncher());
       return new WizardViewModel(
           KeptItems.Find(data),
           folders,
-          (choices, log, progress) => Task.Run(() => runner.RunAsync(choices, data, log, progress)),
+          (choices, forAllUsers, log, progress) => Task.Run(
+              () => runner.RunAsync(choices, forAllUsers, data, log, progress)),
           StartNavpaky);
     }
 

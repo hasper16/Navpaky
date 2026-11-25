@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Navpaky.Core;
 
 namespace Navpaky.Setup.Install {
@@ -32,36 +33,38 @@ namespace Navpaky.Setup.Install {
     // How long the wizard's own run of the install hook may take (design D3).
     public TimeSpan HookWait { get; init; } = TimeSpan.FromMinutes(2);
 
+    // Starts the wizard itself elevated for an all-users install (design D2 of
+    // add-machine-wide-install).
+    public ISetupLauncher Elevated { get; init; } = new ProcessSetupLauncher(elevate: true);
+
+    public string Self { get; init; } = Environment.ProcessPath ?? string.Empty;
+
     public async Task<SetupOutcome> RunAsync(
         InstallChoices choices,
+        bool forAllUsers,
         DataFolderPair data,
         string logPath,
         IProgress<SetupPhase>? progress) {
       choices.WriteTo(data.Local);
+      if (forAllUsers) {
+        using ISetupProcess elevated = Elevated.Start(
+            Self, MachineSetup.Arguments(choices.Attempt, choices.LaunchAtSignIn));
+
+        // The administrator's own account may have run the install hook: the wizard user's
+        // choices then come from running it again below.
+        SetupOutcome outcome =
+            await Finish(elevated, choices, data, logPath, progress).ConfigureAwait(false);
+        return elevated.ExitCode == MachineSetup.MayStillRunExitCode
+            ? SetupOutcome.MayStillRun
+            : outcome;
+      }
+
       DirectoryInfo temp = Directory.CreateTempSubdirectory("navpaky-setup-");
       try {
         string exe = _extractSetup(temp.FullName);
         using ISetupProcess setup = _launcher.Start(
             exe, ["--silent", "--log", logPath, "--installto", choices.InstallFolder]);
-        bool exited = await WaitWhileReporting(setup, logPath, progress).ConfigureAwait(false);
-        if (!exited) {
-          TryStop(setup);
-          return await setup.WaitForExitAsync(KillWait).ConfigureAwait(false)
-              ? SetupOutcome.Failed
-              : SetupOutcome.MayStillRun;
-        }
-
-        Report(logPath, progress);
-        if (setup.ExitCode != 0) {
-          return SetupOutcome.Failed;
-        }
-
-        string acknowledgement = Path.Join(data.Local, choices.AcknowledgementName);
-        if (!File.Exists(acknowledgement)) {
-          await RunHookAgain(choices.InstallFolder, logPath).ConfigureAwait(false);
-        }
-
-        return File.Exists(acknowledgement) ? SetupOutcome.Succeeded : SetupOutcome.Failed;
+        return await Finish(setup, choices, data, logPath, progress).ConfigureAwait(false);
       } finally {
         TryDelete(temp);
       }
@@ -75,16 +78,24 @@ namespace Navpaky.Setup.Install {
       return line?[(line.IndexOf(label, StringComparison.Ordinal) + label.Length)..].Trim();
     }
 
-    private static void Report(string logPath, IProgress<SetupPhase>? progress) {
+    // Reports the phases the log shows that were not reported yet, in order: the log only grows,
+    // and every poll reads it whole.
+    private static int Report(string logPath, IProgress<SetupPhase>? progress, int reported) {
       if (progress is null || ReadShared(logPath) is not { } log) {
-        return;
+        return reported;
       }
 
-      foreach ((string line, SetupPhase phase) in _phases) {
-        if (log.Contains(line, StringComparison.Ordinal)) {
-          progress.Report(phase);
+      for (int next = reported; next < _phases.Length; next++) {
+        (string line, SetupPhase phase) = _phases[next];
+        if (!log.Contains(line, StringComparison.Ordinal)) {
+          break;
         }
+
+        progress.Report(phase);
+        reported = next + 1;
       }
+
+      return reported;
     }
 
     // Velopack keeps the log open while it writes.
@@ -123,7 +134,8 @@ namespace Navpaky.Setup.Install {
     // that long to start. The installed app runs the same hook without that limit.
     private async Task RunHookAgain(string installFolder, string logPath) {
       string app = Path.Join(installFolder, "current", "Navpaky.App.exe");
-      if (!File.Exists(app) || PackageVersion(logPath) is not { Length: > 0 } version) {
+      string? version = PackageVersion(logPath) ?? PackageManifest.VersionIn(installFolder);
+      if (!File.Exists(app) || version is not { Length: > 0 }) {
         return;
       }
 
@@ -134,8 +146,40 @@ namespace Navpaky.Setup.Install {
       }
     }
 
+    private async Task<SetupOutcome> Finish(
+        ISetupProcess setup,
+        InstallChoices choices,
+        DataFolderPair data,
+        string logPath,
+        IProgress<SetupPhase>? progress) {
+      var reported = new StrongBox<int>();
+      bool exited = await WaitWhileReporting(setup, logPath, progress, reported)
+          .ConfigureAwait(false);
+      if (!exited) {
+        TryStop(setup);
+        return await setup.WaitForExitAsync(KillWait).ConfigureAwait(false)
+            ? SetupOutcome.Failed
+            : SetupOutcome.MayStillRun;
+      }
+
+      Report(logPath, progress, reported.Value);
+      if (setup.ExitCode != 0) {
+        return SetupOutcome.Failed;
+      }
+
+      string acknowledgement = Path.Join(data.Local, choices.AcknowledgementName);
+      if (!File.Exists(acknowledgement)) {
+        await RunHookAgain(choices.InstallFolder, logPath).ConfigureAwait(false);
+      }
+
+      return File.Exists(acknowledgement) ? SetupOutcome.Succeeded : SetupOutcome.Failed;
+    }
+
     private async Task<bool> WaitWhileReporting(
-        ISetupProcess setup, string logPath, IProgress<SetupPhase>? progress) {
+        ISetupProcess setup,
+        string logPath,
+        IProgress<SetupPhase>? progress,
+        StrongBox<int> reported) {
       DateTime deadline = DateTime.UtcNow + Timeout;
       while (DateTime.UtcNow < deadline) {
         TimeSpan left = deadline - DateTime.UtcNow;
@@ -143,7 +187,7 @@ namespace Navpaky.Setup.Install {
           return true;
         }
 
-        Report(logPath, progress);
+        reported.Value = Report(logPath, progress, reported.Value);
       }
 
       return false;

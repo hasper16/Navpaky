@@ -181,6 +181,24 @@
   <data name="FolderNotEnoughSpace" xml:space="preserve">
     <value>There isn't enough free space on this drive.</value>
   </data>
+  <data name="FolderModeJustMe" xml:space="preserve">
+    <value>Just for me</value>
+  </data>
+  <data name="FolderModeAllUsers" xml:space="preserve">
+    <value>For all users</value>
+  </data>
+  <data name="FolderAllUsers" xml:space="preserve">
+    <value>Needs administrator rights. When the install starts, Windows asks for an administrator's approval; if your account isn't an administrator, an administrator types their password. Every update asks for this approval again. The prompt closes by itself after about 2 minutes, and the password field uses the keyboard layout that is on. Navpaky goes into Program Files for every account on this PC, and each user keeps their own settings.</value>
+  </data>
+  <data name="FolderModeMine" xml:space="preserve">
+    <value>Navpaky is already installed for your account, so it can only be reinstalled for you.</value>
+  </data>
+  <data name="FolderModeAll" xml:space="preserve">
+    <value>Navpaky is installed for all users of this PC, so it can only be reinstalled for all users.</value>
+  </data>
+  <data name="OptionSignInAllUsers" xml:space="preserve">
+    <value>For all users: it turns on at each user's first sign-in, and each user can turn it off.</value>
+  </data>
   <data name="SizeMegabytes" xml:space="preserve">
     <value>{0:0} MB</value>
   </data>

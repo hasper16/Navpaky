@@ -181,6 +181,24 @@
   <data name="FolderNotEnoughSpace" xml:space="preserve">
     <value>На цьому диску замало вільного місця.</value>
   </data>
+  <data name="FolderModeJustMe" xml:space="preserve">
+    <value>Лише для мене</value>
+  </data>
+  <data name="FolderModeAllUsers" xml:space="preserve">
+    <value>Для всіх користувачів</value>
+  </data>
+  <data name="FolderAllUsers" xml:space="preserve">
+    <value>Потрібні права адміністратора. Коли почнеться встановлення, Windows попросить дозвіл адміністратора; якщо ваш обліковий запис не адміністратор, адміністратор вводить свій пароль. Кожне оновлення знову просить цей дозвіл. Запит закривається сам приблизно за 2 хвилини, а поле пароля використовує ввімкнену розкладку клавіатури. Navpaky встановлюється в Program Files для всіх облікових записів цього ПК, і кожен користувач зберігає власні налаштування.</value>
+  </data>
+  <data name="FolderModeMine" xml:space="preserve">
+    <value>Navpaky уже встановлено для вашого облікового запису, тож його можна перевстановити лише для вас.</value>
+  </data>
+  <data name="FolderModeAll" xml:space="preserve">
+    <value>Navpaky встановлено для всіх користувачів цього ПК, тож його можна перевстановити лише для всіх.</value>
+  </data>
+  <data name="OptionSignInAllUsers" xml:space="preserve">
+    <value>Для всіх користувачів: вмикається під час першого входу кожного користувача, і кожен може його вимкнути.</value>
+  </data>
   <data name="SizeMegabytes" xml:space="preserve">
     <value>{0:0} МБ</value>
   </data>

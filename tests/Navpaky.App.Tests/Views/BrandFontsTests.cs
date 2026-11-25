@@ -30,8 +30,13 @@ namespace Navpaky.App.Tests.Views {
 
     [Fact]
     public void BothBrandFontsLoad() {
+      // As `--check-fonts` does: pack URIs resolve against an Application, which another test may
+      // or may not have made first.
       bool loaded = false;
-      Sta.Run(() => loaded = BrandFonts.Check());
+      Sta.Run(() => {
+        Sta.EnsureApplication();
+        loaded = BrandFonts.Check();
+      });
 
       Assert.True(loaded);
     }

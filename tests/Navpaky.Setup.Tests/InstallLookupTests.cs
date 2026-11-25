@@ -5,6 +5,7 @@ namespace Navpaky.Setup.Tests {
   public sealed class InstallLookupTests {
     private const string _default = @"C:\Users\olena\AppData\Local\Programs\Navpaky";
     private const string _installed = @"C:\Users\olena\AppData\Local\navpaky-app";
+    private const string _machine = @"C:\Program Files\Navpaky";
 
     private readonly FakeFolders _folders = new();
 
@@ -12,7 +13,23 @@ namespace Navpaky.Setup.Tests {
     public void TheUninstallEntryNamesTheExistingInstall() {
       _folders.Install(_installed);
 
-      Assert.Equal(_installed, InstallLookup.Existing(new FakeEntry(_installed), _folders));
+      Assert.Equal(
+          new ExistingInstall(_installed, ForAllUsers: false),
+          InstallLookup.Existing(new FakeEntry(_installed), _folders));
+    }
+
+    [Fact]
+    public void TheMachineEntryNamesAnAllUsersInstall() {
+      _folders.Install(_machine);
+
+      Assert.Equal(
+          new ExistingInstall(_machine, ForAllUsers: true),
+          InstallLookup.Existing(new FakeEntry(null, _machine), _folders));
+    }
+
+    [Fact]
+    public void AMachineEntryWhoseFolderLostItsFilesIsNoInstall() {
+      Assert.Null(InstallLookup.Existing(new FakeEntry(null, _machine), _folders));
     }
 
     [Fact]
@@ -42,9 +59,13 @@ namespace Navpaky.Setup.Tests {
       Assert.Equal(_default, InstallLookup.Proposed(null, remembered: null, _default));
     }
 
-    private sealed class FakeEntry(string? location) : IUninstallEntry {
+    private sealed class FakeEntry(string? location, string? machine = null) : IUninstallEntry {
       public string? InstallLocation() {
         return location;
+      }
+
+      public string? MachineInstallLocation() {
+        return machine;
       }
     }
   }

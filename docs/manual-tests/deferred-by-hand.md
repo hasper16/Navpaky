@@ -332,3 +332,62 @@ Use the same VM, scripts and test-signed builds as add-install-wizard.
   - The Folder page listed `backup` and `notes.txt` with the box off and Next disabled.
   - After closing, both were still there.
   - After confirming, Next was enabled and the reinstall reached Done in 16 s, leaving only `current`, `packages`, `Navpaky.exe` and `Update.exe`.
+
+## add-machine-wide-install
+
+Use the same VM, scripts and test-signed builds as add-install-wizard, with the wizard and the 0.1.0/0.2.0 feed built from this change. On 2026-11-25 the VM check passed the elevated install, the pending update at start, the update while another session ran Navpaky, and the declined and approved uninstall, all driven through PowerShell Direct. The steps below need someone to type an administrator's password or sign in.
+
+Run: 2026-11-25, Hyper-V NavpakyLab, uk-UA, wizard and feed of 60e1940. Lab accounts: NavpakyTest and NavpakyTest2 are standard users and NavConsent is an administrator, all with empty passwords (owner-approved, lab only). Consent came from NavConsent with an empty password; evidence in `C:\Users\Public\NavpakyTest\hv\out\i2\h*`.
+
+- [x] **Over-the-shoulder install.** Sign in as the standard user, choose "For all users" and Install. Type the administrator's password at the prompt, switching it to the English layout first.
+  Expected:
+  - the prompt names "Navpaky Setup";
+  - the wizard reaches Done;
+  - Installed apps lists Navpaky once, for every user;
+  - the standard user's interface language, sign-in and desktop shortcut follow the wizard;
+  - the administrator's own Installed apps shows no second entry.
+
+  2026-11-25: pass. NavpakyTest installed for all users through NavConsent's consent.
+  - The prompt named "Navpaky Setup" (verified publisher), and the wizard reached Done in 51 s.
+  - Results: the HKLM entry 0.1.0, no HKCU entry for NavpakyTest or NavConsent, only the shared ProgramData link, and Active Setup marked done for NavpakyTest.
+  - NavpakyTest's choices applied: sign-in on, no desktop link, language "Same as Windows".
+- [x] **Declined prompt at Install.** Same as above, but answer No.
+  Expected: the wizard says the install failed and offers Retry and Close; nothing is installed.
+
+  2026-11-25: pass. The page offered Retry and Close, showed no log line (fix 60e1940), and nothing was installed.
+- [x] **Second user's first sign-in.** After an all-users install with sign-in on, sign in as a user who never signed in since.
+  Expected:
+  - Navpaky starts and shows its Welcome window;
+  - turning off "Start Navpaky when I sign in to Windows" asks for no administrator;
+  - after the next update and sign-in, Navpaky still doesn't start for that user.
+
+  2026-11-25: pass. NavpakyTest2 signed in for the first time.
+  - Active Setup ran: HKCU Run was set and Navpaky started with the Welcome.
+  - Turning sign-in off in the Welcome raised no prompt and removed the Run entry.
+  - After the 0.2.0 update and a sign-out and sign-in, there was still no Run entry, Active Setup did not run again, and Navpaky did not start.
+- [x] **Update from the tray while two users are signed in.** Sign in both accounts and start Navpaky in each. In the administrator's session choose "Restart to update" and approve.
+  Expected:
+  - the other user's Navpaky closes;
+  - the update applies and the administrator's Navpaky restarts in the new version;
+  - Installed apps shows the new version once.
+  Repeat, answering No: Navpaky comes back in the old version, and the update is still offered.
+
+  2026-11-25: pass. Both standard users were signed in; NavpakyTest2 chose "Перезапустити для оновлення" and NavConsent approved.
+  - The prompt names "Velopack 1.2.161", Velopack's own `Update.exe`.
+  - NavpakyTest's Navpaky in the other session closed after saving its settings.
+  - 0.2.0 applied, and NavpakyTest2's Navpaky restarted.
+  - HKLM shows 0.2.0 with one entry; NavConsent has no HKCU entry.
+  - The "answer No" repeat was not run again: it is Velopack's unchanged behaviour, seen on 2026-11-24 (A4/A5).
+- [x] **Uninstall from Installed apps.** Settings → Installed apps → Navpaky → Uninstall, then approve.
+  Expected:
+  - the prompt names "Navpaky";
+  - Program Files\Navpaky, the entry and the shared Start-menu shortcut are gone;
+  - other users' Navpaky closes;
+  - a user who signs in for the first time afterwards gets no Navpaky sign-in entry.
+
+  2026-11-25: pass. NavpakyTest2 (standard) used Settings → Інстальовані програми, which listed Navpaky 0.2.0 once, with "Змінити" disabled; NavConsent approved.
+  - The prompt named "Navpaky", with the verified publisher.
+  - NavpakyTest2's running Navpaky closed after saving its statistics.
+  - The data question was answered No.
+  - After Velopack's completion dialog, Program Files\Navpaky, the HKLM entry, Active Setup and the shared link were gone, and other users' data was kept.
+  - With the Active Setup key gone, a new user gets no sign-in entry.

@@ -12,6 +12,7 @@ namespace Navpaky.App.Tests.Updates {
     private readonly string _install;
     private readonly List<(bool On, string Exe)> _signIn = [];
     private readonly FakeShortcut _shortcut = new();
+    private Action? _markActiveSetupDone;
 
     public InstallHookTests() {
       _data = new DataFolders(
@@ -49,6 +50,27 @@ namespace Navpaky.App.Tests.Updates {
       Assert.Equal(["create"], _shortcut.Calls);
       Assert.True(File.Exists(Path.Join(_data.Local, InstallMarker.FileName)));
       Assert.True(File.Exists(Path.Join(_data.Local, choices.AcknowledgementName)));
+    }
+
+    [Fact]
+    public void AnAllUsersInstallMarksActiveSetupDoneWithTheChoices() {
+      int marks = 0;
+      _markActiveSetupDone = () => marks++;
+      Write(KeptData.New, signIn: false, shortcut: false);
+
+      Hook().Run();
+
+      Assert.Equal(1, marks);
+    }
+
+    [Fact]
+    public void WithoutChoicesActiveSetupStaysForTheNextSignIn() {
+      int marks = 0;
+      _markActiveSetupDone = () => marks++;
+
+      Hook().Run();
+
+      Assert.Equal(0, marks);
     }
 
     [Fact]
@@ -140,7 +162,8 @@ namespace Navpaky.App.Tests.Updates {
     }
 
     private InstallHook Hook() {
-      return new InstallHook(_data, _install, (on, exe) => _signIn.Add((on, exe)), _shortcut);
+      return new InstallHook(
+          _data, _install, (on, exe) => _signIn.Add((on, exe)), _shortcut, _markActiveSetupDone);
     }
 
     private InstallChoices Write(KeptData data, bool signIn, bool shortcut) {

@@ -111,7 +111,11 @@ namespace Navpaky.Setup.Wizard {
       ShowButtons(page);
       ShowWelcomeBack();
       ShowFolder();
-      SignInRow.Hint = Was(_model.SignInBefore);
+      string signInHint = string.Join(" ", new[] {
+          _model.ForAllUsers ? Text("OptionSignInAllUsers") : null,
+          Was(_model.SignInBefore),
+      }.OfType<string>());
+      SignInRow.Hint = signInHint.Length > 0 ? signInHint : null;
       ShortcutRow.Hint = string.Join(
           " ", new[] { Text("OptionShortcutHint"), Was(_model.ShortcutBefore) }.OfType<string>());
       ShowInstalling();
@@ -176,7 +180,15 @@ namespace Navpaky.Setup.Wizard {
       FolderCheck folder = _model.Folder;
       FolderPath.Text = folder.Folder;
       Browse.IsEnabled = !folder.Locked;
-      FolderLocked.Visibility = Shown(folder.Locked);
+      FolderModes.IsEnabled = !_model.ModeLocked;
+      FolderModeLocked.Text = Text(_model.ForAllUsers ? "FolderModeAll" : "FolderModeMine");
+      FolderModeLocked.Visibility = Shown(_model.ModeLocked);
+      FolderHint.Visibility = Shown(!_model.ForAllUsers);
+      FolderQuiet.Visibility = Shown(!_model.ForAllUsers);
+      FolderAllUsers.Visibility = Shown(_model.ForAllUsers);
+
+      // All users: the folder is fixed by the mode, not by an earlier install.
+      FolderLocked.Visibility = Shown(_model.ModeLocked);
       FolderRule.Visibility = Shown(!folder.Locked);
       FolderProblem.Text = _model.FolderProblem is { } problem ? Text(problem) : string.Empty;
       FolderProblem.Visibility = Shown(_model.FolderProblem is not null);
@@ -207,7 +219,7 @@ namespace Navpaky.Setup.Wizard {
       FailureText.Text = Text(_model.MayStillRun ? "InstallMayStillRun" : "InstallFailed");
       FailureText.Visibility = Shown(_model.Failed);
       LogText.Text = _model.LogPath is { } log ? Text("InstallLog", log) : string.Empty;
-      LogText.Visibility = Shown(_model.Failed && _model.LogPath is not null);
+      LogText.Visibility = Shown(_model.Failed && _model.HasLog);
     }
 
     private void PickFolder() {

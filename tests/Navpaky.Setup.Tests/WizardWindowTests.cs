@@ -19,6 +19,7 @@ namespace Navpaky.Setup.Tests {
   public sealed class WizardWindowTests : IDisposable {
     private readonly string _root = Directory.CreateTempSubdirectory("navpaky-window").FullName;
     private readonly DataFolderPair _data;
+    private readonly List<string> _logs = [];
     private SetupOutcome _outcome = SetupOutcome.Succeeded;
 
     public WizardWindowTests() {
@@ -29,6 +30,7 @@ namespace Navpaky.Setup.Tests {
     public void Dispose() {
       Sta.Run(() => Localizer.Instance.Use(CultureInfo.GetCultureInfo("en")));
       Directory.Delete(_root, recursive: true);
+      _logs.ForEach(File.Delete);
     }
 
     [Fact]
@@ -142,6 +144,56 @@ namespace Navpaky.Setup.Tests {
       });
     }
 
+    // Task 4.3 of add-machine-wide-install.
+    [Fact]
+    public void TheAdministratorWarningShowsOnlyForAllUsers() {
+      Sta.Run(() => {
+        (WizardWindow window, WizardViewModel model) = Open(kept: null);
+        try {
+          Walk(model, WizardPage.Folder);
+          Sta.Flush();
+
+          Assert.Equal(Visibility.Collapsed, window.FolderAllUsers.Visibility);
+          Assert.Equal(Visibility.Visible, window.FolderHint.Visibility);
+          Assert.True(window.Browse.IsEnabled);
+
+          window.ModeAllUsers.IsChecked = true;
+          Sta.Flush();
+
+          Assert.True(model.ForAllUsers);
+          Assert.Equal(Visibility.Visible, window.FolderAllUsers.Visibility);
+          Assert.Equal(Visibility.Collapsed, window.FolderHint.Visibility);
+          Assert.Equal(Visibility.Collapsed, window.FolderModeLocked.Visibility);
+          Assert.False(window.Browse.IsEnabled);
+        } finally {
+          window.Close();
+        }
+      });
+    }
+
+    [Fact]
+    public void AnExistingInstallDisablesTheModeAndSaysWhy() {
+      string existing = Path.Join(_root, "navpaky-app");
+      var probe = new FakeFolders { Free = 40_000_000_000 };
+      probe.Install(existing);
+
+      Sta.Run(() => {
+        (WizardWindow window, WizardViewModel model) = Open(kept: null, probe, existing);
+        try {
+          model.Language = UiLanguage.English;
+          Walk(model, WizardPage.Folder);
+          Sta.Flush();
+
+          Assert.False(window.FolderModes.IsEnabled);
+          Assert.Equal(Visibility.Visible, window.FolderModeLocked.Visibility);
+          Assert.StartsWith(
+              "Navpaky is already installed for your account", window.FolderModeLocked.Text);
+        } finally {
+          window.Close();
+        }
+      });
+    }
+
     [Fact]
     public void AFolderWithoutExtrasShowsNoWarning() {
       Sta.Run(() => {
@@ -227,13 +279,22 @@ namespace Navpaky.Setup.Tests {
     private (WizardWindow Window, WizardViewModel Model) Open(
         KeptItems? kept, FakeFolders? probe = null, string? existing = null) {
       var folders = new WizardFolders(
-          existing,
+          existing is null ? null : new ExistingInstall(existing, ForAllUsers: false),
           Path.Join(_root, "Programs", "Navpaky"),
           _data,
           230_000_000,
-          probe ?? new FakeFolders { Free = 40_000_000_000 });
+          probe ?? new FakeFolders { Free = 40_000_000_000 },
+          Path.Join(_root, "Program Files", "Navpaky"));
       var model = new WizardViewModel(
-          kept, folders, (_, _, _) => Task.FromResult(_outcome), _ => { });
+          kept,
+          folders,
+          (_, _, log, _) => {
+            // As a setup that ran: it leaves its log; Dispose deletes it.
+            File.WriteAllText(log, string.Empty);
+            _logs.Add(log);
+            return Task.FromResult(_outcome);
+          },
+          _ => { });
       var window = new WizardWindow(model) {
         WindowStartupLocation = WindowStartupLocation.Manual,
         Left = -20_000,

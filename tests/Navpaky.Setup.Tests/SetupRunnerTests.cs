@@ -12,6 +12,7 @@ namespace Navpaky.Setup.Tests {
     private readonly InstallChoices _choices;
     private readonly string _log;
     private readonly List<string> _extractedTo = [];
+    private readonly string _self;
 
     public SetupRunnerTests() {
       _data = new DataFolderPair(
@@ -20,6 +21,7 @@ namespace Navpaky.Setup.Tests {
           _attempt, UiLanguage.English, LaunchAtSignIn: true, DesktopShortcut: false,
           KeptData.New, Path.Join(_root, "Programs", "Navpaky"));
       _log = Path.Join(_root, "setup.log");
+      _self = Path.Join(_root, "Downloads", "NavpakySetup.exe");
     }
 
     // A stopped cmd.exe child can hold seen-args.txt for a moment after the kill (a CI flake).
@@ -41,7 +43,8 @@ namespace Navpaky.Setup.Tests {
       SetupRunner runner = Runner(Stub(exitCode: 0, acknowledge: true));
       List<SetupPhase> phases = [];
 
-      SetupOutcome outcome = await runner.RunAsync(_choices, _data, _log, new Collect(phases));
+      SetupOutcome outcome = await runner.RunAsync(
+          _choices, forAllUsers: false, _data, _log, new Collect(phases));
 
       Assert.Equal(SetupOutcome.Succeeded, outcome);
       Assert.Equal([SetupPhase.Copying, SetupPhase.Applying, SetupPhase.Finishing], phases);
@@ -51,7 +54,7 @@ namespace Navpaky.Setup.Tests {
     public async Task TheChoicesAreWrittenBeforeSetupStarts() {
       SetupRunner runner = Runner(Stub(exitCode: 0, acknowledge: true));
 
-      await runner.RunAsync(_choices, _data, _log, progress: null);
+      await ForMe(runner);
 
       string seen = await File.ReadAllTextAsync(
           Path.Join(_root, "seen-choices.txt"), TestContext.Current.CancellationToken);
@@ -62,7 +65,7 @@ namespace Navpaky.Setup.Tests {
     public async Task SetupRunsSilentlyIntoTheFolderWithoutExtraArguments() {
       SetupRunner runner = Runner(Stub(exitCode: 0, acknowledge: true));
 
-      await runner.RunAsync(_choices, _data, _log, progress: null);
+      await ForMe(runner);
 
       string[] args = await File.ReadAllLinesAsync(
           Path.Join(_root, "seen-args.txt"), TestContext.Current.CancellationToken);
@@ -74,7 +77,7 @@ namespace Navpaky.Setup.Tests {
       SetupRunner runner = Runner(Stub(exitCode: 0, acknowledge: false));
 
       Assert.Equal(
-          SetupOutcome.Failed, await runner.RunAsync(_choices, _data, _log, progress: null));
+          SetupOutcome.Failed, await ForMe(runner));
     }
 
     [Fact]
@@ -82,7 +85,7 @@ namespace Navpaky.Setup.Tests {
       SetupRunner runner = Runner(Stub(exitCode: 3, acknowledge: true));
 
       Assert.Equal(
-          SetupOutcome.Failed, await runner.RunAsync(_choices, _data, _log, progress: null));
+          SetupOutcome.Failed, await ForMe(runner));
     }
 
     [Fact]
@@ -94,7 +97,7 @@ namespace Navpaky.Setup.Tests {
       };
 
       Assert.Equal(
-          SetupOutcome.Failed, await runner.RunAsync(_choices, _data, _log, progress: null));
+          SetupOutcome.Failed, await ForMe(runner));
       Assert.False(File.Exists(Path.Join(_root, "finished.txt")));
     }
 
@@ -106,7 +109,7 @@ namespace Navpaky.Setup.Tests {
         KillWait = TimeSpan.FromMilliseconds(200),
       };
 
-      SetupOutcome outcome = await runner.RunAsync(_choices, _data, _log, progress: null);
+      SetupOutcome outcome = await ForMe(runner);
 
       Assert.Equal(SetupOutcome.MayStillRun, outcome);
       Assert.True(stubborn.Killed);
@@ -121,7 +124,7 @@ namespace Navpaky.Setup.Tests {
         KillWait = TimeSpan.FromMilliseconds(200),
       };
 
-      SetupOutcome outcome = await runner.RunAsync(_choices, _data, _log, progress: null);
+      SetupOutcome outcome = await ForMe(runner);
 
       Assert.Equal(SetupOutcome.MayStillRun, outcome);
     }
@@ -134,7 +137,7 @@ namespace Navpaky.Setup.Tests {
       SetupRunner runner = new(Extract(Stub(exitCode: 0, acknowledge: false)), hook);
       Installed();
 
-      SetupOutcome outcome = await runner.RunAsync(_choices, _data, _log, progress: null);
+      SetupOutcome outcome = await ForMe(runner);
 
       Assert.Equal(SetupOutcome.Succeeded, outcome);
       Assert.Equal(
@@ -149,7 +152,7 @@ namespace Navpaky.Setup.Tests {
       Installed();
 
       Assert.Equal(
-          SetupOutcome.Failed, await runner.RunAsync(_choices, _data, _log, progress: null));
+          SetupOutcome.Failed, await ForMe(runner));
       Assert.Single(hook.Runs);
     }
 
@@ -159,7 +162,7 @@ namespace Navpaky.Setup.Tests {
       SetupRunner runner = new(Extract(Stub(exitCode: 0, acknowledge: false)), hook);
 
       Assert.Equal(
-          SetupOutcome.Failed, await runner.RunAsync(_choices, _data, _log, progress: null));
+          SetupOutcome.Failed, await ForMe(runner));
       Assert.Empty(hook.Runs);
     }
 
@@ -171,7 +174,7 @@ namespace Navpaky.Setup.Tests {
       Installed();
 
       Assert.Equal(
-          SetupOutcome.Failed, await runner.RunAsync(_choices, _data, _log, progress: null));
+          SetupOutcome.Failed, await ForMe(runner));
       Assert.Empty(hook.Runs);
     }
 
@@ -182,18 +185,103 @@ namespace Navpaky.Setup.Tests {
       Installed();
 
       Assert.Equal(
-          SetupOutcome.Succeeded, await runner.RunAsync(_choices, _data, _log, progress: null));
+          SetupOutcome.Succeeded, await ForMe(runner));
       Assert.Empty(hook.Runs);
+    }
+
+    // A poll after the log is complete must not report the phases a second time (a CI flake).
+    [Fact]
+    public async Task EachPhaseIsReportedOnceInOrder() {
+      CancellationToken cancel = TestContext.Current.CancellationToken;
+      string[] log = [
+          "[INFO] Extracting Update.exe...",
+          "[INFO] Starting process install hook",
+          "[INFO] Installation completed successfully!"];
+      await File.WriteAllLinesAsync(_log, log, cancel);
+      Directory.CreateDirectory(_data.Local);
+      await File.WriteAllTextAsync(Acknowledgement(), string.Empty, cancel);
+      SetupRunner runner = new(Extract(Stub(0, acknowledge: true)), new LateExit());
+      var phases = new Recorded();
+
+      await runner.RunAsync(_choices, forAllUsers: false, _data, _log, phases);
+
+      Assert.Equal([SetupPhase.Copying, SetupPhase.Applying, SetupPhase.Finishing], phases.All);
+    }
+
+    // Task 5.1 of add-machine-wide-install: only the attempt and a flag cross the elevation.
+    [Fact]
+    public async Task ForAllUsersTheWizardStartsItselfElevated() {
+      var elevated = new ElevatedFake(0, Acknowledgement());
+      SetupRunner runner = new(Extract(Stub(0, acknowledge: true)), new ProcessSetupLauncher()) {
+        Elevated = elevated,
+        Self = _self,
+      };
+
+      SetupOutcome outcome = await runner.RunAsync(
+          _choices, forAllUsers: true, _data, _log, progress: null);
+
+      Assert.Equal(SetupOutcome.Succeeded, outcome);
+      Assert.Equal(
+          [(_self, "--all-users-setup|6f9619ff8b86d011b42d00c04fc964ff|on")],
+          elevated.Runs.Select(run => (run.Exe, string.Join('|', run.Args))));
+      Assert.Empty(_extractedTo);
+    }
+
+    [Fact]
+    public async Task ForAllUsersAFailedElevatedSetupFails() {
+      SetupRunner runner = new(Extract(Stub(0, acknowledge: true)), new ProcessSetupLauncher()) {
+        Elevated = new ElevatedFake(1, Acknowledgement()),
+        Self = _self,
+      };
+
+      Assert.Equal(
+          SetupOutcome.Failed,
+          await runner.RunAsync(_choices, forAllUsers: true, _data, _log, progress: null));
+    }
+
+    [Fact]
+    public async Task ForAllUsersASetupThatMayStillRunIsNotRetried() {
+      SetupRunner runner = new(Extract(Stub(0, acknowledge: true)), new ProcessSetupLauncher()) {
+        Elevated = new ElevatedFake(MachineSetup.MayStillRunExitCode, Acknowledgement()),
+        Self = _self,
+      };
+
+      Assert.Equal(
+          SetupOutcome.MayStillRun,
+          await runner.RunAsync(_choices, forAllUsers: true, _data, _log, progress: null));
+    }
+
+    // An administrator's own account ran the elevated hook without this user's choices.
+    [Fact]
+    public async Task ForAllUsersTheHookRunsAgainAsThisUserWithTheInstalledVersion() {
+      var hook = new HookLauncher(Acknowledgement());
+      SetupRunner runner = new(Extract(Stub(0, acknowledge: true)), hook) {
+        Elevated = new ElevatedFake(0, acknowledgement: null),
+        Self = _self,
+      };
+      Installed("0.3.0");
+
+      SetupOutcome outcome = await runner.RunAsync(
+          _choices, forAllUsers: true, _data, _log, progress: null);
+
+      Assert.Equal(SetupOutcome.Succeeded, outcome);
+      Assert.Equal(
+          [(AppExe(), "--veloapp-install|0.3.0")],
+          hook.Runs.Select(run => (run.Exe, string.Join('|', run.Args))));
     }
 
     [Fact]
     public async Task TheTemporaryCopyOfSetupIsDeleted() {
       SetupRunner runner = Runner(Stub(exitCode: 0, acknowledge: true));
 
-      await runner.RunAsync(_choices, _data, _log, progress: null);
+      await ForMe(runner);
 
       Assert.Single(_extractedTo);
       Assert.False(Directory.Exists(_extractedTo[0]));
+    }
+
+    private Task<SetupOutcome> ForMe(SetupRunner runner) {
+      return runner.RunAsync(_choices, forAllUsers: false, _data, _log, progress: null);
     }
 
     private SetupRunner Runner(string stub) {
@@ -244,10 +332,15 @@ namespace Navpaky.Setup.Tests {
       return Path.Join(_choices.InstallFolder, "current", "Navpaky.App.exe");
     }
 
-    // What Velopack's setup leaves behind even when it stopped the hook.
-    private void Installed() {
+    // What Velopack's setup leaves behind even when it stopped the hook; the version file is
+    // the package manifest Velopack keeps beside the app.
+    private void Installed(string? version = null) {
       Directory.CreateDirectory(Path.GetDirectoryName(AppExe())!);
       File.WriteAllText(AppExe(), string.Empty);
+      if (version is not null) {
+        string manifest = $"<package><metadata><version>{version}</version></metadata></package>";
+        File.WriteAllText(Path.Join(Path.GetDirectoryName(AppExe())!, "sq.version"), manifest);
+      }
     }
 
     private sealed class Collect(List<SetupPhase> phases) : IProgress<SetupPhase> {
@@ -280,6 +373,66 @@ namespace Navpaky.Setup.Tests {
 
       private sealed class Exited : ISetupProcess {
         public int ExitCode => 0;
+
+        public Task<bool> WaitForExitAsync(TimeSpan timeout) {
+          return Task.FromResult(true);
+        }
+
+        public void KillTree() {
+        }
+
+        public void Dispose() {
+        }
+      }
+    }
+
+    // Every phase as reported, without dropping repeats.
+    private sealed class Recorded : IProgress<SetupPhase> {
+      public List<SetupPhase> All { get; } = [];
+
+      public void Report(SetupPhase value) {
+        All.Add(value);
+      }
+    }
+
+    // A setup that exits only after two more polls of its finished log.
+    private sealed class LateExit : ISetupLauncher {
+      public ISetupProcess Start(string exe, IReadOnlyList<string> args) {
+        return new Process();
+      }
+
+      private sealed class Process : ISetupProcess {
+        private int _waits;
+
+        public int ExitCode => 0;
+
+        public Task<bool> WaitForExitAsync(TimeSpan timeout) {
+          return Task.FromResult(++_waits > 2);
+        }
+
+        public void KillTree() {
+        }
+
+        public void Dispose() {
+        }
+      }
+    }
+
+    // The elevated wizard: records how it was started and acknowledges like the hook when asked.
+    private sealed class ElevatedFake(int exitCode, string? acknowledgement) : ISetupLauncher {
+      public List<(string Exe, IReadOnlyList<string> Args)> Runs { get; } = [];
+
+      public ISetupProcess Start(string exe, IReadOnlyList<string> args) {
+        Runs.Add((exe, args));
+        if (acknowledgement is not null) {
+          File.WriteAllText(acknowledgement, string.Empty);
+        }
+
+        return new Done(exitCode);
+      }
+
+      private sealed class Done(int exitCode) : ISetupProcess {
+        public int ExitCode => exitCode;
 
         public Task<bool> WaitForExitAsync(TimeSpan timeout) {
           return Task.FromResult(true);

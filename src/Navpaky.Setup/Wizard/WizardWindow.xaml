@@ -170,7 +170,24 @@
 
         <StackPanel x:Name="FolderPage">
           <TextBlock Text="{u:Loc FolderTitle}" Style="{StaticResource PageTitle}" />
-          <TextBlock Text="{u:Loc FolderHint}" Style="{StaticResource PageHint}" />
+          <WrapPanel x:Name="FolderModes">
+            <RadioButton x:Name="ModeJustMe"
+                         GroupName="Mode"
+                         Style="{StaticResource PillRadio}"
+                         Content="{u:Loc FolderModeJustMe}"
+                         IsChecked="{Binding JustForMe}" />
+            <RadioButton x:Name="ModeAllUsers"
+                         GroupName="Mode"
+                         Style="{StaticResource PillRadio}"
+                         Content="{u:Loc FolderModeAllUsers}"
+                         IsChecked="{Binding ForAllUsers}" />
+          </WrapPanel>
+          <TextBlock x:Name="FolderModeLocked" Style="{StaticResource PageHint}" />
+          <TextBlock x:Name="FolderHint" Text="{u:Loc FolderHint}" Style="{StaticResource PageHint}" />
+          <TextBlock x:Name="FolderAllUsers"
+                     Text="{u:Loc FolderAllUsers}"
+                     Style="{StaticResource Problem}"
+                     Margin="0,0,0,8" />
           <DockPanel>
             <ui:Button x:Name="Browse"
                        DockPanel.Dock="Right"
@@ -197,7 +214,10 @@
                       IsChecked="{Binding ExtrasConfirmed}"
                       Margin="0,6,0,0" />
           </StackPanel>
-          <TextBlock Text="{u:Loc FolderQuiet}" Style="{StaticResource PageHint}" Margin="0,8,0,0" />
+          <TextBlock x:Name="FolderQuiet"
+                     Text="{u:Loc FolderQuiet}"
+                     Style="{StaticResource PageHint}"
+                     Margin="0,8,0,0" />
           <TextBlock x:Name="FolderSpace"
                      Margin="0,8,0,0"
                      FontSize="12.5"

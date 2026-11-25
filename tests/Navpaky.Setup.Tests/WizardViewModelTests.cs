@@ -18,14 +18,18 @@ namespace Navpaky.Setup.Tests {
     private readonly FakeFolders _folders = new();
     private readonly DataFolderPair _data;
     private readonly List<InstallChoices> _ran = [];
+    private readonly List<bool> _ranForAllUsers = [];
     private readonly List<string> _started = [];
     private readonly string _defaultFolder;
+    private readonly string _machineFolder;
     private SetupOutcome _outcome = SetupOutcome.Succeeded;
+    private Exception? _fails;
 
     public WizardViewModelTests() {
       _data = new DataFolderPair(
           Path.Join(_root, "Roaming", "Navpaky"), Path.Join(_root, "Local", "Navpaky"));
       _defaultFolder = Path.Join(_root, "Programs", "Navpaky");
+      _machineFolder = Path.Join(_root, "Program Files", "Navpaky");
       Localizer.Instance.Use(CultureInfo.GetCultureInfo("en"));
     }
 
@@ -185,6 +189,114 @@ namespace Navpaky.Setup.Tests {
 
       Assert.Equal(existing, model.Folder.Folder);
       Assert.True(model.Folder.Locked);
+    }
+
+    // Task 4.2 of add-machine-wide-install.
+    [Fact]
+    public async Task JustForMeIsTheDefault() {
+      WizardViewModel model = Wizard();
+      await ToPage(model, WizardPage.Folder);
+
+      Assert.False(model.ForAllUsers);
+      Assert.False(model.ModeLocked);
+      Assert.Equal(_defaultFolder, model.Folder.Folder);
+    }
+
+    [Fact]
+    public async Task ForAllUsersUsesTheLockedProgramFilesFolder() {
+      WizardViewModel model = Wizard();
+      await ToPage(model, WizardPage.Folder);
+
+      model.ForAllUsers = true;
+
+      Assert.Equal(_machineFolder, model.Folder.Folder);
+      Assert.True(model.Folder.Locked);
+      Assert.True(model.CanGoNext);
+    }
+
+    [Fact]
+    public async Task BackToJustMeRestoresThePickedFolder() {
+      WizardViewModel model = Wizard();
+      await ToPage(model, WizardPage.Folder);
+      model.Pick(Path.Join(_root, "Tools"));
+
+      model.ForAllUsers = true;
+      model.ForAllUsers = false;
+
+      Assert.Equal(Path.Join(_root, "Tools", "Navpaky"), model.Folder.Folder);
+      Assert.False(model.Folder.Locked);
+    }
+
+    [Fact]
+    public async Task APerUserInstallKeepsItsMode() {
+      string existing = Path.Join(_root, "navpaky-app");
+      _folders.Install(existing);
+      WizardViewModel model = Wizard(existing: existing);
+      await ToPage(model, WizardPage.Folder);
+
+      model.ForAllUsers = true;
+
+      Assert.False(model.ForAllUsers);
+      Assert.True(model.ModeLocked);
+      Assert.Equal(existing, model.Folder.Folder);
+    }
+
+    [Fact]
+    public async Task AnAllUsersInstallKeepsItsMode() {
+      _folders.Install(_machineFolder);
+      WizardViewModel model = Wizard(existing: _machineFolder, existingForAllUsers: true);
+      await ToPage(model, WizardPage.Folder);
+
+      model.ForAllUsers = false;
+
+      Assert.True(model.ForAllUsers);
+      Assert.True(model.ModeLocked);
+      Assert.Equal(_machineFolder, model.Folder.Folder);
+    }
+
+    [Fact]
+    public async Task TheInstallRunsInTheChosenMode() {
+      WizardViewModel model = Wizard();
+      await ToPage(model, WizardPage.Options);
+      model.Back();
+      model.ForAllUsers = true;
+      await ToPage(model, WizardPage.Options);
+
+      await model.Next();
+
+      Assert.Equal([true], _ranForAllUsers);
+      Assert.Equal(_machineFolder, _ran[0].InstallFolder);
+    }
+
+    // 1223: the UAC prompt was declined or timed out. No setup ran, so there is no log to name.
+    [Fact]
+    public async Task ADeclinedPromptFailsAndOffersRetry() {
+      _fails = new System.ComponentModel.Win32Exception(1223);
+      WizardViewModel model = Wizard();
+      model.ForAllUsers = true;
+      await ToPage(model, WizardPage.Options);
+
+      await model.Next();
+
+      Assert.True(model.Failed);
+      Assert.True(model.CanRetry);
+      Assert.False(model.HasLog);
+    }
+
+    [Fact]
+    public async Task AFailedSetupThatWroteALogNamesIt() {
+      _outcome = SetupOutcome.Failed;
+      WizardViewModel? model = null;
+      model = Wizard(hook: _ => File.WriteAllText(model!.LogPath!, "log"));
+      await ToPage(model, WizardPage.Options);
+
+      try {
+        await model.Next();
+
+        Assert.True(model.HasLog);
+      } finally {
+        File.Delete(model.LogPath!);
+      }
     }
 
     // Task 2.1 of warn-reinstall-extra-files: the setup would delete the listed entries.
@@ -421,14 +533,28 @@ namespace Navpaky.Setup.Tests {
     }
 
     private WizardViewModel Wizard(
-        KeptItems? kept = null, string? existing = null, Action<InstallChoices>? hook = null) {
-      var folders = new WizardFolders(existing, _defaultFolder, _data, _needed, _folders);
+        KeptItems? kept = null,
+        string? existing = null,
+        Action<InstallChoices>? hook = null,
+        bool existingForAllUsers = false) {
+      var folders = new WizardFolders(
+          existing is null ? null : new ExistingInstall(existing, existingForAllUsers),
+          _defaultFolder,
+          _data,
+          _needed,
+          _folders,
+          _machineFolder);
       return new WizardViewModel(
           kept,
           folders,
-          (choices, log, progress) => {
+          (choices, forAllUsers, log, progress) => {
+            if (_fails is not null) {
+              throw _fails;
+            }
+
             choices.WriteTo(_data.Local);
             _ran.Add(choices);
+            _ranForAllUsers.Add(forAllUsers);
             hook?.Invoke(choices);
             return Task.FromResult(_outcome);
           },

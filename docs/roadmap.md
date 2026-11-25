@@ -46,7 +46,7 @@ Installer changes replace Velopack's one-click setup with Navpaky's own wizard (
 | # | Change | Capability | Depends on |
 |---|---|---|---|
 | I1 | `add-install-wizard` | install-wizard (new), auto-update, onboarding, telemetry: branded per-user wizard (language, licence, folder, shortcut, sign-in, Welcome back / Start fresh), hand-off of choices to the install hook, slimmer Welcome with one telemetry consent, single signed `NavpakySetup.exe` | D2 |
-| I2 | `add-machine-wide-install` (not yet proposed) | install-wizard, auto-update: "All users" into Program Files, with the 2026-11-24 live-run workarounds (HKLM entry and elevating uninstall, shared Start-menu link, per-user autostart through Active Setup, no apply-on-start, closing Navpaky in every session before an update, cleanup of the per-admin Installed apps entry) | I1 |
+| I2 | `add-machine-wide-install` | install-wizard, auto-update: "All users" into Program Files, with the 2026-11-24 live-run workarounds (HKLM entry and elevating uninstall, shared Start-menu link, per-user autostart through Active Setup, no apply-on-start, closing Navpaky in every session before an update, cleanup of the per-admin Installed apps entry) | I1 |
 
 Initiative after I2, **analysis pending** (owner, 2026-11-24): **Portable and use without admin rights**. The goal: a user can run Navpaky on a PC they don't administer, such as a corporate PC, without asking IT. It has no OpenSpec change yet; changes are proposed once the owner settles the open choice (portable data in the profile or next to the exe).
 
