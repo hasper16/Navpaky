@@ -3,9 +3,6 @@ using System.IO;
 namespace Navpaky.Setup.Install {
   // The folder rules of the install wizard (spec install-wizard, design D5).
   internal static class InstallTarget {
-    // The room Velopack's setup asks for on top of the package itself.
-    public const long Margin = 50_000_000;
-
     private const string _folderName = "Navpaky";
 
     public static FolderCheck Check(
@@ -36,7 +33,8 @@ namespace Navpaky.Setup.Install {
         return FolderVerdict.NotWritable;
       }
 
-      return folders.FreeBytes(folder) < neededBytes + Margin
+      // neededBytes is what the setup itself checks (SetupPackage), overhead included.
+      return folders.FreeBytes(folder) < neededBytes
           ? FolderVerdict.NotEnoughSpace
           : FolderVerdict.Ok;
     }

@@ -58,7 +58,7 @@ namespace Navpaky.Setup {
           InstallLookup.Existing(new UninstallEntry(), probe),
           Path.Join(local, "Programs", "Navpaky"),
           data,
-          SetupPayload.Length,
+          SetupPayload.RequiredBytes(),
           probe);
       var runner = new SetupRunner(SetupPayload.ExtractTo, new ProcessSetupLauncher());
       return new WizardViewModel(

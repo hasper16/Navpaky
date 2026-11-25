@@ -5,12 +5,11 @@ namespace Navpaky.Setup.Install {
   internal static class SetupPayload {
     private const string _resource = "Navpaky.Setup.Payload.exe";
 
-    // The package size the Folder page compares with the free space; 0 in a build without one.
-    public static long Length {
-      get {
-        using Stream? payload = Open();
-        return payload?.Length ?? 0;
-      }
+    // The space the setup requires, which the Folder page shows and checks; 0 in a build
+    // without a setup.
+    public static long RequiredBytes() {
+      using Stream? payload = Open();
+      return payload is null ? 0 : SetupPackage.RequiredBytes(payload);
     }
 
     public static string ExtractTo(string folder) {

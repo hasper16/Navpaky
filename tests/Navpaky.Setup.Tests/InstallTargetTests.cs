@@ -89,14 +89,14 @@ namespace Navpaky.Setup.Tests {
 
     [Fact]
     public void TooLittleSpaceIsRefused() {
-      _folders.Free = _needed + InstallTarget.Margin - 1;
+      _folders.Free = _needed - 1;
 
       Assert.Equal(FolderVerdict.NotEnoughSpace, Check(@"D:\Tools").Verdict);
     }
 
     [Fact]
     public void JustEnoughSpaceIsAccepted() {
-      _folders.Free = _needed + InstallTarget.Margin;
+      _folders.Free = _needed;
 
       Assert.Equal(FolderVerdict.Ok, Check(@"D:\Tools").Verdict);
     }
