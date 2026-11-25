@@ -12,9 +12,18 @@ namespace Navpaky.Setup.Tests {
       Directory.Delete(_root, recursive: true);
     }
 
+    // What the same account's unelevated programs could do: make the folder first, owned by the
+    // user. Owner set explicitly, since an elevated test run would otherwise own it as
+    // Administrators.
     [Fact]
     public void AFolderSomeoneElseMadeFirstIsRefused() {
-      string path = Directory.CreateDirectory(Path.Join(_root, "work")).FullName;
+      using var me = WindowsIdentity.GetCurrent();
+      var security = new DirectorySecurity();
+      security.SetOwner(me.User!);
+      security.AddAccessRule(new FileSystemAccessRule(
+          me.User!, FileSystemRights.FullControl, AccessControlType.Allow));
+      string path = Path.Join(_root, "work");
+      new DirectoryInfo(path).Create(security);
 
       Assert.False(AdminFolder.TryCreate(path));
     }
