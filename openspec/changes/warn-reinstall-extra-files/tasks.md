@@ -13,7 +13,7 @@
 
 ## 3. Test cleanup (design D5)
 
-- [ ] 3.1 `SetupRunnerTests.Dispose` retries the temporary-folder delete on `IOException`, up to 10 times, 200 ms apart. Verify: `dotnet test tests/Navpaky.Setup.Tests --filter SetupRunnerTests` passes 10 runs in a row.
+- [x] 3.1 `SetupRunnerTests.Dispose` retries the temporary-folder delete on `IOException`, up to 10 times, 200 ms apart. Verify: `dotnet test tests/Navpaky.Setup.Tests --filter SetupRunnerTests` passes 10 runs in a row.
 
 ## 4. Checks and docs
 
