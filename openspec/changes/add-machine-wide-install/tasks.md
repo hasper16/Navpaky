@@ -18,8 +18,8 @@
 
 ## 4. Wizard mode and folder (design D1, D7)
 
-- [ ] 4.1 Test first: `InstallLookup.Existing` reports an HKLM entry as an all-users install and an HKCU one as per-user. `InstallTarget.Check` for all users accepts an unwritable empty `%ProgramFiles%\Navpaky` and still refuses a non-empty foreign one. Verify: `dotnet test tests/Navpaky.Setup.Tests --filter "InstallLookup|InstallTarget"`.
-- [ ] 4.2 Test first: `WizardViewModel.ForAllUsers`:
+- [x] 4.1 Test first: `InstallLookup.Existing` reports an HKLM entry as an all-users install and an HKCU one as per-user. `InstallTarget.Check` for all users accepts an unwritable empty `%ProgramFiles%\Navpaky` and still refuses a non-empty foreign one. Verify: `dotnet test tests/Navpaky.Setup.Tests --filter "InstallLookup|InstallTarget"`.
+- [x] 4.2 Test first: `WizardViewModel.ForAllUsers`:
   - switches the folder and locks it;
   - switching back restores the per-user proposal;
   - an existing per-user install disables all users;
@@ -30,8 +30,8 @@
 
 ## 5. Elevated setup (design D2, D5)
 
-- [ ] 5.1 Test first: `SetupRunner` for all users starts the wizard's own exe through the elevating launcher, with only `--all-users-setup <attempt> <on|off>`. It polls the derived log path and maps a declined prompt (`Win32Exception` 1223) to Failed. `RunHookAgain` reads the version from `current\sq.version`. Verify: `dotnet test tests/Navpaky.Setup.Tests --filter SetupRunner`.
-- [ ] 5.2 Test first: `MachineSetup`:
+- [x] 5.1 Test first: `SetupRunner` for all users starts the wizard's own exe through the elevating launcher, with only `--all-users-setup <attempt> <on|off>`. It polls the derived log path and maps a declined prompt (`Win32Exception` 1223) to Failed. `RunHookAgain` reads the version from `current\sq.version`. Verify: `dotnet test tests/Navpaky.Setup.Tests --filter SetupRunner`.
+- [x] 5.2 Test first: `MachineSetup`:
   - refuses unelevated;
   - refuses an existing work folder;
   - runs the setup with the derived arguments;

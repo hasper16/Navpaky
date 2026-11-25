@@ -2,10 +2,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Navpaky.Setup.Install {
-  // Runs the extracted setup as a plain process: no shell, no window of its own.
-  internal sealed class ProcessSetupLauncher : ISetupLauncher {
+  // Runs the extracted setup as a plain process: no shell, no window of its own. Elevated, it goes
+  // through the shell's "runas" verb, which shows the UAC prompt and throws Win32Exception 1223
+  // when it is declined (design D2 of add-machine-wide-install).
+  internal sealed class ProcessSetupLauncher(bool elevate = false) : ISetupLauncher {
     public ISetupProcess Start(string exe, IReadOnlyList<string> args) {
-      var start = new ProcessStartInfo(exe) { UseShellExecute = false, CreateNoWindow = true };
+      var start = elevate
+          ? new ProcessStartInfo(exe) { UseShellExecute = true, Verb = "runas" }
+          : new ProcessStartInfo(exe) { UseShellExecute = false, CreateNoWindow = true };
       foreach (string arg in args) {
         start.ArgumentList.Add(arg);
       }

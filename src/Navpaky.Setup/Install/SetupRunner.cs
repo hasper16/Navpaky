@@ -32,36 +32,34 @@ namespace Navpaky.Setup.Install {
     // How long the wizard's own run of the install hook may take (design D3).
     public TimeSpan HookWait { get; init; } = TimeSpan.FromMinutes(2);
 
+    // Starts the wizard itself elevated for an all-users install (design D2 of
+    // add-machine-wide-install).
+    public ISetupLauncher Elevated { get; init; } = new ProcessSetupLauncher(elevate: true);
+
+    public string Self { get; init; } = Environment.ProcessPath ?? string.Empty;
+
     public async Task<SetupOutcome> RunAsync(
         InstallChoices choices,
+        bool forAllUsers,
         DataFolderPair data,
         string logPath,
         IProgress<SetupPhase>? progress) {
       choices.WriteTo(data.Local);
+      if (forAllUsers) {
+        using ISetupProcess elevated = Elevated.Start(
+            Self, MachineSetup.Arguments(choices.Attempt, choices.LaunchAtSignIn));
+
+        // The administrator's own account may have run the install hook: the wizard user's
+        // choices then come from running it again below.
+        return await Finish(elevated, choices, data, logPath, progress).ConfigureAwait(false);
+      }
+
       DirectoryInfo temp = Directory.CreateTempSubdirectory("navpaky-setup-");
       try {
         string exe = _extractSetup(temp.FullName);
         using ISetupProcess setup = _launcher.Start(
             exe, ["--silent", "--log", logPath, "--installto", choices.InstallFolder]);
-        bool exited = await WaitWhileReporting(setup, logPath, progress).ConfigureAwait(false);
-        if (!exited) {
-          TryStop(setup);
-          return await setup.WaitForExitAsync(KillWait).ConfigureAwait(false)
-              ? SetupOutcome.Failed
-              : SetupOutcome.MayStillRun;
-        }
-
-        Report(logPath, progress);
-        if (setup.ExitCode != 0) {
-          return SetupOutcome.Failed;
-        }
-
-        string acknowledgement = Path.Join(data.Local, choices.AcknowledgementName);
-        if (!File.Exists(acknowledgement)) {
-          await RunHookAgain(choices.InstallFolder, logPath).ConfigureAwait(false);
-        }
-
-        return File.Exists(acknowledgement) ? SetupOutcome.Succeeded : SetupOutcome.Failed;
+        return await Finish(setup, choices, data, logPath, progress).ConfigureAwait(false);
       } finally {
         TryDelete(temp);
       }
@@ -123,7 +121,8 @@ namespace Navpaky.Setup.Install {
     // that long to start. The installed app runs the same hook without that limit.
     private async Task RunHookAgain(string installFolder, string logPath) {
       string app = Path.Join(installFolder, "current", "Navpaky.App.exe");
-      if (!File.Exists(app) || PackageVersion(logPath) is not { Length: > 0 } version) {
+      string? version = PackageVersion(logPath) ?? PackageManifest.VersionIn(installFolder);
+      if (!File.Exists(app) || version is not { Length: > 0 }) {
         return;
       }
 
@@ -132,6 +131,33 @@ namespace Navpaky.Setup.Install {
         TryStop(hook);
         await hook.WaitForExitAsync(KillWait).ConfigureAwait(false);
       }
+    }
+
+    private async Task<SetupOutcome> Finish(
+        ISetupProcess setup,
+        InstallChoices choices,
+        DataFolderPair data,
+        string logPath,
+        IProgress<SetupPhase>? progress) {
+      bool exited = await WaitWhileReporting(setup, logPath, progress).ConfigureAwait(false);
+      if (!exited) {
+        TryStop(setup);
+        return await setup.WaitForExitAsync(KillWait).ConfigureAwait(false)
+            ? SetupOutcome.Failed
+            : SetupOutcome.MayStillRun;
+      }
+
+      Report(logPath, progress);
+      if (setup.ExitCode != 0) {
+        return SetupOutcome.Failed;
+      }
+
+      string acknowledgement = Path.Join(data.Local, choices.AcknowledgementName);
+      if (!File.Exists(acknowledgement)) {
+        await RunHookAgain(choices.InstallFolder, logPath).ConfigureAwait(false);
+      }
+
+      return File.Exists(acknowledgement) ? SetupOutcome.Succeeded : SetupOutcome.Failed;
     }
 
     private async Task<bool> WaitWhileReporting(

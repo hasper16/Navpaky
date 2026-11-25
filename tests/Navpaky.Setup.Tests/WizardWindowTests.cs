@@ -227,13 +227,14 @@ namespace Navpaky.Setup.Tests {
     private (WizardWindow Window, WizardViewModel Model) Open(
         KeptItems? kept, FakeFolders? probe = null, string? existing = null) {
       var folders = new WizardFolders(
-          existing,
+          existing is null ? null : new ExistingInstall(existing, ForAllUsers: false),
           Path.Join(_root, "Programs", "Navpaky"),
           _data,
           230_000_000,
-          probe ?? new FakeFolders { Free = 40_000_000_000 });
+          probe ?? new FakeFolders { Free = 40_000_000_000 },
+          Path.Join(_root, "Program Files", "Navpaky"));
       var model = new WizardViewModel(
-          kept, folders, (_, _, _) => Task.FromResult(_outcome), _ => { });
+          kept, folders, (_, _, _, _) => Task.FromResult(_outcome), _ => { });
       var window = new WizardWindow(model) {
         WindowStartupLocation = WindowStartupLocation.Manual,
         Left = -20_000,

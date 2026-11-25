@@ -12,6 +12,7 @@
     <Product>Navpaky</Product>
     <AssemblyTitle>Navpaky Setup</AssemblyTitle>
     <ApplicationIcon>..\Navpaky.App\Navpaky.ico</ApplicationIcon>
+    <StartupObject>Navpaky.Setup.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,6 +53,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Navpaky.Core\Navpaky.Core.csproj" />
     <ProjectReference Include="..\Navpaky.Ui\Navpaky.Ui.csproj" />
+    <ProjectReference Include="..\Navpaky.Win32\Navpaky.Win32.csproj" />
   </ItemGroup>
 
 </Project>

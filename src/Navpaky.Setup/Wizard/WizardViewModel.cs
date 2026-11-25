@@ -23,6 +23,10 @@ namespace Navpaky.Setup.Wizard {
     private bool _confirmingFresh;
     private bool _freshConfirmed;
     private FolderCheck _folder;
+    private bool _forAllUsers;
+
+    // The per-user folder, kept while all users is chosen so going back restores it.
+    private string _ownPick;
     private bool _launchAtSignIn = true;
     private bool _desktopShortcut;
     private SetupPhase _phase;
@@ -39,8 +43,10 @@ namespace Navpaky.Setup.Wizard {
               WizardPage.Installing, WizardPage.Done]
           : [WizardPage.Language, WizardPage.Licence, WizardPage.WelcomeBack, WizardPage.Folder,
               WizardPage.Options, WizardPage.Installing, WizardPage.Done];
-      _folder = Check(InstallLookup.Proposed(
-          folders.ExistingInstall, kept?.Settings?.InstallFolder, folders.DefaultFolder));
+      _forAllUsers = folders.Existing?.ForAllUsers ?? false;
+      _ownPick = InstallLookup.Proposed(
+          folders.Existing?.Folder, kept?.Settings?.InstallFolder, folders.DefaultFolder);
+      _folder = Check(_forAllUsers ? folders.MachineFolder : _ownPick);
       FreeBytes = folders.Probe.FreeBytes(_folder.Folder);
       Language = kept?.Settings?.UiLanguage ?? UiLanguage.System;
       PresetOptions();
@@ -130,6 +136,29 @@ namespace Navpaky.Setup.Wizard {
 
     public FolderCheck Folder => _folder;
 
+    // An existing install keeps its mode: two installs on one account would both run and update.
+    public bool ModeLocked => _folders.Existing is not null;
+
+    public bool ForAllUsers {
+      get {
+        return _forAllUsers;
+      }
+
+      set {
+        if (ModeLocked || value == _forAllUsers) {
+          return;
+        }
+
+        _forAllUsers = value;
+        UseFolder(value ? _folders.MachineFolder : _ownPick);
+      }
+    }
+
+    public bool JustForMe {
+      get => !ForAllUsers;
+      set => ForAllUsers = !value;
+    }
+
     // The user's yes to the setup deleting the folder's extra entries (warn-reinstall-extra-files).
     public bool ExtrasConfirmed {
       get => _extrasConfirmed;
@@ -214,10 +243,8 @@ namespace Navpaky.Setup.Wizard {
 
     public void Pick(string folder) {
       if (!Folder.Locked) {
-        _folder = Check(folder);
-        _extrasConfirmed = false;
-        FreeBytes = _folders.Probe.FreeBytes(_folder.Folder);
-        Changed();
+        _ownPick = folder;
+        UseFolder(folder);
       }
     }
 
@@ -254,17 +281,20 @@ namespace Navpaky.Setup.Wizard {
 
     private async Task InstallAsync() {
       var attempt = Guid.NewGuid();
-      LogPath = Path.Join(Path.GetTempPath(), $"NavpakySetup-{attempt:N}.log");
+      LogPath = ForAllUsers
+          ? MachineSetup.LogOf(Path.GetTempPath(), attempt)
+          : Path.Join(Path.GetTempPath(), $"NavpakySetup-{attempt:N}.log");
       _outcome = null;
       _phase = SetupPhase.Copying;
       Show(WizardPage.Installing);
       InstallChoices choices = Choices(attempt);
       SetupOutcome outcome;
       try {
-        outcome = await _runSetup(choices, LogPath, new Progress<SetupPhase>(phase => {
+        var progress = new Progress<SetupPhase>(phase => {
           _phase = phase;
           Changed();
-        }));
+        });
+        outcome = await _runSetup(choices, ForAllUsers, LogPath, progress);
       } catch (Exception e) when (e is IOException or UnauthorizedAccessException
           or System.ComponentModel.Win32Exception) {
         outcome = SetupOutcome.Failed;
@@ -318,7 +348,19 @@ namespace Navpaky.Setup.Wizard {
 
     private FolderCheck Check(string pick) {
       return InstallTarget.Check(
-          pick, _folders.ExistingInstall, _folders.Data, _folders.NeededBytes, _folders.Probe);
+          pick,
+          _folders.Existing?.Folder,
+          _folders.Data,
+          _folders.NeededBytes,
+          _folders.Probe,
+          _forAllUsers);
+    }
+
+    private void UseFolder(string pick) {
+      _folder = Check(pick);
+      _extrasConfirmed = false;
+      FreeBytes = _folders.Probe.FreeBytes(_folder.Folder);
+      Changed();
     }
 
     // The kept settings preset the options after "Use previous settings"; the defaults otherwise.

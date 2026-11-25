@@ -14,18 +14,22 @@ namespace Navpaky.Setup.Install {
         string? existingInstall,
         DataFolderPair data,
         long neededBytes,
-        IFolderProbe folders) {
-      // An existing install is reused exactly as it is: a second folder would orphan it.
-      string folder = existingInstall is not null
-          ? Normalize(existingInstall)
-          : OwnFolder(Normalize(pick));
+        IFolderProbe folders,
+        bool forAllUsers = false) {
+      // An existing install is reused exactly as it is: a second folder would orphan it. All
+      // users go into the given Program Files folder, which the user can't change.
+      string folder = Normalize(existingInstall ?? pick);
+      if (existingInstall is null && !forAllUsers) {
+        folder = OwnFolder(folder);
+      }
+
       IReadOnlyList<string>? extras = HoldsNavpaky(folder, folders)
           ? Extras(folders.Entries(folder))
           : [];
       return new FolderCheck(
           folder,
-          Verdict(folder, data, neededBytes, folders, listed: extras is not null),
-          existingInstall is not null,
+          Verdict(folder, data, neededBytes, folders, listed: extras is not null, forAllUsers),
+          existingInstall is not null || forAllUsers,
           extras ?? []);
     }
 
@@ -43,7 +47,8 @@ namespace Navpaky.Setup.Install {
         DataFolderPair data,
         long neededBytes,
         IFolderProbe folders,
-        bool listed) {
+        bool listed,
+        bool forAllUsers) {
       if (Overlaps(folder, Normalize(data.Roaming)) || Overlaps(folder, Normalize(data.Local))) {
         return FolderVerdict.OverlapsData;
       }
@@ -57,7 +62,8 @@ namespace Navpaky.Setup.Install {
         return FolderVerdict.NotEmpty;
       }
 
-      if (!folders.CanWrite(folder)) {
+      // All users: the elevated setup writes, not the user.
+      if (!forAllUsers && !folders.CanWrite(folder)) {
         return FolderVerdict.NotWritable;
       }
 

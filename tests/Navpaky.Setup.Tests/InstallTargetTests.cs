@@ -1,3 +1,4 @@
+using System.IO;
 using Navpaky.Setup.Install;
 using Xunit;
 
@@ -6,6 +7,7 @@ namespace Navpaky.Setup.Tests {
     private const long _needed = 230_000_000;
     private const string _roaming = @"C:\Users\olena\AppData\Roaming\Navpaky";
     private const string _local = @"C:\Users\olena\AppData\Local\Navpaky";
+    private const string _machine = @"C:\Program Files\Navpaky";
 
     private readonly FakeFolders _folders = new();
 
@@ -148,12 +150,43 @@ namespace Navpaky.Setup.Tests {
       Assert.Equal(FolderVerdict.Ok, Check(@"D:\Tools").Verdict);
     }
 
+    [Fact]
+    public void ForAllUsersTheProgramFilesFolderNeedsNoWriteRights() {
+      _folders.ReadOnly(@"C:\Program Files");
+
+      FolderCheck check = AllUsers();
+
+      Assert.Equal(_machine, check.Folder);
+      Assert.Equal(FolderVerdict.Ok, check.Verdict);
+      Assert.True(check.Locked);
+    }
+
+    [Fact]
+    public void ForAllUsersAForeignFolderIsStillRefused() {
+      _folders.ReadOnly(@"C:\Program Files");
+      _folders.Add(Path.Join(_machine, "other.exe"));
+
+      Assert.Equal(FolderVerdict.NotEmpty, AllUsers().Verdict);
+    }
+
+    [Fact]
+    public void ForAllUsersSpaceIsStillChecked() {
+      _folders.Free = _needed - 1;
+
+      Assert.Equal(FolderVerdict.NotEnoughSpace, AllUsers().Verdict);
+    }
+
     private static DataFolderPair Data() {
       return new DataFolderPair(_roaming, _local);
     }
 
     private FolderCheck Check(string pick) {
       return InstallTarget.Check(pick, existingInstall: null, Data(), _needed, _folders);
+    }
+
+    private FolderCheck AllUsers() {
+      return InstallTarget.Check(
+          _machine, existingInstall: null, Data(), _needed, _folders, forAllUsers: true);
     }
   }
 }
