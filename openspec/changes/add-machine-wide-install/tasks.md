@@ -2,8 +2,8 @@
 
 ## 1. Machine registration (design D3)
 
-- [ ] 1.1 Test first: `MachineInstall` under a test root in HKCU. It creates or replaces the entry with the version, location, elevating `UninstallString`, `NoModify` and `NoRepair`, copies the display values from Velopack's per-user entry, and deletes that entry. It writes or deletes the Active Setup key by the sign-in flag, with the `reg.exe` stub. `MarkActiveSetupDone` writes the per-user version. `Unregister` removes the entry and the key. `IsMachineRoot` holds for `%ProgramFiles%\Navpaky` in any case and not for a per-user folder. Verify: `dotnet test tests/Navpaky.Win32.Tests --filter MachineInstall`.
-- [ ] 1.2 Test first: the shared shortcut. `MachineInstall` replaces a per-user Start-menu link that points into the root with a link in a given common folder, and `Unregister` deletes the common one. Both use temporary folders in the test. Verify: `dotnet test tests/Navpaky.Win32.Tests --filter MachineInstall`.
+- [x] 1.1 Test first: `MachineInstall` under a test root in HKCU. It creates or replaces the entry with the version, location, elevating `UninstallString`, `NoModify` and `NoRepair`, copies the display values from Velopack's per-user entry, and deletes that entry. It writes or deletes the Active Setup key by the sign-in flag, with the `reg.exe` stub. `MarkActiveSetupDone` writes the per-user version. `Unregister` removes the entry and the key. `IsMachineRoot` holds for `%ProgramFiles%\Navpaky` in any case and not for a per-user folder. Verify: `dotnet test tests/Navpaky.Win32.Tests --filter MachineInstall`.
+- [x] 1.2 Test first: the shared shortcut. `MachineInstall` replaces a per-user Start-menu link that points into the root with a link in a given common folder, and `Unregister` deletes the common one. Both use temporary folders in the test. Verify: `dotnet test tests/Navpaky.Win32.Tests --filter MachineInstall`.
 
 ## 2. Close in every session (design D6)
 
