@@ -2,6 +2,7 @@ using System.Collections;
 using System.Globalization;
 using System.Resources;
 using Navpaky.App.Localization;
+using Navpaky.Ui;
 using Xunit;
 
 namespace Navpaky.App.Tests.Localization {

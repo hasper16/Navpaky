@@ -85,6 +85,30 @@ namespace Navpaky.Core.Tests {
       Assert.False(File.Exists(Path.Combine(_folder, "settings.json.bak")));
     }
 
+    [Fact]
+    public void PeekReadsTheStoredSettingsWithoutWriting() {
+      new SettingsStore(_folder).Save(new Settings { AutoCorrectionEnabled = false });
+
+      Settings? peeked = new SettingsStore(_folder).Peek();
+
+      Assert.False(peeked?.AutoCorrectionEnabled);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("{ not json")]
+    public void PeekLeavesAMissingOrCorruptFileAsItIs(string? json) {
+      var store = new SettingsStore(_folder);
+      Directory.CreateDirectory(_folder);
+      if (json is not null) {
+        File.WriteAllText(store.FilePath, json);
+      }
+
+      Assert.Null(store.Peek());
+      string[] expected = json is null ? [] : ["settings.json"];
+      Assert.Equal(expected, Directory.GetFiles(_folder).Select(Path.GetFileName));
+    }
+
     private Settings LoadFrom(string json) {
       var store = new SettingsStore(_folder);
       Directory.CreateDirectory(_folder);

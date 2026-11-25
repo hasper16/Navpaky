@@ -5,6 +5,7 @@ using Navpaky.App.Feedback;
 using Navpaky.App.Localization;
 using Navpaky.App.ViewModels;
 using Navpaky.Core;
+using Navpaky.Ui;
 
 namespace Navpaky.App.Views {
   // General: the interface language, start at sign-in, the cursor indicator and the switch

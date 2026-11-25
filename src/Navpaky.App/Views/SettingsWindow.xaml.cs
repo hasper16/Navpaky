@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Navpaky.App.Localization;
+using Navpaky.Ui;
 using Wpf.Ui.Appearance;
 using ImageIcon = Wpf.Ui.Controls.ImageIcon;
 

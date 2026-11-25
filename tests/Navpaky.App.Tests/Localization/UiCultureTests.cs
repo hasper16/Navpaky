@@ -1,6 +1,7 @@
 using System.Globalization;
 using Navpaky.App.Localization;
 using Navpaky.Core;
+using Navpaky.Ui;
 using Xunit;
 
 namespace Navpaky.App.Tests.Localization {

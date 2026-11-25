@@ -1,0 +1,286 @@
+<ui:FluentWindow x:Class="Navpaky.Setup.Wizard.WizardWindow"
+                 x:ClassModifier="internal"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:u="clr-namespace:Navpaky.Ui;assembly=Navpaky.Ui"
+                 Title="{u:Loc SetupTitle}"
+                 Width="600"
+                 Height="640"
+                 ResizeMode="CanMinimize"
+                 WindowStartupLocation="CenterScreen"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="None">
+  <!-- The install wizard of prototype v3.1 (spec install-wizard). Code-behind shows one page and
+       sets the texts that carry values; the inputs bind to WizardViewModel. -->
+  <Window.Resources>
+    <Style x:Key="StepBar" TargetType="Border">
+      <Setter Property="Height" Value="4" />
+      <Setter Property="CornerRadius" Value="2" />
+      <Setter Property="Margin" Value="3,0" />
+      <Setter Property="Background" Value="{DynamicResource BrandLine}" />
+    </Style>
+    <Style x:Key="PageTitle" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="17" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Margin" Value="0,0,0,8" />
+      <Setter Property="Focusable" Value="True" />
+    </Style>
+    <Style x:Key="PageHint" TargetType="TextBlock">
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Foreground" Value="{DynamicResource BrandTextSecondary}" />
+      <Setter Property="Margin" Value="0,0,0,14" />
+      <Setter Property="Focusable" Value="True" />
+    </Style>
+    <Style x:Key="Problem" TargetType="TextBlock">
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+      <Setter Property="Margin" Value="0,8,0,0" />
+      <Setter Property="Focusable" Value="True" />
+      <Setter Property="AutomationProperties.LiveSetting" Value="Polite" />
+    </Style>
+  </Window.Resources>
+  <!-- WPF UI resets Window.Background on each theme change, so the root carries the surface. -->
+  <Grid Background="{DynamicResource BrandWindowBackground}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <ui:TitleBar x:Name="TitleBar" Grid.Row="0" Title="Navpaky" ShowMaximize="False" />
+    <Border Grid.Row="0"
+            BorderBrush="{DynamicResource BrandLine}"
+            BorderThickness="0,0,0,1"
+            IsHitTestVisible="False" />
+    <DockPanel Grid.Row="1" Margin="24,8,24,14">
+      <Image x:Name="Mark"
+             DockPanel.Dock="Left"
+             Width="56"
+             Height="56"
+             Margin="0,0,14,0"
+             AutomationProperties.Name="Navpaky" />
+      <StackPanel VerticalAlignment="Center">
+        <TextBlock Text="{u:Loc SetupHeading}"
+                   Style="{StaticResource HeadingText}"
+                   FontSize="26"
+                   Focusable="True" />
+        <TextBlock Text="{u:Loc SetupTagline}"
+                   Foreground="{DynamicResource BrandTextSecondary}"
+                   Focusable="True" />
+      </StackPanel>
+    </DockPanel>
+    <UniformGrid x:Name="StepBars" Grid.Row="2" Rows="1" Margin="21,0,21,8" />
+    <ScrollViewer x:Name="Scroller"
+                  Grid.Row="3"
+                  VerticalScrollBarVisibility="Auto"
+                  Focusable="False">
+      <Grid Margin="24,6,24,18">
+        <StackPanel x:Name="LanguagePage">
+          <TextBlock Text="{u:Loc LanguageTitle}" Style="{StaticResource PageTitle}" />
+          <TextBlock Text="{u:Loc LanguageHint}" Style="{StaticResource PageHint}" />
+          <WrapPanel>
+            <RadioButton GroupName="Language"
+                         Style="{StaticResource PillRadio}"
+                         Content="{u:Loc LanguageSystem}"
+                         IsChecked="{Binding UsesSystemLanguage}" />
+            <RadioButton GroupName="Language"
+                         Style="{StaticResource PillRadio}"
+                         Content="{u:Loc LanguageEnglish}"
+                         IsChecked="{Binding UsesEnglish}" />
+            <RadioButton GroupName="Language"
+                         Style="{StaticResource PillRadio}"
+                         Content="{u:Loc LanguageUkrainian}"
+                         IsChecked="{Binding UsesUkrainian}" />
+          </WrapPanel>
+        </StackPanel>
+
+        <StackPanel x:Name="LicencePage">
+          <TextBlock Text="{u:Loc LicenceTitle}" Style="{StaticResource PageTitle}" />
+          <TextBlock Text="{u:Loc LicenceHint}" Style="{StaticResource PageHint}" />
+          <TextBox x:Name="Licence"
+                   Height="210"
+                   IsReadOnly="True"
+                   TextWrapping="Wrap"
+                   FontFamily="Cascadia Mono, Consolas"
+                   FontSize="11.5"
+                   VerticalScrollBarVisibility="Auto"
+                   AutomationProperties.Name="{u:Loc LicenceTitle}" />
+          <CheckBox Content="{u:Loc LicenceAccept}"
+                    IsChecked="{Binding LicenceAccepted}"
+                    Margin="0,12,0,0" />
+        </StackPanel>
+
+        <StackPanel x:Name="WelcomeBackPage">
+          <TextBlock Text="{u:Loc WelcomeBackTitle}" Style="{StaticResource PageTitle}" />
+          <TextBlock Text="{u:Loc WelcomeBackHint}" Style="{StaticResource PageHint}" />
+          <StackPanel x:Name="DataChoice">
+            <RadioButton GroupName="Data"
+                         Content="{u:Loc KeepPrevious}"
+                         IsChecked="{Binding KeepsData}"
+                         FontWeight="SemiBold" />
+            <TextBlock Text="{u:Loc KeepHint}"
+                       Margin="28,4,0,0"
+                       Foreground="{DynamicResource BrandTextSecondary}"
+                       Focusable="True" />
+            <TextBlock x:Name="KeptList"
+                       Margin="28,2,0,14"
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource BrandTextSecondary}"
+                       Focusable="True" />
+            <RadioButton GroupName="Data"
+                         Content="{u:Loc StartFresh}"
+                         IsChecked="{Binding StartsFresh}"
+                         FontWeight="SemiBold" />
+            <TextBlock Text="{u:Loc StartFreshHint}"
+                       Margin="28,4,0,0"
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource BrandTextSecondary}"
+                       Focusable="True" />
+          </StackPanel>
+          <Border x:Name="FreshConfirm"
+                  BorderThickness="1"
+                  BorderBrush="{DynamicResource SystemFillColorCriticalBrush}"
+                  Background="{DynamicResource SystemFillColorCriticalBackgroundBrush}"
+                  CornerRadius="6"
+                  Padding="16">
+            <StackPanel>
+              <TextBlock Text="{u:Loc FreshConfirmTitle}"
+                         FontWeight="SemiBold"
+                         Margin="0,0,0,6"
+                         Focusable="True" />
+              <TextBlock Text="{u:Loc FreshConfirmText}" TextWrapping="Wrap" Focusable="True" />
+              <TextBlock Text="{u:Loc FreshConfirmItems}" Margin="0,6,0,0" Focusable="True" />
+              <TextBlock Text="{u:Loc FreshConfirmWarn}"
+                         TextWrapping="Wrap"
+                         FontWeight="SemiBold"
+                         Margin="0,8,0,0"
+                         Focusable="True" />
+              <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                <ui:Button x:Name="FreshCancel" Content="{u:Loc FreshCancel}" MinWidth="90" />
+                <ui:Button x:Name="FreshDelete"
+                           Content="{u:Loc FreshDelete}"
+                           Appearance="Primary"
+                           Margin="8,0,0,0" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+
+        <StackPanel x:Name="FolderPage">
+          <TextBlock Text="{u:Loc FolderTitle}" Style="{StaticResource PageTitle}" />
+          <TextBlock Text="{u:Loc FolderHint}" Style="{StaticResource PageHint}" />
+          <DockPanel>
+            <ui:Button x:Name="Browse"
+                       DockPanel.Dock="Right"
+                       Content="{u:Loc FolderBrowse}"
+                       Margin="8,0,0,0" />
+            <TextBox x:Name="FolderPath"
+                     IsReadOnly="True"
+                     AutomationProperties.Name="{u:Loc FolderTitle}" />
+          </DockPanel>
+          <TextBlock x:Name="FolderLocked"
+                     Text="{u:Loc FolderLocked}"
+                     Style="{StaticResource PageHint}"
+                     Margin="0,8,0,0" />
+          <TextBlock x:Name="FolderRule"
+                     Text="{u:Loc FolderRule}"
+                     Style="{StaticResource PageHint}"
+                     Margin="0,8,0,0" />
+          <TextBlock x:Name="FolderProblem" Style="{StaticResource Problem}" />
+          <TextBlock Text="{u:Loc FolderQuiet}" Style="{StaticResource PageHint}" Margin="0,8,0,0" />
+          <TextBlock x:Name="FolderSpace"
+                     Margin="0,8,0,0"
+                     FontSize="12.5"
+                     Foreground="{DynamicResource BrandTextTertiary}"
+                     Focusable="True" />
+        </StackPanel>
+
+        <StackPanel x:Name="OptionsPage">
+          <TextBlock Text="{u:Loc OptionsTitle}" Style="{StaticResource PageTitle}" />
+          <TextBlock Text="{u:Loc OptionsHint}" Style="{StaticResource PageHint}" />
+          <Border Style="{StaticResource SettingsCard}">
+            <StackPanel>
+              <u:SettingRow x:Name="SignInRow" Label="{u:Loc OptionSignIn}">
+                <ui:ToggleSwitch IsChecked="{Binding LaunchAtSignIn}"
+                                 AutomationProperties.Name="{u:Loc OptionSignIn}" />
+              </u:SettingRow>
+              <u:SettingRow x:Name="ShortcutRow" Label="{u:Loc OptionShortcut}">
+                <ui:ToggleSwitch IsChecked="{Binding DesktopShortcut}"
+                                 AutomationProperties.Name="{u:Loc OptionShortcut}" />
+              </u:SettingRow>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+
+        <StackPanel x:Name="InstallingPage">
+          <TextBlock Text="{u:Loc InstallingTitle}" Style="{StaticResource PageTitle}" />
+          <TextBlock x:Name="InstallingHint"
+                     Text="{u:Loc InstallingHint}"
+                     Style="{StaticResource PageHint}" />
+          <TextBlock x:Name="PhaseText"
+                     Style="{StaticResource PageHint}"
+                     AutomationProperties.LiveSetting="Polite" />
+          <ProgressBar x:Name="Progress" IsIndeterminate="True" Height="4" />
+          <TextBlock x:Name="FailureText" Style="{StaticResource Problem}" Margin="0,14,0,0" />
+          <TextBlock x:Name="LogText"
+                     Margin="0,8,0,0"
+                     FontSize="12.5"
+                     TextWrapping="Wrap"
+                     Foreground="{DynamicResource BrandTextTertiary}"
+                     Focusable="True" />
+        </StackPanel>
+
+        <StackPanel x:Name="DonePage">
+          <TextBlock Text="{u:Loc DoneTitle}" Style="{StaticResource PageTitle}" />
+          <TextBlock Text="{u:Loc DoneText}" Style="{StaticResource PageHint}" />
+          <TextBlock x:Name="DoneNext" Style="{StaticResource PageHint}" />
+          <CheckBox Content="{u:Loc DoneStartNow}" IsChecked="{Binding StartNow}" />
+        </StackPanel>
+      </Grid>
+    </ScrollViewer>
+    <Border Grid.Row="4"
+            BorderThickness="0,1,0,0"
+            BorderBrush="{DynamicResource BrandLine}"
+            Background="{DynamicResource BrandSurface}"
+            Padding="24,12">
+      <DockPanel>
+        <ui:Button x:Name="Back"
+                   DockPanel.Dock="Left"
+                   Content="{u:Loc SetupBack}"
+                   MinWidth="90" />
+        <ui:Button x:Name="CloseWizard"
+                   DockPanel.Dock="Right"
+                   Content="{u:Loc SetupClose}"
+                   MinWidth="90"
+                   Margin="8,0,0,0" />
+        <ui:Button x:Name="Retry"
+                   DockPanel.Dock="Right"
+                   Content="{u:Loc SetupRetry}"
+                   Appearance="Primary"
+                   MinWidth="100" />
+        <ui:Button x:Name="Finish"
+                   DockPanel.Dock="Right"
+                   Content="{u:Loc SetupFinish}"
+                   Appearance="Primary"
+                   MinWidth="100" />
+        <ui:Button x:Name="Install"
+                   DockPanel.Dock="Right"
+                   Content="{u:Loc SetupInstall}"
+                   Appearance="Primary"
+                   MinWidth="100" />
+        <ui:Button x:Name="Next"
+                   DockPanel.Dock="Right"
+                   Content="{u:Loc SetupNext}"
+                   Appearance="Primary"
+                   MinWidth="100" />
+        <TextBlock x:Name="StepText"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="12"
+                   Foreground="{DynamicResource BrandTextTertiary}" />
+      </DockPanel>
+    </Border>
+  </Grid>
+</ui:FluentWindow>

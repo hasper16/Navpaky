@@ -5,6 +5,7 @@ using System.IO;
 using Navpaky.App.Localization;
 using Navpaky.App.Updates;
 using Navpaky.Core;
+using Navpaky.Ui;
 using Navpaky.Win32;
 using Velopack;
 
@@ -21,11 +22,11 @@ namespace Navpaky.App {
     public static int Main(string[] args) {
       if (args.Contains(_checkFonts)) {
         _ = new System.Windows.Application();
-        return Views.BrandFonts.Check() ? 0 : 1;
+        return BrandFonts.Check() ? 0 : 1;
       }
 
       VelopackApp.Build()
-          .OnAfterInstallFastCallback(_ => MarkInstall())
+          .OnAfterInstallFastCallback(_ => ApplyInstall())
           .OnBeforeUninstallFastCallback(_ => Uninstall())
           .Run();
       var app = new App();
@@ -33,13 +34,29 @@ namespace Navpaky.App {
       return app.Run();
     }
 
-    // Without the marker only a reinstall made while an old data question is open goes unseen,
-    // so a failed write must not fail the install.
-    private static void MarkInstall() {
+    // Velopack runs Navpaky from <root>\current; the root holds the Navpaky.exe launcher.
+    // AppContext.BaseDirectory would be the %TEMP% folder native libraries are extracted to.
+    internal static string InstallRoot() {
+      return InstallRoot(Environment.ProcessPath!);
+    }
+
+    internal static string InstallRoot(string processPath) {
+      return Path.GetDirectoryName(Path.GetDirectoryName(processPath))!;
+    }
+
+    // Applies the install wizard's choices (design D4 of add-install-wizard). A step that fails
+    // leaves no acknowledgement, so the wizard reports the install as failed; without the wizard
+    // only the install marker is written, and its failure must not fail the install.
+    private static void ApplyInstall() {
       try {
-        InstallMarker.Write(DataFolders.ForCurrentUser(null).Local);
-      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-        Trace.WriteLine($"Navpaky could not mark its installation: {e.GetType().Name}");
+        new InstallHook(
+            DataFolders.ForCurrentUser(null),
+            InstallRoot(),
+            (on, exe) => new SignInLaunch().Set(on, exe),
+            new UserDesktopShortcut()).Run();
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException
+          or System.Runtime.InteropServices.COMException) {
+        Trace.WriteLine($"Navpaky could not apply its installation: {e.GetType().Name}");
       }
     }
 
@@ -50,6 +67,7 @@ namespace Navpaky.App {
       new Uninstaller(
           DataFolders.ForCurrentUser(null),
           () => new SignInLaunch().Set(false, string.Empty),
+          () => new UserDesktopShortcut().Remove(InstallRoot()),
           AskDeleteData).Run();
     }
 

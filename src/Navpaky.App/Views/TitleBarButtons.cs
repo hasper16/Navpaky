@@ -3,6 +3,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Navpaky.App.Localization;
+using Navpaky.Ui;
 
 namespace Navpaky.App.Views {
   // WPF UI's caption buttons carry only glyphs; screen readers need their names.

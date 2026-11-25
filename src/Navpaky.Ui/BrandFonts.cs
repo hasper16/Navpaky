@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace Navpaky.App.Views {
+namespace Navpaky.Ui {
   // Inter for all text and Grunt Grotesk for headings (design D3 of fix-redesign-findings).
   // WPF UI reads no font resource of its own, so the text font is set on every window, menu and
   // tooltip; their controls inherit it. A font a window sets itself stays.
@@ -51,12 +51,12 @@ namespace Navpaky.App.Views {
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Major Code Smell",
         "S1075:URIs should not be hardcoded",
-        Justification = "The pack URI of the app's own embedded fonts never changes.")]
+        Justification = "The pack URI of the embedded brand fonts never changes.")]
     private static FontFamily Shipped(string family) {
       // Reading the scheme registers pack: URIs before an Application exists.
       _ = PackUriHelper.UriSchemePack;
       return new FontFamily(
-          new Uri("pack://application:,,,/Navpaky.App;component/"),
+          new Uri("pack://application:,,,/Navpaky.Ui;component/"),
           $"./Fonts/#{family}{_fallback}");
     }
 

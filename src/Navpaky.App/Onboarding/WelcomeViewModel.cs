@@ -23,10 +23,53 @@ namespace Navpaky.App.Onboarding {
       _languages = LanguagesOf(layouts);
     }
 
-    // Spec telemetry: the welcome window asks about crash reports only, off by default.
-    public bool CrashReportsAgreed {
-      get => _hub.Current.DiagnosticsConsent.CrashReports;
-      set => _hub.Update(settings => settings with { DiagnosticsConsent = Crash(settings, value) });
+    // Spec telemetry (add-install-wizard): one switch, off by default, for crash reports and
+    // Usage Digests together; it shows on only when both are agreed.
+    public bool TelemetryAgreed {
+      get {
+        return _hub.Current.DiagnosticsConsent == DiagnosticsConsent.All(true);
+      }
+
+      set {
+        _hub.Update(
+            settings => settings with { DiagnosticsConsent = DiagnosticsConsent.All(value) });
+      }
+    }
+
+    // Spec onboarding (add-install-wizard): installed without the wizard, the welcome window asks
+    // the interface language, launch at sign-in and the desktop shortcut itself.
+    public bool AsksInstallQuestions => !_hub.Current.InstallQuestionsAnswered;
+
+    public UiLanguage Language {
+      get => _hub.Current.UiLanguage;
+      set => _hub.Update(settings => settings with { UiLanguage = value });
+    }
+
+    // The three language chips; picking one switches the window at once.
+    public bool UsesSystemLanguage {
+      get => Language == UiLanguage.System;
+      set => Pick(UiLanguage.System, value);
+    }
+
+    public bool UsesEnglish {
+      get => Language == UiLanguage.English;
+      set => Pick(UiLanguage.English, value);
+    }
+
+    public bool UsesUkrainian {
+      get => Language == UiLanguage.Ukrainian;
+      set => Pick(UiLanguage.Ukrainian, value);
+    }
+
+    public bool LaunchAtSignIn {
+      get => _hub.Current.LaunchAtSignIn;
+      set => _hub.Update(settings => settings with { LaunchAtSignIn = value });
+    }
+
+    // Off unless the user asks for it (owner decision).
+    public bool DesktopShortcut {
+      get => _hub.Current.DesktopShortcut ?? false;
+      set => _hub.Update(settings => settings with { DesktopShortcut = value });
     }
 
     public WelcomeProgress Progress => new(TryItWorked, _closedWithDone);
@@ -64,9 +107,12 @@ namespace Navpaky.App.Onboarding {
       return !settings.WelcomeCompleted;
     }
 
-    // Launch at sign-in is on unless the user turns it off in the welcome window.
+    // Launch at sign-in is on unless the user turns it off in the welcome window. When the
+    // install wizard already asked, its answer stands (add-install-wizard).
     public static Settings FirstStartDefaults(Settings settings) {
-      return OpensAtStart(settings) ? settings with { LaunchAtSignIn = true } : settings;
+      return OpensAtStart(settings) && !settings.InstallQuestionsAnswered
+          ? settings with { LaunchAtSignIn = true }
+          : settings;
     }
 
     public void UseLayouts(IReadOnlyList<LayoutId> layouts) {
@@ -100,10 +146,6 @@ namespace Navpaky.App.Onboarding {
       _hub.Changed -= OnHubChanged;
     }
 
-    private static DiagnosticsConsent Crash(Settings settings, bool agreed) {
-      return settings.DiagnosticsConsent with { CrashReports = agreed };
-    }
-
     private static string[] LanguagesOf(IReadOnlyList<LayoutId> layouts) {
       return [.. layouts.Select(layout => layout.LanguageId).Distinct().Select(NameOf)];
     }
@@ -116,8 +158,21 @@ namespace Navpaky.App.Onboarding {
       }
     }
 
+    private void Pick(UiLanguage language, bool picked) {
+      if (picked) {
+        Language = language;
+      }
+    }
+
     private void OnHubChanged(Settings settings) {
-      OnPropertyChanged(nameof(CrashReportsAgreed));
+      OnPropertyChanged(nameof(TelemetryAgreed));
+      OnPropertyChanged(nameof(AsksInstallQuestions));
+      OnPropertyChanged(nameof(Language));
+      OnPropertyChanged(nameof(UsesSystemLanguage));
+      OnPropertyChanged(nameof(UsesEnglish));
+      OnPropertyChanged(nameof(UsesUkrainian));
+      OnPropertyChanged(nameof(LaunchAtSignIn));
+      OnPropertyChanged(nameof(DesktopShortcut));
     }
   }
 }

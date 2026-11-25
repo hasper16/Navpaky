@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using Navpaky.App.Views;
+using Navpaky.Ui;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Xunit;
@@ -9,6 +10,25 @@ using Xunit;
 namespace Navpaky.App.Tests.Views {
   [Collection(nameof(Sta))]
   public sealed class BrandThemeTests {
+    // WPF UI takes an application as its own only when a dictionary merged straight into its
+    // resources comes from WPF UI (UiApplication in WPF UI 4.3); otherwise theme and accent
+    // changes go to a private dictionary that no window reads.
+    [Fact]
+    public void WpfUiFindsItsDictionariesInTheAppsResources() {
+      bool found = false;
+      Sta.Run(() => {
+        Sta.EnsureApplication();
+        var resources = new ResourceDictionary {
+          Source = new Uri("pack://application:,,,/Navpaky.App;component/Resources.xaml"),
+        };
+        found = resources.MergedDictionaries.Any(merged =>
+            merged.Source?.ToString().Contains("wpf.ui;", StringComparison.OrdinalIgnoreCase)
+                == true);
+      });
+
+      Assert.True(found);
+    }
+
     [Theory]
     [InlineData(ApplicationTheme.Light, "#FFC8102E", "#FF17171C")]
     [InlineData(ApplicationTheme.Dark, "#FF4C86F0", "#FFFACC15")]

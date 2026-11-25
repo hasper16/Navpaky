@@ -260,3 +260,64 @@ Written against the head of the `redesign-visual-identity` PR. Unit tests cover 
 - [ ] **Cursor indicator:** pill (default), tag and underline each appear next to the caret after a Correction and fade; the choice in General shows a preview of each.
 - [ ] **Sounds:** each of the twelve sounds previews from General; with "Navpaky" chosen, a Correction into Ukrainian plays a rising pair and one into English a falling pair.
 - [ ] **Licences:** the install folder holds `Fonts/OFL-Inter.txt` and `Fonts/OFL-GruntGrotesk.txt`.
+
+## add-install-wizard
+
+Written against the head of the `add-install-wizard` PR. Unit tests cover the folder rules, kept-data detection, the hand-off file, the install hook, the setup runner against a stub setup, Start-fresh backups and every page's buttons; these steps need a real install. Use a throwaway Windows 11 VM (Hyper-V, checkpoint `clean-os`, and the scripts of the 2026-11-24 run) with a standard user account, and a wizard built and test-signed as `docs/release.md` "Local test build" describes. Revert to `clean-os` between scenarios unless a step builds on the one before.
+
+**Run of 2026-11-25** (Hyper-V VM NavpakyLab, Windows 11 26300 uk-UA, standard user NavpakyTest, wizard and Debug pack of commit 2fe6f89 test-signed with a throwaway CA). The extra drives were T: (1 GB) and S: (100 MB), since D: and E: held DVDs. The wizard was driven through UI Automation in the user's session, and screenshots and logs were kept outside the repo. No UAC or credential prompt appeared in any scenario. Findings, apart from the per-item notes:
+- **Fixed during the run (2fe6f89):** the hook took the install root from `AppContext.BaseDirectory`, which a single-file app that extracts native libraries places under `%TEMP%`. The sign-in entry and the remembered folder pointed into `%TEMP%`, and Velopack's desktop link stayed although the shortcut was off.
+- **Fixed afterwards (task group 9, rechecked in the VM on 2026-11-25 with the build of 6768b7c):**
+  - **Hook timeout on a never-seen binary (6768b7c).** Velopack gives the install hook 30 s, and Defender's scan of a freshly written `Navpaky.App.exe` made it miss that limit 2 times in 9 installs. The wizard reported "install failed" although the app was installed. The wizard now runs the hook again itself. Recheck: the hook process was suspended so that Velopack logged "timed out after 30s and was killed"; the wizard reached Done after 42 s, with the sign-in entry, the settings and no desktop link.
+  - **Space needed (4a39f59).** The page said "about 82 MB", while Velopack refuses below its package's compressed plus extracted size plus 50 MB (297.92 MB). The page now reads that figure from the embedded setup. Recheck: it shows "about 298 MB" and refuses the 90 MB drive.
+  - **Plain-setup desktop link (621d67d).** The pack now uses `--shortcuts StartMenuRoot`. Recheck: after the plain setup there is no desktop link, and the Welcome's switch reads Off.
+  - **Welcome step 3 at 1024×768 (182be68).** Recheck: the window spans y 36–720 of a 720 px work area, and Done is visible.
+  - **Unreadable-settings claim (dbf3820).** Recheck: with only an unrelated folder in `%LOCALAPPDATA%\Navpaky`, Welcome back lists nothing false. Its "Everything stays as it was:" line is then followed by an empty list, a cosmetic leftover.
+
+- [x] **New install with defaults.** Run `NavpakySetup.exe`, keep every default, Finish.
+  Expected: no UAC prompt and no Velopack window; the pages are Language, Licence, Folder, Options, Installing, Done (step counter "of 6"); Next on Licence is off until the box is checked; Navpaky starts from `%LOCALAPPDATA%\Programs\Navpaky`, appears in Installed apps and the Start menu, starts at the next sign-in, and opens the Welcome with no language, sign-in or shortcut questions.
+  2026-11-25: pass after the 2fe6f89 fix. The Run entry is `<root>\Navpaky.exe`, and the Welcome's step 3 holds only the Hotkey and the telemetry switch. The sign-in start was checked through the Run entry; no actual sign-in was done.
+- [x] **Language.** On a uk-UA Windows pick English on the first page.
+  Expected: every wizard text switches at once; after the install Navpaky's interface is English.
+  2026-11-25: pass; the folder picker's title also follows.
+- [x] **Custom folder and shortcut.** Pick `D:\Tools` (or another drive), turn the shortcut on, uncheck "Start Navpaky now", Finish.
+  Expected: the Folder page shows `D:\Tools\Navpaky`, the space needed and free; Navpaky is not running, yet the desktop shortcut starts it, sign-in start is on and the chosen language applies.
+  2026-11-25: pass with `T:\Tools`. The first attempt hit the hook timeout, and Retry passed.
+- [x] **Refused folders.** Pick a folder holding a text file, then `%LOCALAPPDATA%\Navpaky\Tools`, then a folder under `C:\Program Files`.
+  Expected: Next is off with "not empty", "Navpaky's data folder" and "administrator rights" in turn; the text file is unchanged.
+  2026-11-25: pass. A folder holding a file is accepted, because the wizard installs into a new `Navpaky` subfolder of it. "Not empty" appears when that `Navpaky` subfolder already holds a file, and the file is unchanged.
+- [x] **Remembered folder.** After the custom-folder install, uninstall keeping data and run the wizard again.
+  Expected: the Folder page proposes `D:\Tools\Navpaky`, and Change… still works.
+  2026-11-25: pass (`T:\Tools\Navpaky`).
+- [x] **Not enough space.** Attach a small virtual disk (for example 100 MB) and pick a folder on it.
+  Expected: Next is off and the page shows the space needed.
+  2026-11-25: pass on the 100 MB drive (90 MB free). The page reads "needs about 82 MB, free 90 MB" and refuses; see the space finding above.
+- [x] **Reinstall over an existing install.** Install with the plain `navpaky-app-win-Setup.exe` (folder `%LOCALAPPDATA%\navpaky-app`), then run the wizard.
+  Expected: the Folder page shows `navpaky-app`, Change… is off and the page says why; afterwards one Installed apps entry, one copy.
+  2026-11-25: pass.
+- [x] **Use previous settings.** Change the Hotkey and add an Excluded App, uninstall keeping data, run the wizard and keep "Use previous settings".
+  Expected: Welcome back lists the Hotkey, words, apps and statistics; Options show the earlier sign-in and shortcut with "was on/off before"; Navpaky starts with the earlier settings and no Welcome.
+  2026-11-25: pass. The Hotkey was set in the Welcome; the Excluded App, one invented learned word and a statistics file were written to the data files.
+- [x] **Start fresh.** As above, choose Start fresh, Next, Cancel; then Start fresh, Next, Delete and continue.
+  Expected: Cancel returns to the choice and nothing is deleted; after the install no earlier settings, words, statistics or logs remain, no `*.fresh-*` folder is left, and the Welcome opens at step 1.
+  2026-11-25: pass; Cancel was checked by file hashes.
+- [x] **Install failure.** Start fresh again, and make the install fail (for example lock the install folder with a file open in another process, or end `Setup.exe` in Task Manager while Installing).
+  Expected: the page says the install failed, shows the log path, offers Retry and Close; the kept data is back byte for byte; Retry succeeds once the cause is gone.
+  2026-11-25: pass twice. Setup was ended before the hook in one case, and Setup and the hook were ended while the `.fresh-*` backup existed in the other; both times the hashes were identical and no backup was left. The first Retry then failed on the space check, and the next one passed after space was freed.
+- [x] **Plain Setup.exe fallback.** On `clean-os` run `navpaky-app-win-Setup.exe` instead of the wizard.
+  Expected: the Welcome asks the language on step 1 and sign-in and the shortcut on step 3.
+  2026-11-25: pass, with two open findings above: the desktop link and the height at 1024×768.
+- [x] **Uninstall removes the shortcut.** With the shortcut on, uninstall from Installed apps.
+  Expected: the desktop shortcut is gone.
+  2026-11-25: pass. The uninstall string from the Installed apps entry was run, and "No" was answered to the data question.
+- [x] **Second start.** Double-click `NavpakySetup.exe` twice quickly.
+  Expected: one wizard window, brought to the front.
+  2026-11-25: pass; there was one process and one window.
+- [x] **Cold start time.** On a fresh VM, time from double-click to the first wizard window.
+  Expected: about 8 s cold, under 1 s warm; note the numbers.
+  2026-11-25: 15.3 s, 12.5 s and 13.3 s cold (the 154 MB bundle with the embedded setup); 0.8–1.0 s warm.
+- [x] **Licences.** The Licence page shows the GPL followed by the Inter and Grunt Grotesk font licences.
+  2026-11-25: pass. The texts are in this order: the GPL, the Inter OFL from character 36146, and Grunt Grotesk from character 40344.
+- [x] **Release dry run.** Run **Release** with **Run workflow**.
+  Expected: the artifact holds `NavpakySetup.exe`; the "Sign the install wizard" step is skipped.
+  2026-11-24: pass (run 45479093919).

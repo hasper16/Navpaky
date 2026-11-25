@@ -41,6 +41,24 @@ Design changes reshape the look and feel after the product is complete.
 | D1 | `redesign-visual-identity` | tray-and-settings, onboarding, app-lifecycle (new mark, palette, quick panel, one-page settings, splash) | 1–15, P1 |
 | D2 | `fix-redesign-findings` | tray-and-settings (theme following, accent, fonts, licences, quick panel Language key) | D1 |
 
+Installer changes replace Velopack's one-click setup with Navpaky's own wizard (owner decision, 2026-11-24; approved prototype v3.1). They run in order, one at a time.
+
+| # | Change | Capability | Depends on |
+|---|---|---|---|
+| I1 | `add-install-wizard` | install-wizard (new), auto-update, onboarding, telemetry: branded per-user wizard (language, licence, folder, shortcut, sign-in, Welcome back / Start fresh), hand-off of choices to the install hook, slimmer Welcome with one telemetry consent, single signed `NavpakySetup.exe` | D2 |
+| I2 | `add-machine-wide-install` (not yet proposed) | install-wizard, auto-update: "All users" into Program Files, with the 2026-11-24 live-run workarounds (HKLM entry and elevating uninstall, shared Start-menu link, per-user autostart through Active Setup, no apply-on-start, closing Navpaky in every session before an update, cleanup of the per-admin Installed apps entry) | I1 |
+
+Initiative after I2, **analysis pending** (owner, 2026-11-24): **Portable and use without admin rights**. The goal: a user can run Navpaky on a PC they don't administer, such as a corporate PC, without asking IT. It has no OpenSpec change yet; changes are proposed once the owner settles the open choice (portable data in the profile or next to the exe).
+
+| # | Item | Scope | Depends on |
+|---|---|---|---|
+| V1 | Portable zip | Run without installing (Velopack's portable package): data in the profile or next to the exe (open), no autostart or uninstall entry by default, update behaviour, "remove data from this PC" | I1 |
+| V2 | Folder build | Publish a self-contained folder instead of a single file, so nothing is extracted to `%TEMP%` at start | — |
+| V3 | Code signing | A real code-signing certificate for every executable, including the wizard | — |
+| V4 | Blocked by policy | A clear "blocked by your organization's policy, contact IT" message where Navpaky can detect it, and an IT page explaining how to allow Navpaky by publisher | V3 |
+
+Out of scope: any workaround that bypasses application control (AppLocker/WDAC), removable-media blocking or EDR/antivirus, and IT deployment tooling (Intune/SCCM/GPO, ADMX policies, silent IT installs).
+
 T1 can run in parallel with changes 12–15: it touches no file under `src/`, `tests/` or `tools/Navpaky.DesktopChecks/`. Its global installs reach only sessions started after them, so implementers already at work keep their tools until their change ends.
 
 By-hand checks are not a merge gate for changes 1–14: each change appends them to `docs/manual-tests/deferred-by-hand.md`, and change 15 is the owner's single pass over that file plus the fixes for what fails (owner decision, 2026-11-14).

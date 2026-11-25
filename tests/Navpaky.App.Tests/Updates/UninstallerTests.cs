@@ -8,6 +8,7 @@ namespace Navpaky.App.Tests.Updates {
     private readonly DataFolders _data;
     private readonly List<DataFolders> _questions = [];
     private int _signInOff;
+    private int _shortcutRemoved;
 
     public UninstallerTests() {
       _data = new DataFolders(
@@ -42,6 +43,13 @@ namespace Navpaky.App.Tests.Updates {
     }
 
     [Fact]
+    public void OurDesktopShortcutGoesToo() {
+      Run();
+
+      Assert.Equal(1, _shortcutRemoved);
+    }
+
+    [Fact]
     public void NoQuestionWithoutData() {
       Directory.Delete(_data.Settings);
       Directory.Delete(_data.Local);
@@ -53,7 +61,7 @@ namespace Navpaky.App.Tests.Updates {
     }
 
     private void Run() {
-      new Uninstaller(_data, () => _signInOff++, _questions.Add).Run();
+      new Uninstaller(_data, () => _signInOff++, () => _shortcutRemoved++, _questions.Add).Run();
     }
   }
 }

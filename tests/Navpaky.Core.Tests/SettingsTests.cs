@@ -5,6 +5,35 @@ using Xunit;
 namespace Navpaky.Core.Tests {
   public sealed class SettingsTests {
     [Fact]
+    public void SettingsFromBeforeTheWizardLeaveTheInstallFieldsUnknown() {
+      const string fromVersion04 = """
+          { "version": 1, "welcomeCompleted": true, "launchAtSignIn": true, "uiLanguage": "uk" }
+          """;
+
+      Settings? settings = JsonSerializer.Deserialize(
+          fromVersion04, SettingsJsonContext.Default.Settings);
+
+      Assert.NotNull(settings);
+      Assert.Null(settings.InstallFolder);
+      Assert.Null(settings.DesktopShortcut);
+      Assert.False(settings.InstallQuestionsAnswered);
+      Assert.True(settings.WelcomeCompleted);
+    }
+
+    [Fact]
+    public void InstallFieldsRoundTripThroughJson() {
+      var settings = new Settings(
+          InstallFolder: @"D:\Apps\Navpaky",
+          DesktopShortcut: true,
+          InstallQuestionsAnswered: true);
+
+      string json = JsonSerializer.Serialize(settings, SettingsJsonContext.Default.Settings);
+      Settings? restored = JsonSerializer.Deserialize(json, SettingsJsonContext.Default.Settings);
+
+      Assert.Equal(settings, restored);
+    }
+
+    [Fact]
     public void SensitivityDefaultsToBalanced() {
       Assert.Equal(Sensitivity.Balanced, new Settings().Sensitivity);
     }

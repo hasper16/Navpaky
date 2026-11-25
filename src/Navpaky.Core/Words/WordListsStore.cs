@@ -56,6 +56,22 @@ namespace Navpaky.Core.Words {
     }
 
     /// <summary>
+    /// Reads the stored lists without writing anything, for a reader that must leave them as they
+    /// are, such as the install wizard.
+    /// </summary>
+    /// <returns>
+    /// The stored lists, or <see langword="null" /> when the file is missing, cannot be read as
+    /// version 1, or cannot be opened.
+    /// </returns>
+    public WordListsDocument? Peek() {
+      try {
+        return WordListsJson.Parse(File.ReadAllBytes(FilePath));
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        return null;
+      }
+    }
+
+    /// <summary>
     /// Writes the lists to the file, replacing it in one step.
     /// </summary>
     /// <param name="lists">The lists to write.</param>

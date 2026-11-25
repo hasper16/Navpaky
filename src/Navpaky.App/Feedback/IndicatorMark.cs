@@ -5,6 +5,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using Navpaky.App.Views;
 using Navpaky.Core;
+using Navpaky.Ui;
 
 namespace Navpaky.App.Feedback {
   // The mark the cursor indicator shows, in the style the user chose (design D7): a translucent

@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Windows.Data;
 using Navpaky.App.Localization;
+using Navpaky.Ui;
 
 namespace Navpaky.App.Views {
   // Fills the placeholder of the UI string named by the parameter with the first bound value,

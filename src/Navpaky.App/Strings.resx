@@ -451,6 +451,18 @@
   <data name="WelcomeTrayTitle" xml:space="preserve">
     <value>Pin the icon to the tray</value>
   </data>
+  <data name="WelcomeTelemetry" xml:space="preserve">
+    <value>Send anonymous usage counters and crash reports</value>
+  </data>
+  <data name="WelcomeTelemetryHint" xml:space="preserve">
+    <value>Counts, error types and versions. Never what you type, window titles, your name or file paths.</value>
+  </data>
+  <data name="WelcomeShortcut" xml:space="preserve">
+    <value>Create a desktop shortcut</value>
+  </data>
+  <data name="WelcomeShortcutHint" xml:space="preserve">
+    <value>Navpaky is always in the Start menu and the tray.</value>
+  </data>
   <data name="WelcomeTrayTip" xml:space="preserve">
     <value>Windows may hide it under «^». Drag the icon onto the taskbar.</value>
   </data>

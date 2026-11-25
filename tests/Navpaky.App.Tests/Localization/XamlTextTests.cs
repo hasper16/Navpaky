@@ -6,9 +6,11 @@ using Navpaky.Core.Languages;
 using Xunit;
 
 namespace Navpaky.App.Tests.Localization {
-  // XAML shows text only through {l:Loc Key}, so every visible string follows the interface
+  // XAML shows text only through {u:Loc Key}, so every visible string follows the interface
   // language; the product name is the one literal.
   public sealed class XamlTextTests {
+    private const string _loc = "{u:Loc ";
+
     private static readonly HashSet<string> _textAttributes = [
         "Text", "Content", "Header", "Title", "ToolTip", "ToolTipText", "PlaceholderText",
         "AutomationProperties.Name", "AutomationProperties.HelpText"];
@@ -19,7 +21,7 @@ namespace Navpaky.App.Tests.Localization {
           .Where(attribute => attribute.Value.Contains("Strings.", StringComparison.Ordinal)
               || (_textAttributes.Contains(attribute.Name.LocalName)
                   && attribute.Value != Product.Name
-                  && !attribute.Value.StartsWith("{l:Loc ", StringComparison.Ordinal)
+                  && !attribute.Value.StartsWith(_loc, StringComparison.Ordinal)
                   && !attribute.Value.StartsWith("{Binding", StringComparison.Ordinal)
                   && !attribute.Value.StartsWith("{TemplateBinding", StringComparison.Ordinal)))
           .Select(Describe)];
@@ -29,12 +31,15 @@ namespace Navpaky.App.Tests.Localization {
 
     [Fact]
     public void EveryLocKeyExists() {
-      List<string> missing = [.. Attributes()
-          .Where(attribute => attribute.Value.StartsWith("{l:Loc ", StringComparison.Ordinal))
+      List<XAttribute> keys = [.. Attributes()
+          .Where(attribute => attribute.Value.StartsWith(_loc, StringComparison.Ordinal))];
+      List<string> missing = [.. keys
           .Where(attribute => Strings.ResourceManager.GetString(
-              attribute.Value[7..^1], CultureInfo.InvariantCulture) is null)
+              attribute.Value[_loc.Length..^1], CultureInfo.InvariantCulture) is null)
           .Select(Describe)];
 
+      // A renamed prefix would leave no keys to check and pass by accident.
+      Assert.NotEmpty(keys);
       Assert.Empty(missing);
     }
 

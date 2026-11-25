@@ -102,20 +102,12 @@ namespace Navpaky.App.Tests.Views {
         Hotkey before = hub.Current.Hotkey;
 
         window.Close();
-        Flush();
+        Sta.Flush();
         chords.Offer(KeyModifiers.Control | KeyModifiers.Alt, 0x20);
 
         Assert.Equal(before, hub.Current.Hotkey);
         Assert.Equal([true, false], listening);
       });
-    }
-
-    // Unloaded arrives through the dispatcher after Close.
-    private static void Flush() {
-      var frame = new DispatcherFrame();
-      Dispatcher.CurrentDispatcher.BeginInvoke(
-          DispatcherPriority.Background, () => frame.Continue = false);
-      Dispatcher.PushFrame(frame);
     }
   }
 }

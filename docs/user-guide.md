@@ -1,5 +1,20 @@
 # Navpaky user guide
 
+## Installing
+
+Run `NavpakySetup.exe` from the latest release. It installs Navpaky for your account only and asks for no administrator rights. The wizard asks everything before it copies anything:
+
+1. **Language:** Same as Windows, English or Українська. The wizard switches at once, and Navpaky uses the same language.
+2. **Licence:** accept it to continue.
+3. **Welcome back** appears only when an earlier install left Navpaky's data on this computer:
+   - **Use previous settings** keeps the Hotkey, learned words, the app list and statistics. Navpaky then starts without the Welcome.
+   - **Start fresh** deletes all kept data after a confirmation, as on a first install. The data is deleted only once the install has succeeded; if it fails, everything stays as it was.
+4. **Install folder:** `%LOCALAPPDATA%\Programs\Navpaky` by default. Navpaky always installs into a folder named `Navpaky` inside the one you pick, and refuses a folder that holds other files, needs administrator rights, lacks space, or is Navpaky's data folder. If Navpaky is already installed, the wizard reuses its folder.
+5. **Options:** start Navpaky when you sign in to Windows (on by default) and a desktop shortcut (off by default; Navpaky is always in the Start menu and the tray).
+6. **Installing** and **Done:** Finish starts Navpaky when "Start Navpaky now" is checked. If the install fails, Retry tries again and the log path shows where the details are.
+
+Your choices take effect even if you don't start Navpaky right away. Installed with the plain `navpaky-app-win-Setup.exe` instead, Navpaky asks the language, sign-in and shortcut questions in its Welcome.
+
 ## The tray icon
 
 Navpaky lives in the notification area as a small key showing the language you type in now, such as "EN" or "RU". Windows 11 may hide it under the arrow; to keep it in sight, turn it on under Settings → Personalization → Taskbar → Other system tray icons.

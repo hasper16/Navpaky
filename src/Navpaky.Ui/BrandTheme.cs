@@ -3,7 +3,7 @@ using System.Windows.Media;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 
-namespace Navpaky.App.Views {
+namespace Navpaky.Ui {
   // The brand palette follows the app theme: red and black in light, blue and gold in dark
   // (design D3 of redesign-visual-identity). WPF UI resets the accent to the system one on every
   // theme change, so the brand colours are applied again after it, into the same resources WPF UI

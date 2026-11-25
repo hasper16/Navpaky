@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Navpaky.App.Localization;
 using Navpaky.App.ViewModels;
 using Navpaky.Core;
+using Navpaky.Ui;
 
 namespace Navpaky.App.Views {
   // Hotkey: the presets as keycaps (prototype v24), a recorder for a custom combination, and

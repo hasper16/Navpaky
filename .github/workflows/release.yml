@@ -88,7 +88,7 @@ jobs:
             'pack', '--packId', 'navpaky-app', '--packVersion', $env:VERSION,
             '--packDir', 'publish', '--mainExe', 'Navpaky.App.exe', '--packTitle', 'Navpaky',
             '--packAuthors', 'Pavlo Yeremenko', '--icon', 'src/Navpaky.App/Navpaky.ico',
-            '--runtime', 'win-x64',
+            '--runtime', 'win-x64', '--shortcuts', 'StartMenuRoot',
             '--delta', 'None', '--exclude', '\.(pdb|xml)$', '--outputDir', 'releases')
           # A dry run never signs, even if a secret of that name exists outside the environment.
           if ($env:EVENT_NAME -eq 'push') {
@@ -100,12 +100,45 @@ jobs:
           & .tools/vpk @pack
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+      # The install wizard carries this release's Setup.exe (design D8 of add-install-wizard).
+      - name: Publish the install wizard
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          $setup = (Resolve-Path releases/navpaky-app-win-Setup.exe).Path
+          dotnet publish src/Navpaky.Setup -c Release -r win-x64 --self-contained `
+            -p:PublishSingleFile=true -p:Version=$env:VERSION "-p:EmbeddedSetupPath=$setup" -o setup
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      # Signed with the packages' certificate, and published only when the wizard and the
+      # Setup.exe inside it carry a valid signature from that one publisher.
+      - name: Sign the install wizard
+        if: github.event_name == 'push' && github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          SIGN_PARAMS: ${{ secrets.VPK_SIGN_PARAMS }}
+        run: |
+          $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" |
+            Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $signtool) { throw 'signtool.exe not found.' }
+          cmd /c "`"$($signtool.FullName)`" sign $env:SIGN_PARAMS setup\NavpakySetup.exe"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $wizard = Get-AuthenticodeSignature setup/NavpakySetup.exe
+          $inside = Get-AuthenticodeSignature releases/navpaky-app-win-Setup.exe
+          if ($wizard.Status -ne 'Valid' -or $inside.Status -ne 'Valid' -or
+              $wizard.SignerCertificate.Thumbprint -ne $inside.SignerCertificate.Thumbprint) {
+            throw "Wizard $($wizard.Status), setup $($inside.Status), or two publishers."
+          }
+
       - name: Keep dry-run packages
         if: github.event_name != 'push'
         uses: actions/upload-artifact@v7
         with:
           name: releases-${{ steps.version.outputs.value }}
-          path: releases/
+          path: |
+            releases/
+            setup/NavpakySetup.exe
 
       - name: Upload to GitHub Releases
         if: github.event_name == 'push' && github.ref_type == 'tag'
@@ -114,6 +147,7 @@ jobs:
           VERSION: ${{ steps.version.outputs.value }}
           REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $upload = @(
             'upload', 'github', '--repoUrl', "https://github.com/$env:REPOSITORY",
@@ -123,4 +157,6 @@ jobs:
             $upload += '--pre'
           }
           & .tools/vpk @upload
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          gh release upload "v$env:VERSION" setup/NavpakySetup.exe --repo $env:REPOSITORY
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

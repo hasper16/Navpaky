@@ -7,6 +7,7 @@ using Navpaky.App.Localization;
 using Navpaky.App.Onboarding;
 using Navpaky.App.Tray;
 using Navpaky.App.ViewModels;
+using Navpaky.Ui;
 using Wpf.Ui.Appearance;
 using ImageIcon = Wpf.Ui.Controls.ImageIcon;
 
@@ -41,6 +42,7 @@ namespace Navpaky.App.Views {
 
       Hotkey.Content = new HotkeyPage(hotkey, chords, inCard: false);
       OuterWheelScroll.Attach(Scroller);
+      WorkAreaFit.Attach(this);
       Localizer.Follow(this, ShowLayouts);
       model.PropertyChanged += OnModelChanged;
       LanguageSettings.Click += (_, _) => openLanguageSettings();

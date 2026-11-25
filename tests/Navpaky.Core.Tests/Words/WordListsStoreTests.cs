@@ -48,6 +48,23 @@ namespace Navpaky.Core.Tests.Words {
     }
 
     [Fact]
+    public void PeekReadsTheStoredLists() {
+      new WordListsStore(_folder).Save(_lists);
+
+      Assert.Equal(_lists.Learned, new WordListsStore(_folder).Peek()?.Learned);
+    }
+
+    [Fact]
+    public void PeekLeavesACorruptFileAsItIs() {
+      var store = new WordListsStore(_folder);
+      Directory.CreateDirectory(_folder);
+      File.WriteAllText(store.FilePath, "{ not json");
+
+      Assert.Null(store.Peek());
+      Assert.Equal(["words.json"], Directory.GetFiles(_folder).Select(Path.GetFileName));
+    }
+
+    [Fact]
     public void SaveReplacesTheFileAndLeavesNoTemporaryFile() {
       var store = new WordListsStore(_folder);
       store.Save(WordListsDocument.Empty);

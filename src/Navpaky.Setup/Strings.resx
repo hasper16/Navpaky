@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetupTitle" xml:space="preserve">
+    <value>Navpaky Setup</value>
+  </data>
+  <data name="SetupHeading" xml:space="preserve">
+    <value>Install Navpaky</value>
+  </data>
+  <data name="SetupTagline" xml:space="preserve">
+    <value>Fixes words typed in the wrong layout.</value>
+  </data>
+  <data name="SetupStep" xml:space="preserve">
+    <value>Step {0} of {1}</value>
+  </data>
+  <data name="SetupBack" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="SetupNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="SetupInstall" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="SetupFinish" xml:space="preserve">
+    <value>Finish</value>
+  </data>
+  <data name="SetupRetry" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="SetupClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="LanguageTitle" xml:space="preserve">
+    <value>Welcome to Navpaky</value>
+  </data>
+  <data name="LanguageHint" xml:space="preserve">
+    <value>Choose the language for setup and for the app.</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Same as Windows</value>
+  </data>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageUkrainian" xml:space="preserve">
+    <value>Українська</value>
+  </data>
+  <data name="LicenceTitle" xml:space="preserve">
+    <value>Licence</value>
+  </data>
+  <data name="LicenceHint" xml:space="preserve">
+    <value>Read and accept to continue.</value>
+  </data>
+  <data name="LicenceAccept" xml:space="preserve">
+    <value>I accept the licence</value>
+  </data>
+  <data name="WelcomeBackTitle" xml:space="preserve">
+    <value>Welcome back</value>
+  </data>
+  <data name="WelcomeBackHint" xml:space="preserve">
+    <value>Navpaky found settings from an earlier install.</value>
+  </data>
+  <data name="KeepPrevious" xml:space="preserve">
+    <value>Use previous settings</value>
+  </data>
+  <data name="KeepHint" xml:space="preserve">
+    <value>Everything stays as you left it:</value>
+  </data>
+  <data name="KeptHotkey" xml:space="preserve">
+    <value>Hotkey: {0}</value>
+  </data>
+  <data name="KeptWords" xml:space="preserve">
+    <value>Learned words: {0}</value>
+  </data>
+  <data name="KeptApps" xml:space="preserve">
+    <value>Apps with their own rules: {0}</value>
+  </data>
+  <data name="KeptStatistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="KeptNoDetails" xml:space="preserve">
+    <value>The settings file can't be read. It is kept as it is.</value>
+  </data>
+  <data name="HotkeyDoubleShift" xml:space="preserve">
+    <value>Shift twice</value>
+  </data>
+  <data name="HotkeyDoubleCtrl" xml:space="preserve">
+    <value>Ctrl twice</value>
+  </data>
+  <data name="HotkeyDoubleAlt" xml:space="preserve">
+    <value>Alt twice</value>
+  </data>
+  <data name="HotkeyCtrlSpace" xml:space="preserve">
+    <value>Ctrl + Space</value>
+  </data>
+  <data name="HotkeyWinSpace" xml:space="preserve">
+    <value>Win + Space</value>
+  </data>
+  <data name="HotkeyCustom" xml:space="preserve">
+    <value>your own</value>
+  </data>
+  <data name="StartFresh" xml:space="preserve">
+    <value>Start fresh</value>
+  </data>
+  <data name="StartFreshHint" xml:space="preserve">
+    <value>Deletes all kept data, as on a first install. The Welcome opens after setup.</value>
+  </data>
+  <data name="FreshConfirmTitle" xml:space="preserve">
+    <value>Delete all kept data?</value>
+  </data>
+  <data name="FreshConfirmText" xml:space="preserve">
+    <value>Navpaky deletes everything left from the earlier install:</value>
+  </data>
+  <data name="FreshConfirmItems" xml:space="preserve">
+    <value>• Settings
+• Learned and protected words
+• App list
+• Statistics
+• Logs</value>
+  </data>
+  <data name="FreshConfirmWarn" xml:space="preserve">
+    <value>This can’t be undone. Data is deleted only after the install succeeds.</value>
+  </data>
+  <data name="FreshCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="FreshDelete" xml:space="preserve">
+    <value>Delete and continue</value>
+  </data>
+  <data name="FolderTitle" xml:space="preserve">
+    <value>Install folder</value>
+  </data>
+  <data name="FolderHint" xml:space="preserve">
+    <value>Navpaky installs for your account only.</value>
+  </data>
+  <data name="FolderQuiet" xml:space="preserve">
+    <value>No administrator rights needed. Updates install quietly in the background.</value>
+  </data>
+  <data name="FolderRule" xml:space="preserve">
+    <value>Navpaky always installs into its own Navpaky folder inside the one you choose.</value>
+  </data>
+  <data name="FolderBrowse" xml:space="preserve">
+    <value>Change…</value>
+  </data>
+  <data name="FolderSpace" xml:space="preserve">
+    <value>Needs about {0}. Free on this drive: {1}.</value>
+  </data>
+  <data name="FolderLocked" xml:space="preserve">
+    <value>Navpaky is already installed here. To move it, uninstall it first.</value>
+  </data>
+  <data name="FolderNotEmpty" xml:space="preserve">
+    <value>This folder isn't empty. Pick an empty or a new folder.</value>
+  </data>
+  <data name="FolderOverlapsData" xml:space="preserve">
+    <value>This is Navpaky's data folder. Pick another folder.</value>
+  </data>
+  <data name="FolderNotWritable" xml:space="preserve">
+    <value>This folder needs administrator rights. Pick a folder in your profile.</value>
+  </data>
+  <data name="FolderNotEnoughSpace" xml:space="preserve">
+    <value>There isn't enough free space on this drive.</value>
+  </data>
+  <data name="SizeMegabytes" xml:space="preserve">
+    <value>{0:0} MB</value>
+  </data>
+  <data name="SizeGigabytes" xml:space="preserve">
+    <value>{0:0.#} GB</value>
+  </data>
+  <data name="OptionsTitle" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="OptionsHint" xml:space="preserve">
+    <value>You can change these later in Settings.</value>
+  </data>
+  <data name="OptionSignIn" xml:space="preserve">
+    <value>Start Navpaky when I sign in to Windows</value>
+  </data>
+  <data name="OptionShortcut" xml:space="preserve">
+    <value>Create a desktop shortcut</value>
+  </data>
+  <data name="OptionShortcutHint" xml:space="preserve">
+    <value>Navpaky is always in the Start menu and the tray.</value>
+  </data>
+  <data name="WasOn" xml:space="preserve">
+    <value>Was on before.</value>
+  </data>
+  <data name="WasOff" xml:space="preserve">
+    <value>Was off before.</value>
+  </data>
+  <data name="InstallingTitle" xml:space="preserve">
+    <value>Installing</value>
+  </data>
+  <data name="InstallingHint" xml:space="preserve">
+    <value>This takes a few seconds.</value>
+  </data>
+  <data name="PhaseCopying" xml:space="preserve">
+    <value>Copying the files…</value>
+  </data>
+  <data name="PhaseApplying" xml:space="preserve">
+    <value>Applying your choices…</value>
+  </data>
+  <data name="PhaseFinishing" xml:space="preserve">
+    <value>Registering Navpaky in Installed apps…</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>The install failed. Everything is as it was before.</value>
+  </data>
+  <data name="InstallMayStillRun" xml:space="preserve">
+    <value>The setup did not stop and may still be running. Close the wizard and try again later.</value>
+  </data>
+  <data name="InstallLog" xml:space="preserve">
+    <value>Details: {0}</value>
+  </data>
+  <data name="DoneTitle" xml:space="preserve">
+    <value>Navpaky is installed</value>
+  </data>
+  <data name="DoneText" xml:space="preserve">
+    <value>Find it in the tray and in the Start menu.</value>
+  </data>
+  <data name="DoneKeep" xml:space="preserve">
+    <value>Your previous settings are back. The Welcome won’t show again.</value>
+  </data>
+  <data name="DoneNew" xml:space="preserve">
+    <value>The Welcome opens and shows how Navpaky works.</value>
+  </data>
+  <data name="DoneStartNow" xml:space="preserve">
+    <value>Start Navpaky now</value>
+  </data>
+</root>

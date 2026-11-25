@@ -44,6 +44,22 @@ namespace Navpaky.Core {
     }
 
     /// <summary>
+    /// Reads the stored settings without writing anything, for a reader that must leave them as
+    /// they are, such as the install wizard.
+    /// </summary>
+    /// <returns>
+    /// The stored settings, or <see langword="null" /> when the file is missing, cannot be parsed,
+    /// or cannot be opened.
+    /// </returns>
+    public Settings? Peek() {
+      try {
+        return TryRead();
+      } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+        return null;
+      }
+    }
+
+    /// <summary>
     /// Writes the settings to the file, replacing it in one step.
     /// </summary>
     /// <param name="settings">The settings to write.</param>

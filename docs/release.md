@@ -26,14 +26,14 @@ Pull-request workflows never see the secret: `release.yml` has no `pull_request`
    git tag v0.2.0
    git push origin v0.2.0
    ```
-3. `release.yml` builds, tests, publishes a self-contained single-file `win-x64` build, signs and packs it with `vpk pack`, and uploads it with `vpk upload github --publish`. The single-file build extracts its assemblies to `%TEMP%\.net\Navpaky.App\` at first start, because WPF's mixed-mode assemblies cannot load from inside the bundle (`Navpaky.App.csproj`, dotnet/wpf#11842). A version with a suffix (`v0.2.0-beta.1`) becomes a pre-release, which installed copies ignore.
-4. Check the release has `navpaky-app-win-Setup.exe`, `navpaky-app-<version>-full.nupkg` and `releases.win.json`.
+3. `release.yml` builds, tests, publishes a self-contained single-file `win-x64` build, signs and packs it with `vpk pack` (Start-menu shortcut only: the desktop shortcut is the user's choice), and uploads it with `vpk upload github --publish`. It then publishes the install wizard `NavpakySetup.exe` with that release's `navpaky-app-win-Setup.exe` inside (`-p:EmbeddedSetupPath`), signs it with the same `VPK_SIGN_PARAMS`, and uploads it with `gh release upload`. The run stops before publishing unless `Get-AuthenticodeSignature` reports both the wizard and the setup inside it `Valid`, signed by one certificate. The single-file build extracts its assemblies to `%TEMP%\.net\Navpaky.App\` at first start, because WPF's mixed-mode assemblies cannot load from inside the bundle (`Navpaky.App.csproj`, dotnet/wpf#11842). A version with a suffix (`v0.2.0-beta.1`) becomes a pre-release, which installed copies ignore.
+4. Check the release has `NavpakySetup.exe` (the download for users), `navpaky-app-win-Setup.exe` (kept for updates and as a fallback), `navpaky-app-<version>-full.nupkg` and `releases.win.json`.
 
 The run fails instead of publishing when `VPK_SIGN_PARAMS` is missing.
 
 ## Dry run
 
-From the Actions tab run **Release** with **Run workflow** and a version. It packs without signing, publishes nothing and keeps the packages as a run artifact. Use it to check the pipeline, and to see that a run outside the `release` environment gets no signing secret (its log says "No signing parameters provided").
+From the Actions tab run **Release** with **Run workflow** and a version. It packs without signing, publishes nothing and keeps the packages and the unsigned `NavpakySetup.exe` as a run artifact; the wizard's signing step shows as skipped. Use it to check the pipeline, and to see that a run outside the `release` environment gets no signing secret (its log says "No signing parameters provided").
 
 ## Local test build
 
@@ -51,8 +51,13 @@ For the by-hand checks in `docs/manual-tests/deferred-by-hand.md`. Install the p
 2. Publish and pack a Debug build into one feed folder (here `%USERPROFILE%\NavpakyFeed`: any folder your account can write works, but not the `C:\` root, which a standard user cannot write), signing with the test certificate. Delete the `publish` folder before each version, so the second pack holds no files of the first:
    ```powershell
    dotnet publish src/Navpaky.App -c Debug -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=0.1.0 -o publish
-   .tools\vpk pack --packId navpaky-app --packVersion 0.1.0 --packDir publish --mainExe Navpaky.App.exe --packTitle Navpaky --packAuthors 'Pavlo Yeremenko' --icon src\Navpaky.App\Navpaky.ico --runtime win-x64 --delta None --outputDir $env:USERPROFILE\NavpakyFeed --signParams "/fd sha256 /sha1 <leaf thumbprint>"
+   .tools\vpk pack --packId navpaky-app --packVersion 0.1.0 --packDir publish --mainExe Navpaky.App.exe --packTitle Navpaky --packAuthors 'Pavlo Yeremenko' --icon src\Navpaky.App\Navpaky.ico --runtime win-x64 --shortcuts StartMenuRoot --delta None --outputDir $env:USERPROFILE\NavpakyFeed --signParams "/fd sha256 /sha1 <leaf thumbprint>"
    ```
    Repeat with `0.2.0` for an update.
-3. Install with `%USERPROFILE%\NavpakyFeed\navpaky-app-win-Setup.exe` from the 0.1.0 pack: packing 0.2.0 replaces it, so first copy it out, for example to `%USERPROFILE%\NavpakySetup-0.1.0.exe`. To check updates, quit Navpaky and start `%LOCALAPPDATA%\navpaky-app\current\Navpaky.App.exe --update-feed %USERPROFILE%\NavpakyFeed --update-pin "CN=Navpaky Test Publisher" <CA thumbprint>`.
+3. Publish the wizard around the 0.1.0 setup and sign it with the same test certificate (the Windows SDK's `signtool`):
+   ```powershell
+   dotnet publish src/Navpaky.Setup -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:Version=0.1.0 "-p:EmbeddedSetupPath=$env:USERPROFILE\NavpakyFeed\navpaky-app-win-Setup.exe" -o setup
+   signtool sign /fd sha256 /sha1 <leaf thumbprint> setup\NavpakySetup.exe
+   ```
+   Install with `setup\NavpakySetup.exe`. To install without the wizard, use `%USERPROFILE%\NavpakyFeed\navpaky-app-win-Setup.exe` from the 0.1.0 pack: packing 0.2.0 replaces it, so first copy it out, for example to `%USERPROFILE%\NavpakySetup-0.1.0.exe`. To check updates, quit Navpaky and start `%LOCALAPPDATA%\navpaky-app\current\Navpaky.App.exe --update-feed %USERPROFILE%\NavpakyFeed --update-pin "CN=Navpaky Test Publisher" <CA thumbprint>`.
 4. Afterwards uninstall Navpaky and remove both test certificates from `Cert:\CurrentUser\My` and the CA from `Cert:\CurrentUser\Root`.

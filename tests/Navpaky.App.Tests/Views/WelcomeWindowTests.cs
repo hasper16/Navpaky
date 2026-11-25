@@ -8,6 +8,7 @@ using Navpaky.App.ViewModels;
 using Navpaky.App.Views;
 using Navpaky.Core;
 using Navpaky.Core.Tests;
+using Navpaky.Ui;
 using Navpaky.Win32.Hotkeys;
 using Xunit;
 
@@ -29,26 +30,23 @@ namespace Navpaky.App.Tests.Views {
     }
 
     [Fact]
-    public void LastStepChoosesTheHotkeyAndCrashReportsOnly() {
+    public void LastStepChoosesTheHotkeyAndOneTelemetrySwitch() {
       Hotkey chosen = Hotkey.DoubleShift;
       List<string> switches = [];
-      string? crashReports = null;
+      string? telemetry = null;
       Sta.Run(() => {
-        crashReports = Strings.ResourceManager.GetString(
-            "CrashReportsEnabled", Navpaky.App.Localization.Localizer.Instance.Culture);
+        telemetry = Strings.ResourceManager.GetString(
+            "WelcomeTelemetry", Navpaky.Ui.Localizer.Instance.Culture);
         Sta.EnsureApplication();
         Open((window, hub) => {
           Option(window, Hotkey.DoubleCtrl).IsChecked = true;
           chosen = hub.Current.Hotkey;
-          switches.AddRange(Find<ToggleButton>((DependencyObject)window.FindName("Step2"))
-              .Where(toggle => toggle is not RadioButton)
-              .Select(toggle => (string)toggle.GetValue(
-                  System.Windows.Automation.AutomationProperties.NameProperty)));
+          switches.AddRange(Switches(window));
         });
       });
 
       Assert.Equal(Hotkey.DoubleCtrl, chosen);
-      Assert.Equal([crashReports!], switches);
+      Assert.Equal([telemetry!], switches);
     }
 
     // A screen reader selects a radio button without a click.
@@ -84,6 +82,40 @@ namespace Navpaky.App.Tests.Views {
           names.Take(HotkeyViewModel.Presets.Count));
     }
 
+    [Fact]
+    public void WithoutTheWizardTheInstallQuestionsAreAsked() {
+      bool languageShown = false;
+      List<string> switches = [];
+      Sta.Run(() => {
+        Sta.EnsureApplication();
+        Open(
+            (window, _) => {
+              languageShown = VisibleInTree((DependencyObject)window.FindName("LanguageChoice"));
+              switches.AddRange(Switches(window));
+            },
+            new Settings(InstallQuestionsAnswered: false));
+      });
+
+      Assert.True(languageShown);
+      Assert.Equal(
+          [Text("WelcomeTelemetry"), Text("LaunchAtSignIn"), Text("WelcomeShortcut")],
+          switches);
+    }
+
+    [Fact]
+    public void AfterTheWizardTheLanguageIsNotAskedAgain() {
+      Visibility language = Visibility.Visible;
+      Sta.Run(() => {
+        Sta.EnsureApplication();
+        Open(
+            (window, _) => language =
+                ((FrameworkElement)window.FindName("LanguageChoice")).Visibility,
+            new Settings(InstallQuestionsAnswered: true));
+      });
+
+      Assert.Equal(Visibility.Collapsed, language);
+    }
+
     private static IEnumerable<RadioButton> Options(WelcomeWindow window) {
       return Find<RadioButton>((DependencyObject)window.FindName("Step2"));
     }
@@ -99,11 +131,41 @@ namespace Navpaky.App.Tests.Views {
           "WelcomePrivacyField", System.Globalization.CultureInfo.GetCultureInfo(language))!;
     }
 
+    private static string Text(string key) {
+      return Strings.ResourceManager.GetString(key, Localizer.Instance.Culture)!;
+    }
+
+    private static IEnumerable<string> Switches(WelcomeWindow window) {
+      return Find<ToggleButton>((DependencyObject)window.FindName("Step2"))
+          .Where(toggle => toggle is not RadioButton && VisibleInTree(toggle))
+          .Select(toggle => (string)toggle.GetValue(
+              System.Windows.Automation.AutomationProperties.NameProperty));
+    }
+
+    // Whether an element shows when its step does: the window is never shown in tests, and
+    // only one step panel is visible at a time.
+    private static bool VisibleInTree(DependencyObject node) {
+      for (DependencyObject? at = node;
+          at is not null and not FrameworkElement { Name: "Step0" or "Step1" or "Step2" };
+          at = LogicalTreeHelper.GetParent(at)) {
+        if (at is UIElement { Visibility: not Visibility.Visible }) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
     private static void Open(Action<WelcomeWindow, SettingsHub> check) {
-      using var hub = new SettingsHub(new Settings(), _ => { }, new ManualClock());
+      Open(check, new Settings(InstallQuestionsAnswered: true));
+    }
+
+    private static void Open(Action<WelcomeWindow, SettingsHub> check, Settings settings) {
+      using var hub = new SettingsHub(settings, _ => { }, new ManualClock());
       using var model = new WelcomeViewModel(hub, []);
       using var hotkey = new HotkeyViewModel(hub, _ => HotkeyConflict.None);
       var window = new WelcomeWindow(model, hotkey, chords: null, () => { });
+      Sta.Flush();
       try {
         check(window, hub);
       } finally {
