@@ -7,8 +7,8 @@
 
 ## 2. Close in every session (design D6)
 
-- [ ] 2.1 Test first: `CloseSignal`. `IsRaised` is false with no event, and true for an event created by `Raise` in the test, which runs elevated in CI and as a plain user locally. The owner check rejects an event whose owner is the current non-administrator user. Pass the event name in, so tests don't use the real one. Verify: `dotnet test tests/Navpaky.Win32.Tests --filter CloseSignal`.
-- [ ] 2.2 `App` polls the signal every 2 s when started from a machine root and calls `Shutdown()`. Test first through `CloseSignal` with an injected name and a short timer. Verify: `dotnet test tests/Navpaky.App.Tests --filter CloseForUpdate`.
+- [x] 2.1 Test first: `CloseSignal`. `IsRaised` is false with no event, and true for an event created by `Raise` in the test, which runs elevated in CI and as a plain user locally. The owner check rejects an event whose owner is the current non-administrator user. Pass the event name in, so tests don't use the real one. Verify: `dotnet test tests/Navpaky.Win32.Tests --filter CloseSignal`.
+- [x] 2.2 `App` polls the signal every 2 s when started from a machine root and calls `Shutdown()`. Test first through `CloseSignal` with an injected name and a short timer. Verify: `dotnet test tests/Navpaky.App.Tests --filter CloseForUpdate`.
 
 ## 3. App hooks for machine mode (design D4, D5)
 

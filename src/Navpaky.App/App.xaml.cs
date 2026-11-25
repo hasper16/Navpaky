@@ -121,6 +121,7 @@ namespace Navpaky.App {
     private QueuedIncidentLog? _incidents;
     private UpdateScheduler? _updates;
     private ExecutableWatch? _executableWatch;
+    private CloseForUpdate? _closeForUpdate;
     private TelemetryHost? _telemetry;
     private ChordRecorder? _chords;
 
@@ -208,6 +209,7 @@ namespace Navpaky.App {
       _hub.Update(WelcomeViewModel.FirstStartDefaults);
       StartTrayFollowers();
       StartUpdates();
+      StartCloseForUpdate();
       StartLocationChecks();
       if (WelcomeViewModel.OpensAtStart(_hub.Current)) {
         OpenWelcome();
@@ -266,6 +268,7 @@ namespace Navpaky.App {
         _trayTimer?.Stop();
         _updates?.Dispose();
         _executableWatch?.Dispose();
+        _closeForUpdate?.Dispose();
         _foregroundApps?.Dispose();
         _telemetry?.Flush();
         _telemetry?.Dispose();
@@ -713,6 +716,19 @@ namespace Navpaky.App {
       _executableWatch.Disappeared += () => Dispatcher.BeginInvoke(() => AskToInstall(
           executable, Strings.MovedTitle, Strings.MovedNotice, Strings.MovedClose));
       _executableWatch.Start();
+    }
+
+    // An all-users install closes in every session before an update (add-machine-wide-install).
+    private void StartCloseForUpdate() {
+      if (!MachineInstall.IsMachineRoot(Program.InstallRoot())) {
+        return;
+      }
+
+      _closeForUpdate = new CloseForUpdate(
+          () => CloseSignal.IsRaised(CloseSignal.Name),
+          () => Dispatcher.BeginInvoke(() => Shutdown()),
+          CloseForUpdate.Period);
+      _closeForUpdate.Start();
     }
 
     // The tray's update item checks for updates, or restarts into one that is ready.
