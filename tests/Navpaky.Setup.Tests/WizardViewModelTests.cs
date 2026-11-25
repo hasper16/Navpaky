@@ -268,7 +268,7 @@ namespace Navpaky.Setup.Tests {
       Assert.Equal(_machineFolder, _ran[0].InstallFolder);
     }
 
-    // 1223: the UAC prompt was declined or timed out.
+    // 1223: the UAC prompt was declined or timed out. No setup ran, so there is no log to name.
     [Fact]
     public async Task ADeclinedPromptFailsAndOffersRetry() {
       _fails = new System.ComponentModel.Win32Exception(1223);
@@ -280,6 +280,23 @@ namespace Navpaky.Setup.Tests {
 
       Assert.True(model.Failed);
       Assert.True(model.CanRetry);
+      Assert.False(model.HasLog);
+    }
+
+    [Fact]
+    public async Task AFailedSetupThatWroteALogNamesIt() {
+      _outcome = SetupOutcome.Failed;
+      WizardViewModel? model = null;
+      model = Wizard(hook: _ => File.WriteAllText(model!.LogPath!, "log"));
+      await ToPage(model, WizardPage.Options);
+
+      try {
+        await model.Next();
+
+        Assert.True(model.HasLog);
+      } finally {
+        File.Delete(model.LogPath!);
+      }
     }
 
     // Task 2.1 of warn-reinstall-extra-files: the setup would delete the listed entries.

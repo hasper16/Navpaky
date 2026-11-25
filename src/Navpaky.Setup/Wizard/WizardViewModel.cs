@@ -202,6 +202,9 @@ namespace Navpaky.Setup.Wizard {
 
     public string? LogPath { get; private set; }
 
+    // A declined UAC prompt runs no setup, so there may be no log to point at.
+    public bool HasLog => LogPath is { } log && File.Exists(log);
+
     public bool StartNow { get; set; } = true;
 
     public Task Next() {

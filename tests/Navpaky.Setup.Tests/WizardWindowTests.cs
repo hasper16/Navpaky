@@ -19,6 +19,7 @@ namespace Navpaky.Setup.Tests {
   public sealed class WizardWindowTests : IDisposable {
     private readonly string _root = Directory.CreateTempSubdirectory("navpaky-window").FullName;
     private readonly DataFolderPair _data;
+    private readonly List<string> _logs = [];
     private SetupOutcome _outcome = SetupOutcome.Succeeded;
 
     public WizardWindowTests() {
@@ -29,6 +30,7 @@ namespace Navpaky.Setup.Tests {
     public void Dispose() {
       Sta.Run(() => Localizer.Instance.Use(CultureInfo.GetCultureInfo("en")));
       Directory.Delete(_root, recursive: true);
+      _logs.ForEach(File.Delete);
     }
 
     [Fact]
@@ -284,7 +286,15 @@ namespace Navpaky.Setup.Tests {
           probe ?? new FakeFolders { Free = 40_000_000_000 },
           Path.Join(_root, "Program Files", "Navpaky"));
       var model = new WizardViewModel(
-          kept, folders, (_, _, _, _) => Task.FromResult(_outcome), _ => { });
+          kept,
+          folders,
+          (_, _, log, _) => {
+            // As a setup that ran: it leaves its log; Dispose deletes it.
+            File.WriteAllText(log, string.Empty);
+            _logs.Add(log);
+            return Task.FromResult(_outcome);
+          },
+          _ => { });
       var window = new WizardWindow(model) {
         WindowStartupLocation = WindowStartupLocation.Manual,
         Left = -20_000,

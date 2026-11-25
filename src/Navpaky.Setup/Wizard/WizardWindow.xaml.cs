@@ -219,7 +219,7 @@ namespace Navpaky.Setup.Wizard {
       FailureText.Text = Text(_model.MayStillRun ? "InstallMayStillRun" : "InstallFailed");
       FailureText.Visibility = Shown(_model.Failed);
       LogText.Text = _model.LogPath is { } log ? Text("InstallLog", log) : string.Empty;
-      LogText.Visibility = Shown(_model.Failed && _model.LogPath is not null);
+      LogText.Visibility = Shown(_model.Failed && _model.HasLog);
     }
 
     private void PickFolder() {
