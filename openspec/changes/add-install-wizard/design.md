@@ -62,7 +62,12 @@ The app's behaviour doesn't change: same resources, same keys. Each executable k
 On Install, the wizard starts the extracted setup with `--silent --log <per-run log> --installto <folder>`, and **no `--` arguments** (F1). It runs on a background `Task`; the UI thread only shows progress.
 
 - **Progress:** Velopack reports none under `--silent`, so the Installing page shows an indeterminate bar. It moves to the next phase when the log file shows "Extracting", "Starting process install hook" and "Installation completed".
-- **Result:** the wizard waits for **the setup process only**, never its descendants (F7). Success needs both: exit code 0, **and** the hook's completion acknowledgement for this attempt (D4). Exit 0 alone isn't enough: Velopack 1.2.161 kills a hook that overruns its 30 s and still exits 0. Anything else is a failure. The wizard keeps the per-run log for diagnostics. The log holds no typed text, but it does hold paths, so it isn't sent anywhere.
+- **Result:** the wizard waits for **the setup process only**, never its descendants (F7). Success needs both: exit code 0, **and** the hook's completion acknowledgement for this attempt (D4). Exit 0 alone isn't enough: Velopack 1.2.161 kills a hook that overruns its 30 s and still exits 0. Anything else is a failure.
+- **Hook rerun:** an overrun is not rare. In the 2026-11-25 VM run, the first start of a never-seen `Navpaky.App.exe` waited for Defender's scan and overran 2 times in 9 installs, while a warm hook takes about 3 s. So when the setup exits 0, `<folder>\current\Navpaky.App.exe` exists and the acknowledgement is missing, the wizard starts `Navpaky.App.exe --veloapp-install <version>` from `current` itself. The version comes from the setup log's "Package Version" line. The wizard waits up to 2 minutes, the Applying phase stays shown, and it checks for the acknowledgement again.
+  - It is the same hook with the same hand-off file, which is seconds old, so the 10-minute staleness rule (D4) is unaffected and nothing is left for a later start of the app.
+  - A hook that fails again, or a missing `Navpaky.App.exe`, is a failure as before.
+  - The hook is safe to run twice. Start fresh moves the kept data aside only when no backup of this attempt exists yet, so a rerun never moves the data of the stopped run's own install.
+  - *Alternative:* leave the choices for the app's first start. Rejected: the choices must be in effect before Done even when Navpaky isn't started (spec "Choices reach the app"), and a file waiting for a later start would need its own staleness rule against steering a different install. The wizard keeps the per-run log for diagnostics. The log holds no typed text, but it does hold paths, so it isn't sent anywhere.
 - **Timeout:** no exit after 5 minutes (design decision) is a failure too. The wizard first stops the setup it started (`Process.Kill(entireProcessTree: true)`, then up to 30 s for it to exit). **Retry is offered only once that process is confirmed gone.** If the wizard can't confirm it, it offers only Close and says a setup may still be running, so two setups never write the same folder.
 - **On failure:** the wizard restores the Start-fresh backup if there is one (D4) and leaves any earlier install as Velopack left it.
 - **Finish:** when "Start Navpaky now" is checked, the wizard starts `<folder>\Navpaky.exe` (the root launcher, F2) with `Process.Start` (`UseShellExecute = true`) and exits.
@@ -107,7 +112,10 @@ It returns the target folder and a verdict:
 - **NotEmpty:** the folder exists, has entries, and has no `Update.exe` plus `current\Navpaky.App.exe`.
 - **OverlapsData:** the target equals, lies inside, or contains either data folder. Velopack would rename a non-empty `%LOCALAPPDATA%\Navpaky` before the hook runs, and Start fresh moves everything in it. The default `%LOCALAPPDATA%\Programs\Navpaky` doesn't overlap.
 - **NotWritable:** creating and deleting a probe file under the nearest existing parent fails.
-- **NotEnoughSpace:** compared with the package size plus 50 MB, the same margin Velopack uses.
+- **NotEnoughSpace:** compared with exactly what Velopack's setup requires (`commands/install.rs`): the package zip's compressed size plus its extracted size plus 50 MB.
+  - The wizard reads the package from its embedded `Setup.exe`. Velopack's bundle header there holds the zip's offset and length, then a fixed 32-byte signature. The wizard sums the zip's central directory entries.
+  - For the current build that's about 298 MB; the setup file's own size plus 50 MB (about 132 MB) let the page accept a drive the setup then refused (2026-11-25 VM run).
+  - A setup without a readable bundle gives 0, as a build without a payload does.
 - **Locked to the existing install.**
 
 **Folder name.** A pick whose last segment isn't `Navpaky` (case-insensitive) gets `\Navpaky` appended. This applies only when there is no existing install: an existing install's folder is used exactly as it is, for example `%LOCALAPPDATA%\navpaky-app`.
@@ -156,7 +164,7 @@ The Welcome's one switch sets both `DiagnosticsConsent.CrashReports` and `Diagno
 
 - **Download about 150 MB** (F8 plus Setup.exe), roughly 1.8× today → accepted by the owner. A native wizard would be smaller but loses the WPF look.
 - **Cold start of the wizard about 8 s** while the single-file bundle extracts (F8). Nothing is shown before the WPF window, so the user may double-click again → the wizard is single-instance (named mutex). The README says it can take a few seconds.
-- **The 30 s hook budget** must cover the Start-fresh renames, the marker, the Run entry, the shortcut and settings → keep it fast; renames, not deletions. Velopack 1.2.161 kills an overrunning hook and still exits 0, so the wizard relies on the per-attempt acknowledgement (D3, D4): no acknowledgement is a failed, partial install, and the Start-fresh backup is restored.
+- **The 30 s hook budget** must cover the Start-fresh renames, the marker, the Run entry, the shortcut and settings → keep it fast; renames, not deletions. Velopack 1.2.161 kills an overrunning hook and still exits 0, so the wizard relies on the per-attempt acknowledgement (D3, D4). When the setup succeeded but the hook was stopped, the wizard reruns the hook without that limit (D3); only no acknowledgement after that is a failed, partial install, and the Start-fresh backup is restored.
 - **The plain Setup.exe stays downloadable** and bypasses the wizard → the Welcome fallback asks the install questions (spec `onboarding`).
 - **Velopack upgrades** can change `--silent`, `--installto` or the panic in F1 → Velopack is pinned (`Directory.Packages.props`, `VPK_VERSION`); one live install run per Velopack bump (deferred by-hand checklist).
 - **SmartScreen:** a new signed exe needs reputation like `Setup.exe` does. No change in kind.

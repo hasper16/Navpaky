@@ -45,9 +45,15 @@ The Folder page SHALL propose a folder and let the user pick another one through
 - **WHEN** an earlier install in `D:\Apps\Navpaky` was uninstalled with its data kept, and the user runs the wizard
 - **THEN** the proposed folder is `D:\Apps\Navpaky` and the user can pick another one
 
+The space needed SHALL be what Velopack's setup itself requires: the package's compressed size plus its extracted size plus 50 MB, read from the package inside the embedded setup (about 298 MB for a build whose package is 74 MB). A smaller figure lets the page accept a drive the setup then refuses (observed in the 2026-11-25 VM run).
+
 #### Scenario: Not enough space
 - **WHEN** the chosen drive has less free space than the install needs
 - **THEN** Next is disabled and the page says how much space is needed
+
+#### Scenario: Space the setup checks
+- **WHEN** the chosen drive has more free space than the package's compressed size but less than the setup's requirement
+- **THEN** Next is disabled, and the space shown as needed is the setup's requirement
 
 ### Requirement: Install into a Navpaky folder
 When Navpaky is not installed for the user, the wizard SHALL install only into a folder named `Navpaky`. When the user picks a folder with any other name, the wizard SHALL use a `Navpaky` subfolder of it and show the resulting path. An existing install's folder SHALL be used exactly as it is, whatever its name.
@@ -113,7 +119,7 @@ They SHALL be applied when the install completes, before the wizard reports Done
 
 ### Requirement: Welcome back
 When the wizard finds Navpaky data kept from an earlier install, it SHALL show a Welcome back page after the Licence. The page offers:
-- "Use previous settings", selected by default, listing what is kept (hotkey, learned words, apps, statistics);
+- "Use previous settings", selected by default, listing what is kept (hotkey, learned words, apps, statistics). It says the settings could not be read only when a settings file exists and cannot be read;
 - "Start fresh", which deletes all kept data, as on a first install.
 
 #### Scenario: Kept data found
@@ -163,8 +169,13 @@ The wizard SHALL offer Retry only once the failed setup is known to have stopped
 - **AND** no second setup starts while the first one may still be running
 
 #### Scenario: Choices not applied
-- **WHEN** the setup reports success but the choices were not all applied
+- **WHEN** the setup reports success but the choices were not all applied, even after the wizard ran the install hook again
 - **THEN** the wizard reports the install as failed and offers Retry and Close
+
+#### Scenario: Install hook stopped by the setup's time limit
+- **WHEN** the setup reports success and the app is installed, but the setup stopped the install hook before it applied the choices (its 30 s limit, as when an antivirus scans the new app on its first start)
+- **THEN** the wizard runs the same install hook again itself, without that limit, before reporting Done
+- **AND** the install counts as successful once that run has applied every choice
 
 ### Requirement: Done page
 The Done page SHALL say that Navpaky is installed and where to find it (tray and Start menu), and SHALL offer "Start Navpaky now", on by default. Finish SHALL close the wizard and start Navpaky when that box is checked.

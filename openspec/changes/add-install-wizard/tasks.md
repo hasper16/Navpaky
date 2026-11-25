@@ -112,3 +112,11 @@
 
   Verify: the section exists and every scenario of spec `install-wizard` maps to an item.
 - [x] 8.3 Run `/ponytail-review branch` and the `security-audit` review in guidance mode (areas: auto-update and installer, process execution, CI). Record it in the PR body; fix or defer each finding. Verify: the PR body has the `## Security review` section with the reviewed commit.
+
+## 9. VM-run fixes (2026-11-25 run, design D3, D5, D6)
+
+- [ ] 9.1 Test first: when the setup exits 0, `current\Navpaky.App.exe` exists and no acknowledgement came, `SetupRunner` runs `Navpaky.App.exe --veloapp-install <log's Package Version>` from `current` itself, waits up to 2 minutes and succeeds once the acknowledgement exists. A missing app, a missing version or a rerun without acknowledgement fails. The hook's Start-fresh move skips data already moved for the same attempt. Verify: `dotnet test tests/Navpaky.Setup.Tests` and `tests/Navpaky.App.Tests`.
+- [ ] 9.2 Test first: the space needed is the embedded package's compressed size plus its extracted size plus 50 MB, read through Velopack's bundle header, and the Folder page shows and checks that figure. Verify: `dotnet test tests/Navpaky.Setup.Tests`; in the VM the page shows about 298 MB.
+- [ ] 9.3 `release.yml` and `docs/release.md` pack with `--shortcuts StartMenuRoot`. Verify: in the VM the plain setup leaves no desktop link.
+- [ ] 9.4 The welcome window's step 3 fits a 1024×768 work area after an install without the wizard. Verify: in the VM at 1024×768 the Done button lies inside the work area.
+- [ ] 9.5 Test first: Welcome back says the settings could not be read only when `settings.json` exists and cannot be read. Verify: `dotnet test tests/Navpaky.Setup.Tests`.

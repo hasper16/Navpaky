@@ -20,6 +20,10 @@ Closing the window at any step SHALL count as completing it. The window SHALL NO
 - **WHEN** the user presses Next twice
 - **THEN** the window shows step 3 of 3 with a Done button
 
+#### Scenario: Small screen
+- **WHEN** the screen is 1024×768 and the welcome window shows its tallest step, step 3 after an install without the wizard
+- **THEN** the whole window, its Done button included, lies inside the screen's work area
+
 #### Scenario: Reinstall keeping settings
 - **WHEN** the user reinstalled with "Use previous settings" and Navpaky starts for the first time after that install
 - **THEN** no welcome window opens
