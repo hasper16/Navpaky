@@ -26,7 +26,7 @@ namespace Navpaky.App {
       }
 
       bool machine = MachineInstall.IsMachineRoot(InstallRoot());
-      if (args is [AllUsersUninstall.Argument]) {
+      if (AllUsersUninstall.Applies(args, machine)) {
         return StartAllUsersUninstall();
       }
 
