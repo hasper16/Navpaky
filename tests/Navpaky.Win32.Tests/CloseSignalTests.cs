@@ -35,24 +35,21 @@ namespace Navpaky.Win32.Tests {
     [Fact]
     public void EndsWhenTheRaiserIsDoneEvenIfAnotherHandleStaysOpen() {
       Assert.SkipUnless(IsElevated(), "Raising needs an elevated test run.");
-      IDisposable raised = CloseSignal.Raise(_name);
-      EventWaitHandle? kept = null;
-      try {
-        Assert.True(EventWaitHandle.TryOpenExisting(_name, out kept));
+      using IDisposable raised = CloseSignal.Raise(_name);
+      bool opened = EventWaitHandle.TryOpenExisting(_name, out EventWaitHandle? kept);
+      using (kept) {
+        Assert.True(opened);
 
         raised.Dispose();
 
         Assert.False(CloseSignal.IsRaised(_name));
-      } finally {
-        kept?.Dispose();
-        raised.Dispose();
       }
     }
 
     [Fact]
     public void EndingTwiceIsHarmless() {
       Assert.SkipUnless(IsElevated(), "Raising needs an elevated test run.");
-      IDisposable raised = CloseSignal.Raise(_name);
+      using IDisposable raised = CloseSignal.Raise(_name);
 
       raised.Dispose();
       raised.Dispose();
