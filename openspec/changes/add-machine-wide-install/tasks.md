@@ -61,7 +61,7 @@
 
   The parts that need a typed password or a sign-in are deferred to `deferred-by-hand.md`: the administrator's tray update, the Installed apps uninstall, and a real second-user sign-in.
 - [x] 6.2 Add an "All-users install" section to `docs/manual-tests/deferred-by-hand.md`: an over-the-shoulder password install by a standard user, and a declined UAC at Install, at update and at uninstall. Verify: the section exists.
-- [ ] 6.3 Run the ponytail review of the branch and the `security-audit` review in guidance mode. Areas: installer, elevation, process execution. Record it in the PR body and fix or defer each finding. Verify: the PR body has the `## Security review` section with the reviewed commit.
+- [x] 6.3 Run the ponytail review of the branch and the `security-audit` review in guidance mode. Areas: installer, elevation, process execution. Record it in the PR body and fix or defer each finding. Verify: the PR body has the `## Security review` section with the reviewed commit.
 
 ## Workflow follow-up
 
