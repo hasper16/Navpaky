@@ -47,7 +47,7 @@ An existing install fixes the mode (`InstallLookup.Existing` returns the folder 
 *Alternative:* a separate mode page. It adds a step to every install, while most users take the default.
 
 ### D2. The elevated wizard
-For all users, `SetupRunner` doesn't extract or start `Setup.exe` itself. It starts its own executable through `ShellExecuteEx` with the `runas` verb (`ElevatedSetupLauncher`, `ProcessStartInfo { UseShellExecute = true, Verb = "runas" }`), with the arguments:
+For all users, `SetupRunner` doesn't extract or start `Setup.exe` itself. It starts its own executable through `ShellExecuteEx` with the `runas` verb (`ProcessSetupLauncher(elevate: true)`: `UseShellExecute = true`, `Verb = "runas"`), with the arguments:
 
 ```
 --all-users-setup <attempt:N> <sign-in: on|off>
@@ -90,7 +90,7 @@ One class owns every machine-wide artifact. Its keys sit under an injectable `Re
   - `StubPath` = `reg.exe add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v Navpaky /t REG_SZ /d "\"<root>\Navpaky.exe\"" /f`.
 
   This is the value `SignInLaunch` writes. When sign-in is off, it deletes the key.
-- **Unregister**: deletes the HKLM entry, the Active Setup key and the shared shortcut.
+- **Unregister(root)**: deletes the HKLM entry, the Active Setup key and the shared shortcut.
 
 `reg.exe` keeps sign-in fast: Active Setup runs the stub synchronously before the desktop appears, and a cold Navpaky start extracts about 160 MB. `Version` never changes, so an update never re-runs the stub, and a user who turned the sign-in entry off keeps it off.
 
@@ -105,7 +105,7 @@ Then:
 - `VelopackApp.Build().SetAutoApplyOnStartup(!machine)`. Per-user installs keep today's behaviour.
 - `OnBeforeUpdateFastCallback` (the obsolete hook, elevated, 15 s): in machine mode, closes Navpaky in every session (D6).
 - `OnAfterUpdateFastCallback` (elevated, after Velopack rewrote its entry): in machine mode, `RegisterEntry(root, version)` again. That bumps the HKLM version and deletes the approving administrator's HKCU entry.
-- `OnBeforeUninstallFastCallback`: in machine mode, closes Navpaky in other sessions (D6) and calls `Unregister()`, then runs today's `Uninstaller`. The data question is for the elevated account.
+- `OnBeforeUninstallFastCallback`: in machine mode, closes Navpaky in other sessions (D6) and calls `Unregister(root)`, then runs today's `Uninstaller`. The data question is for the elevated account.
 - `--uninstall-all-users`, checked before `VelopackApp`:
   - unelevated: re-starts itself with `runas` and the same argument, and exits. A declined prompt exits with 1223 and changes nothing.
   - elevated: starts `<root>\Update.exe --uninstall` and exits at once, so it doesn't hold a file Velopack deletes.
@@ -115,7 +115,7 @@ The hand-off file stays in the wizard user's `%LOCALAPPDATA%\Navpaky`, unchanged
 
 When the administrator is the same account, Velopack's install hook (elevated, same profile) finds it and applies it, as today. With an over-the-shoulder administrator, the hook runs in the administrator's profile, finds no hand-off and only writes the marker. The wizard then runs the hook again, unelevated, as the wizard user (the existing `RunHookAgain` path), and that run applies the choices.
 
-`RunHookAgain` reads the version from `<root>\current\sq.version` (the `<version>` element Velopack writes) instead of the setup log, which the wizard may not be able to read (D2). In machine mode, the hook also calls `MarkActiveSetupDone` and sets the user's sign-in entry per the choice (`SignInLaunch`, HKCU, as today).
+`RunHookAgain` reads the version from the setup log. When the wizard can't read that log (D2), it reads `<root>\current\sq.version` instead (the `<version>` element Velopack writes). In machine mode, the hook also calls `MarkActiveSetupDone` and sets the user's sign-in entry per the choice (`SignInLaunch`, HKCU, as today).
 
 ### D6. Closing Navpaky in every session
 The obsolete and uninstall hooks run elevated. In machine mode they:

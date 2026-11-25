@@ -42,7 +42,7 @@
 
 ## 6. Checks and docs
 
-- [ ] 6.1 Run in the NavpakyLab VM from checkpoint `staged`, with a wizard and 0.1.0 → 0.2.0 feed built from this branch:
+- [x] 6.1 Run in the NavpakyLab VM from checkpoint `staged`, with a wizard and 0.1.0 → 0.2.0 feed built from this branch:
   - an admin installs for all users: one UAC prompt naming the wizard; HKLM entry, no HKCU entry, shared link, Active Setup;
   - NavpakyTest signs in: autostart and Welcome; turns autostart off with no prompt;
   - a pending update at start: no prompt;
@@ -50,7 +50,17 @@
   - uninstall from Installed apps: prompt names Navpaky; files, entry, link and Active Setup gone.
 
   Steps the owner must do (a NavpakyTest sign-in) go through the orchestrator. Verify: evidence in `C:\Users\Public\NavpakyTest\hv\out\i2\`, summarised in the shared notes and the PR.
-- [ ] 6.2 Add an "All-users install" section to `docs/manual-tests/deferred-by-hand.md`: an over-the-shoulder password install by a standard user, and a declined UAC at Install, at update and at uninstall. Verify: the section exists.
+
+  2026-11-25: pass, through PowerShell Direct, from `test-session`:
+  - the wizard's all-users page and a declined prompt;
+  - the elevated install;
+  - the Active Setup stub;
+  - a pending update at start;
+  - an update while NavpakyTest's Navpaky ran;
+  - a declined and an approved uninstall.
+
+  The parts that need a typed password or a sign-in are deferred to `deferred-by-hand.md`: the administrator's tray update, the Installed apps uninstall, and a real second-user sign-in.
+- [x] 6.2 Add an "All-users install" section to `docs/manual-tests/deferred-by-hand.md`: an over-the-shoulder password install by a standard user, and a declined UAC at Install, at update and at uninstall. Verify: the section exists.
 - [ ] 6.3 Run the ponytail review of the branch and the `security-audit` review in guidance mode. Areas: installer, elevation, process execution. Record it in the PR body and fix or defer each finding. Verify: the PR body has the `## Security review` section with the reviewed commit.
 
 ## Workflow follow-up

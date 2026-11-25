@@ -332,3 +332,34 @@ Use the same VM, scripts and test-signed builds as add-install-wizard.
   - The Folder page listed `backup` and `notes.txt` with the box off and Next disabled.
   - After closing, both were still there.
   - After confirming, Next was enabled and the reinstall reached Done in 16 s, leaving only `current`, `packages`, `Navpaky.exe` and `Update.exe`.
+
+## add-machine-wide-install
+
+Use the same VM, scripts and test-signed builds as add-install-wizard, with the wizard and the 0.1.0/0.2.0 feed built from this change. On 2026-11-25 the VM check passed the elevated install, the pending update at start, the update while another session ran Navpaky, and the declined and approved uninstall, all driven through PowerShell Direct. The steps below need someone to type an administrator's password or sign in.
+
+- [ ] **Over-the-shoulder install.** Sign in as the standard user, choose "For all users" and Install. Type the administrator's password at the prompt, switching it to the English layout first.
+  Expected:
+  - the prompt names "Navpaky Setup";
+  - the wizard reaches Done;
+  - Installed apps lists Navpaky once, for every user;
+  - the standard user's interface language, sign-in and desktop shortcut follow the wizard;
+  - the administrator's own Installed apps shows no second entry.
+- [ ] **Declined prompt at Install.** Same as above, but answer No.
+  Expected: the wizard says the install failed and offers Retry and Close; nothing is installed.
+- [ ] **Second user's first sign-in.** After an all-users install with sign-in on, sign in as a user who never signed in since.
+  Expected:
+  - Navpaky starts and shows its Welcome window;
+  - turning off "Start Navpaky when I sign in to Windows" asks for no administrator;
+  - after the next update and sign-in, Navpaky still doesn't start for that user.
+- [ ] **Update from the tray while two users are signed in.** Sign in both accounts and start Navpaky in each. In the administrator's session choose "Restart to update" and approve.
+  Expected:
+  - the other user's Navpaky closes;
+  - the update applies and the administrator's Navpaky restarts in the new version;
+  - Installed apps shows the new version once.
+  Repeat, answering No: Navpaky comes back in the old version, and the update is still offered.
+- [ ] **Uninstall from Installed apps.** Settings → Installed apps → Navpaky → Uninstall, then approve.
+  Expected:
+  - the prompt names "Navpaky";
+  - Program Files\Navpaky, the entry and the shared Start-menu shortcut are gone;
+  - other users' Navpaky closes;
+  - a user who signs in for the first time afterwards gets no Navpaky sign-in entry.
