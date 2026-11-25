@@ -36,13 +36,28 @@ namespace Navpaky.Win32.Tests {
     public void EndsWhenTheRaiserIsDoneEvenIfAnotherHandleStaysOpen() {
       Assert.SkipUnless(IsElevated(), "Raising needs an elevated test run.");
       IDisposable raised = CloseSignal.Raise(_name);
-      Assert.True(EventWaitHandle.TryOpenExisting(_name, out EventWaitHandle? kept));
+      EventWaitHandle? kept = null;
+      try {
+        Assert.True(EventWaitHandle.TryOpenExisting(_name, out kept));
 
-      using (kept) {
         raised.Dispose();
 
         Assert.False(CloseSignal.IsRaised(_name));
+      } finally {
+        kept?.Dispose();
+        raised.Dispose();
       }
+    }
+
+    [Fact]
+    public void EndingTwiceIsHarmless() {
+      Assert.SkipUnless(IsElevated(), "Raising needs an elevated test run.");
+      IDisposable raised = CloseSignal.Raise(_name);
+
+      raised.Dispose();
+      raised.Dispose();
+
+      Assert.False(CloseSignal.IsRaised(_name));
     }
 
     // A squatter can deny everyone the rights the check needs; that must not crash Navpaky.

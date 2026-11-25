@@ -76,9 +76,13 @@ namespace Navpaky.Win32 {
     // Ends the request before closing this handle: a handle another process keeps open must not
     // extend it.
     private sealed class Raised(EventWaitHandle signal) : IDisposable {
+      private int _ended;
+
       public void Dispose() {
-        signal.Reset();
-        signal.Dispose();
+        if (Interlocked.Exchange(ref _ended, 1) == 0) {
+          signal.Reset();
+          signal.Dispose();
+        }
       }
     }
   }
