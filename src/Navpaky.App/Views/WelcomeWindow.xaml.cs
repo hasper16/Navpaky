@@ -42,6 +42,7 @@ namespace Navpaky.App.Views {
 
       Hotkey.Content = new HotkeyPage(hotkey, chords, inCard: false);
       OuterWheelScroll.Attach(Scroller);
+      WorkAreaFit.Attach(this);
       Localizer.Follow(this, ShowLayouts);
       model.PropertyChanged += OnModelChanged;
       LanguageSettings.Click += (_, _) => openLanguageSettings();
