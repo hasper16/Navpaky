@@ -93,6 +93,25 @@ namespace Navpaky.App.Tests.Updates {
       Assert.True(File.Exists(Path.Join(_data.Local + suffix, InstallMarker.FileName)));
     }
 
+    // Task 9.1, design D3: the wizard reruns a hook Velopack stopped. The stopped run may have
+    // moved the kept data aside already; the rerun must not move the new install's data there.
+    [Fact]
+    public void ARerunAfterStartingFreshKeepsTheFirstBackup() {
+      KeepSomeData(new Settings(WelcomeCompleted: true, Hotkey: Hotkey.DoubleCtrl));
+      InstallChoices choices = Write(KeptData.Fresh, signIn: true, shortcut: false);
+      Hook().Run();
+      File.Delete(Path.Join(_data.Local, choices.AcknowledgementName));
+
+      Hook().Run();
+
+      string suffix = $".fresh-{choices.Attempt:N}";
+      Assert.Equal(
+          Hotkey.DoubleCtrl, new SettingsStore(_data.Settings + suffix).Load().Hotkey);
+      Assert.True(File.Exists(Path.Join(_data.Local + suffix, "stats.json")));
+      Assert.True(File.Exists(Path.Join(_data.Local, choices.AcknowledgementName)));
+      Assert.Equal(2, Backups().Count());
+    }
+
     [Fact]
     public void AFailingStepLeavesNoAcknowledgement() {
       InstallChoices choices = Write(KeptData.New, signIn: true, shortcut: true);

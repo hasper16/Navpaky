@@ -116,6 +116,66 @@ namespace Navpaky.Setup.Tests {
       Assert.Equal(SetupOutcome.MayStillRun, outcome);
     }
 
+    // Task 9.1, design D3: Velopack stops a hook that overruns its 30 s, for example while an
+    // antivirus scans the new app on its first start, and still exits 0.
+    [Fact]
+    public async Task AStoppedHookIsRunAgainAndTheInstallSucceeds() {
+      var hook = new HookLauncher(Acknowledgement());
+      SetupRunner runner = new(Extract(Stub(exitCode: 0, acknowledge: false)), hook);
+      Installed();
+
+      SetupOutcome outcome = await runner.RunAsync(_choices, _data, _log, progress: null);
+
+      Assert.Equal(SetupOutcome.Succeeded, outcome);
+      Assert.Equal(
+          [(AppExe(), "--veloapp-install|0.1.0")],
+          hook.Runs.Select(run => (run.Exe, string.Join('|', run.Args))));
+    }
+
+    [Fact]
+    public async Task AHookThatFailsAgainFails() {
+      var hook = new HookLauncher(null);
+      SetupRunner runner = new(Extract(Stub(exitCode: 0, acknowledge: false)), hook);
+      Installed();
+
+      Assert.Equal(
+          SetupOutcome.Failed, await runner.RunAsync(_choices, _data, _log, progress: null));
+      Assert.Single(hook.Runs);
+    }
+
+    [Fact]
+    public async Task WithoutTheInstalledAppTheHookIsNotRunAgain() {
+      var hook = new HookLauncher(Acknowledgement());
+      SetupRunner runner = new(Extract(Stub(exitCode: 0, acknowledge: false)), hook);
+
+      Assert.Equal(
+          SetupOutcome.Failed, await runner.RunAsync(_choices, _data, _log, progress: null));
+      Assert.Empty(hook.Runs);
+    }
+
+    [Fact]
+    public async Task WithoutTheVersionInTheLogTheHookIsNotRunAgain() {
+      var hook = new HookLauncher(Acknowledgement());
+      SetupRunner runner = new(
+          Extract(Stub(exitCode: 0, acknowledge: false, version: null)), hook);
+      Installed();
+
+      Assert.Equal(
+          SetupOutcome.Failed, await runner.RunAsync(_choices, _data, _log, progress: null));
+      Assert.Empty(hook.Runs);
+    }
+
+    [Fact]
+    public async Task AnAcknowledgedInstallRunsNoHookAgain() {
+      var hook = new HookLauncher(Acknowledgement());
+      SetupRunner runner = new(Extract(Stub(exitCode: 0, acknowledge: true)), hook);
+      Installed();
+
+      Assert.Equal(
+          SetupOutcome.Succeeded, await runner.RunAsync(_choices, _data, _log, progress: null));
+      Assert.Empty(hook.Runs);
+    }
+
     [Fact]
     public async Task TheTemporaryCopyOfSetupIsDeleted() {
       SetupRunner runner = Runner(Stub(exitCode: 0, acknowledge: true));
@@ -142,7 +202,8 @@ namespace Navpaky.Setup.Tests {
 
     // A batch file standing in for Velopack's setup: it records what it saw, writes the log
     // lines the runner follows, and acknowledges like the install hook when asked to.
-    private string Stub(int exitCode, bool acknowledge, int sleepSeconds = 0) {
+    private string Stub(
+        int exitCode, bool acknowledge, int sleepSeconds = 0, string? version = "0.1.0") {
       string choices = Path.Join(_data.Local, InstallChoices.FileName);
       string ack = Path.Join(_data.Local, _choices.AcknowledgementName);
       return string.Join(
@@ -155,6 +216,7 @@ namespace Navpaky.Setup.Tests {
           "goto next",
           ":done",
           $"copy /y \"{choices}\" \"{Path.Join(_root, "seen-choices.txt")}\" >nul",
+          version is null ? "rem" : $"echo [INFO]     Package Version: {version}>> \"{_log}\"",
           $"echo [INFO] Extracting Update.exe...>> \"{_log}\"",
           sleepSeconds > 0 ? $"ping -n {sleepSeconds + 1} 127.0.0.1 >nul" : "rem",
           $"echo [INFO] Starting process install hook>> \"{_log}\"",
@@ -164,10 +226,59 @@ namespace Navpaky.Setup.Tests {
           $"exit /b {exitCode}");
     }
 
+    private string Acknowledgement() {
+      return Path.Join(_data.Local, _choices.AcknowledgementName);
+    }
+
+    private string AppExe() {
+      return Path.Join(_choices.InstallFolder, "current", "Navpaky.App.exe");
+    }
+
+    // What Velopack's setup leaves behind even when it stopped the hook.
+    private void Installed() {
+      Directory.CreateDirectory(Path.GetDirectoryName(AppExe())!);
+      File.WriteAllText(AppExe(), string.Empty);
+    }
+
     private sealed class Collect(List<SetupPhase> phases) : IProgress<SetupPhase> {
       public void Report(SetupPhase value) {
         if (phases.Count == 0 || phases[^1] != value) {
           phases.Add(value);
+        }
+      }
+    }
+
+    // Runs the setup stub for real and stands in for the installed app when the runner starts
+    // its install hook again, acknowledging like the hook when asked to.
+    private sealed class HookLauncher(string? acknowledgement) : ISetupLauncher {
+      private readonly ProcessSetupLauncher _setup = new();
+
+      public List<(string Exe, IReadOnlyList<string> Args)> Runs { get; } = [];
+
+      public ISetupProcess Start(string exe, IReadOnlyList<string> args) {
+        if (!exe.EndsWith("Navpaky.App.exe", StringComparison.Ordinal)) {
+          return _setup.Start(exe, args);
+        }
+
+        Runs.Add((exe, args));
+        if (acknowledgement is not null) {
+          File.WriteAllText(acknowledgement, string.Empty);
+        }
+
+        return new Exited();
+      }
+
+      private sealed class Exited : ISetupProcess {
+        public int ExitCode => 0;
+
+        public Task<bool> WaitForExitAsync(TimeSpan timeout) {
+          return Task.FromResult(true);
+        }
+
+        public void KillTree() {
+        }
+
+        public void Dispose() {
         }
       }
     }

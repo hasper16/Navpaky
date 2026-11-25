@@ -29,6 +29,9 @@ namespace Navpaky.Setup.Install {
 
     public TimeSpan KillWait { get; init; } = TimeSpan.FromSeconds(30);
 
+    // How long the wizard's own run of the install hook may take (design D3).
+    public TimeSpan HookWait { get; init; } = TimeSpan.FromMinutes(2);
+
     public async Task<SetupOutcome> RunAsync(
         InstallChoices choices,
         DataFolderPair data,
@@ -49,11 +52,27 @@ namespace Navpaky.Setup.Install {
         }
 
         Report(logPath, progress);
-        bool acknowledged = File.Exists(Path.Join(data.Local, choices.AcknowledgementName));
-        return setup.ExitCode == 0 && acknowledged ? SetupOutcome.Succeeded : SetupOutcome.Failed;
+        if (setup.ExitCode != 0) {
+          return SetupOutcome.Failed;
+        }
+
+        string acknowledgement = Path.Join(data.Local, choices.AcknowledgementName);
+        if (!File.Exists(acknowledgement)) {
+          await RunHookAgain(choices.InstallFolder, logPath).ConfigureAwait(false);
+        }
+
+        return File.Exists(acknowledgement) ? SetupOutcome.Succeeded : SetupOutcome.Failed;
       } finally {
         TryDelete(temp);
       }
+    }
+
+    // The version Velopack passes to the hook, as the setup logged it.
+    private static string? PackageVersion(string logPath) {
+      const string label = "Package Version: ";
+      string? line = ReadShared(logPath)?.Split('\n')
+          .FirstOrDefault(entry => entry.Contains(label, StringComparison.Ordinal));
+      return line?[(line.IndexOf(label, StringComparison.Ordinal) + label.Length)..].Trim();
     }
 
     private static void Report(string logPath, IProgress<SetupPhase>? progress) {
@@ -97,6 +116,21 @@ namespace Navpaky.Setup.Install {
         temp.Delete(recursive: true);
       } catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
         System.Diagnostics.Trace.WriteLine($"Setup copy not deleted: {e.GetType().Name}");
+      }
+    }
+
+    // Velopack 1.2.161 stops a hook after 30 s and still exits 0; a never-scanned app can take
+    // that long to start. The installed app runs the same hook without that limit.
+    private async Task RunHookAgain(string installFolder, string logPath) {
+      string app = Path.Join(installFolder, "current", "Navpaky.App.exe");
+      if (!File.Exists(app) || PackageVersion(logPath) is not { Length: > 0 } version) {
+        return;
+      }
+
+      using ISetupProcess hook = _launcher.Start(app, ["--veloapp-install", version]);
+      if (!await hook.WaitForExitAsync(HookWait).ConfigureAwait(false)) {
+        TryStop(hook);
+        await hook.WaitForExitAsync(KillWait).ConfigureAwait(false);
       }
     }
 

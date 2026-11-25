@@ -74,14 +74,15 @@ namespace Navpaky.App.Updates {
     }
 
     // Start fresh: the kept data moves aside, deleting nothing, so a failed install can put it
-    // back. The wizard deletes it once the install completed.
+    // back. The wizard deletes it once the install completed. A part whose backup of this attempt
+    // exists was moved by a run Velopack stopped; what is there now belongs to the new install.
     private void MoveAside(Guid attempt) {
       string suffix = $".fresh-{attempt:N}";
-      if (Directory.Exists(_data.Settings)) {
+      if (Directory.Exists(_data.Settings) && !Directory.Exists(_data.Settings + suffix)) {
         Directory.Move(_data.Settings, _data.Settings + suffix);
       }
 
-      if (!Directory.Exists(_data.Local)) {
+      if (!Directory.Exists(_data.Local) || Directory.Exists(_data.Local + suffix)) {
         return;
       }
 
